@@ -37,9 +37,9 @@ public abstract class BattleCharacter : MonoBehaviour
         if (currentHP < 0)
             currentHP = 0;
 
-        Debug.Log(
-            $"{gameObject.name} 피해 {damage} / HP {currentHP} / Block {block}"
-        );
+        Debug.Log($"{gameObject.name} 피해 {damage} / HP {currentHP} / Block {block}");
+
+        UpdateUI();
 
         if (currentHP <= 0)
         {
@@ -51,9 +51,9 @@ public abstract class BattleCharacter : MonoBehaviour
     {
         block += amount;
 
-        Debug.Log(
-            $"{gameObject.name} 방어도 +{amount} / 현재 방어도 {block}"
-        );
+        Debug.Log($"{gameObject.name} 방어도 +{amount} / 현재 방어도 {block}");
+
+        UpdateUI();
     }
 
     public virtual void Heal(int amount)
@@ -62,6 +62,8 @@ public abstract class BattleCharacter : MonoBehaviour
         if (currentHP > maxHP) currentHP = maxHP;
 
         Debug.Log($"{gameObject.name} 회복 +{amount} / 현재 HP {currentHP}");
+
+        UpdateUI();
     }
 
     protected void UpdateUI()
