@@ -1,0 +1,85 @@
+using UnityEngine;
+
+public abstract class BattleCharacter : MonoBehaviour
+{
+    [Header("HP")]
+    [SerializeField] protected int maxHP = 80;
+    [SerializeField] protected int currentHP;
+
+    [Header("Block")]
+    [SerializeField] protected int block;
+
+    [Header("UI")]
+    [SerializeField] private CharacterInfoUI characterInfoUI;
+
+    protected virtual void Awake()
+    {
+        currentHP = maxHP;
+
+        UpdateUI();
+    }
+
+    public virtual void TakeDamage(int damage)
+    {
+        // 방어도가 먼저 피해를 흡수
+        int remainingDamage = damage - block;
+
+        if (remainingDamage < 0)
+            remainingDamage = 0;
+
+        block -= damage;
+
+        if (block < 0)
+            block = 0;
+
+        currentHP -= remainingDamage;
+
+        if (currentHP < 0)
+            currentHP = 0;
+
+        Debug.Log(
+            $"{gameObject.name} 피해 {damage} / HP {currentHP} / Block {block}"
+        );
+
+        if (currentHP <= 0)
+        {
+            Die();
+        }
+    }
+
+    public virtual void AddBlock(int amount)
+    {
+        block += amount;
+
+        Debug.Log(
+            $"{gameObject.name} 방어도 +{amount} / 현재 방어도 {block}"
+        );
+    }
+
+    protected void UpdateUI()
+    {
+        if (characterInfoUI == null) return;
+
+        characterInfoUI.SetHP(currentHP, maxHP);
+    }
+
+    protected virtual void Die()
+    {
+        Debug.Log($"{gameObject.name} 사망");
+    }
+
+    public int GetCurrentHP()
+    {
+        return currentHP;
+    }
+
+    public int GetMaxHP()
+    {
+        return maxHP;
+    }
+
+    public int GetBlock()
+    {
+        return block;
+    }
+}
