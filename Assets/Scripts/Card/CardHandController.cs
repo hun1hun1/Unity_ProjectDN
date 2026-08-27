@@ -16,7 +16,7 @@ public class CardHandController : MonoBehaviour
         return cards.Count >= maxHandSize;
     }
 
-    public bool AddCard(CardData cardData)
+    public bool AddCard(CardData cardData, BattleManager battleManager)
     {
         if (IsFull())
             return false;
@@ -24,7 +24,7 @@ public class CardHandController : MonoBehaviour
         CardUI cardUI =
             Instantiate(cardPrefab, transform);
 
-        cardUI.SetCard(cardData);
+        cardUI.SetCard(cardData, battleManager);
 
         cards.Add(cardUI);
 

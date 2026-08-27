@@ -22,7 +22,7 @@ public class BattleManager : MonoBehaviour
         {
             foreach (CardData cardData in testCards)
             {
-                cardHandController.AddCard(cardData);
+                cardHandController.AddCard(cardData, this);
             }
         }
     }

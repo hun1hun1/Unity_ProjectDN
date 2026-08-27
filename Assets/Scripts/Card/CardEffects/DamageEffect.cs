@@ -3,10 +3,19 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "DamageEffect", menuName = "Card/Effect/Damage")]
 public class DamageEffect : CardEffect
 {
-    public int damage;
+    [SerializeField] public int damage;
 
     public override void Execute(BattleManager battleManager)
     {
-        battleManager.GetTarget().TakeDamage(damage);
+        switch (target)
+        {
+            case CardTarget.Player:
+                battleManager.GetPlayer().TakeDamage(damage);
+                break;
+
+            case CardTarget.Enemy:
+                battleManager.GetTarget().TakeDamage(damage);
+                break;
+        }
     }
 }

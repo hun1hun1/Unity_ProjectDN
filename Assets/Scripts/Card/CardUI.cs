@@ -12,11 +12,13 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     [SerializeField] private TMP_Text typeText;
 
     private CardData cardData;
+    private BattleManager battleManager;
 
-    public BattleManager battleManager;
-
-    public void SetCard(CardData data)
+    public void SetCard(CardData data, BattleManager manager)
     {
+        cardData = data;
+        battleManager = manager;
+
         artwork.sprite = data.artwork;
         costText.text = data.cost.ToString();
         nameText.text = data.cardName;
