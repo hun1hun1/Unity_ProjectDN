@@ -56,6 +56,14 @@ public abstract class BattleCharacter : MonoBehaviour
         );
     }
 
+    public virtual void Heal(int amount)
+    {
+        currentHP += amount;
+        if (currentHP > maxHP) currentHP = maxHP;
+
+        Debug.Log($"{gameObject.name} 회복 +{amount} / 현재 HP {currentHP}");
+    }
+
     protected void UpdateUI()
     {
         if (characterInfoUI == null) return;

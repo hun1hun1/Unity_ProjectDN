@@ -17,3 +17,5 @@ MonoBehaviour:
   artwork: {fileID: 0}
   description: "\uBC29\uC5B4\uB3C4\uB97C 4\uC5BB\uC2B5\uB2C8\uB2E4."
   type: 1
+  effects:
+  - {fileID: 11400000, guid: 89fdebe2d0f7fcb47b77f5190df6a1ae, type: 2}

@@ -1483,8 +1483,8 @@ MonoBehaviour:
   testCards:
   - {fileID: 11400000, guid: 5e9aa0ec2ae3d1b40b5362197c6f4b9d, type: 2}
   - {fileID: 11400000, guid: b1b6fe61a54cd1343a646ecbb9e69bb2, type: 2}
-  player: {fileID: 0}
-  target: {fileID: 0}
+  player: {fileID: 1262383011}
+  target: {fileID: 208320240}
 --- !u!1 &1262383009
 GameObject:
   m_ObjectHideFlags: 0
