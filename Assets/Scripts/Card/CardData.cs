@@ -11,7 +11,7 @@ public enum CardType
 public class CardData : ScriptableObject
 {
     public string cardName;
-    public int cost;
+    public Cost cost;
     public Sprite artwork;
 
     [TextArea]

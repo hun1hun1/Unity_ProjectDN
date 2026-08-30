@@ -39,11 +39,34 @@ public class BattleManager : MonoBehaviour
 
     public void UseCard(CardData cardData)
     {
+        if (cardData == null)
+            return;
+
+        Player player = GetPlayer();
+
+        if (player == null)
+            return;
+
+        CostSystem costSystem = player.GetCostSystem();
+
+        if (costSystem == null)
+            return;
+
+        // 코스트 지불 실패
+        if (!costSystem.TryPay(cardData.cost))
+        {
+            Debug.Log("코스트가 부족합니다.");
+            return;
+        }
+
         Debug.Log($"카드 사용: {cardData.cardName}");
 
         foreach (CardEffect effect in cardData.effects)
         {
-            effect.Execute(this);
+            if (effect != null)
+            {
+                effect.Execute(this);
+            }
         }
     }
 }

@@ -2,6 +2,14 @@ using UnityEngine;
 
 public class Player : BattleCharacter
 {
+    [SerializeField]
+    private CostSystem costSystem;
+
+    public CostSystem GetCostSystem()
+    {
+        return costSystem;
+    }
+
     protected override void Awake()
     {
         base.Awake();

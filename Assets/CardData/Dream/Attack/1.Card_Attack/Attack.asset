@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Attack
   m_EditorClassIdentifier: 
   cardName: "\uACF5\uACA9"
-  cost: 1
+  cost:
+    dreamCost: 1
+    nightmareCost: 0
   artwork: {fileID: 0}
   description: "\uC801\uC5D0\uAC8C 6\uC758 \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
   type: 0
