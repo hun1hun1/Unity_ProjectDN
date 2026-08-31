@@ -17,8 +17,7 @@ public class CardData : ScriptableObject
     [TextArea]
     public string description;
 
-    [SerializeField]
-    private CardDeckType deckType;
+    public CardDeckType deckType;
     public CardType type;
     public CardEffect[] effects;
 }

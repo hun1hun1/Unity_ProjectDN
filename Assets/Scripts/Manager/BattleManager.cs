@@ -2,28 +2,47 @@ using UnityEngine;
 
 public class BattleManager : MonoBehaviour
 {
-    [Header("Card Hand")]
-    [SerializeField] private CardHandController cardHandController;
+    [SerializeField] private DeckController deckController;
 
-    [Header("Test Cards")]
-    [SerializeField] private CardData[] testCards;
+    [Header("Card Hand")]
+    [SerializeField] private CardHandController dreamCardHand;
+    [SerializeField] private CardHandController nightmareCardHand;
 
     [SerializeField] private Player player;
     [SerializeField] private Enemy target;
 
     private void Start()
     {
-        DrawTestCards();
+        DrawStartingHands();
     }
 
-    private void DrawTestCards()
+    private void DrawStartingHands()
     {
-        while (!cardHandController.IsFull())
+        DrawCards(CardDeckType.TypeDream, dreamCardHand);
+
+        DrawCards(CardDeckType.TypeNightmare, nightmareCardHand);
+    }
+
+    public bool DrawCard(CardDeckType deckType, CardHandController handController)
+    {
+        if (handController.IsFull())
+            return false;
+
+        CardData cardData = deckController.DrawCard(deckType);
+
+        if (cardData == null)
+            return false;
+
+        handController.AddCard(cardData, this);
+
+        return true;
+    }
+
+    public void DrawCards(CardDeckType deckType, CardHandController handController)
+    {
+        while (!handController.IsFull())
         {
-            foreach (CardData cardData in testCards)
-            {
-                cardHandController.AddCard(cardData, this);
-            }
+            if(!DrawCard(deckType, handController)) break;
         }
     }
 
@@ -37,8 +56,13 @@ public class BattleManager : MonoBehaviour
         return target;
     }
 
-    public void UseCard(CardData cardData)
+    public void UseCard(CardUI cardUI)
     {
+        if (cardUI == null)
+            return;
+
+        CardData cardData = cardUI.GetCardData();
+
         if (cardData == null)
             return;
 
@@ -68,5 +92,9 @@ public class BattleManager : MonoBehaviour
                 effect.Execute(this);
             }
         }
+
+        deckController.DiscardCard(cardData, cardData.deckType);
+
+        cardUI.GetHandController().RemoveCard(cardUI);
     }
 }

@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Cat_and_Mouse_BlockEffect
   m_EditorClassIdentifier: 
   target: 0
-  block: 0
+  block: 6

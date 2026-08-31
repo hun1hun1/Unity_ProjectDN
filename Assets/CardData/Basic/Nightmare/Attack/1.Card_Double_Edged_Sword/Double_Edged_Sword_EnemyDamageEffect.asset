@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab4b40425af7c6b42ba29588a9597c63, type: 3}
   m_Name: Double_Edged_Sword_EnemyDamageEffect
   m_EditorClassIdentifier: 
-  target: 0
-  damage: 0
+  target: 1
+  damage: 8

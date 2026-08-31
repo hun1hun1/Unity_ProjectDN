@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab5d5ed51cfdb1a40940004cbe25003b, type: 3}
   m_Name: Cat_and_Mouse_EnemyHealEffect
   m_EditorClassIdentifier: 
-  target: 0
-  heal: 0
+  target: 1
+  heal: 3

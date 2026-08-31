@@ -13,6 +13,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
     private CardData cardData;
     private BattleManager battleManager;
+    private CardHandController handController;
 
     public void SetCard(CardData data, BattleManager manager)
     {
@@ -26,21 +27,50 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         typeText.text = data.type.ToString();
     }
 
+    public void SetHandController(CardHandController controller)
+    {
+        handController = controller;
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
+        Debug.Log($"Card Clicked: {eventData.clickCount}");
+
         if (eventData.clickCount == 2)
         {
+            Debug.Log("더블클릭 감지");
             UseCard();
         }
     }
 
     private void UseCard()
     {
-        if (cardData == null) return;
+        Debug.Log("UseCard 호출");
 
-        if (battleManager != null)
+        if (cardData == null)
         {
-            battleManager.UseCard(cardData);
+            Debug.LogError("cardData가 null입니다.");
+            return;
         }
+
+        if (battleManager == null)
+        {
+            Debug.LogError("battleManager가 null입니다.");
+            return;
+        }
+
+        Debug.Log($"카드 사용 요청: {cardData.cardName}");
+
+        battleManager.UseCard(this);
+    }
+
+    public CardData GetCardData()
+    {
+        return cardData;
+    }
+
+    public CardHandController GetHandController()
+    {
+        return handController;
     }
 }

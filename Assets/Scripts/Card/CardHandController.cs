@@ -25,6 +25,7 @@ public class CardHandController : MonoBehaviour
             Instantiate(cardPrefab, transform);
 
         cardUI.SetCard(cardData, battleManager);
+        cardUI.SetHandController(this);
 
         cards.Add(cardUI);
 

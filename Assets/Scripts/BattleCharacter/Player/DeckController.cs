@@ -7,6 +7,9 @@ public class DeckController : MonoBehaviour
     [SerializeField] private List<CardData> dreamStartingDeck;
     [SerializeField] private List<CardData> nightmareStartingDeck;
 
+    private List<CardData> dreamDeck;
+    private List<CardData> nightmareDeck;
+
     private List<CardData> dreamDrawPile = new List<CardData>();
     private List<CardData> dreamDiscardPile = new List<CardData>();
 
@@ -20,8 +23,11 @@ public class DeckController : MonoBehaviour
 
     private void InitializeDeck()
     {
-        dreamDrawPile = new List<CardData>(dreamStartingDeck);
-        nightmareDrawPile = new List<CardData>(nightmareStartingDeck);
+        dreamDeck = new List<CardData>(dreamStartingDeck);
+        nightmareDeck = new List<CardData>(nightmareStartingDeck);
+
+        dreamDrawPile = new List<CardData>(dreamDeck);
+        nightmareDrawPile = new List<CardData>(nightmareDeck);
 
         dreamDiscardPile.Clear();
         nightmareDiscardPile.Clear();
@@ -39,6 +45,21 @@ public class DeckController : MonoBehaviour
             CardData temp = cards[i];
             cards[i] = cards[randomIndex];
             cards[randomIndex] = temp;
+        }
+    }
+
+    private List<CardData> GetDeck(CardDeckType deckType)
+    {
+        switch (deckType)
+        {
+            case CardDeckType.TypeDream:
+                return dreamDeck;
+
+            case CardDeckType.TypeNightmare:
+                return nightmareDeck;
+
+            default:
+                return null;
         }
     }
 
@@ -107,5 +128,31 @@ public class DeckController : MonoBehaviour
             return;
 
         discardPile.Add(cardData);
+    }
+
+    public void AddCardToDeck(CardData cardData, CardDeckType deckType)
+    {
+        if (cardData == null)
+            return;
+
+        List<CardData> deck = GetDeck(deckType);
+
+        if (deck == null)
+            return;
+
+        deck.Add(cardData);
+    }
+
+    public bool RemoveCardFromDeck(CardData cardData, CardDeckType deckType)
+    {
+        if (cardData == null)
+            return false;
+
+        List<CardData> deck = GetDeck(deckType);
+
+        if (deck == null)
+            return false;
+
+        return deck.Remove(cardData);
     }
 }
