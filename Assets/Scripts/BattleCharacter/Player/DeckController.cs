@@ -48,7 +48,7 @@ public class DeckController : MonoBehaviour
         }
     }
 
-    private List<CardData> GetDeck(CardDeckType deckType)
+    public List<CardData> GetDeck(CardDeckType deckType)
     {
         switch (deckType)
         {
@@ -65,8 +65,8 @@ public class DeckController : MonoBehaviour
 
     public CardData DrawCard(CardDeckType deckType)
     {
-        List<CardData> drawPile = GetDrawPile(deckType);
-        List<CardData> discardPile = GetDiscardPile(deckType);
+        List<CardData> drawPile = GetDrawPile(deckType) as List<CardData>;
+        List<CardData> discardPile = GetDiscardPile(deckType) as List<CardData>;
 
         // 뽑을 카드가 없다면 버린 카드 더미를 다시 섞어서 사용
         if (drawPile.Count == 0)
@@ -89,7 +89,7 @@ public class DeckController : MonoBehaviour
         return card;
     }
 
-    private List<CardData> GetDrawPile(CardDeckType deckType)
+    public IReadOnlyList<CardData> GetDrawPile(CardDeckType deckType)
     {
         switch (deckType)
         {
@@ -103,7 +103,7 @@ public class DeckController : MonoBehaviour
         return null;
     }
 
-    private List<CardData> GetDiscardPile(CardDeckType deckType)
+    public IReadOnlyList<CardData> GetDiscardPile(CardDeckType deckType)
     {
         switch (deckType)
         {
@@ -122,7 +122,7 @@ public class DeckController : MonoBehaviour
         if (cardData == null)
             return;
 
-        List<CardData> discardPile = GetDiscardPile(deckType);
+        List<CardData> discardPile = GetDiscardPile(deckType) as List<CardData>; 
 
         if (discardPile == null)
             return;

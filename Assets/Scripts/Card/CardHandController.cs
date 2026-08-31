@@ -18,11 +18,9 @@ public class CardHandController : MonoBehaviour
 
     public bool AddCard(CardData cardData, BattleManager battleManager)
     {
-        if (IsFull())
-            return false;
+        if (IsFull()) return false;
 
-        CardUI cardUI =
-            Instantiate(cardPrefab, transform);
+        CardUI cardUI = Instantiate(cardPrefab, transform);
 
         cardUI.SetCard(cardData, battleManager);
         cardUI.SetHandController(this);

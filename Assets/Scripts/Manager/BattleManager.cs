@@ -46,6 +46,29 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    private CardHandController GetHandController(CardDeckType deckType)
+    {
+        switch (deckType)
+        {
+            case CardDeckType.TypeDream:
+                return dreamCardHand;
+
+            case CardDeckType.TypeNightmare:
+                return nightmareCardHand;
+        }
+
+        return null;
+    }
+
+    public void RefillHand(CardDeckType deckType)
+    {
+        CardHandController handController = GetHandController(deckType);
+
+        if (handController == null) return;
+
+        DrawCards(deckType, handController);
+    }
+
     public Player GetPlayer()
     {
         return player;
@@ -59,25 +82,37 @@ public class BattleManager : MonoBehaviour
     public void UseCard(CardUI cardUI)
     {
         if (cardUI == null)
+        {
+            Debug.Log("cardUI is null");
             return;
+        }
 
         CardData cardData = cardUI.GetCardData();
 
         if (cardData == null)
+        {
+            Debug.Log("cardData is null");
             return;
+        }
 
         Player player = GetPlayer();
 
         if (player == null)
+        {
+            Debug.Log("player is null");
             return;
+        }
 
         CostSystem costSystem = player.GetCostSystem();
 
         if (costSystem == null)
+        {
+            Debug.Log("costSystem is null");
             return;
+        }
 
         // 코스트 지불 실패
-        if (!costSystem.TryPay(cardData.cost))
+        if (!costSystem.TryPay(cardData))
         {
             Debug.Log("코스트가 부족합니다.");
             return;
@@ -95,6 +130,13 @@ public class BattleManager : MonoBehaviour
 
         deckController.DiscardCard(cardData, cardData.deckType);
 
-        cardUI.GetHandController().RemoveCard(cardUI);
+        CardHandController handController = cardUI.GetHandController();
+
+        if (handController != null)
+        {
+            handController.RemoveCard(cardUI);
+
+            RefillHand(cardData.deckType);
+        }
     }
 }
