@@ -21,7 +21,14 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         battleManager = manager;
 
         artwork.sprite = data.artwork;
-        costText.text = data.cost.ToString();
+        if (data.deckType == CardDeckType.TypeDream)
+        {
+            costText.text = data.cost.dreamCost.ToString();
+        }
+        if (data.deckType == CardDeckType.TypeNightmare)
+        {
+            costText.text = data.cost.nightmareCost.ToString();
+        }
         nameText.text = data.cardName;
         descriptionText.text = data.description;
         typeText.text = data.type.ToString();

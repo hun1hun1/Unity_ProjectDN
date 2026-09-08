@@ -22,23 +22,39 @@ public class CostSystem : MonoBehaviour
         UpdateUI();
     }
 
-    public bool CanPay(Cost cost)
+    public bool TryPay(CardData cardData)
     {
-        return currentDreamCost >= cost.dreamCost &&
-               currentNightmareCost >= cost.nightmareCost;
-    }
+        switch (cardData.deckType)
+        {
+            case CardDeckType.TypeDream:
 
-    public bool TryPay(Cost cost)
-    {
-        if (!CanPay(cost))
-            return false;
+                if (currentDreamCost < cardData.cost.dreamCost)
+                {
+                    Debug.Log("Dream 코스트 부족");
+                    return false;
+                }
 
-        currentDreamCost -= cost.dreamCost;
-        currentNightmareCost -= cost.nightmareCost;
+                currentDreamCost -= cardData.cost.dreamCost;
 
-        UpdateUI();
+                UpdateUI();
+                return true;
 
-        return true;
+
+            case CardDeckType.TypeNightmare:
+
+                if (currentNightmareCost < cardData.cost.nightmareCost)
+                {
+                    Debug.Log("Nightmare 코스트 부족");
+                    return false;
+                }       
+
+                currentNightmareCost -= cardData.cost.nightmareCost;
+
+                UpdateUI();
+                return true;
+        }
+
+        return false;
     }
 
     public void AddDreamCost(int amount)

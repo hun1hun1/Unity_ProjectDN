@@ -1,0 +1,28 @@
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class DeckCardUI : MonoBehaviour
+{
+    [SerializeField] private Image artwork;
+    [SerializeField] private TMP_Text costText;
+    [SerializeField] private TMP_Text nameText;
+    [SerializeField] private TMP_Text descriptionText;
+    [SerializeField] private TMP_Text typeText;
+
+    public void SetCard(CardData data)
+    {
+        artwork.sprite = data.artwork;
+        if (data.deckType == CardDeckType.TypeDream)
+        {
+            costText.text = data.cost.dreamCost.ToString();
+        }
+        if (data.deckType == CardDeckType.TypeNightmare)
+        {
+            costText.text = data.cost.nightmareCost.ToString();
+        }
+        nameText.text = data.cardName;
+        descriptionText.text = data.description;
+        typeText.text = data.type.ToString();
+    }
+}
