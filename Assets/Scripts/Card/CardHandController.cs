@@ -52,4 +52,25 @@ public class CardHandController : MonoBehaviour
     {
         return maxHandSize;
     }
+
+    public List<CardData> RemoveAllCards()
+    {
+        List<CardData> removedCards = new List<CardData>();
+
+        foreach (CardUI cardUI in cards)
+        {
+            CardData cardData = cardUI.GetCardData();
+
+            if (cardData != null)
+            {
+                removedCards.Add(cardData);
+            }
+
+            Destroy(cardUI.gameObject);
+        }
+
+        cards.Clear();
+
+        return removedCards;
+    }
 }

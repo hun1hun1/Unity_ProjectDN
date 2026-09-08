@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BattleManager : MonoBehaviour
@@ -138,5 +139,44 @@ public class BattleManager : MonoBehaviour
 
             RefillHand(cardData.deckType);
         }
+    }
+
+    private void DiscardPlayerHands()
+    {
+        DiscardHand(CardDeckType.TypeDream, dreamCardHand);
+
+        DiscardHand(CardDeckType.TypeNightmare, nightmareCardHand);
+    }
+
+    private void DiscardHand(CardDeckType deckType, CardHandController handController)
+    {
+        if (handController == null)
+            return;
+
+        List<CardData> cards = handController.RemoveAllCards();
+
+        foreach (CardData cardData in cards)
+        {
+            deckController.DiscardCard(cardData, deckType);
+        }
+    }
+
+    private void ProcessPlayerStatusEffects()
+    {
+        Debug.Log("플레이어 상태이상 처리");
+    }
+
+    public void EndPlayerTurn()
+    {
+        Debug.Log("플레이어 턴 종료");
+
+        // 1. 현재 손패 전부 버리기
+        DiscardPlayerHands();
+
+        // 2. 플레이어 상태이상 처리
+        ProcessPlayerStatusEffects();
+
+        // 3. 적 행동
+        // 아직 구현하지 않음
     }
 }
