@@ -56,6 +56,15 @@ public abstract class BattleCharacter : MonoBehaviour
         UpdateUI();
     }
 
+    public virtual void ResetBlock()
+    {
+        block = 0;
+
+        Debug.Log($"{gameObject.name} 방어도 초기화 / 현재 방어도 {block}");
+
+        UpdateUI();
+    }
+
     public virtual void Heal(int amount)
     {
         currentHP += amount;
@@ -71,6 +80,7 @@ public abstract class BattleCharacter : MonoBehaviour
         if (characterInfoUI == null) return;
 
         characterInfoUI.SetHP(currentHP, maxHP);
+        characterInfoUI.SetBlock(block);
     }
 
     protected virtual void Die()

@@ -16,10 +16,7 @@ public class CostSystem : MonoBehaviour
 
     private void Awake()
     {
-        currentDreamCost = maxDreamCost;
-        currentNightmareCost = 0;
-
-        UpdateUI();
+        ResetForTurn();
     }
 
     public bool TryPay(CardData cardData)
@@ -124,5 +121,13 @@ public class CostSystem : MonoBehaviour
         {
             nightmareCostUI.SetCost(currentNightmareCost,maxNightmareCost);
         }
+    }
+
+    public void ResetForTurn()
+    {
+        currentDreamCost = maxDreamCost;
+        currentNightmareCost = 0;
+
+        UpdateUI();
     }
 }

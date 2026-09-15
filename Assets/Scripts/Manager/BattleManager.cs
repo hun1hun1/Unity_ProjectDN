@@ -12,6 +12,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private Player player;
     [SerializeField] private Enemy target;
 
+    private BattleState currentState;
+
     private void Start()
     {
         DrawStartingHands();
@@ -82,6 +84,9 @@ public class BattleManager : MonoBehaviour
 
     public void UseCard(CardUI cardUI)
     {
+        if (currentState != BattleState.PlayerTurn)
+            return;
+
         if (cardUI == null)
         {
             Debug.Log("cardUI is null");
@@ -168,6 +173,14 @@ public class BattleManager : MonoBehaviour
 
     public void EndPlayerTurn()
     {
+        if (currentState != BattleState.PlayerTurn)
+        {
+            Debug.Log("플레이어 턴이 아닙니다.");
+            return;
+        }
+
+        ChangeState(BattleState.PlayerTurnEnd);
+
         Debug.Log("플레이어 턴 종료");
 
         // 1. 현재 손패 전부 버리기
@@ -177,6 +190,54 @@ public class BattleManager : MonoBehaviour
         ProcessPlayerStatusEffects();
 
         // 3. 적 행동
-        // 아직 구현하지 않음
+        StartEnemyTurn();
+
+        StartPlayerTurn();
+    }
+
+    private void StartPlayerTurn()
+    {
+        ChangeState(BattleState.PlayerTurn);
+
+        Debug.Log("플레이어 턴 시작");
+
+        CostSystem costSystem = player.GetCostSystem();
+
+        if (costSystem != null)
+        {
+            costSystem.ResetForTurn();
+        }
+
+        player.ResetBlock();
+
+        DrawCards(CardDeckType.TypeDream, dreamCardHand);
+        DrawCards(CardDeckType.TypeNightmare, nightmareCardHand);
+    }
+
+    private void ChangeState(BattleState newState)
+    {
+        currentState = newState;
+
+        Debug.Log($"Battle State : {currentState}");
+    }
+
+    private void StartEnemyTurn()
+    {
+        ChangeState(BattleState.EnemyTurn);
+
+        Debug.Log("적 턴 시작");
+
+        target.ResetBlock();
+
+        target.EnemyTurn(this);
+
+        EndEnemyTurn();
+    }
+
+    private void EndEnemyTurn()
+    {
+        ChangeState(BattleState.EnemyTurnEnd);
+
+        Debug.Log("적 턴 종료");
     }
 }
