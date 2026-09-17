@@ -183,6 +183,13 @@ public class BattleManager : MonoBehaviour
 
         Debug.Log("플레이어 턴 종료");
 
+        CostSystem costSystem = player.GetCostSystem();
+
+        if (costSystem != null)
+        {
+            costSystem.AddRemainingCostToGauge();
+        }
+
         // 1. 현재 손패 전부 버리기
         DiscardPlayerHands();
 
@@ -205,6 +212,11 @@ public class BattleManager : MonoBehaviour
 
         if (costSystem != null)
         {
+            CostGaugeState state =
+            costSystem.ConsumePendingState();
+
+            ApplyCostGaugeState(state);
+
             costSystem.ResetForTurn();
         }
 
@@ -239,5 +251,26 @@ public class BattleManager : MonoBehaviour
         ChangeState(BattleState.EnemyTurnEnd);
 
         Debug.Log("적 턴 종료");
+    }
+
+    private void ApplyCostGaugeState(CostGaugeState state)
+    {
+        switch (state)
+        {
+            case CostGaugeState.Dream:
+                Debug.Log("Dream 상태 발동");
+                // Dream 상태 효과
+                break;
+
+            case CostGaugeState.Nightmare:
+                Debug.Log("Nightmare 상태 발동");
+                // Nightmare 상태 효과
+                break;
+
+            case CostGaugeState.Twilight:
+                Debug.Log("황혼 상태 발동");
+                // 황혼 상태 효과
+                break;
+        }
     }
 }

@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Double_Edged_Sword_EnemyDamageEffect
   m_EditorClassIdentifier: 
   target: 1
-  damage: 8
+  damage: 5

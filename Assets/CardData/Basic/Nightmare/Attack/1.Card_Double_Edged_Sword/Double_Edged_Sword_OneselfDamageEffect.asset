@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Double_Edged_Sword_OneselfDamageEffect
   m_EditorClassIdentifier: 
   target: 0
-  damage: 4
+  damage: 3

@@ -17,10 +17,11 @@ MonoBehaviour:
     dreamCost: 0
     nightmareCost: 1
   artwork: {fileID: 0}
-  description: "\uC801\uC5D0\uAC8C 8\uC758 \uD53C\uD574\uB97C \uC8FC\uACE0 \uC790\uC2E0\uC5D0\uAC8C
-    4\uC758 \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
+  description: "\uC801\uC5D0\uAC8C 5\uC758 \uD53C\uD574\uB97C \uC8FC\uACE0 \uC790\uC2E0\uC5D0\uAC8C
+    3\uC758 \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
   deckType: 1
   type: 0
+  rarity: 0
   effects:
   - {fileID: 11400000, guid: 5a622d83313cba546af7c06e9309232b, type: 2}
   - {fileID: 11400000, guid: 510388685859c30468dfa16fb973ce5c, type: 2}

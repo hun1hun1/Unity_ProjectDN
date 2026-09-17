@@ -7,6 +7,13 @@ public enum CardType
     Continuous
 }
 
+public enum CardRarity
+{
+    Common,
+    Uncommon,
+    Rare
+}
+
 [CreateAssetMenu(fileName = "CardData", menuName = "Card/CardData")]
 public class CardData : ScriptableObject
 {
@@ -19,5 +26,6 @@ public class CardData : ScriptableObject
 
     public CardDeckType deckType;
     public CardType type;
+    public CardRarity rarity;
     public CardEffect[] effects;
 }
