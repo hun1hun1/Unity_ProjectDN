@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -146,12 +147,12 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void DiscardPlayerHands()
-    {
-        DiscardHand(CardDeckType.TypeDream, dreamCardHand);
+    //private void DiscardPlayerHands()
+    //{
+    //    DiscardHand(CardDeckType.TypeDream, dreamCardHand);
 
-        DiscardHand(CardDeckType.TypeNightmare, nightmareCardHand);
-    }
+    //    DiscardHand(CardDeckType.TypeNightmare, nightmareCardHand);
+    //}
 
     private void DiscardHand(CardDeckType deckType, CardHandController handController)
     {
@@ -169,6 +170,13 @@ public class BattleManager : MonoBehaviour
     private void ProcessPlayerStatusEffects()
     {
         Debug.Log("플레이어 상태이상 처리");
+    }
+
+    private IEnumerator DiscardPlayerHands()
+    {
+        yield return StartCoroutine(dreamCardHand.DiscardAllCards());
+
+        yield return StartCoroutine(nightmareCardHand.DiscardAllCards());
     }
 
     public void EndPlayerTurn()
