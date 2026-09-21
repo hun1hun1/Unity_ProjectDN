@@ -25,6 +25,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     [SerializeField] private RectTransform cardVisual;
     [SerializeField] private float moveDuration = 0.35f;
     [SerializeField] private float flipDuration = 0.25f;
+    [SerializeField] private float discardShrinkDuration = 0.01f;
 
     private CardData cardData;
     private BattleManager battleManager;
@@ -118,12 +119,159 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         cardVisual.localScale = finalScale;
     }
 
-    public IEnumerator DiscardAnimation(RectTransform discardPoint)
+    //public IEnumerator DiscardAnimation(RectTransform discardPoint)
+    //{
+    //    SetFaceUp(false);
+
+    //    Vector3 startPosition = cardVisual.position;
+    //    Vector3 endPosition = discardPoint.position;
+
+    //    float elapsed = 0f;
+
+    //    while (elapsed < moveDuration)
+    //    {
+    //        elapsed += Time.deltaTime;
+
+    //        float t = Mathf.Clamp01(elapsed / moveDuration);
+    //        t = Mathf.SmoothStep(0f, 1f, t);
+
+    //        cardVisual.position =
+    //            Vector3.Lerp(startPosition, endPosition, t);
+
+    //        yield return null;
+    //    }
+
+    //    cardVisual.position = endPosition;
+    //}
+
+    public IEnumerator DiscardAnimation(RectTransform discardPilePoint)
     {
+        if (cardVisual == null || discardPilePoint == null)
+            yield break;
+
+        // 현재 위치와 크기 저장
+        Vector3 startPosition = cardVisual.position;
+        Vector3 startScale = cardVisual.localScale;
+
+        // 버림 더미의 위치
+        Vector3 endPosition = discardPilePoint.position;
+
+        // 버림 더미의 크기를 기준으로 목표 크기 계산
+        Vector3 targetScale = CalculateTargetScale(discardPilePoint);
+
+        // -------------------------------------------------
+        // 1. 카드 뒷면으로 변경
+        // -------------------------------------------------
+
         SetFaceUp(false);
 
+        // -------------------------------------------------
+        // 2. 카드 크기 축소
+        // -------------------------------------------------
+
+        float elapsed = 0f;
+
+        while (elapsed < discardShrinkDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            float t = Mathf.Clamp01(
+                elapsed / discardShrinkDuration
+            );
+
+            t = Mathf.SmoothStep(0f, 1f, t);
+
+            cardVisual.localScale =
+                Vector3.Lerp(startScale, targetScale, t);
+
+            yield return null;
+        }
+
+        cardVisual.localScale = targetScale;
+
+        // -------------------------------------------------
+        // 3. 버림 더미 위치로 이동
+        // -------------------------------------------------
+
+        elapsed = 0f;
+
+        while (elapsed < moveDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            float t = Mathf.Clamp01(
+                elapsed / moveDuration
+            );
+
+            t = Mathf.SmoothStep(0f, 1f, t);
+
+            cardVisual.position =
+                Vector3.Lerp(startPosition, endPosition, t);
+
+            yield return null;
+        }
+
+        cardVisual.position = endPosition;
+    }
+
+    private Vector3 CalculateTargetScale(
+        RectTransform discardPilePoint)
+    {
+        RectTransform cardRect = cardVisual;
+
+        // 카드와 버림 더미의 실제 크기 비율
+        float scaleX =
+            discardPilePoint.rect.width /
+            cardRect.rect.width;
+
+        float scaleY =
+            discardPilePoint.rect.height /
+            cardRect.rect.height;
+
+        float scale = Mathf.Min(scaleX, scaleY);
+
+        return new Vector3(
+            scale,
+            scale,
+            1f
+        );
+    }
+
+    public IEnumerator UsedCardAnimation(
+    RectTransform cardUsingPoint,
+    RectTransform discardPilePoint)
+    {
+        if (cardVisual == null ||
+            cardUsingPoint == null ||
+            discardPilePoint == null)
+        {
+            yield break;
+        }
+
+        // 카드 사용 연출 중에는 카드 뒷면을 표시
+        SetFaceUp(true);
+
+        // 1. CardUsingArea로 이동
         Vector3 startPosition = cardVisual.position;
-        Vector3 endPosition = discardPoint.position;
+        Vector3 usingPosition = cardUsingPoint.position;
+
+        // 시작 스케일
+        Vector3 startScale = cardVisual.localScale;
+
+        // CardUsingArea에 맞는 목표 스케일 계산
+        RectTransform usingArea = cardUsingPoint;
+
+        float scaleX =
+            usingArea.rect.width / cardVisual.rect.width;
+
+        float scaleY =
+            usingArea.rect.height / cardVisual.rect.height;
+
+        // 카드 비율을 유지하면서 영역 안에 맞춤
+        float targetScaleFactor = Mathf.Min(scaleX, scaleY);
+
+        Vector3 targetScale =
+            startScale * targetScaleFactor;
 
         float elapsed = 0f;
 
@@ -134,13 +282,29 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             float t = Mathf.Clamp01(elapsed / moveDuration);
             t = Mathf.SmoothStep(0f, 1f, t);
 
-            cardVisual.position =
-                Vector3.Lerp(startPosition, endPosition, t);
+            cardVisual.position = Vector3.Lerp(
+                startPosition,
+                usingPosition,
+                t
+            );
+
+            // 크기 축소
+            cardVisual.localScale = Vector3.Lerp(
+                startScale,
+                targetScale,
+                t
+            );
 
             yield return null;
         }
 
-        cardVisual.position = endPosition;
+        cardVisual.position = usingPosition;
+        cardVisual.localScale = targetScale;
+
+        // 2. CardUsingArea에 도착한 뒤 기존 버림 애니메이션 실행
+        yield return StartCoroutine(
+            DiscardAnimation(discardPilePoint)
+        );
     }
 
     public void SetCard(CardData data, BattleManager manager)

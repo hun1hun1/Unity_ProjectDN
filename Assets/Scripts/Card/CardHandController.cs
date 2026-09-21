@@ -22,7 +22,7 @@ public class CardHandController : MonoBehaviour
         return cards.Count >= maxHandSize;
     }
 
-    public IEnumerator DiscardAllCards()
+    public IEnumerator DiscardAllCards(System.Action<CardData> onDiscard)
     {
         // 애니메이션 중 목록이 변경될 수 있으므로 복사본 사용
         List<CardUI> cardsToDiscard = new List<CardUI>(cards);
@@ -32,10 +32,17 @@ public class CardHandController : MonoBehaviour
             if (cardUI == null)
                 continue;
 
+            CardData cardData = cardUI.GetCardData();
+
+            if (cardData != null)
+            {
+                onDiscard?.Invoke(cardData);
+            }
+
             // 카드가 이동하는 동안 Layout Group의 영향을 받지 않도록
             cardUI.transform.SetParent(cardAnimationLayer, true);
 
-            yield return cardUI.DiscardAnimation(discardPilePoint);
+            yield return StartCoroutine(cardUI.DiscardAnimation(discardPilePoint));
 
             cards.Remove(cardUI);
             Destroy(cardUI.gameObject);
@@ -63,10 +70,21 @@ public class CardHandController : MonoBehaviour
 
     public void RemoveCard(CardUI cardUI)
     {
-        if (!cards.Remove(cardUI))
-            return;
+        //if (!cards.Remove(cardUI))
+        //    return;
 
-        Destroy(cardUI.gameObject);
+        //Destroy(cardUI.gameObject);
+        cards.Remove(cardUI);
+    }
+
+    public RectTransform GetCardAnimationLayer()
+    {
+        return cardAnimationLayer;
+    }
+
+    public RectTransform GetDiscardPilePoint()
+    {
+        return discardPilePoint;
     }
 
     public void IncreaseMaxHandSize(int amount)

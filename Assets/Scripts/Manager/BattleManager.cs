@@ -13,6 +13,9 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private Player player;
     [SerializeField] private Enemy target;
 
+    [Header("Card Using Area")]
+    [SerializeField] private RectTransform cardUsingPoint;
+
     private BattleState currentState;
 
     private void Start()
@@ -135,16 +138,61 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-        deckController.DiscardCard(cardData, cardData.deckType);
+        //deckController.DiscardCard(cardData, cardData.deckType);
 
-        CardHandController handController = cardUI.GetHandController();
+        //CardHandController handController = cardUI.GetHandController();
 
-        if (handController != null)
-        {
-            handController.RemoveCard(cardUI);
+        //if (handController != null)
+        //{
+        //    handController.RemoveCard(cardUI);
 
-            RefillHand(cardData.deckType);
-        }
+        //    RefillHand(cardData.deckType);
+        //}
+
+        StartCoroutine(UseCardRoutine(cardUI, cardData));
+    }
+
+    private IEnumerator UseCardRoutine(
+    CardUI cardUI,
+    CardData cardData)
+    {
+        if (cardUI == null)
+            yield break;
+
+        CardHandController handController =
+            cardUI.GetHandController();
+
+        if (handController == null)
+            yield break;
+
+        // 손패 목록에서 제거하되 UI 오브젝트는 유지
+        handController.RemoveCard(cardUI);
+
+        // LayoutGroup의 영향을 받지 않도록 이동 레이어로 옮김
+        cardUI.transform.SetParent(
+            handController.GetCardAnimationLayer(),
+            true
+        );
+
+        // CardUsingArea 이동 → 축소 → 버림 더미 이동
+        yield return StartCoroutine(
+            cardUI.UsedCardAnimation(
+                cardUsingPoint,
+                handController.GetDiscardPilePoint()
+            )
+        );
+
+        // 애니메이션 완료 후 실제 버림 더미에 추가
+        deckController.DiscardCard(
+            cardData,
+            cardData.deckType
+        );
+
+        // UI 오브젝트 제거
+        Destroy(cardUI.gameObject);
+
+        // 손패 보충
+        RefillHand(cardData.deckType);
     }
 
     //private void DiscardPlayerHands()
@@ -174,38 +222,115 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator DiscardPlayerHands()
     {
-        yield return StartCoroutine(dreamCardHand.DiscardAllCards());
+        Coroutine dreamDiscard = StartCoroutine(
+            dreamCardHand.DiscardAllCards(
+                cardData =>
+                {
+                    deckController.DiscardCard(
+                        cardData,
+                        cardData.deckType
+                    );
+                }
+            )
+        );
 
-        yield return StartCoroutine(nightmareCardHand.DiscardAllCards());
+        Coroutine nightmareDiscard = StartCoroutine(
+            nightmareCardHand.DiscardAllCards(
+                cardData =>
+                {
+                    deckController.DiscardCard(
+                        cardData,
+                        cardData.deckType
+                    );
+                }
+            )
+        );
+
+        // 두 손패의 버림 처리가 모두 끝날 때까지 대기
+        yield return dreamDiscard;
+        yield return nightmareDiscard;
     }
 
+    //public void EndPlayerTurn()
+    //{
+    //    if (currentState != BattleState.PlayerTurn)
+    //    {
+    //        Debug.Log("플레이어 턴이 아닙니다.");
+    //        return;
+    //    }
+
+    //    ChangeState(BattleState.PlayerTurnEnd);
+
+    //    Debug.Log("플레이어 턴 종료");
+
+    //    CostSystem costSystem = player.GetCostSystem();
+
+    //    if (costSystem != null)
+    //    {
+    //        costSystem.AddRemainingCostToGauge();
+    //    }
+
+    //    // 1. 현재 손패 전부 버리기
+    //    DiscardPlayerHands();
+
+    //    // 2. 플레이어 상태이상 처리
+    //    ProcessPlayerStatusEffects();
+
+    //    // 3. 적 행동
+    //    StartEnemyTurn();
+
+    //    StartPlayerTurn();
+    //}
+
     public void EndPlayerTurn()
+    {
+        StartCoroutine(EndPlayerTurnRoutine());
+    }
+
+    private IEnumerator EndPlayerTurnRoutine()
     {
         if (currentState != BattleState.PlayerTurn)
         {
             Debug.Log("플레이어 턴이 아닙니다.");
-            return;
+            yield break;
         }
 
         ChangeState(BattleState.PlayerTurnEnd);
 
         Debug.Log("플레이어 턴 종료");
 
-        CostSystem costSystem = player.GetCostSystem();
+        // 남은 코스트 처리
+        CostSystem costSystem =
+            player.GetCostSystem();
 
         if (costSystem != null)
         {
             costSystem.AddRemainingCostToGauge();
         }
 
-        // 1. 현재 손패 전부 버리기
-        DiscardPlayerHands();
+        // =========================================
+        // 1. 현재 손패 버리기
+        // =========================================
 
+        yield return StartCoroutine(
+            DiscardPlayerHands()
+        );
+
+        // =========================================
         // 2. 플레이어 상태이상 처리
+        // =========================================
+
         ProcessPlayerStatusEffects();
 
-        // 3. 적 행동
+        // =========================================
+        // 3. 적 턴
+        // =========================================
+
         StartEnemyTurn();
+
+        // =========================================
+        // 4. 플레이어 턴 시작
+        // =========================================
 
         StartPlayerTurn();
     }
