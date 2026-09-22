@@ -17,6 +17,9 @@ public class CardHandController : MonoBehaviour
     [Header("Discard Animation")]
     [SerializeField] private RectTransform discardPilePoint;
 
+    [Header("Drag References")]
+    [SerializeField] private RectTransform battleArea;
+
     public bool IsFull()
     {
         return cards.Count >= maxHandSize;
@@ -47,6 +50,11 @@ public class CardHandController : MonoBehaviour
             cards.Remove(cardUI);
             Destroy(cardUI.gameObject);
         }
+    }
+
+    public RectTransform GetBattleArea()
+    {
+        return battleArea;
     }
 
     public bool AddCard(CardData cardData, BattleManager battleManager)

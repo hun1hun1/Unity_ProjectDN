@@ -18,7 +18,20 @@ public class DeckListUI : MonoBehaviour
 
         panel.SetActive(true);
 
-        foreach (CardData cardData in cards)
+        // 원본 DrawPile은 건드리지 않고 복사
+        List<CardData> shuffledCards = new List<CardData>(cards);
+
+        // Fisher-Yates Shuffle
+        for (int i = shuffledCards.Count - 1; i > 0; i--)
+        {
+            int randomIndex = Random.Range(0, i + 1);
+
+            CardData temp = shuffledCards[i];
+            shuffledCards[i] = shuffledCards[randomIndex];
+            shuffledCards[randomIndex] = temp;
+        }
+
+        foreach (CardData cardData in shuffledCards)
         {
             DeckCardUI cardUI = Instantiate(cardPrefab, content);
 

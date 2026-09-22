@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CardUI : MonoBehaviour, IPointerClickHandler
+public class CardUI : MonoBehaviour, IPointerDownHandler
 {
     [SerializeField] private Image artwork;
     [SerializeField] private TMP_Text costText;
@@ -25,7 +25,12 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     [SerializeField] private RectTransform cardVisual;
     [SerializeField] private float moveDuration = 0.35f;
     [SerializeField] private float flipDuration = 0.25f;
-    [SerializeField] private float discardShrinkDuration = 0.01f;
+    [SerializeField] private float discardShrinkDuration = 0.05f;
+    [SerializeField] private float returnDuration = 0.2f;
+
+    [Header("Drag")]
+    [SerializeField] private float selectedScale = 1.3f;
+    [SerializeField] private float scaleDuration = 0.1f;
 
     private CardData cardData;
     private BattleManager battleManager;
@@ -33,6 +38,30 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
     private bool isFaceUp = true;
     private Coroutine drawCoroutine;
+
+    private bool isDragging = false;
+
+    private Transform originalParent;
+    private int originalSiblingIndex;
+    private Vector3 dragOffset;
+    private Vector3 originalPosition;
+
+    private Vector3 originalVisualScale;
+    private Coroutine scaleCoroutine;
+
+    private void Update()
+    {
+        if (!isDragging)
+            return;
+
+        transform.position =
+            Input.mousePosition + dragOffset;
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            EndDrag();
+        }
+    }
 
     public void SetFaceUp(bool faceUp)
     {
@@ -333,14 +362,239 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         handController = controller;
     }
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        Debug.Log($"Card Clicked: {eventData.clickCount}");
+    //public void OnPointerClick(PointerEventData eventData)
+    //{
+    //    Debug.Log($"Card Clicked: {eventData.clickCount}");
 
-        if (eventData.clickCount == 2)
+    //    if (eventData.clickCount == 2)
+    //    {
+    //        Debug.Log("더블클릭 감지");
+    //        UseCard();
+    //    }
+    //}
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Left)
+            return;
+
+        StartDrag();
+    }
+
+    private RectTransform GetCardAnimationLayer()
+    {
+        if (handController == null)
+            return null;
+
+        return handController.GetCardAnimationLayer();
+    }
+
+    private RectTransform GetBattleArea()
+    {
+        if (handController == null)
+            return null;
+
+        return handController.GetBattleArea();
+    }
+
+    private void StartDrag()
+    {
+        if (cardData == null)
+            return;
+
+        if (battleManager == null)
+            return;
+
+        if (handController == null)
         {
-            Debug.Log("더블클릭 감지");
+            Debug.LogError("HandController가 설정되지 않았습니다.");
+            return;
+        }
+
+        RectTransform animationLayer =
+            handController.GetCardAnimationLayer();
+
+        if (animationLayer == null)
+        {
+            Debug.LogError("CardAnimationLayer가 설정되지 않았습니다.");
+            return;
+        }
+
+        isDragging = true;
+
+        originalPosition = transform.position;
+
+        // 원래 크기 저장
+        originalVisualScale = cardVisual.localScale;
+
+        // 원래 부모와 위치 기억
+        originalParent = transform.parent;
+        originalSiblingIndex = transform.GetSiblingIndex();
+
+        // LayoutGroup의 영향을 받지 않도록 이동
+        transform.SetParent(animationLayer, true);
+
+        // 카드가 현재 위치에서 시작하도록 유지
+        dragOffset = transform.position - Input.mousePosition;
+
+        // 카드 확대
+        SetSelected(true);
+    }
+
+    private void SetSelected(bool selected)
+    {
+        if (scaleCoroutine != null)
+        {
+            StopCoroutine(scaleCoroutine);
+        }
+
+        Vector3 targetScale;
+
+        if (selected)
+        {
+            targetScale =
+                originalVisualScale * selectedScale;
+        }
+        else
+        {
+            targetScale =
+                originalVisualScale;
+        }
+
+        scaleCoroutine = StartCoroutine(
+            ScaleCard(targetScale)
+        );
+    }
+
+    private IEnumerator ScaleCard(Vector3 targetScale)
+    {
+        Vector3 startScale = cardVisual.localScale;
+
+        float elapsed = 0f;
+
+        while (elapsed < scaleDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            float t = Mathf.Clamp01(
+                elapsed / scaleDuration
+            );
+
+            t = Mathf.SmoothStep(0f, 1f, t);
+
+            cardVisual.localScale =
+                Vector3.Lerp(
+                    startScale,
+                    targetScale,
+                    t
+                );
+
+            yield return null;
+        }
+
+        cardVisual.localScale = targetScale;
+
+        scaleCoroutine = null;
+    }
+
+    private void EndDrag()
+    {
+        isDragging = false;
+
+        if (handController == null)
+        {
+            ReturnToHand();
+            return;
+        }
+
+        RectTransform battleArea =
+            handController.GetBattleArea();
+
+        if (battleArea == null)
+        {
+            Debug.LogError("BattleArea가 설정되지 않았습니다.");
+            ReturnToHand();
+            return;
+        }
+
+        bool isInsideBattleArea =
+            RectTransformUtility.RectangleContainsScreenPoint(
+                battleArea,
+                Input.mousePosition,
+                null
+            );
+
+        if (isInsideBattleArea)
+        {
             UseCard();
+        }
+        else
+        {
+            ReturnToHand();
+        }
+    }
+
+    //private void ReturnToHand()
+    //{
+    //    transform.SetParent(originalParent, true);
+    //    transform.SetSiblingIndex(originalSiblingIndex);
+
+    //    LayoutRebuilder.ForceRebuildLayoutImmediate(
+    //        originalParent as RectTransform
+    //    );
+    //}
+
+    private void ReturnToHand()
+    {
+        StartCoroutine(ReturnToHandAnimation());
+    }
+
+    private IEnumerator ReturnToHandAnimation()
+    {
+        Vector3 startPosition = transform.position;
+        Vector3 startScale = cardVisual.localScale;
+
+        float elapsed = 0f;
+
+        while (elapsed < returnDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            float t = Mathf.Clamp01(
+                elapsed / returnDuration
+            );
+
+            t = Mathf.SmoothStep(0f, 1f, t);
+
+            transform.position = Vector3.Lerp(
+                startPosition,
+                originalPosition,
+                t
+            );
+
+            cardVisual.localScale =
+            Vector3.Lerp(
+                startScale,
+                originalVisualScale,
+                t
+            );
+
+            yield return null;
+        }
+
+        transform.position = originalPosition;
+        cardVisual.localScale = originalVisualScale;
+
+        // 원래 손패로 복귀
+        transform.SetParent(originalParent, true);
+        transform.SetSiblingIndex(originalSiblingIndex);
+
+        RectTransform parentRect =
+            originalParent as RectTransform;
+
+        if (parentRect != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(parentRect);
         }
     }
 
