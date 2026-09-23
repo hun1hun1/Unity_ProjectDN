@@ -86,15 +86,15 @@ public class BattleManager : MonoBehaviour
         return target;
     }
 
-    public void UseCard(CardUI cardUI)
+    public bool UseCard(CardUI cardUI)
     {
         if (currentState != BattleState.PlayerTurn)
-            return;
+            return false;
 
         if (cardUI == null)
         {
             Debug.Log("cardUI is null");
-            return;
+            return false;
         }
 
         CardData cardData = cardUI.GetCardData();
@@ -102,7 +102,7 @@ public class BattleManager : MonoBehaviour
         if (cardData == null)
         {
             Debug.Log("cardData is null");
-            return;
+            return false;
         }
 
         Player player = GetPlayer();
@@ -110,7 +110,7 @@ public class BattleManager : MonoBehaviour
         if (player == null)
         {
             Debug.Log("player is null");
-            return;
+            return false;
         }
 
         CostSystem costSystem = player.GetCostSystem();
@@ -118,14 +118,14 @@ public class BattleManager : MonoBehaviour
         if (costSystem == null)
         {
             Debug.Log("costSystem is null");
-            return;
+            return false;
         }
 
         // 코스트 지불 실패
         if (!costSystem.TryPay(cardData))
         {
             Debug.Log("코스트가 부족합니다.");
-            return;
+            return false;
         }
 
         Debug.Log($"카드 사용: {cardData.cardName}");
@@ -150,6 +150,8 @@ public class BattleManager : MonoBehaviour
         //}
 
         StartCoroutine(UseCardRoutine(cardUI, cardData));
+
+        return true;
     }
 
     private IEnumerator UseCardRoutine(

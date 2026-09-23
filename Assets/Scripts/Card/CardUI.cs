@@ -21,6 +21,12 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
     [SerializeField] private GameObject front;
     [SerializeField] private GameObject back;
 
+    [Header("Card Rarity Images")]
+    [SerializeField] private Image rarityImage;
+    [SerializeField] private Sprite commonImage;
+    [SerializeField] private Sprite uncommonImage;
+    [SerializeField] private Sprite rareImage;
+
     [Header("Animation")]
     [SerializeField] private RectTransform cardVisual;
     [SerializeField] private float moveDuration = 0.35f;
@@ -616,7 +622,11 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
 
         Debug.Log($"카드 사용 요청: {cardData.cardName}");
 
-        battleManager.UseCard(this);
+        if (!battleManager.UseCard(this))
+        {
+            ReturnToHand();
+            return;
+        }
     }
 
     public CardData GetCardData()
