@@ -361,6 +361,19 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
         nameText.text = data.cardName;
         descriptionText.text = data.description;
         typeText.text = data.type.ToString();
+
+        if (data.rarity == CardRarity.Common)
+        {
+            rarityImage.sprite = commonImage;
+        }
+        else if (data.rarity == CardRarity.Uncommon)
+        {
+            rarityImage.sprite = uncommonImage;
+        }
+        else
+        {
+            rarityImage.sprite = rareImage;
+        }
     }
 
     public void SetHandController(CardHandController controller)

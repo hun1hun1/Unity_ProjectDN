@@ -41,7 +41,6 @@ public class CardRewardSystem : MonoBehaviour
     [SerializeField]
     private float rareContinuousChance = 20f;
 
-
     public CardData GetRandomCard(CardDeckType deckType)
     {
         if (cardDatabase == null)

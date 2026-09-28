@@ -1260,9 +1260,9 @@ MonoBehaviour:
   front: {fileID: 524027433407525735}
   back: {fileID: 1063015770194844872}
   rarityImage: {fileID: 7091806841845931698}
-  commonImage: {fileID: 0}
-  uncommonImage: {fileID: 0}
-  rareImage: {fileID: 0}
+  commonImage: {fileID: -8909494244173138425, guid: c543b141468d2f3428b664783c0075e8, type: 3}
+  uncommonImage: {fileID: 7166952622119852659, guid: 96fc514104d84eb429eb20b38a244508, type: 3}
+  rareImage: {fileID: 2126494313080876652, guid: ab13423a7795bd041984410552b9cffb, type: 3}
   cardVisual: {fileID: 782041619029271210}
   moveDuration: 0.35
   flipDuration: 0.25
