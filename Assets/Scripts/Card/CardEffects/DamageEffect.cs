@@ -10,11 +10,11 @@ public class DamageEffect : CardEffect
         switch (target)
         {
             case CardTarget.Player:
-                battleManager.GetPlayer().TakeDamage(damage);
+                battleManager.GetPlayer().TakeDamage(damage, battleManager.GetPlayer());
                 break;
 
             case CardTarget.Enemy:
-                battleManager.GetTarget().TakeDamage(damage);
+                battleManager.GetTarget().TakeDamage(damage, battleManager.GetPlayer());
                 break;
         }
     }

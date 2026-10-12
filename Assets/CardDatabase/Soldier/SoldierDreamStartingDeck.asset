@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aeab13a239884f548a3b20092cba29c0, type: 3}
+  m_Name: SoldierDreamStartingDeck
+  m_EditorClassIdentifier: 
+  cards:
+  - {fileID: 11400000, guid: fed619c842e953440a93e256065c6818, type: 2}
+  - {fileID: 11400000, guid: fed619c842e953440a93e256065c6818, type: 2}
+  - {fileID: 11400000, guid: fed619c842e953440a93e256065c6818, type: 2}
+  - {fileID: 11400000, guid: da4d34be5e0f4b44b94a322ef837e4c6, type: 2}
+  - {fileID: 11400000, guid: 4c16e3b962812ab4db21a83337d4647f, type: 2}
+  - {fileID: 11400000, guid: 4c16e3b962812ab4db21a83337d4647f, type: 2}
+  - {fileID: 11400000, guid: 4c16e3b962812ab4db21a83337d4647f, type: 2}
+  - {fileID: 11400000, guid: d296d36e8a51e434aa1948edb57d4893, type: 2}

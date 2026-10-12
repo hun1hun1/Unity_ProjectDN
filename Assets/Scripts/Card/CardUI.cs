@@ -46,6 +46,15 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
     private Coroutine drawCoroutine;
 
     private bool isDragging = false;
+    private bool isUsed;
+
+    public bool IsUsed => isUsed;
+
+    public void MarkAsUsed()
+    {
+        isUsed = true;
+        isDragging = false;
+    }
 
     private Transform originalParent;
     private int originalSiblingIndex;
@@ -346,6 +355,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
     {
         cardData = data;
         battleManager = manager;
+        isUsed = false;
 
         artwork.sprite = data.artwork;
         if (data.deckType == CardDeckType.TypeDream)
@@ -418,6 +428,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
 
     private void StartDrag()
     {
+        if (isUsed) return;
         if (cardData == null)
             return;
 

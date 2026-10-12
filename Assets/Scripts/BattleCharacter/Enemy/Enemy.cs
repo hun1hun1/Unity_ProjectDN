@@ -9,6 +9,44 @@ public class Enemy : BattleCharacter
     private EnemyActionUI actionUI;
 
     private int currentActionIndex;
+    private BattleManager battleContext;
+    private Player subscribedPlayer;
+
+    public void BindBattle(BattleManager battleManager)
+    {
+        UnsubscribeStatuses();
+        battleContext = battleManager;
+        if (isActiveAndEnabled) SubscribeStatuses();
+        RefreshNextActionUI();
+    }
+
+    private void OnEnable()
+    {
+        SubscribeStatuses();
+        RefreshNextActionUI();
+    }
+
+    private void OnDisable() { UnsubscribeStatuses(); }
+
+    private void SubscribeStatuses()
+    {
+        UnsubscribeStatuses();
+        StatusEffects.Changed += RefreshNextActionUI;
+        subscribedPlayer = battleContext != null ? battleContext.GetPlayer() : null;
+        if (subscribedPlayer != null) subscribedPlayer.StatusEffects.Changed += RefreshNextActionUI;
+    }
+
+    private void UnsubscribeStatuses()
+    {
+        StatusEffects.Changed -= RefreshNextActionUI;
+        if (subscribedPlayer != null) subscribedPlayer.StatusEffects.Changed -= RefreshNextActionUI;
+        subscribedPlayer = null;
+    }
+
+    private void RefreshNextActionUI()
+    {
+        UpdateNextActionUI(behavior != null ? behavior.GetAction(currentActionIndex) : null);
+    }
 
     protected override void Awake()
     {
@@ -16,7 +54,7 @@ public class Enemy : BattleCharacter
 
         currentActionIndex = 0;
 
-        UpdateNextActionUI(behavior.GetAction(currentActionIndex));
+        RefreshNextActionUI();
     }
 
     protected override void Die()
@@ -44,17 +82,18 @@ public class Enemy : BattleCharacter
             currentActionIndex = 0;
         }
 
-        UpdateNextActionUI(behavior.GetAction(currentActionIndex));
+        RefreshNextActionUI();
     }
 
     private void UpdateNextActionUI(EnemyAction action)
     {
+        if (actionUI == null) return;
         if (action == null)
         {
             actionUI.ClearAction();
             return;
         }
 
-        actionUI.SetAction(action);
+        actionUI.SetAction(action, battleContext);
     }
 }

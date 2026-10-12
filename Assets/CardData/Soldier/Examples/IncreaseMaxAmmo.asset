@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c813815edeae7934380dab4472c7c28c, type: 3}
+  m_Name: IncreaseMaxAmmo
+  m_EditorClassIdentifier: 
+  cardName: "\uD0C4\uCC3D \uD655\uC7A5 \uC608\uC2DC"
+  cost:
+    dreamCost: 1
+    nightmareCost: 0
+  artwork: {fileID: 0}
+  description: "\uC774\uBC88 \uC804\uD22C \uB3D9\uC548 \uCD5C\uB300 \uCD1D\uC54C\uC774
+    1\uC54C \uC99D\uAC00\uD569\uB2C8\uB2E4. \uCD1D\uC54C\uC744 \uC7A5\uC804\uD558\uC9C0\uB294
+    \uC54A\uC2B5\uB2C8\uB2E4."
+  deckType: 0
+  type: 1
+  rarity: 0
+  effects:
+  - {fileID: 11400000, guid: c84a9b6ec6b13874284affee075527c6, type: 2}
+  requiredAmmo: 0
+  consumeRequiredAmmo: 0

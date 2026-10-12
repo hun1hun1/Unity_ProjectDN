@@ -12,15 +12,24 @@ public abstract class BattleCharacter : MonoBehaviour
     [Header("UI")]
     [SerializeField] private CharacterInfoUI characterInfoUI;
 
+    public StatusEffectSystem StatusEffects { get; } = new StatusEffectSystem();
+
     protected virtual void Awake()
     {
         currentHP = maxHP;
+        if (characterInfoUI != null) characterInfoUI.BindStatusEffects(StatusEffects);
 
         UpdateUI();
     }
 
     public virtual void TakeDamage(int damage)
     {
+        TakeDamage(damage, null);
+    }
+
+    public virtual void TakeDamage(int damage, BattleCharacter attacker)
+    {
+        damage = DamageCalculator.Calculate(damage, attacker, this);
         // 방어도가 먼저 피해를 흡수
         int remainingDamage = damage - block;
 

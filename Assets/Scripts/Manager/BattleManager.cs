@@ -17,9 +17,22 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private RectTransform cardUsingPoint;
 
     private BattleState currentState;
+    private bool isResolvingEffects;
+    private int activeCardUses;
 
     private void Start()
     {
+        if (player != null) player.StatusEffects.Clear();
+        if (target != null)
+        {
+            target.StatusEffects.Clear();
+            target.BindBattle(this);
+        }
+        if (player != null)
+        {
+            AmmoSystem ammo = player.GetAmmoSystem();
+            if (ammo != null) ammo.ResetForBattle();
+        }
         DrawStartingHands();
     }
 
@@ -86,115 +99,94 @@ public class BattleManager : MonoBehaviour
         return target;
     }
 
-    public bool UseCard(CardUI cardUI)
+    public bool CanUseCard(CardData cardData)
     {
-        if (currentState != BattleState.PlayerTurn)
+        if (currentState != BattleState.PlayerTurn || isResolvingEffects ||
+            cardData == null || cardData.requiredAmmo < 0 || player == null)
             return false;
-
-        if (cardUI == null)
-        {
-            Debug.Log("cardUI is null");
-            return false;
-        }
-
-        CardData cardData = cardUI.GetCardData();
-
-        if (cardData == null)
-        {
-            Debug.Log("cardData is null");
-            return false;
-        }
-
-        Player player = GetPlayer();
-
-        if (player == null)
-        {
-            Debug.Log("player is null");
-            return false;
-        }
 
         CostSystem costSystem = player.GetCostSystem();
-
-        if (costSystem == null)
-        {
-            Debug.Log("costSystem is null");
+        if (costSystem == null || !costSystem.CanPay(cardData))
             return false;
-        }
 
-        // 코스트 지불 실패
-        if (!costSystem.TryPay(cardData))
-        {
-            Debug.Log("코스트가 부족합니다.");
+        if (cardData.requiredAmmo == 0)
+            return true;
+
+        AmmoSystem ammoSystem = player.GetAmmoSystem();
+        return ammoSystem != null && ammoSystem.HasAmmo(cardData.requiredAmmo);
+    }
+
+    public bool UseCard(CardUI cardUI)
+    {
+        if (cardUI == null || cardUI.IsUsed)
             return false;
-        }
 
-        Debug.Log($"카드 사용: {cardData.cardName}");
+        CardData cardData = cardUI.GetCardData();
+        if (!CanUseCard(cardData))
+            return false;
 
-        foreach (CardEffect effect in cardData.effects)
+        CostSystem costSystem = player.GetCostSystem();
+        isResolvingEffects = true;
+        try
         {
-            if (effect != null)
+            if (!costSystem.TryPay(cardData))
+                return false;
+
+            if (cardData.consumeRequiredAmmo && cardData.requiredAmmo > 0 &&
+                !player.GetAmmoSystem().TrySpend(cardData.requiredAmmo))
             {
-                effect.Execute(this);
+                // Restore the card cost if a resource changed after preflight.
+                if (cardData.deckType == CardDeckType.TypeDream)
+                    costSystem.AddDreamCost(cardData.cost.dreamCost);
+                else
+                    costSystem.AddNightmareCost(cardData.cost.nightmareCost);
+                return false;
+            }
+
+            cardUI.MarkAsUsed();
+            Debug.Log($"Card used: {cardData.cardName}");
+
+            if (cardData.effects != null)
+            {
+                foreach (CardEffect effect in cardData.effects)
+                    if (effect != null) effect.Execute(this);
             }
         }
+        finally
+        {
+            isResolvingEffects = false;
+        }
 
-        //deckController.DiscardCard(cardData, cardData.deckType);
-
-        //CardHandController handController = cardUI.GetHandController();
-
-        //if (handController != null)
-        //{
-        //    handController.RemoveCard(cardUI);
-
-        //    RefillHand(cardData.deckType);
-        //}
-
+        activeCardUses++;
         StartCoroutine(UseCardRoutine(cardUI, cardData));
-
         return true;
     }
 
-    private IEnumerator UseCardRoutine(
-    CardUI cardUI,
-    CardData cardData)
+    private IEnumerator UseCardRoutine(CardUI cardUI, CardData cardData)
     {
-        if (cardUI == null)
-            yield break;
+        try
+        {
+            if (cardUI == null) yield break;
 
-        CardHandController handController =
-            cardUI.GetHandController();
+            CardHandController handController = cardUI.GetHandController();
+            if (handController == null) yield break;
 
-        if (handController == null)
-            yield break;
+            handController.RemoveCard(cardUI);
+            cardUI.transform.SetParent(handController.GetCardAnimationLayer(), true);
 
-        // 손패 목록에서 제거하되 UI 오브젝트는 유지
-        handController.RemoveCard(cardUI);
+            yield return StartCoroutine(cardUI.UsedCardAnimation(
+                cardUsingPoint, handController.GetDiscardPilePoint()));
 
-        // LayoutGroup의 영향을 받지 않도록 이동 레이어로 옮김
-        cardUI.transform.SetParent(
-            handController.GetCardAnimationLayer(),
-            true
-        );
+            deckController.DiscardCard(cardData, cardData.deckType);
+            Destroy(cardUI.gameObject);
 
-        // CardUsingArea 이동 → 축소 → 버림 더미 이동
-        yield return StartCoroutine(
-            cardUI.UsedCardAnimation(
-                cardUsingPoint,
-                handController.GetDiscardPilePoint()
-            )
-        );
-
-        // 애니메이션 완료 후 실제 버림 더미에 추가
-        deckController.DiscardCard(
-            cardData,
-            cardData.deckType
-        );
-
-        // UI 오브젝트 제거
-        Destroy(cardUI.gameObject);
-
-        // 손패 보충
-        RefillHand(cardData.deckType);
+            if (currentState == BattleState.PlayerTurn)
+                RefillHand(cardData.deckType);
+        }
+        finally
+        {
+            activeCardUses--;
+        }
     }
 
     //private void DiscardPlayerHands()
@@ -217,9 +209,10 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void ProcessPlayerStatusEffects()
+    private void ProcessTurnStartStatusEffects()
     {
-        Debug.Log("플레이어 상태이상 처리");
+        if (player != null) player.StatusEffects.ReduceRemainingTurns();
+        if (target != null) target.StatusEffects.ReduceRemainingTurns();
     }
 
     private IEnumerator DiscardPlayerHands()
@@ -276,7 +269,6 @@ public class BattleManager : MonoBehaviour
     //    DiscardPlayerHands();
 
     //    // 2. 플레이어 상태이상 처리
-    //    ProcessPlayerStatusEffects();
 
     //    // 3. 적 행동
     //    StartEnemyTurn();
@@ -286,6 +278,7 @@ public class BattleManager : MonoBehaviour
 
     public void EndPlayerTurn()
     {
+        if (isResolvingEffects) return;
         StartCoroutine(EndPlayerTurnRoutine());
     }
 
@@ -298,6 +291,9 @@ public class BattleManager : MonoBehaviour
         }
 
         ChangeState(BattleState.PlayerTurnEnd);
+
+        while (activeCardUses > 0)
+            yield return null;
 
         Debug.Log("플레이어 턴 종료");
 
@@ -319,19 +315,13 @@ public class BattleManager : MonoBehaviour
         );
 
         // =========================================
-        // 2. 플레이어 상태이상 처리
-        // =========================================
-
-        ProcessPlayerStatusEffects();
-
-        // =========================================
-        // 3. 적 턴
+        // 2. 적 턴
         // =========================================
 
         StartEnemyTurn();
 
         // =========================================
-        // 4. 플레이어 턴 시작
+        // 3. 플레이어 턴 시작
         // =========================================
 
         StartPlayerTurn();
@@ -339,6 +329,8 @@ public class BattleManager : MonoBehaviour
 
     private void StartPlayerTurn()
     {
+        ProcessTurnStartStatusEffects();
+
         ChangeState(BattleState.PlayerTurn);
 
         Debug.Log("플레이어 턴 시작");

@@ -94,6 +94,7 @@ MonoBehaviour:
   hpFill: {fileID: 0}
   hpText: {fileID: 0}
   blockText: {fileID: 0}
+  statusUI: {fileID: 2184417913759083860}
 --- !u!1 &787283227235357098
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,6 +258,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1544452721738062637}
   - component: {fileID: 7446736974318326726}
+  - component: {fileID: 2184417913759083860}
   m_Layer: 5
   m_Name: StatusContainer
   m_TagString: Untagged
@@ -300,15 +302,28 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
+  m_ChildAlignment: 3
+  m_Spacing: 6
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &2184417913759083860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2253599584613693256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55b9a169408b44949b9cf7ece0d02cf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  iconPrefab: {fileID: 4969807975334942594, guid: 4ae23d30630e36a4aa5f6508f0ae81bf, type: 3}
 --- !u!1 &4920207893950514723
 GameObject:
   m_ObjectHideFlags: 0

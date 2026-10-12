@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62f2cb8cd5b97ca46aae3e30395a3bb7, type: 3}
+  m_Name: AmmoCapacityRelic
+  m_EditorClassIdentifier: 
+  relicName: "\uD655\uC7A5 \uD0C4\uCC3D \uC608\uC2DC"
+  description: "\uC774\uBC88 \uAC8C\uC784 \uB3D9\uC548 \uCD5C\uB300 \uCD1D\uC54C\uC774
+    1\uC54C \uC99D\uAC00\uD569\uB2C8\uB2E4."
+  maxAmmoBonus: 1

@@ -20,5 +20,10 @@ public abstract class EnemyAction : ScriptableObject
 
     public abstract string GetActionDescription();
 
+    public virtual string GetActionDescription(BattleManager battleManager)
+    {
+        return GetActionDescription();
+    }
+
     public abstract void Execute(BattleManager battleManager);
 }

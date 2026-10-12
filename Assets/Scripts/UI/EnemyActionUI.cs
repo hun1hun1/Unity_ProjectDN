@@ -12,6 +12,11 @@ public class EnemyActionUI : MonoBehaviour
 
     public void SetAction(EnemyAction action)
     {
+        SetAction(action, null);
+    }
+
+    public void SetAction(EnemyAction action, BattleManager battleManager)
+    {
         if (action == null)
         {
             ClearAction();
@@ -19,7 +24,7 @@ public class EnemyActionUI : MonoBehaviour
         }
 
         actionIcon.sprite = action.GetActionIcon();
-        actionText.text = action.GetActionDescription();
+        actionText.text = action.GetActionDescription(battleManager);
     }
 
     public void ClearAction()

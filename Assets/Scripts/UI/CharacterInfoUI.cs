@@ -15,6 +15,14 @@ public class CharacterInfoUI : MonoBehaviour
     [SerializeField]
     private TMP_Text blockText;
 
+    [Header("Status")]
+    [SerializeField] private StatusEffectsUI statusUI;
+
+    public void BindStatusEffects(StatusEffectSystem status)
+    {
+        if (statusUI != null) statusUI.Bind(status);
+    }
+
     public void SetHP(int currentHP, int maxHP)
     {
         if (maxHP <= 0) return;

@@ -39,6 +39,23 @@ public class CostSystem : MonoBehaviour
         UpdateGaugeUI();
     }
 
+    public bool CanPay(CardData cardData)
+    {
+        if (cardData == null) return false;
+
+        switch (cardData.deckType)
+        {
+            case CardDeckType.TypeDream:
+                return cardData.cost.dreamCost >= 0 &&
+                    currentDreamCost >= cardData.cost.dreamCost;
+            case CardDeckType.TypeNightmare:
+                return cardData.cost.nightmareCost >= 0 &&
+                    currentNightmareCost >= cardData.cost.nightmareCost;
+            default:
+                return false;
+        }
+    }
+
     public bool TryPay(CardData cardData)
     {
         switch (cardData.deckType)

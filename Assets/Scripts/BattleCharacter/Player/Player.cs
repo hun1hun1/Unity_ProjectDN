@@ -7,7 +7,13 @@ public class Player : BattleCharacter
 
     public CostSystem GetCostSystem()
     {
+        if (costSystem == null) costSystem = GetComponent<CostSystem>();
         return costSystem;
+    }
+
+    public AmmoSystem GetAmmoSystem()
+    {
+        return GetComponent<AmmoSystem>();
     }
 
     protected override void Awake()
