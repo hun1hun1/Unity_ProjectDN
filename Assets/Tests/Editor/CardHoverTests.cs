@@ -136,7 +136,9 @@ public class CardHoverTests
         yield return WaitForPlayTime(0.05f);
         Assert.That(wrapper.localScale, Is.EqualTo(Vector3.one));
         ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerExitHandler);
-        yield return WaitForPlayTime(0.3f);
+        float returnDeadline = Time.realtimeSinceStartup + 10f;
+        while (!card.CanHover && Time.realtimeSinceStartup < returnDeadline) yield return null;
+        Assert.That(card.CanHover, Is.True, "The return animation must finish before checking its final parent.");
         Assert.That(card.transform.parent, Is.EqualTo(hand.transform));
         Assert.That(visual.localScale, Is.EqualTo(Vector3.one));
         ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);

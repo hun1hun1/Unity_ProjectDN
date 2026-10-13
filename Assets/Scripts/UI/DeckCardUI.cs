@@ -35,6 +35,7 @@ public class DeckCardUI : MonoBehaviour
 
     public void SetCard(CardData data, BattleManager manager = null)
     {
+        GetComponent<DeckCardHoverUI>()?.ResetHover();
         artwork.sprite = data.artwork;
         if (data.deckType == CardDeckType.TypeDream)
         {

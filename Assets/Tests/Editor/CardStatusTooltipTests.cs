@@ -34,12 +34,15 @@ public class CardStatusTooltipTests
         CardUI card = Cards()[0];
         card.SetCard(AssetDatabase.LoadAssetAtPath<CardData>(
             "Assets/CardData/Soldier/Starting/Nightmare/Attack/2.Corrosion/Corrosion.asset"), battle);
+        var hoverState = new SerializedObject(card.GetComponent<CardHoverUI>());
+        hoverState.FindProperty("tooltipDelay").floatValue = 1f;
+        hoverState.ApplyModifiedPropertiesWithoutUndo();
         var pointer = new PointerEventData(EventSystem.current);
+        float hoverStartedAt = Time.unscaledTime;
         Enter(card, pointer);
         Time.timeScale = 0f;
-        yield return Wait(0.65f);
-        Assert.That(VisibleTooltip(card), Is.Null);
-        yield return Wait(0.5f);
+        yield return AssertHiddenBeforeDelay(card, hoverStartedAt);
+        yield return Wait(0.15f);
         TMP_Text text = VisibleTooltip(card);
         Assert.That(text, Is.Not.Null, "A status card must show its tooltip after one second of hover.");
         Assert.That(text.text, Does.Contain("녹슬음").And.Contain("25%"));
@@ -48,10 +51,10 @@ public class CardStatusTooltipTests
         Assert.That(battle.GetTarget().StatusEffects.ActiveEffects, Is.Empty);
         Exit(card, pointer);
         Assert.That(VisibleTooltip(card), Is.Null);
+        hoverStartedAt = Time.unscaledTime;
         Enter(card, pointer);
-        yield return Wait(0.65f);
-        Assert.That(VisibleTooltip(card), Is.Null, "Reentry must start a fresh delay.");
-        yield return Wait(0.5f);
+        yield return AssertHiddenBeforeDelay(card, hoverStartedAt);
+        yield return Wait(0.15f);
         Assert.That(VisibleTooltip(card), Is.Not.Null);
         card.MarkAsUsed();
         Assert.That(VisibleTooltip(card), Is.Null);
@@ -199,6 +202,19 @@ public class CardStatusTooltipTests
 
     private static void SetField(object value, string name, object fieldValue) => value.GetType()
         .GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(value, fieldValue);
+
+    private static IEnumerator AssertHiddenBeforeDelay(CardUI card, float hoverStartedAt)
+    {
+        float end = hoverStartedAt + 1f;
+        float deadline = Time.realtimeSinceStartup + 10f;
+        // A slow Editor frame may cross the deadline; only assert while hover is under one second.
+        while (Time.unscaledTime < end && Time.realtimeSinceStartup < deadline)
+        {
+            Assert.That(VisibleTooltip(card), Is.Null, "Every hover must wait one second before showing the tooltip.");
+            yield return null;
+        }
+        Assert.That(Time.unscaledTime, Is.GreaterThanOrEqualTo(end));
+    }
 
     private static IEnumerator Wait(float seconds)
     {
