@@ -1,8 +1,9 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class DeckCardUI : MonoBehaviour
+public class DeckCardUI : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private Image artwork;
     [SerializeField] private TMP_Text costText;
@@ -10,7 +11,22 @@ public class DeckCardUI : MonoBehaviour
     [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private TMP_Text typeText;
 
+    [Header("Card Rarity Images")]
+    [SerializeField] private UnityEngine.UI.Image rarityImage;
+    [SerializeField] private Sprite commonImage;
+    [SerializeField] private Sprite uncommonImage;
+    [SerializeField] private Sprite rareImage;
+
+    [SerializeField] private bool allowInspection = true;
+    private CardData cardData;
+    private BattleManager battleContext;
     private CardDescriptionBinding descriptionBinding;
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (allowInspection && eventData.button == PointerEventData.InputButton.Right)
+            CardInspectionUI.TryOpen(cardData, battleContext);
+    }
 
     private void OnEnable() { descriptionBinding?.Enable(); }
     private void OnDisable() { descriptionBinding?.Disable(); }
@@ -33,8 +49,10 @@ public class DeckCardUI : MonoBehaviour
             cardTexts[i].fontSize = originalFontSizes[i] * ratio;
     }
 
-    public void SetCard(CardData data, BattleManager manager = null)
+    public void SetCard(CardData data, BattleManager manager = null, bool applyStatusModifiers = true)
     {
+        cardData = data;
+        battleContext = manager;
         GetComponent<DeckCardHoverUI>()?.ResetHover();
         artwork.sprite = data.artwork;
         if (data.deckType == CardDeckType.TypeDream)
@@ -51,7 +69,10 @@ public class DeckCardUI : MonoBehaviour
             {
                 if (descriptionText != null) descriptionText.text = text;
             });
-        descriptionBinding.Bind(data, manager, isActiveAndEnabled);
+        descriptionBinding.Bind(data, manager, isActiveAndEnabled, applyStatusModifiers);
         typeText.text = data.type.ToString();
+        if (rarityImage != null)
+            rarityImage.sprite = data.rarity == CardRarity.Common ? commonImage
+                : data.rarity == CardRarity.Uncommon ? uncommonImage : rareImage;
     }
 }

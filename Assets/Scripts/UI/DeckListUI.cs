@@ -26,6 +26,7 @@ public class DeckListUI : MonoBehaviour
 
     public void ShowCards(IReadOnlyList<CardData> cards, CardHandController hand = null)
     {
+        if (CardInspectionUI.BlocksGameplayInput) return;
         Clear();
 
         sourceHand = hand;
@@ -81,6 +82,7 @@ public class DeckListUI : MonoBehaviour
 
     public void Close()
     {
+        if (CardInspectionUI.BlocksGameplayInput) return;
         panel.SetActive(false);
         Clear();
         sourceHand = null;

@@ -4,12 +4,12 @@ public static class CardDescriptionBuilder
 {
     private static readonly Regex Tokens = new Regex(@"\{(damage|ammoCost|ammoCondition):(\d+(?:\.\d+)*)\}");
 
-    public static string Build(CardData card, BattleManager battle = null)
+    public static string Build(CardData card, BattleManager battle = null, bool applyStatusModifiers = true)
     {
         if (card == null) return "";
         string template = card.description ?? "";
         if (!Tokens.IsMatch(template)) return template;
-        var context = new CardPreviewContext(card, battle);
+        var context = new CardPreviewContext(card, battle, applyStatusModifiers);
         context.PreviewEffects(card.effects);
         return Tokens.Replace(template, match =>
         {

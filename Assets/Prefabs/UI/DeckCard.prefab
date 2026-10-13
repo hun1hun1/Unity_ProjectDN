@@ -1097,6 +1097,10 @@ MonoBehaviour:
   nameText: {fileID: 4463925768830209223}
   descriptionText: {fileID: 1650460160224504300}
   typeText: {fileID: 9064845558385343635}
+  rarityImage: {fileID: 9213094556853803998}
+  commonImage: {fileID: -8909494244173138425, guid: c543b141468d2f3428b664783c0075e8, type: 3}
+  uncommonImage: {fileID: 7166952622119852659, guid: 96fc514104d84eb429eb20b38a244508, type: 3}
+  rareImage: {fileID: 2126494313080876652, guid: ab13423a7795bd041984410552b9cffb, type: 3}
 --- !u!1 &91000001
 GameObject:
   m_ObjectHideFlags: 0

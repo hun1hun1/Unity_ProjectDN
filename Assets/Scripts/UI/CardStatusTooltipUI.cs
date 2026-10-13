@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Text;
 using TMPro;
 using UnityEngine;
 
@@ -25,14 +24,7 @@ public class CardStatusTooltipUI : MonoBehaviour
         owner = source;
         cardVisual = visual;
         rootCanvas = canvas;
-        var text = new StringBuilder();
-        foreach (StatusEffectData status in statuses)
-        {
-            if (status == null) continue;
-            if (text.Length > 0) text.Append("\n\n");
-            text.Append("<b>").Append(status.DisplayName).Append("</b>\n").Append(status.Description);
-        }
-        contentText.text = text.ToString();
+        contentText.text = CardStatusDescriptionBuilder.Build(statuses);
         measuredWidth = -1f;
         Canvas layer = GetComponent<Canvas>();
         layer.overrideSorting = true;

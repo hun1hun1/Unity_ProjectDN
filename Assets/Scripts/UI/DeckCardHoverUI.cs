@@ -30,7 +30,7 @@ public class DeckCardHoverUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
         initialized = true;
     }
 
-    public void OnPointerEnter(PointerEventData eventData) { pointerInside = true; }
+    public void OnPointerEnter(PointerEventData eventData) { if (!CardInspectionUI.BlocksGameplayInput) pointerInside = true; }
     public void OnPointerExit(PointerEventData eventData) { pointerInside = false; }
 
     public void ResetHover()
@@ -50,6 +50,7 @@ public class DeckCardHoverUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     private void LateUpdate()
     {
+        if (CardInspectionUI.BlocksGameplayInput) { ResetHover(); return; }
         if (hoverVisual == null) return;
         float target = pointerInside ? 1f : 0f;
         progress = hoverDuration > 0f

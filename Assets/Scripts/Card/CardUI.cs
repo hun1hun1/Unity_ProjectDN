@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CardUI : MonoBehaviour, IPointerDownHandler
+public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
 {
     [SerializeField] private Image artwork;
     [SerializeField] private TMP_Text costText;
@@ -55,9 +55,22 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
     private bool isUsed;
     private bool presentationBusy;
 
-    public bool CanHover => isActiveAndEnabled && cardData != null && !isUsed && !isDragging &&
+    public bool CanHover => !CardInspectionUI.BlocksGameplayInput && isActiveAndEnabled && cardData != null && !isUsed && !isDragging &&
         !presentationBusy && drawCoroutine == null && handController != null &&
         transform.parent == handController.transform;
+
+    public static bool HasBusyCards(BattleManager battle)
+    {
+        foreach (CardUI card in FindObjectsByType<CardUI>(FindObjectsSortMode.None))
+            if (card.battleManager == battle && (card.isDragging || card.presentationBusy || card.drawCoroutine != null || card.isUsed)) return true;
+        return false;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right && CanHover)
+            CardInspectionUI.TryOpen(cardData, battleManager);
+    }
 
     private void ResetHover() { GetComponent<CardHoverUI>()?.ResetHover(); }
 
@@ -122,7 +135,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
 
     private void Update()
     {
-        if (!isDragging)
+        if (!isDragging || CardInspectionUI.BlocksGameplayInput)
             return;
 
         transform.position =

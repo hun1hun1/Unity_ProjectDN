@@ -100,9 +100,12 @@ public class BattleManager : MonoBehaviour
         return target;
     }
 
+    public bool CanInspectCards => currentState == BattleState.PlayerTurn && !isResolvingEffects &&
+        activeCardUses == 0 && !CardUI.HasBusyCards(this);
+
     public bool CanUseCard(CardData cardData)
     {
-        if (currentState != BattleState.PlayerTurn || isResolvingEffects ||
+        if (CardInspectionUI.BlocksGameplayInput || currentState != BattleState.PlayerTurn || isResolvingEffects ||
             cardData == null || cardData.requiredAmmo < 0 || player == null)
             return false;
 
@@ -282,7 +285,7 @@ public class BattleManager : MonoBehaviour
 
     public void EndPlayerTurn()
     {
-        if (isResolvingEffects) return;
+        if (CardInspectionUI.BlocksGameplayInput || isResolvingEffects) return;
         StartCoroutine(EndPlayerTurnRoutine());
     }
 

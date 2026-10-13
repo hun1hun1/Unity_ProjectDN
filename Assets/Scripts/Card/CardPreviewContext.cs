@@ -13,15 +13,17 @@ public sealed class CardPreviewContext
     private readonly bool hasEnemy;
     private readonly bool hasAmmoSystem;
     private readonly bool hasBattleContext;
+    private readonly bool applyStatusModifiers;
     private bool canExecute;
     private int ammo;
     private int maxAmmo;
 
-    internal CardPreviewContext(CardData card, BattleManager battle)
+    internal CardPreviewContext(CardData card, BattleManager battle, bool applyStatusModifiers)
     {
         Player player = battle != null ? battle.GetPlayer() : null;
         Enemy enemy = battle != null ? battle.GetTarget() : null;
         AmmoSystem source = player != null ? player.GetAmmoSystem() : null;
+        this.applyStatusModifiers = applyStatusModifiers;
         hasPlayer = player != null;
         hasEnemy = enemy != null;
         hasBattleContext = battle != null && hasPlayer;
@@ -44,6 +46,7 @@ public sealed class CardPreviewContext
         enemyStatuses = new HashSet<StatusEffectType>(source.enemyStatuses);
         values = source.values;
         visiting = source.visiting;
+        applyStatusModifiers = source.applyStatusModifiers;
         hasPlayer = source.hasPlayer;
         hasEnemy = source.hasEnemy;
         hasAmmoSystem = source.hasAmmoSystem;
@@ -82,7 +85,8 @@ public sealed class CardPreviewContext
         if (target != CardTarget.Player && target != CardTarget.Enemy) return;
         HashSet<StatusEffectType> defender = target == CardTarget.Player ? playerStatuses : enemyStatuses;
         int amount = DamageCalculator.CalculateWithModifiers(baseDamage,
-            playerStatuses.Contains(StatusEffectType.Rust), defender.Contains(StatusEffectType.WeaknessExposure));
+            applyStatusModifiers && playerStatuses.Contains(StatusEffectType.Rust),
+            applyStatusModifiers && defender.Contains(StatusEffectType.WeaknessExposure));
         string value = amount.ToString(CultureInfo.InvariantCulture);
         if (amount < baseDamage) value = "<color=#E57373>" + value + "</color>";
         else if (amount > baseDamage) value = "<color=#81C784>" + value + "</color>";

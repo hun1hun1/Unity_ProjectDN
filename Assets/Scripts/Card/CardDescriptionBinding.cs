@@ -6,17 +6,19 @@ internal sealed class CardDescriptionBinding
     private readonly Action<string> display;
     private CardData card;
     private BattleManager battle;
+    private bool applyStatusModifiers;
     private StatusEffectSystem playerStatuses;
     private StatusEffectSystem enemyStatuses;
     private AmmoSystem ammo;
 
     internal CardDescriptionBinding(Action<string> display) { this.display = display; }
 
-    internal void Bind(CardData data, BattleManager context, bool enabled)
+    internal void Bind(CardData data, BattleManager context, bool enabled, bool applyStatusModifiers = true)
     {
         Disable();
         card = data;
         battle = context;
+        this.applyStatusModifiers = applyStatusModifiers;
         if (enabled) Enable();
         else Refresh();
     }
@@ -46,5 +48,5 @@ internal sealed class CardDescriptionBinding
     }
 
     private void OnAmmoChanged(int current, int maximum) { Refresh(); }
-    private void Refresh() { display(CardDescriptionBuilder.Build(card, battle)); }
+    private void Refresh() { display(CardDescriptionBuilder.Build(card, battle, applyStatusModifiers)); }
 }

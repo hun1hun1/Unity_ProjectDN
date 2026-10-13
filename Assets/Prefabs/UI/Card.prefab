@@ -1326,8 +1326,8 @@ MonoBehaviour:
   uncommonImage: {fileID: 7166952622119852659, guid: 96fc514104d84eb429eb20b38a244508, type: 3}
   rareImage: {fileID: 2126494313080876652, guid: ab13423a7795bd041984410552b9cffb, type: 3}
   cardVisual: {fileID: 782041619029271210}
-  moveDuration: 0.35
-  flipDuration: 0.25
+  moveDuration: 0.3
+  flipDuration: 0.2
   discardShrinkDuration: 0.05
   returnDuration: 0.2
   selectedScale: 1.5

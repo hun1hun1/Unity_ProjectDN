@@ -20,17 +20,20 @@ public class CardRewardUI : MonoBehaviour
 
     public void ShowReward()
     {
+        if (CardInspectionUI.BlocksGameplayInput) return;
         deckSelectPanel.SetActive(true);
         cardRewardPanel.SetActive(false);
     }
 
     public void SelectDream()
     {
+        if (CardInspectionUI.BlocksGameplayInput) return;
         ShowCardRewards(CardDeckType.TypeDream);
     }
 
     public void SelectNightmare()
     {
+        if (CardInspectionUI.BlocksGameplayInput) return;
         ShowCardRewards(CardDeckType.TypeNightmare);
     }
 
