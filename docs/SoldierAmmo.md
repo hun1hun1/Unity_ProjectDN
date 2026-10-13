@@ -6,14 +6,31 @@
 
 실행 중 Inspector에서 최대량이나 현재량을 변경하면 다음 프레임에 총알 UI가 갱신됩니다. Starting Ammo를 변경해도 진행 중인 전투의 잔탄을 초기화하지는 않습니다.
 
-현재 BattleScene은 Soldier로 플레이하도록 연결되어 있습니다. 기존 Player 오브젝트의 컴포넌트를 Soldier로 교체하여 BattleManager, 꿈/악몽 코스트·게이지 HUD, 덱 목록 버튼의 기존 참조를 유지했습니다. 총알 UI와 AmmoSystem이 포함되며 기본 최대량은 10알, 시작량은 0알입니다. 씬과 프리팹의 꿈/악몽 시작 덱은 기존 기본 덱을 사용하며 총알 예시 카드는 자동으로 추가하지 않습니다.
+현재 BattleScene은 `Soldier.prefab`의 인스턴스로 플레이하도록 연결되어 있습니다. BattleManager, 꿈/악몽 코스트·게이지 HUD, 덱 목록 버튼과 총알 HUD의 씬 참조를 유지하며, 시작 덱 설정은 프리팹에서 상속받습니다. 총알 예시 카드는 자동으로 추가하지 않습니다.
+
+## 시작 덱과 진행 중 덱
+
+Soldier 프리팹의 DeckController는 아래 두 데이터베이스를 참조합니다. 씬에는 별도의 시작 카드 목록이나 데이터베이스 재정의를 저장하지 않습니다.
+
+- 꿈: `Assets/CardDatabase/Soldier/SoldierDreamStartingDeck.asset` (8장)
+- 악몽: `Assets/CardDatabase/Soldier/SoldierNightmareStartingDeck.asset` (6장)
+
+새 게임에서 처음 캐릭터가 초기화될 때 데이터베이스 목록을 이번 게임의 덱으로 복사합니다. 중복 카드는 각각 한 장으로 유지하며, 카드 추가·제거가 시작 덱 에셋을 수정하지 않습니다. 같은 데이터베이스 조합을 사용하는 Soldier를 다시 생성하거나 BattleScene을 다시 불러와도 진행 중 덱을 이어받습니다.
+
+- `DeckController.GetDeck(deckType)`은 추가·제거가 반영되는 현재 전체 덱의 읽기 전용 목록을 반환합니다.
+- `AddCardToDeck(card, deckType)`은 카드의 꿈/악몽 종류가 일치할 때 현재 덱과 현재 전투의 버림 더미에 한 장을 추가합니다. 추가한 카드는 버림 더미 재셔플 또는 다음 전투부터 뽑을 수 있습니다.
+- `RemoveCardFromDeck(card, deckType)`은 현재 덱에서 한 장을 제거하며, 뽑기/버림 더미에 해당 카드가 있으면 한 장만 함께 제거합니다. 손패 카드의 UI를 제거하는 기능은 포함하지 않습니다.
+- `ResetForBattle()`은 시작 데이터베이스 대신 현재 진행 중 덱으로 뽑기 더미를 재구성하고 버림 더미를 비웁니다. BattleManager가 시작 손패를 뽑기 전에 호출합니다.
+- 새 게임을 시작할 때 씬을 불러오기 전에 `RunDeckInventory.ResetForNewGame()`을 호출합니다. 기존 유물도 초기화하려면 `RunRelicInventory.ResetForNewGame()`을 함께 호출합니다. Play Mode에 새로 진입하면 두 상태가 자동 초기화됩니다.
+
+진행 중 덱은 이번 플레이 실행 동안 유지됩니다. 앱 종료 후 저장·불러오기는 포함하지 않습니다.
 
 ## 총알 HUD
 
 총알 텍스트와 Fill 바는 `BattleArea/PlayerArea/PlayerSpecialAbility`에서 표시합니다. Soldier 프리팹과 씬의 Soldier 하위에는 총알 UI가 없습니다.
 
 - `PlayerSpecialAbility`의 AmmoUI가 씬 Soldier의 AmmoSystem, 자식 AmmoText, AmmoBarBackground/Fill을 참조합니다.
-- Fill은 Image의 Filled / Horizontal / Left 설정이며 `현재 총알 / 최종 최대 총알` 비율로 표시합니다. 최대량이 0이면 빈 상태입니다.
+- 현재 씬의 Fill은 Image의 Filled / Vertical / Bottom 설정이며 `현재 총알 / 최종 최대 총알` 비율로 표시합니다. 최대량이 0이면 빈 상태입니다. 군인 프리팹 연결을 다시 실행해도 기존 HUD 배치와 Fill 방향을 유지합니다.
 - 텍스트와 Fill은 장전, 소모, 카드·유물의 최대량 증가, 전투/새 게임 초기화 때 함께 갱신됩니다. HUD를 다시 활성화할 때도 현재 상태를 표시합니다.
 - 이미지는 Unity 기본 UI 스프라이트를 사용합니다. 이후 Fill의 Image > Source Image에서 이미지를 교체할 수 있습니다.
 - 런타임에 HUD가 참조하는 캐릭터를 바꿀 때는 `AmmoUI.Bind(newAmmoSystem)`을 호출합니다. 이전 총알 시스템의 이벤트 구독은 해제됩니다.
@@ -46,7 +63,7 @@ O알 이상이면 한 번 O알을 소모하고 Bonus Effects 전체를 순서대
 
 `Assets/CardData/Soldier/Examples/`에 Reload, AmmoBonus, RequireAmmo, ConsumeAmmo 카드와 해당 효과가 있습니다. 필요량/소모량 1알의 설정 예시이며 현재 기본 덱·보상 목록에는 포함하지 않았습니다. 공격 예시는 기존 기본 공격의 효과를 참조합니다.
 
-`ProjectDN > Create Soldier Assets` 메뉴는 누락된 프리팹/예시 에셋을 생성합니다. 기존 에셋을 덮어쓰거나 BattleScene을 저장하지 않습니다.
+`ProjectDN > Create Soldier Assets` 메뉴는 누락된 프리팹/예시 에셋을 생성하고 프리팹의 두 시작 덱 데이터베이스 참조를 설정합니다. 기존 예시 카드 에셋을 덮어쓰거나 BattleScene을 저장하지 않습니다. `ProjectDN > Use Soldier In BattleScene`은 씬의 Soldier를 해당 프리팹으로 연결하고 시작 덱 설정을 상속받도록 합니다.
 
 ## 최대 총알 증가
 

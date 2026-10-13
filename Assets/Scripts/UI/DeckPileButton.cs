@@ -10,6 +10,9 @@ public class DeckPileButton : MonoBehaviour
     private DeckListUI deckListUI;
 
     [SerializeField]
+    private CardHandController handController;
+
+    [SerializeField]
     private CardDeckType deckType;
 
     [SerializeField]
@@ -27,11 +30,11 @@ public class DeckPileButton : MonoBehaviour
     {
         if (isDiscardPile)
         {
-            deckListUI.ShowCards(deckController.GetDiscardPile(deckType));
+            deckListUI.ShowCards(deckController.GetDiscardPile(deckType), handController);
         }
         else
         {
-            deckListUI.ShowCards(deckController.GetDrawPile(deckType));
+            deckListUI.ShowCards(deckController.GetDrawPile(deckType), handController);
         }
     }
 }

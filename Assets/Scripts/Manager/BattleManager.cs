@@ -33,6 +33,7 @@ public class BattleManager : MonoBehaviour
             AmmoSystem ammo = player.GetAmmoSystem();
             if (ammo != null) ammo.ResetForBattle();
         }
+        if (deckController != null) deckController.ResetForBattle();
         DrawStartingHands();
     }
 

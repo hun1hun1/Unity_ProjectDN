@@ -29,7 +29,8 @@ public class AmmoHudTests
         UnityEngine.UI.Image fill = (UnityEngine.UI.Image)GetField(hud, "ammoFill");
         Assert.That(fill, Is.Not.Null);
         Assert.That(fill.type, Is.EqualTo(UnityEngine.UI.Image.Type.Filled));
-        Assert.That(fill.fillMethod, Is.EqualTo(UnityEngine.UI.Image.FillMethod.Horizontal));
+        // Preserve BattleScene's existing vertical ammo bar.
+        Assert.That(fill.fillMethod, Is.EqualTo(UnityEngine.UI.Image.FillMethod.Vertical));
         Assert.That(fill.sprite, Is.Not.Null, "Default UI sprite is needed for Image fill geometry.");
         Assert.That(fill.raycastTarget, Is.False);
         Assert.That(text.raycastTarget, Is.False);

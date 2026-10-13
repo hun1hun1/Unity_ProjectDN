@@ -10,6 +10,7 @@ public class CardHandController : MonoBehaviour
     [SerializeField] private int maxHandSize = 3;
 
     private List<CardUI> cards = new List<CardUI>();
+    private bool handLayoutDirty = true;
 
     [SerializeField] private RectTransform drawStartPoint;
     [SerializeField] private RectTransform cardAnimationLayer;
@@ -19,6 +20,49 @@ public class CardHandController : MonoBehaviour
 
     [Header("Drag References")]
     [SerializeField] private RectTransform battleArea;
+
+    private void OnEnable() => handLayoutDirty = true;
+
+    private void OnRectTransformDimensionsChange() => handLayoutDirty = true;
+
+    private void LateUpdate()
+    {
+        if (handLayoutDirty) RefreshCardSizes();
+    }
+
+    public void RefreshCardSizes()
+    {
+        handLayoutDirty = false;
+        if (cardPrefab == null || cards.Count == 0) return;
+
+        RectTransform handRect = (RectTransform)transform;
+        float ratio = GetCardSizeRatio();
+        foreach (CardUI card in cards)
+        {
+            // Detached cards keep their size until their animation or drag ends.
+            if (card != null && !card.IsUsed && card.transform.parent == transform)
+                card.ResizeForHand(ratio);
+        }
+        LayoutRebuilder.MarkLayoutForRebuild(handRect);
+    }
+
+    public Vector2 GetHandCardSize()
+    {
+        if (cardPrefab == null) return Vector2.zero;
+        return ((RectTransform)cardPrefab.transform).rect.size * GetCardSizeRatio();
+    }
+
+    private float GetCardSizeRatio()
+    {
+        if (cardPrefab == null) return 1f;
+        RectTransform prefabRect = (RectTransform)cardPrefab.transform;
+        if (prefabRect.rect.height <= 0f) return 1f;
+
+        HorizontalLayoutGroup layout = GetComponent<HorizontalLayoutGroup>();
+        float padding = layout != null ? layout.padding.vertical : 0f;
+        float availableHeight = Mathf.Max(0f, ((RectTransform)transform).rect.height - padding);
+        return Mathf.Clamp01(availableHeight / prefabRect.rect.height);
+    }
 
     public bool IsFull()
     {
@@ -69,6 +113,7 @@ public class CardHandController : MonoBehaviour
         cards.Add(cardUI);
 
         Canvas.ForceUpdateCanvases();
+        RefreshCardSizes();
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
 
         cardUI.PlayDrawAnimation(drawStartPoint);

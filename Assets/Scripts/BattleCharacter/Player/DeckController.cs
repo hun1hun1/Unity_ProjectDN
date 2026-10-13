@@ -4,11 +4,13 @@ using UnityEngine;
 public class DeckController : MonoBehaviour
 {
     [Header("Starting Deck")]
-    [SerializeField] private List<CardData> dreamStartingDeck;
-    [SerializeField] private List<CardData> nightmareStartingDeck;
+    [SerializeField] private CardDatabase dreamStartingDeckDatabase;
+    [SerializeField] private CardDatabase nightmareStartingDeckDatabase;
 
-    private List<CardData> dreamDeck;
-    private List<CardData> nightmareDeck;
+    private RunDeckState runDeck;
+    private CardDatabase initializedDreamDatabase;
+    private CardDatabase initializedNightmareDatabase;
+    private uint gameVersion;
 
     private List<CardData> dreamDrawPile = new List<CardData>();
     private List<CardData> dreamDiscardPile = new List<CardData>();
@@ -18,20 +20,39 @@ public class DeckController : MonoBehaviour
 
     private void Awake()
     {
-        InitializeDeck();
+        ResetForBattle();
     }
 
-    private void InitializeDeck()
+    private void EnsureInitialized()
     {
-        dreamDeck = new List<CardData>(dreamStartingDeck);
-        nightmareDeck = new List<CardData>(nightmareStartingDeck);
+        if (runDeck != null && gameVersion == RunDeckInventory.GameVersion &&
+            initializedDreamDatabase == dreamStartingDeckDatabase &&
+            initializedNightmareDatabase == nightmareStartingDeckDatabase)
+            return;
 
-        dreamDrawPile = new List<CardData>(dreamDeck);
-        nightmareDrawPile = new List<CardData>(nightmareDeck);
+        initializedDreamDatabase = dreamStartingDeckDatabase;
+        initializedNightmareDatabase = nightmareStartingDeckDatabase;
+        gameVersion = RunDeckInventory.GameVersion;
+        runDeck = dreamStartingDeckDatabase != null || nightmareStartingDeckDatabase != null
+            ? RunDeckInventory.GetOrCreate(dreamStartingDeckDatabase, nightmareStartingDeckDatabase)
+            : new RunDeckState(null, null);
+        ResetBattlePiles();
+    }
 
+    public void ResetForBattle()
+    {
+        EnsureInitialized();
+        ResetBattlePiles();
+    }
+
+    private void ResetBattlePiles()
+    {
+        dreamDrawPile.Clear();
+        dreamDrawPile.AddRange(runDeck.Dream);
+        nightmareDrawPile.Clear();
+        nightmareDrawPile.AddRange(runDeck.Nightmare);
         dreamDiscardPile.Clear();
         nightmareDiscardPile.Clear();
-
         Shuffle(dreamDrawPile);
         Shuffle(nightmareDrawPile);
     }
@@ -48,25 +69,36 @@ public class DeckController : MonoBehaviour
         }
     }
 
-    public List<CardData> GetDeck(CardDeckType deckType)
+    public IReadOnlyList<CardData> GetDeck(CardDeckType deckType)
     {
+        EnsureInitialized();
         switch (deckType)
         {
-            case CardDeckType.TypeDream:
-                return dreamDeck;
+            case CardDeckType.TypeDream: return runDeck.DreamView;
+            case CardDeckType.TypeNightmare: return runDeck.NightmareView;
+            default: return null;
+        }
+    }
 
-            case CardDeckType.TypeNightmare:
-                return nightmareDeck;
-
-            default:
-                return null;
+    private List<CardData> GetMutableDeck(CardDeckType deckType)
+    {
+        EnsureInitialized();
+        switch (deckType)
+        {
+            case CardDeckType.TypeDream: return runDeck.Dream;
+            case CardDeckType.TypeNightmare: return runDeck.Nightmare;
+            default: return null;
         }
     }
 
     public CardData DrawCard(CardDeckType deckType)
     {
-        List<CardData> drawPile = GetDrawPile(deckType) as List<CardData>;
-        List<CardData> discardPile = GetDiscardPile(deckType) as List<CardData>;
+        EnsureInitialized();
+        List<CardData> drawPile = deckType == CardDeckType.TypeDream ? dreamDrawPile :
+            deckType == CardDeckType.TypeNightmare ? nightmareDrawPile : null;
+        List<CardData> discardPile = deckType == CardDeckType.TypeDream ? dreamDiscardPile :
+            deckType == CardDeckType.TypeNightmare ? nightmareDiscardPile : null;
+        if (drawPile == null || discardPile == null) return null;
 
         // 뽑을 카드가 없다면 버린 카드 더미를 다시 섞어서 사용
         if (drawPile.Count == 0)
@@ -91,13 +123,14 @@ public class DeckController : MonoBehaviour
 
     public IReadOnlyList<CardData> GetDrawPile(CardDeckType deckType)
     {
+        EnsureInitialized();
         switch (deckType)
         {
             case CardDeckType.TypeDream:
-                return dreamDrawPile;
+                return dreamDrawPile.AsReadOnly();
 
             case CardDeckType.TypeNightmare:
-                return nightmareDrawPile;
+                return nightmareDrawPile.AsReadOnly();
         }
 
         return null;
@@ -105,13 +138,14 @@ public class DeckController : MonoBehaviour
 
     public IReadOnlyList<CardData> GetDiscardPile(CardDeckType deckType)
     {
+        EnsureInitialized();
         switch (deckType)
         {
             case CardDeckType.TypeDream:
-                return dreamDiscardPile;
+                return dreamDiscardPile.AsReadOnly();
 
             case CardDeckType.TypeNightmare:
-                return nightmareDiscardPile;
+                return nightmareDiscardPile.AsReadOnly();
         }
 
         return null;
@@ -122,7 +156,9 @@ public class DeckController : MonoBehaviour
         if (cardData == null)
             return;
 
-        List<CardData> discardPile = GetDiscardPile(deckType) as List<CardData>; 
+        EnsureInitialized();
+        List<CardData> discardPile = deckType == CardDeckType.TypeDream ? dreamDiscardPile :
+            deckType == CardDeckType.TypeNightmare ? nightmareDiscardPile : null;
 
         if (discardPile == null)
             return;
@@ -135,12 +171,14 @@ public class DeckController : MonoBehaviour
         if (cardData == null)
             return;
 
-        List<CardData> deck = GetDeck(deckType);
+        List<CardData> deck = GetMutableDeck(deckType);
 
         if (deck == null)
             return;
 
+        if (cardData.deckType != deckType) return;
         deck.Add(cardData);
+        DiscardCard(cardData, deckType);
     }
 
     public bool RemoveCardFromDeck(CardData cardData, CardDeckType deckType)
@@ -148,11 +186,15 @@ public class DeckController : MonoBehaviour
         if (cardData == null)
             return false;
 
-        List<CardData> deck = GetDeck(deckType);
+        List<CardData> deck = GetMutableDeck(deckType);
 
         if (deck == null)
             return false;
 
-        return deck.Remove(cardData);
+        if (!deck.Remove(cardData)) return false;
+        List<CardData> drawPile = deckType == CardDeckType.TypeDream ? dreamDrawPile : nightmareDrawPile;
+        List<CardData> discardPile = deckType == CardDeckType.TypeDream ? dreamDiscardPile : nightmareDiscardPile;
+        if (!drawPile.Remove(cardData)) discardPile.Remove(cardData);
+        return true;
     }
 }

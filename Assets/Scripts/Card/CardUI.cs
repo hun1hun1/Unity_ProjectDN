@@ -47,11 +47,27 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
 
     private bool isDragging = false;
     private bool isUsed;
+    private bool presentationBusy;
+
+    public bool CanHover => isActiveAndEnabled && cardData != null && !isUsed && !isDragging &&
+        !presentationBusy && drawCoroutine == null && handController != null &&
+        transform.parent == handController.transform;
+
+    private void ResetHover() { GetComponent<CardHoverUI>()?.ResetHover(); }
+
+    private void StopScaleAnimation()
+    {
+        if (scaleCoroutine == null) return;
+        StopCoroutine(scaleCoroutine);
+        scaleCoroutine = null;
+    }
 
     public bool IsUsed => isUsed;
 
     public void MarkAsUsed()
     {
+        ResetHover();
+        StopScaleAnimation();
         isUsed = true;
         isDragging = false;
     }
@@ -63,6 +79,32 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
 
     private Vector3 originalVisualScale;
     private Coroutine scaleCoroutine;
+
+    private Vector2 baseHandSize;
+    private TMP_Text[] responsiveTexts;
+    private float[] baseFontSizes;
+
+    public void ResizeForHand(float ratio)
+    {
+        RectTransform rect = (RectTransform)transform;
+        if (responsiveTexts == null)
+        {
+            baseHandSize = rect.rect.size;
+            responsiveTexts = GetComponentsInChildren<TMP_Text>(true);
+            baseFontSizes = new float[responsiveTexts.Length];
+            for (int i = 0; i < responsiveTexts.Length; i++)
+                baseFontSizes[i] = responsiveTexts[i].fontSize;
+        }
+
+        ratio = Mathf.Clamp01(ratio);
+        rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, baseHandSize.x * ratio);
+        rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, baseHandSize.y * ratio);
+        for (int i = 0; i < responsiveTexts.Length; i++)
+        {
+            if (responsiveTexts[i] != null)
+                responsiveTexts[i].fontSize = baseFontSizes[i] * ratio;
+        }
+    }
 
     private void Update()
     {
@@ -88,6 +130,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
 
     public void PlayDrawAnimation(RectTransform startPoint)
     {
+        ResetHover();
         if (drawCoroutine != null)
             StopCoroutine(drawCoroutine);
 
@@ -193,6 +236,10 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
         if (cardVisual == null || discardPilePoint == null)
             yield break;
 
+        ResetHover();
+        StopScaleAnimation();
+        presentationBusy = true;
+
         // 현재 위치와 크기 저장
         Vector3 startPosition = cardVisual.position;
         Vector3 startScale = cardVisual.localScale;
@@ -256,6 +303,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
         }
 
         cardVisual.position = endPosition;
+        presentationBusy = false;
     }
 
     private Vector3 CalculateTargetScale(
@@ -291,6 +339,10 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
         {
             yield break;
         }
+
+        ResetHover();
+        StopScaleAnimation();
+        presentationBusy = true;
 
         // 카드 사용 연출 중에는 카드 뒷면을 표시
         SetFaceUp(true);
@@ -349,6 +401,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
         yield return StartCoroutine(
             DiscardAnimation(discardPilePoint)
         );
+        presentationBusy = false;
     }
 
     public void SetCard(CardData data, BattleManager manager)
@@ -428,7 +481,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
 
     private void StartDrag()
     {
-        if (isUsed) return;
+        if (!CanHover) return;
         if (cardData == null)
             return;
 
@@ -450,6 +503,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
             return;
         }
 
+        ResetHover();
         isDragging = true;
 
         originalPosition = transform.position;
@@ -581,6 +635,9 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
 
     private IEnumerator ReturnToHandAnimation()
     {
+        ResetHover();
+        StopScaleAnimation();
+        presentationBusy = true;
         Vector3 startPosition = transform.position;
         Vector3 startScale = cardVisual.localScale;
 
@@ -618,6 +675,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
         // 원래 손패로 복귀
         transform.SetParent(originalParent, true);
         transform.SetSiblingIndex(originalSiblingIndex);
+        if (handController != null) handController.RefreshCardSizes();
 
         RectTransform parentRect =
             originalParent as RectTransform;
@@ -626,6 +684,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
         {
             LayoutRebuilder.ForceRebuildLayoutImmediate(parentRect);
         }
+        presentationBusy = false;
     }
 
     private void UseCard()

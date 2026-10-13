@@ -4,6 +4,8 @@ using UnityEngine;
 public class StatusEffectsUI : MonoBehaviour
 {
     [SerializeField] private StatusIconUI iconPrefab;
+    [SerializeField] private StatusTooltipUI tooltipPrefab;
+    private StatusTooltipUI tooltip;
     private StatusEffectSystem source;
     private readonly Dictionary<StatusEffectType, StatusIconUI> icons = new Dictionary<StatusEffectType, StatusIconUI>();
 
@@ -25,6 +27,21 @@ public class StatusEffectsUI : MonoBehaviour
     private void OnDisable() { Unsubscribe(); }
     private void Unsubscribe() { if (source != null) source.Changed -= Refresh; }
 
+    private StatusTooltipUI GetOrCreateTooltip()
+    {
+        Canvas parent = GetComponentInParent<Canvas>();
+        if (parent == null || tooltipPrefab == null) return null;
+        Canvas root = parent.rootCanvas;
+        if (tooltip != null && tooltip.transform.parent == root.transform) return tooltip;
+        tooltip = root.GetComponentInChildren<StatusTooltipUI>(true);
+        if (tooltip == null)
+        {
+            tooltip = Instantiate(tooltipPrefab, root.transform, false);
+            tooltip.gameObject.SetActive(false);
+        }
+        return tooltip;
+    }
+
     private void Refresh()
     {
         var expired = new List<StatusEffectType>();
@@ -45,6 +62,7 @@ public class StatusEffectsUI : MonoBehaviour
             if (!icons.TryGetValue(status.Type, out StatusIconUI icon) || icon == null)
             {
                 icon = Instantiate(iconPrefab, transform, false);
+                icon.BindTooltip(GetOrCreateTooltip());
                 icons[status.Type] = icon;
             }
             icon.SetStatus(status);

@@ -18,6 +18,7 @@ public static class SoldierAssetSetup
         EnsureFolder(ExampleFolder);
         EnsureFolder("Assets/Prefabs/Player");
         CreatePrefab();
+        ConfigureStartingDeckDatabases();
         RemovePrefabAmmoUI();
         CreateExampleCards();
         AssetDatabase.SaveAssetIfDirty(AssetDatabase.LoadMainAssetAtPath(PrefabPath));
@@ -29,6 +30,7 @@ public static class SoldierAssetSetup
     [MenuItem("ProjectDN/Use Soldier In BattleScene")]
     public static void UseSoldierInBattleScene()
     {
+        ConfigureStartingDeckDatabases();
         const string path = "Assets/Scenes/BattleScene.unity";
         Scene scene = SceneManager.GetSceneByPath(path);
         bool opened = !scene.isLoaded;
@@ -61,17 +63,63 @@ public static class SoldierAssetSetup
                 SetInt(ammo, "maxAmmo", 10);
                 SetInt(ammo, "startingAmmo", 0);
             }
-            ConfigureAmmoHud(scene, ammo);
+            BindOrCreateAmmoHud(scene, ammo);
             RemovePrefabAmmoUI();
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if (!PrefabUtility.IsPartOfPrefabInstance(obj))
+            {
+                PrefabUtility.ConvertToPrefabInstance(obj, prefab, new ConvertToPrefabInstanceSettings
+                {
+                    objectMatchMode = ObjectMatchMode.ByHierarchy,
+                    recordPropertyOverridesOfMatches = true,
+                    componentsNotMatchedBecomesOverride = true,
+                    gameObjectsNotMatchedBecomesOverride = true
+                }, InteractionMode.AutomatedAction);
+            }
+            if (PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(obj) != PrefabPath)
+                throw new InvalidOperationException("BattleScene Soldier must use the Soldier prefab.");
+
+            // Keep scene HUD overrides, but inherit both starting databases from the prefab.
+            SerializedObject deckState = new SerializedObject(obj.GetComponent<DeckController>());
+            foreach (string field in new[] { "dreamStartingDeckDatabase", "nightmareStartingDeckDatabase" })
+            {
+                SerializedProperty property = deckState.FindProperty(field);
+                if (property.prefabOverride)
+                    PrefabUtility.RevertPropertyOverride(property, InteractionMode.AutomatedAction);
+            }
             EditorSceneManager.MarkSceneDirty(scene);
             if (!EditorSceneManager.SaveScene(scene))
                 throw new InvalidOperationException("Could not save BattleScene.");
-            Debug.Log("BattleScene now uses Soldier with its existing deck and HUD references.");
+            Debug.Log("BattleScene uses the Soldier prefab's starting databases and retains its HUD references.");
         }
         finally
         {
             if (opened) EditorSceneManager.CloseScene(scene, true);
         }
+    }
+
+    private static void ConfigureStartingDeckDatabases()
+    {
+        CardDatabase dream = AssetDatabase.LoadAssetAtPath<CardDatabase>(
+            "Assets/CardDatabase/Soldier/SoldierDreamStartingDeck.asset");
+        CardDatabase nightmare = AssetDatabase.LoadAssetAtPath<CardDatabase>(
+            "Assets/CardDatabase/Soldier/SoldierNightmareStartingDeck.asset");
+        if (dream == null || nightmare == null)
+            throw new InvalidOperationException("Soldier starting deck databases are missing.");
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath) == null)
+            throw new InvalidOperationException("Soldier prefab is missing.");
+
+        GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
+        try
+        {
+            SerializedObject state = new SerializedObject(root.GetComponent<DeckController>());
+            state.FindProperty("dreamStartingDeckDatabase").objectReferenceValue = dream;
+            state.FindProperty("nightmareStartingDeckDatabase").objectReferenceValue = nightmare;
+            state.ApplyModifiedPropertiesWithoutUndo();
+            if (PrefabUtility.SaveAsPrefabAsset(root, PrefabPath) == null)
+                throw new InvalidOperationException("Could not save Soldier starting deck references.");
+        }
+        finally { PrefabUtility.UnloadPrefabContents(root); }
     }
 
     private static void CreatePrefab()
@@ -151,6 +199,24 @@ public static class SoldierAssetSetup
                 throw new InvalidOperationException("Could not remove prefab ammo UI.");
         }
         finally { PrefabUtility.UnloadPrefabContents(root); }
+    }
+
+    private static void BindOrCreateAmmoHud(Scene scene, AmmoSystem ammo)
+    {
+        foreach (GameObject root in scene.GetRootGameObjects())
+        {
+            foreach (AmmoUI hud in root.GetComponentsInChildren<AmmoUI>(true))
+            {
+                if (hud.name != "PlayerSpecialAbility" && hud.name != "PlayerSpecialAbillity") continue;
+                SerializedObject state = new SerializedObject(hud);
+                if (state.FindProperty("ammoText").objectReferenceValue == null ||
+                    state.FindProperty("ammoFill").objectReferenceValue == null) continue;
+                state.FindProperty("ammoSystem").objectReferenceValue = ammo;
+                state.ApplyModifiedPropertiesWithoutUndo();
+                return;
+            }
+        }
+        ConfigureAmmoHud(scene, ammo);
     }
 
     private static void ConfigureAmmoHud(Scene scene, AmmoSystem ammo)

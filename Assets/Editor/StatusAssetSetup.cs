@@ -52,7 +52,7 @@ public static class StatusAssetSetup
             root.GetComponent<RectTransform>().sizeDelta = new Vector2(32, 32);
             UnityEngine.UI.Image image = root.GetComponent<UnityEngine.UI.Image>();
             image.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
-            image.raycastTarget = false;
+            image.raycastTarget = true;
             GameObject label = new GameObject("Turns", typeof(RectTransform), typeof(TextMeshProUGUI));
             label.layer = 5;
             label.transform.SetParent(root.transform, false);
@@ -86,6 +86,8 @@ public static class StatusAssetSetup
         SerializedObject state = new SerializedObject(data);
         state.FindProperty("statusType").enumValueIndex = (int)type;
         state.FindProperty("displayName").stringValue = name;
+        state.FindProperty("description").stringValue = type == StatusEffectType.WeaknessExposure
+            ? "받는 피해가 50% 증가합니다." : "공격으로 주는 피해가 25% 감소합니다.";
         state.FindProperty("icon").objectReferenceValue = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
         state.ApplyModifiedPropertiesWithoutUndo();
         AssetDatabase.CreateAsset(data, path);
@@ -149,6 +151,7 @@ public static class StatusAssetSetup
         if (ui == null) ui = container.gameObject.AddComponent<StatusEffectsUI>();
         SerializedObject state = new SerializedObject(ui);
         state.FindProperty("iconPrefab").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(IconPath).GetComponent<StatusIconUI>();
+        state.FindProperty("tooltipPrefab").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/StatusTooltip.prefab").GetComponent<StatusTooltipUI>();
         state.ApplyModifiedPropertiesWithoutUndo();
         state = new SerializedObject(info);
         state.FindProperty("statusUI").objectReferenceValue = ui;

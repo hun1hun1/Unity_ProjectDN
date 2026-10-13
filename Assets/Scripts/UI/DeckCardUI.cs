@@ -10,6 +10,23 @@ public class DeckCardUI : MonoBehaviour
     [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private TMP_Text typeText;
 
+    private TMP_Text[] cardTexts;
+    private float[] originalFontSizes;
+
+    public void ResizeForList(float ratio)
+    {
+        if (cardTexts == null)
+        {
+            cardTexts = GetComponentsInChildren<TMP_Text>(true);
+            originalFontSizes = new float[cardTexts.Length];
+            for (int i = 0; i < cardTexts.Length; i++)
+                originalFontSizes[i] = cardTexts[i].fontSize;
+        }
+
+        for (int i = 0; i < cardTexts.Length; i++)
+            cardTexts[i].fontSize = originalFontSizes[i] * ratio;
+    }
+
     public void SetCard(CardData data)
     {
         artwork.sprite = data.artwork;

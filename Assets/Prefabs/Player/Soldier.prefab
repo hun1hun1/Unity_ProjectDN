@@ -72,7 +72,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 8965854721717966162, guid: 0fc2f92428420b74692f3ad6030661c1, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -92,18 +92,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd89608e28b00074a97277c5f24bf0aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dreamStartingDeck:
-  - {fileID: 11400000, guid: 5e9aa0ec2ae3d1b40b5362197c6f4b9d, type: 2}
-  - {fileID: 11400000, guid: 5e9aa0ec2ae3d1b40b5362197c6f4b9d, type: 2}
-  - {fileID: 11400000, guid: 5e9aa0ec2ae3d1b40b5362197c6f4b9d, type: 2}
-  - {fileID: 11400000, guid: b1b6fe61a54cd1343a646ecbb9e69bb2, type: 2}
-  - {fileID: 11400000, guid: b1b6fe61a54cd1343a646ecbb9e69bb2, type: 2}
-  - {fileID: 11400000, guid: b1b6fe61a54cd1343a646ecbb9e69bb2, type: 2}
-  nightmareStartingDeck:
-  - {fileID: 11400000, guid: 77ebfabf1f2550345bcc3f793edc64cd, type: 2}
-  - {fileID: 11400000, guid: 77ebfabf1f2550345bcc3f793edc64cd, type: 2}
-  - {fileID: 11400000, guid: e228e24264f369c40bd57eacb300bb66, type: 2}
-  - {fileID: 11400000, guid: e228e24264f369c40bd57eacb300bb66, type: 2}
+  dreamStartingDeckDatabase: {fileID: 11400000, guid: db84336cd60a727499a39cfb6dd7049b, type: 2}
+  nightmareStartingDeckDatabase: {fileID: 11400000, guid: 70e180a85297a15479847b8a957a8745, type: 2}
 --- !u!114 &4057060681818568473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,6 +226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iconPrefab: {fileID: 4969807975334942594, guid: 4ae23d30630e36a4aa5f6508f0ae81bf, type: 3}
+  tooltipPrefab: {fileID: 4969807975334942594, guid: dd93858de4e24f1fa41360533edc34ae, type: 3}
 --- !u!1 &1715684356032971475
 GameObject:
   m_ObjectHideFlags: 0

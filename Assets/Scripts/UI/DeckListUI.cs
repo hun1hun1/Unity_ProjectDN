@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DeckListUI : MonoBehaviour
 {
@@ -12,10 +13,22 @@ public class DeckListUI : MonoBehaviour
     [SerializeField]
     private GameObject panel;
 
-    public void ShowCards(IReadOnlyList<CardData> cards)
+    private readonly List<DeckCardUI> displayedCards = new List<DeckCardUI>();
+    private CardHandController sourceHand;
+    private GridLayoutGroup grid;
+    private Vector2 originalSpacing;
+    private Vector2 appliedCardSize = new Vector2(-1f, -1f);
+
+    private void LateUpdate()
+    {
+        if (panel.activeInHierarchy) RefreshCardSizes();
+    }
+
+    public void ShowCards(IReadOnlyList<CardData> cards, CardHandController hand = null)
     {
         Clear();
 
+        sourceHand = hand;
         panel.SetActive(true);
 
         // 원본 DrawPile은 건드리지 않고 복사
@@ -36,20 +49,53 @@ public class DeckListUI : MonoBehaviour
             DeckCardUI cardUI = Instantiate(cardPrefab, content);
 
             cardUI.SetCard(cardData);
+            displayedCards.Add(cardUI);
         }
+
+        Canvas.ForceUpdateCanvases();
+        RefreshCardSizes(true);
+    }
+
+    private void RefreshCardSizes(bool force = false)
+    {
+        if (grid == null)
+        {
+            grid = content.GetComponent<GridLayoutGroup>();
+            if (grid == null) return;
+            originalSpacing = grid.spacing;
+        }
+
+        Vector2 prefabSize = ((RectTransform)cardPrefab.transform).rect.size;
+        Vector2 size = sourceHand != null ? sourceHand.GetHandCardSize() : prefabSize;
+        if (!force && size == appliedCardSize) return;
+
+        appliedCardSize = size;
+        float ratio = prefabSize.y > 0f ? size.y / prefabSize.y : 1f;
+        grid.cellSize = size;
+        grid.spacing = originalSpacing * ratio;
+        foreach (DeckCardUI card in displayedCards)
+            if (card != null) card.ResizeForList(ratio);
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)content);
     }
 
     public void Close()
     {
         panel.SetActive(false);
         Clear();
+        sourceHand = null;
     }
 
     private void Clear()
     {
         for (int i = content.childCount - 1; i >= 0; i--)
         {
-            Destroy(content.GetChild(i).gameObject);
+            GameObject child = content.GetChild(i).gameObject;
+            // Destroy is deferred; hide old entries before rebuilding the grid.
+            child.SetActive(false);
+            if (Application.isPlaying) Destroy(child);
+            else DestroyImmediate(child);
         }
+        displayedCards.Clear();
     }
 }
