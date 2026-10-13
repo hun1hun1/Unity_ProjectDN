@@ -48,7 +48,7 @@ public class DeckListUI : MonoBehaviour
         {
             DeckCardUI cardUI = Instantiate(cardPrefab, content);
 
-            cardUI.SetCard(cardData);
+            cardUI.SetCard(cardData, sourceHand != null ? sourceHand.BattleContext : null);
             displayedCards.Add(cardUI);
         }
 

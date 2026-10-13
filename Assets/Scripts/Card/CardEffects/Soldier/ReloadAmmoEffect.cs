@@ -5,6 +5,11 @@ public class ReloadAmmoEffect : CardEffect
 {
     [Min(0)] [SerializeField] private int amount = 1;
 
+    public override void Preview(CardPreviewContext context, string path)
+    {
+        context.LoadAmmo(amount);
+    }
+
     public override void Execute(BattleManager battleManager)
     {
         Player player = battleManager != null ? battleManager.GetPlayer() : null;

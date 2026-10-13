@@ -133,6 +133,8 @@ public class BattleManager : MonoBehaviour
             if (!costSystem.TryPay(cardData))
                 return false;
 
+            // Preserve the preview from before resource payment and effect execution.
+            cardUI.PauseDescriptionUpdates();
             if (cardData.consumeRequiredAmmo && cardData.requiredAmmo > 0 &&
                 !player.GetAmmoSystem().TrySpend(cardData.requiredAmmo))
             {
@@ -155,6 +157,7 @@ public class BattleManager : MonoBehaviour
         }
         finally
         {
+            if (cardUI != null && !cardUI.IsUsed) cardUI.ResumeDescriptionUpdates();
             isResolvingEffects = false;
         }
 

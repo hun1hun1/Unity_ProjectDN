@@ -10,6 +10,12 @@ public class DeckCardUI : MonoBehaviour
     [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private TMP_Text typeText;
 
+    private CardDescriptionBinding descriptionBinding;
+
+    private void OnEnable() { descriptionBinding?.Enable(); }
+    private void OnDisable() { descriptionBinding?.Disable(); }
+    private void OnDestroy() { descriptionBinding?.Disable(); }
+
     private TMP_Text[] cardTexts;
     private float[] originalFontSizes;
 
@@ -27,7 +33,7 @@ public class DeckCardUI : MonoBehaviour
             cardTexts[i].fontSize = originalFontSizes[i] * ratio;
     }
 
-    public void SetCard(CardData data)
+    public void SetCard(CardData data, BattleManager manager = null)
     {
         artwork.sprite = data.artwork;
         if (data.deckType == CardDeckType.TypeDream)
@@ -39,7 +45,12 @@ public class DeckCardUI : MonoBehaviour
             costText.text = data.cost.nightmareCost.ToString();
         }
         nameText.text = data.cardName;
-        descriptionText.text = data.description;
+        if (descriptionBinding == null)
+            descriptionBinding = new CardDescriptionBinding(text =>
+            {
+                if (descriptionText != null) descriptionText.text = text;
+            });
+        descriptionBinding.Bind(data, manager, isActiveAndEnabled);
         typeText.text = data.type.ToString();
     }
 }

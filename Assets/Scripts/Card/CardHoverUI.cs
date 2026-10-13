@@ -9,6 +9,13 @@ public class CardHoverUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [SerializeField, Min(1f)] private float hoverScale = 1.2f;
     [SerializeField, Min(0f)] private float hoverDuration = 0.12f;
     [SerializeField] private int sortingOrderOffset = 10;
+    [Header("Status Tooltip")]
+    [SerializeField] private CardStatusTooltipUI statusTooltipPrefab;
+    [SerializeField, Min(0f)] private float tooltipDelay = 1f;
+    private CardStatusTooltipUI tooltip;
+    private float hoverTime;
+    private float hoverStartedAt = -1f;
+    private bool tooltipShown;
     private CardUI card;
     private Vector3 baseScale;
     private Vector2 basePosition;
@@ -31,13 +38,24 @@ public class CardHoverUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         initialized = true;
     }
 
-    public void OnPointerEnter(PointerEventData eventData) { pointerInside = true; }
-    public void OnPointerExit(PointerEventData eventData) { pointerInside = false; }
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        CloseTooltip();
+        pointerInside = true;
+        if (card != null && card.CanHover) hoverStartedAt = Time.unscaledTime;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        pointerInside = false;
+        CloseTooltip();
+    }
 
     public void ResetHover()
     {
         Initialize();
         pointerInside = false;
+        CloseTooltip();
         progress = 0f;
         if (hoverVisual != null)
         {
@@ -53,6 +71,12 @@ public class CardHoverUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         if (hoverVisual == null || card == null) return;
         bool available = card.CanHover;
+        if (pointerInside && available)
+        {
+            if (hoverStartedAt < 0f) hoverStartedAt = Time.unscaledTime;
+            hoverTime = Time.unscaledTime - hoverStartedAt;
+        }
+        else CloseTooltip();
         float target = pointerInside && available ? 1f : 0f;
         progress = available && hoverDuration > 0f
             ? Mathf.MoveTowards(progress, target, Time.unscaledDeltaTime / hoverDuration)
@@ -89,5 +113,34 @@ public class CardHoverUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         else if (max.y > bounds.yMax) offset.y = bounds.yMax - max.y;
         Vector3 localOffset = hoverVisual.parent.InverseTransformVector(canvasRect.TransformVector(offset));
         hoverVisual.anchoredPosition = basePosition + (Vector2)localOffset;
+        UpdateTooltip(canvas);
+    }
+
+    private void CloseTooltip()
+    {
+        hoverTime = 0f;
+        hoverStartedAt = -1f;
+        tooltipShown = false;
+        if (tooltip != null) tooltip.Hide(this);
+    }
+
+    private void UpdateTooltip(Canvas canvas)
+    {
+        if (!pointerInside || !card.CanHover || hoverTime < tooltipDelay || progress < 1f) return;
+        if (!tooltipShown)
+        {
+            var statuses = CardStatusCollector.Collect(card.GetCardData());
+            // Empty results are also cached until hover ends or the card is rebound.
+            tooltipShown = true;
+            if (statuses.Count == 0 || statusTooltipPrefab == null) return;
+            if (tooltip == null || tooltip.transform.parent != canvas.transform)
+            {
+                tooltip = canvas.GetComponentInChildren<CardStatusTooltipUI>(true);
+                if (tooltip == null) tooltip = Instantiate(statusTooltipPrefab, canvas.transform, false);
+            }
+            tooltip.Show(this, hoverVisual, canvas, statuses,
+                hoverCanvas != null ? hoverCanvas.sortingOrder : canvas.sortingOrder);
+        }
+        if (tooltip != null) tooltip.Move(this);
     }
 }

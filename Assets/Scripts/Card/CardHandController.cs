@@ -11,6 +11,7 @@ public class CardHandController : MonoBehaviour
 
     private List<CardUI> cards = new List<CardUI>();
     private bool handLayoutDirty = true;
+    public BattleManager BattleContext { get; private set; }
 
     [SerializeField] private RectTransform drawStartPoint;
     [SerializeField] private RectTransform cardAnimationLayer;
@@ -103,6 +104,7 @@ public class CardHandController : MonoBehaviour
 
     public bool AddCard(CardData cardData, BattleManager battleManager)
     {
+        BattleContext = battleManager;
         if (IsFull()) return false;
 
         CardUI cardUI = Instantiate(cardPrefab, transform);

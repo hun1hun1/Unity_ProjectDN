@@ -1379,3 +1379,5 @@ MonoBehaviour:
   hoverScale: 1.5
   hoverDuration: 0.12
   sortingOrderOffset: 10
+  statusTooltipPrefab: {fileID: 4969807975334942594, guid: a60de01907ab44d6b9c3e733f8dc39dc, type: 3}
+  tooltipDelay: 0.5

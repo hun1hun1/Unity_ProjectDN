@@ -6,6 +6,16 @@ public class ApplyStatusEffect : CardEffect
     [SerializeField] private StatusEffectData status;
     [Min(1)] [SerializeField] private int turns = 1;
 
+    public override void CollectReferencedStatuses(CardStatusCollector collector)
+    {
+        if (turns > 0) collector.Add(status);
+    }
+
+    public override void Preview(CardPreviewContext context, string path)
+    {
+        context.ApplyStatus(status, turns, target);
+    }
+
     public override void Execute(BattleManager battleManager)
     {
         if (battleManager == null) return;

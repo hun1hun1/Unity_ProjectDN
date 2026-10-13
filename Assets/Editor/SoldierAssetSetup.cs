@@ -336,7 +336,7 @@ public static class SoldierAssetSetup
         });
         EnsureAsset<CardData>("AmmoBonus", card =>
         {
-            Configure(card, basicAttack, "총알 강화 예시", "기본 공격 효과. 총알이 1알 이상이면 반드시 1알을 소모하여 추가로 6의 피해를 줍니다.");
+            Configure(card, basicAttack, "총알 강화 예시", "기본 공격 효과. 총알이 {ammoCost:2}알 이상이면 반드시 {ammoCost:2}알을 소모하여 추가로 {damage:2.0}의 피해를 줍니다.\n{ammoCondition:2}");
             var effects = new List<CardEffect>(basicAttack.effects);
             effects.Add(bonus);
             card.effects = effects.ToArray();

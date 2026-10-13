@@ -6,6 +6,16 @@ public class SpendAmmoBonusEffect : CardEffect
     [Min(1)] [SerializeField] private int ammoCost = 1;
     [SerializeField] private CardEffect[] bonusEffects;
 
+    public override void CollectReferencedStatuses(CardStatusCollector collector)
+    {
+        collector.CollectEffects(bonusEffects);
+    }
+
+    public override void Preview(CardPreviewContext context, string path)
+    {
+        context.PreviewAmmoBonus(path, ammoCost, bonusEffects);
+    }
+
     public override void Execute(BattleManager battleManager)
     {
         Player player = battleManager != null ? battleManager.GetPlayer() : null;

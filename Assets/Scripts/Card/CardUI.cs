@@ -39,6 +39,12 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
     [SerializeField] private float scaleDuration = 0.1f;
 
     private CardData cardData;
+    private CardDescriptionBinding descriptionBinding;
+
+    private void OnEnable() { if (!isUsed) descriptionBinding?.Enable(); }
+    private void OnDisable() { descriptionBinding?.Disable(); }
+    private void OnDestroy() { descriptionBinding?.Disable(); }
+
     private BattleManager battleManager;
     private CardHandController handController;
 
@@ -64,8 +70,16 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
 
     public bool IsUsed => isUsed;
 
+    internal void PauseDescriptionUpdates() { descriptionBinding?.Disable(); }
+
+    internal void ResumeDescriptionUpdates()
+    {
+        if (isActiveAndEnabled && !isUsed) descriptionBinding?.Enable();
+    }
+
     public void MarkAsUsed()
     {
+        PauseDescriptionUpdates();
         ResetHover();
         StopScaleAnimation();
         isUsed = true;
@@ -406,6 +420,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
 
     public void SetCard(CardData data, BattleManager manager)
     {
+        ResetHover();
         cardData = data;
         battleManager = manager;
         isUsed = false;
@@ -422,7 +437,12 @@ public class CardUI : MonoBehaviour, IPointerDownHandler
             backImage.sprite = nightmareBackImage;
         }
         nameText.text = data.cardName;
-        descriptionText.text = data.description;
+        if (descriptionBinding == null)
+            descriptionBinding = new CardDescriptionBinding(text =>
+            {
+                if (descriptionText != null) descriptionText.text = text;
+            });
+        descriptionBinding.Bind(data, manager, isActiveAndEnabled);
         typeText.text = data.type.ToString();
 
         if (data.rarity == CardRarity.Common)
