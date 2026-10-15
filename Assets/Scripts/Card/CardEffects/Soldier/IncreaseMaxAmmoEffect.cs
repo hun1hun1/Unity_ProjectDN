@@ -10,6 +10,13 @@ public class IncreaseMaxAmmoEffect : CardEffect
         context.IncreaseMaxAmmo(amount);
     }
 
+    public override System.Action ActivateContinuous(BattleManager battleManager, ActiveContinuousCard source)
+    {
+        Player player = battleManager != null ? battleManager.GetPlayer() : null;
+        AmmoSystem ammo = player != null ? player.GetAmmoSystem() : null;
+        return ammo != null ? ammo.AddContinuousMaxForBattle(amount) : null;
+    }
+
     public override void Execute(BattleManager battleManager)
     {
         Player player = battleManager != null ? battleManager.GetPlayer() : null;

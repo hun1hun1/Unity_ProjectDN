@@ -30,7 +30,7 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
     private float preferredStatusHeight;
 
     public bool IsOpen => panel != null && panel.activeInHierarchy;
-    public static bool BlocksGameplayInput => Time.frameCount <= blockedUntilFrame ||
+    public static bool BlocksGameplayInput => MulliganSelectionUI.BlocksGameplayInput || Time.frameCount <= blockedUntilFrame ||
         (instance != null && (instance.IsOpen || instance.inputCaptured));
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -64,7 +64,7 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
         foreach (CardHoverUI hover in FindObjectsByType<CardHoverUI>(FindObjectsSortMode.None)) hover.ResetHover();
         foreach (DeckCardHoverUI hover in FindObjectsByType<DeckCardHoverUI>(FindObjectsSortMode.None)) hover.ResetHover();
         cardView.SetCard(data, battle, applyStatusModifiers: false);
-        statusText.text = CardStatusDescriptionBuilder.Build(CardStatusCollector.Collect(data));
+        statusText.text = CardStatusDescriptionBuilder.BuildForCard(data);
         statusPanel.gameObject.SetActive(!string.IsNullOrEmpty(statusText.text));
         measuredWidth = -1f;
         panel.SetActive(true);

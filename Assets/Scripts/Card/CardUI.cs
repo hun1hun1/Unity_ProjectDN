@@ -42,7 +42,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
     private CardDescriptionBinding descriptionBinding;
 
     private void OnEnable() { if (!isUsed) descriptionBinding?.Enable(); }
-    private void OnDisable() { descriptionBinding?.Disable(); }
+    private void OnDisable() { descriptionBinding?.Disable(); SetMulliganSelected(false); }
     private void OnDestroy() { descriptionBinding?.Disable(); }
 
     private BattleManager battleManager;
@@ -54,10 +54,14 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
     private bool isDragging = false;
     private bool isUsed;
     private bool presentationBusy;
+    private GameObject mulliganBorder;
+    private CanvasGroup usedInputGroup;
+    public bool IsMoving => isDragging || presentationBusy || drawCoroutine != null;
+    public bool CanMulligan => isActiveAndEnabled && cardData != null && !isUsed && !IsMoving &&
+        handController != null && transform.parent == handController.transform;
 
-    public bool CanHover => !CardInspectionUI.BlocksGameplayInput && isActiveAndEnabled && cardData != null && !isUsed && !isDragging &&
-        !presentationBusy && drawCoroutine == null && handController != null &&
-        transform.parent == handController.transform;
+    public bool CanHover => !CardInspectionUI.BlocksGameplayInput &&
+        (battleManager == null || !battleManager.BlocksCardInteraction) && CanMulligan;
 
     public static bool HasBusyCards(BattleManager battle)
     {
@@ -68,6 +72,11 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (eventData.button == PointerEventData.InputButton.Left && battleManager != null && battleManager.Mulligans.IsSelecting)
+        {
+            battleManager.Mulligans.Toggle(this);
+            return;
+        }
         if (eventData.button == PointerEventData.InputButton.Right && CanHover)
             CardInspectionUI.TryOpen(cardData, battleManager);
     }
@@ -83,6 +92,38 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
 
     public bool IsUsed => isUsed;
 
+    public void PresentWhileResolving(RectTransform usingPoint)
+    {
+        if (isUsed && cardVisual != null && usingPoint != null) cardVisual.position = usingPoint.position;
+    }
+
+    public void SetMulliganSelected(bool selected)
+    {
+        if (mulliganBorder == null && selected && cardVisual != null)
+        {
+            mulliganBorder = new GameObject("MulliganSelectionBorder", typeof(RectTransform));
+            mulliganBorder.layer = gameObject.layer;
+            RectTransform rect = (RectTransform)mulliganBorder.transform;
+            rect.SetParent(cardVisual, false); rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
+            rect.offsetMin = rect.offsetMax = Vector2.zero;
+            AddMulliganEdge("Top", new Vector2(0, 1), Vector2.one, new Vector2(0, 4), new Vector2(0, -2));
+            AddMulliganEdge("Bottom", Vector2.zero, new Vector2(1, 0), new Vector2(0, 4), new Vector2(0, 2));
+            AddMulliganEdge("Left", Vector2.zero, new Vector2(0, 1), new Vector2(4, 0), new Vector2(2, 0));
+            AddMulliganEdge("Right", new Vector2(1, 0), Vector2.one, new Vector2(4, 0), new Vector2(-2, 0));
+        }
+        if (mulliganBorder != null) mulliganBorder.SetActive(selected);
+    }
+
+    private void AddMulliganEdge(string name, Vector2 min, Vector2 max, Vector2 size, Vector2 position)
+    {
+        var edge = new GameObject(name, typeof(RectTransform), typeof(UnityEngine.UI.Image));
+        edge.layer = gameObject.layer;
+        RectTransform rect = (RectTransform)edge.transform; rect.SetParent(mulliganBorder.transform, false);
+        rect.anchorMin = min; rect.anchorMax = max; rect.sizeDelta = size; rect.anchoredPosition = position;
+        UnityEngine.UI.Image image = edge.GetComponent<UnityEngine.UI.Image>();
+        image.color = new Color(0.1f, 1f, 0.2f, 1f); image.raycastTarget = false;
+    }
+
     internal void PauseDescriptionUpdates() { descriptionBinding?.Disable(); }
 
     internal void ResumeDescriptionUpdates()
@@ -97,6 +138,9 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
         StopScaleAnimation();
         isUsed = true;
         isDragging = false;
+        if (usedInputGroup == null) usedInputGroup = GetComponent<CanvasGroup>();
+        if (usedInputGroup == null) usedInputGroup = gameObject.AddComponent<CanvasGroup>();
+        usedInputGroup.blocksRaycasts = false;
     }
 
     private Transform originalParent;
@@ -358,7 +402,9 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
 
     public IEnumerator UsedCardAnimation(
     RectTransform cardUsingPoint,
-    RectTransform discardPilePoint)
+    RectTransform discardPilePoint,
+    Transform absorbPoint = null,
+    bool exhaust = false)
     {
         if (cardVisual == null ||
             cardUsingPoint == null ||
@@ -425,18 +471,35 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
         cardVisual.localScale = targetScale;
 
         // 2. CardUsingArea에 도착한 뒤 기존 버림 애니메이션 실행
-        yield return StartCoroutine(
-            DiscardAnimation(discardPilePoint)
-        );
+        if (absorbPoint != null || exhaust)
+        {
+            Vector3 destination = absorbPoint != null && !exhaust ? absorbPoint.position : cardVisual.position;
+            Vector3 fromPosition = cardVisual.position;
+            Vector3 fromScale = cardVisual.localScale;
+            elapsed = 0f;
+            while (elapsed < moveDuration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / moveDuration));
+                cardVisual.position = Vector3.Lerp(fromPosition, destination, t);
+                cardVisual.localScale = Vector3.Lerp(fromScale, Vector3.zero, t);
+                yield return null;
+            }
+            cardVisual.localScale = Vector3.zero;
+        }
+        else
+            yield return StartCoroutine(DiscardAnimation(discardPilePoint));
         presentationBusy = false;
     }
 
     public void SetCard(CardData data, BattleManager manager)
     {
+        SetMulliganSelected(false);
         ResetHover();
         cardData = data;
         battleManager = manager;
         isUsed = false;
+        if (usedInputGroup != null) usedInputGroup.blocksRaycasts = true;
 
         artwork.sprite = data.artwork;
         if (data.deckType == CardDeckType.TypeDream)

@@ -13,11 +13,12 @@ public abstract class BattleCharacter : MonoBehaviour
     [SerializeField] private CharacterInfoUI characterInfoUI;
 
     public StatusEffectSystem StatusEffects { get; } = new StatusEffectSystem();
+    public ContinuousCardSystem ContinuousCards { get; } = new ContinuousCardSystem();
 
     protected virtual void Awake()
     {
         currentHP = maxHP;
-        if (characterInfoUI != null) characterInfoUI.BindStatusEffects(StatusEffects);
+        if (characterInfoUI != null) characterInfoUI.BindStatusEffects(StatusEffects, ContinuousCards);
 
         UpdateUI();
     }
@@ -58,6 +59,7 @@ public abstract class BattleCharacter : MonoBehaviour
 
     public virtual void AddBlock(int amount)
     {
+        amount = BlockCalculator.Calculate(amount, this);
         block += amount;
 
         Debug.Log($"{gameObject.name} 방어도 +{amount} / 현재 방어도 {block}");

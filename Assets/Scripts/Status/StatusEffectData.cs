@@ -12,5 +12,10 @@ public class StatusEffectData : ScriptableObject
     public Sprite Icon => icon;
     public string Description => description;
     public string DisplayName => !string.IsNullOrEmpty(displayName) ? displayName :
-        statusType == StatusEffectType.WeaknessExposure ? "약점 노출" : "녹슬음";
+        statusType switch
+        {
+            StatusEffectType.WeaknessExposure => "약점 노출",
+            StatusEffectType.DefenseBreak => "방어 파괴",
+            _ => "녹슬음"
+        };
 }

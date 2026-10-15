@@ -26,7 +26,29 @@ public class StatusTooltipUI : MonoBehaviour
     public void Refresh(StatusIconUI icon, ActiveStatusEffect effect)
     {
         if (owner != icon || effect == null || contentText == null) return;
-        contentText.text = $"<b>{effect.Definition.DisplayName}</b>\n{effect.Definition.Description}\n남은 턴: {effect.RemainingTurns}";
+        string duration = effect.IsPermanent ? "전투 종료까지 지속" : $"남은 턴: {effect.RemainingTurns}";
+        contentText.text = $"<b>{effect.Definition.DisplayName}</b>\n{effect.Definition.Description}\n{duration}";
+        UpdatePosition();
+    }
+
+    public void ShowContinuous(StatusIconUI icon, ActiveContinuousCard card, Vector2 position)
+    {
+        if (icon == null || card == null || contentText == null) return;
+        canvas = GetComponentInParent<Canvas>()?.rootCanvas;
+        if (canvas == null) return;
+        owner = icon;
+        screenPosition = position;
+        gameObject.SetActive(true);
+        transform.SetAsLastSibling();
+        RefreshContinuous(icon, card);
+    }
+
+    public void RefreshContinuous(StatusIconUI icon, ActiveContinuousCard card)
+    {
+        if (owner != icon || card == null || contentText == null) return;
+        string duration = card.IsPermanent ? "전투 종료까지 지속" : $"남은 턴: {card.RemainingTurns}";
+        string location = card.IsAbsorbed ? (card.IsPermanent ? "흡수됨" : "흡수됨 · 만료 시 뽑을 카드 더미로 복귀") : "사용 시 소멸";
+        contentText.text = $"<b>{card.Card.cardName}</b>\n{CardDescriptionBuilder.Build(card.Card, null, false)}\n{duration}\n{location}";
         UpdatePosition();
     }
 

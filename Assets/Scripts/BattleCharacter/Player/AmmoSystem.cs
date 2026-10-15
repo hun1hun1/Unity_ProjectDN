@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -11,13 +12,15 @@ public class AmmoSystem : MonoBehaviour
     private bool pendingInspectorNotification;
     private int battleMaxAmmoBonus;
     private int runMaxAmmoBonus;
+    private readonly Dictionary<object, int> continuousBonuses = new Dictionary<object, int>();
+    private long continuousMaxAmmoBonus;
     private uint gameVersion;
 
     public int BaseMaxAmmo => maxAmmo;
     public int BattleMaxAmmoBonus => battleMaxAmmoBonus;
     public int RunMaxAmmoBonus => runMaxAmmoBonus;
     public int MaxAmmo => (int)Math.Min(int.MaxValue,
-        (long)Mathf.Max(0, maxAmmo) + runMaxAmmoBonus + battleMaxAmmoBonus);
+        (long)Mathf.Max(0, maxAmmo) + runMaxAmmoBonus + battleMaxAmmoBonus + continuousMaxAmmoBonus);
     public int CurrentAmmo => currentAmmo;
     public event Action<int, int> AmmoChanged;
 
@@ -59,6 +62,8 @@ public class AmmoSystem : MonoBehaviour
         gameVersion = RunRelicInventory.GameVersion;
         runMaxAmmoBonus = RunRelicInventory.MaxAmmoBonus;
         battleMaxAmmoBonus = 0;
+        continuousBonuses.Clear();
+        continuousMaxAmmoBonus = 0;
         NormalizeSettings();
         currentAmmo = startingAmmo;
         NotifyIfChanged(previousCurrent, previousMax);
@@ -71,6 +76,25 @@ public class AmmoSystem : MonoBehaviour
         battleMaxAmmoBonus = (int)Math.Min(int.MaxValue, (long)battleMaxAmmoBonus + amount);
         NotifyIfChanged(currentAmmo, previousMax);
         return MaxAmmo - previousMax;
+    }
+
+    public Action AddContinuousMaxForBattle(int amount)
+    {
+        if (amount <= 0) return null;
+        int previousMax = MaxAmmo;
+        object token = new object();
+        continuousBonuses.Add(token, amount);
+        continuousMaxAmmoBonus += amount;
+        NotifyIfChanged(currentAmmo, previousMax);
+        return () =>
+        {
+            if (!continuousBonuses.Remove(token)) return;
+            int oldMax = MaxAmmo;
+            int oldCurrent = currentAmmo;
+            continuousMaxAmmoBonus -= amount;
+            currentAmmo = Mathf.Clamp(currentAmmo, 0, MaxAmmo);
+            NotifyIfChanged(oldCurrent, oldMax);
+        };
     }
 
     private void RefreshRunCapacity()

@@ -221,9 +221,9 @@ public class CardDescriptionTests
         CardHandController nightmare = (CardHandController)new SerializedObject(battle)
             .FindProperty("nightmareCardHand").objectReferenceValue;
         CardData attack = AssetDatabase.LoadAssetAtPath<CardData>(
-            "Assets/CardData/Soldier/Starting/Dream/Attack/1.Card_Attack/Attack.asset");
+            "Assets/CardData/Soldier/Starting/Dream/Attack/01.Card_Attack/Attack.asset");
         CardData sword = AssetDatabase.LoadAssetAtPath<CardData>(
-            "Assets/CardData/Soldier/Starting/Nightmare/Attack/1.Card_Double_Edged_Sword/Double_Edged_Sword.asset");
+            "Assets/CardData/Soldier/Starting/Nightmare/Attack/01.Card_Double_Edged_Sword/Double_Edged_Sword.asset");
         CardUI dreamCard = dream.GetComponentsInChildren<CardUI>()[0];
         CardUI nightmareCard = nightmare.GetComponentsInChildren<CardUI>()[0];
         dreamCard.SetCard(attack, battle);
@@ -245,7 +245,7 @@ public class CardDescriptionTests
         list.Close();
 
         CardData snipe = AssetDatabase.LoadAssetAtPath<CardData>(
-            "Assets/CardData/Soldier/Starting/Dream/Attack/2.Card_Snipe/Snipe.asset");
+            "Assets/CardData/Soldier/Starting/Dream/Attack/02.Card_Snipe/Snipe.asset");
         list.ShowCards(new[] { snipe }, dream);
         entry = content.GetComponentInChildren<DeckCardUI>();
         Assert.That(Description(entry), Does.Contain("현재 총알 부족"));
@@ -293,12 +293,12 @@ public class CardDescriptionTests
         player.StatusEffects.Apply(Status(StatusEffectType.Rust), 2);
         ammo.Load(1);
         CardData snipe = AssetDatabase.LoadAssetAtPath<CardData>(
-            "Assets/CardData/Soldier/Starting/Dream/Attack/2.Card_Snipe/Snipe.asset");
+            "Assets/CardData/Soldier/Starting/Dream/Attack/02.Card_Snipe/Snipe.asset");
         string description = Description(HandCard(snipe));
         Assert.That(description, Does.Contain("3의 피해").And.Contain("4의 피해"));
         Assert.That(description, Does.Not.Contain("{damage:"));
         CardData tracking = AssetDatabase.LoadAssetAtPath<CardData>(
-            "Assets/CardData/Soldier/Starting/Nightmare/Skill/2.Target_Tracking/Target_Tracking.asset");
+            "Assets/CardData/Soldier/Starting/Nightmare/Skill/02.Target_Tracking/Target_Tracking.asset");
         Assert.That(Description(HandCard(tracking)), Does.Contain("3의 피해"));
     }
 

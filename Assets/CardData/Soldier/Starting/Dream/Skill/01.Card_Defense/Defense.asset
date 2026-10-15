@@ -10,18 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c813815edeae7934380dab4472c7c28c, type: 3}
-  m_Name: Cat_and_Mouse
+  m_Name: Defense
   m_EditorClassIdentifier: 
-  cardName: "\uBCD1 \uC8FC\uACE0 \uC57D \uC8FC\uAE30"
+  cardName: "\uBC29\uC5B4"
   cost:
-    dreamCost: 0
-    nightmareCost: 1
+    dreamCost: 1
+    nightmareCost: 0
   artwork: {fileID: 0}
-  description: "\uBC29\uC5B4\uB3C4\uB97C 4\uC5BB\uACE0 \uC801\uC758 \uCCB4\uB825\uC744
-    3\uD68C\uBCF5\uC2DC\uD0B5\uB2C8\uB2E4."
-  deckType: 1
+  description: "\ubc29\uc5b4\ub3c4\ub97c {block:0}\uc5bb\uc2b5\ub2c8\ub2e4."
+  deckType: 0
   type: 1
-  rarity: 0
   effects:
-  - {fileID: 11400000, guid: 0ab85236534ff2f44bf4946cf65bd572, type: 2}
-  - {fileID: 11400000, guid: 9b44541f4c3f5e64b944b9f4b4c33129, type: 2}
+  - {fileID: 11400000, guid: 89fdebe2d0f7fcb47b77f5190df6a1ae, type: 2}
+  - {fileID: 11400000, guid: 4424753bf2eef4249b87fe9b2d81a8fb, type: 2}

@@ -123,6 +123,8 @@ public class CardHandController : MonoBehaviour
         return true;
     }
 
+    public CardUI[] GetCardsSnapshot() => cards.ToArray();
+
     public void RemoveCard(CardUI cardUI)
     {
         //if (!cards.Remove(cardUI))

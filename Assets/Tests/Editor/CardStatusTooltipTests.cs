@@ -33,7 +33,7 @@ public class CardStatusTooltipTests
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
         CardUI card = Cards()[0];
         card.SetCard(AssetDatabase.LoadAssetAtPath<CardData>(
-            "Assets/CardData/Soldier/Starting/Nightmare/Attack/2.Corrosion/Corrosion.asset"), battle);
+            "Assets/CardData/Soldier/Starting/Nightmare/Attack/02.Corrosion/Corrosion.asset"), battle);
         var hoverState = new SerializedObject(card.GetComponent<CardHoverUI>());
         hoverState.FindProperty("tooltipDelay").floatValue = 1f;
         hoverState.ApplyModifiedPropertiesWithoutUndo();

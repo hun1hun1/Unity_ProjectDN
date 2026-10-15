@@ -12,7 +12,11 @@ public sealed class CardStatusCollector
     public static IReadOnlyList<StatusEffectData> Collect(CardData card)
     {
         var collector = new CardStatusCollector();
-        if (card != null) collector.CollectEffects(card.effects);
+        if (card != null)
+        {
+            collector.CollectEffects(card.effects);
+            if (card.type == CardType.Continuous) collector.CollectEffects(card.turnStartEffects);
+        }
         return collector.statuses;
     }
 

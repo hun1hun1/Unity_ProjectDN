@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -17,14 +16,14 @@ public class CardStatusTooltipUI : MonoBehaviour
     private readonly Vector3[] corners = new Vector3[4];
 
     public void Show(CardHoverUI source, RectTransform visual, Canvas canvas,
-        IReadOnlyList<StatusEffectData> statuses, int cardSortingOrder)
+        string explanation, int cardSortingOrder)
     {
         if (source == null || visual == null || canvas == null || contentText == null ||
-            statuses == null || statuses.Count == 0) return;
+            string.IsNullOrEmpty(explanation)) return;
         owner = source;
         cardVisual = visual;
         rootCanvas = canvas;
-        contentText.text = CardStatusDescriptionBuilder.Build(statuses);
+        contentText.text = explanation;
         measuredWidth = -1f;
         Canvas layer = GetComponent<Canvas>();
         layer.overrideSorting = true;

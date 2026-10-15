@@ -19,12 +19,68 @@ public class BattleManager : MonoBehaviour
     private BattleState currentState;
     private bool isResolvingEffects;
     private int activeCardUses;
+    private CardUI resolvingCard;
+    private readonly MulliganSystem mulligans = new MulliganSystem();
+    public MulliganSystem Mulligans => mulligans;
+    public bool BlocksCardInteraction => isResolvingEffects;
+    public bool CanContinueEffects => isActiveAndEnabled && currentState != BattleState.BattleEnd;
+    public bool HasOtherCardUses => activeCardUses > (resolvingCard != null ? 1 : 0);
+    public bool HandsAreMoving => HandIsMoving(dreamCardHand) || HandIsMoving(nightmareCardHand);
+    public CardHandController GetHand(CardDeckType type) => GetHandController(type);
+    public DeckController GetDeckController() => deckController;
+    public void PresentResolvingCard()
+    {
+        if (resolvingCard != null) resolvingCard.PresentWhileResolving(cardUsingPoint);
+    }
+
+    private static bool HandIsMoving(CardHandController hand)
+    {
+        if (hand == null) return false;
+        foreach (CardUI card in hand.GetCardsSnapshot())
+            if (card != null && card.isActiveAndEnabled && !card.IsUsed && card.IsMoving) return true;
+        return false;
+    }
+
+    public IEnumerator ExecuteEffectsRoutine(CardEffect[] effects, ActiveContinuousCard source = null)
+    {
+        if (effects == null) yield break;
+        foreach (CardEffect effect in effects)
+        {
+            if (!CanContinueEffects || (source != null && !source.IsActive)) yield break;
+            if (effect == null) continue;
+            IEnumerator step = source == null ? effect.ExecuteRoutine(this) : effect.ActivateContinuousRoutine(this, source);
+            if (step != null) yield return step;
+        }
+    }
+
+    public void RunEffectRoutine(IEnumerator sequence) => EffectSequence.Start(this, LockedEffects(sequence));
+
+    private IEnumerator LockedEffects(IEnumerator sequence)
+    {
+        bool previous = isResolvingEffects;
+        isResolvingEffects = true;
+        try { if (sequence != null) yield return sequence; }
+        finally { isResolvingEffects = previous; }
+    }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+        EffectSequence.Stop(this);
+        mulligans.Cancel();
+        resolvingCard = null; activeCardUses = 0; isResolvingEffects = false;
+    }
 
     private void Start()
     {
-        if (player != null) player.StatusEffects.Clear();
+        if (player != null)
+        {
+            player.ContinuousCards.ResetForBattle();
+            player.StatusEffects.Clear();
+        }
         if (target != null)
         {
+            target.ContinuousCards.ResetForBattle();
             target.StatusEffects.Clear();
             target.BindBattle(this);
         }
@@ -109,6 +165,10 @@ public class BattleManager : MonoBehaviour
             cardData == null || cardData.requiredAmmo < 0 || player == null)
             return false;
 
+        if (cardData.type == CardType.Continuous &&
+            (deckController == null || !ContinuousCardSystem.CanActivate(cardData)))
+            return false;
+
         CostSystem costSystem = player.GetCostSystem();
         if (costSystem == null || !costSystem.CanPay(cardData))
             return false;
@@ -152,11 +212,6 @@ public class BattleManager : MonoBehaviour
             cardUI.MarkAsUsed();
             Debug.Log($"Card used: {cardData.cardName}");
 
-            if (cardData.effects != null)
-            {
-                foreach (CardEffect effect in cardData.effects)
-                    if (effect != null) effect.Execute(this);
-            }
         }
         finally
         {
@@ -165,34 +220,68 @@ public class BattleManager : MonoBehaviour
         }
 
         activeCardUses++;
-        StartCoroutine(UseCardRoutine(cardUI, cardData));
+        EffectSequence.Start(this, UseCardRoutine(cardUI, cardData));
         return true;
     }
 
     private IEnumerator UseCardRoutine(CardUI cardUI, CardData cardData)
     {
+        bool settled = false;
+        ActiveContinuousCard continuous = null;
         try
         {
             if (cardUI == null) yield break;
-
             CardHandController handController = cardUI.GetHandController();
-            if (handController == null) yield break;
+            if (handController != null)
+            {
+                handController.RemoveCard(cardUI);
+                cardUI.transform.SetParent(handController.GetCardAnimationLayer(), true);
+            }
 
-            handController.RemoveCard(cardUI);
-            cardUI.transform.SetParent(handController.GetCardAnimationLayer(), true);
+            resolvingCard = cardUI;
+            bool previous = isResolvingEffects;
+            isResolvingEffects = true;
+            try
+            {
+                if (cardData.type == CardType.Continuous)
+                    yield return player.ContinuousCards.ActivateRoutine(cardData, this, deckController, entry => continuous = entry);
+                else
+                    yield return ExecuteEffectsRoutine(cardData.effects);
+            }
+            finally
+            {
+                if (resolvingCard == cardUI) resolvingCard = null;
+                isResolvingEffects = previous;
+            }
 
-            yield return StartCoroutine(cardUI.UsedCardAnimation(
-                cardUsingPoint, handController.GetDiscardPilePoint()));
+            // Effect execution also supports callers without a hand/presentation binding.
+            if (handController == null) { settled = true; yield break; }
+            if (!CanContinueEffects) yield break;
+            yield return cardUI.UsedCardAnimation(cardUsingPoint, handController.GetDiscardPilePoint(),
+                cardData.type == CardType.Continuous ? player.transform : null, cardData.ExhaustsOnUse);
 
-            deckController.DiscardCard(cardData, cardData.deckType);
+            if (cardData.type != CardType.Continuous)
+            {
+                if (cardData.ExhaustsOnUse) deckController.ExhaustCard(cardData, cardData.deckType);
+                else deckController.DiscardCard(cardData, cardData.deckType);
+            }
+            settled = true;
             Destroy(cardUI.gameObject);
-
-            if (currentState == BattleState.PlayerTurn)
-                RefillHand(cardData.deckType);
+            if (currentState == BattleState.PlayerTurn) RefillHand(cardData.deckType);
         }
         finally
         {
-            activeCardUses--;
+            if (!settled && cardUI != null && cardUI.IsUsed)
+            {
+                // A suspended use still needs a destination when its owner is disabled.
+                if (deckController != null && (continuous == null || !continuous.IsActive))
+                {
+                    if (cardData.ExhaustsOnUse) deckController.ExhaustCard(cardData, cardData.deckType);
+                    else deckController.DiscardCard(cardData, cardData.deckType);
+                }
+                Destroy(cardUI.gameObject);
+            }
+            activeCardUses = Mathf.Max(0, activeCardUses - 1);
         }
     }
 
@@ -220,6 +309,8 @@ public class BattleManager : MonoBehaviour
     {
         if (player != null) player.StatusEffects.ReduceRemainingTurns();
         if (target != null) target.StatusEffects.ReduceRemainingTurns();
+        if (player != null) player.ContinuousCards.ReduceRemainingTurns();
+        if (target != null) target.ContinuousCards.ReduceRemainingTurns();
     }
 
     private IEnumerator DiscardPlayerHands()
@@ -334,30 +425,45 @@ public class BattleManager : MonoBehaviour
         StartPlayerTurn();
     }
 
-    private void StartPlayerTurn()
+    private void StartPlayerTurn() => EffectSequence.Start(this, StartPlayerTurnRoutine());
+
+    private IEnumerator StartPlayerTurnRoutine()
     {
-        ProcessTurnStartStatusEffects();
-
-        ChangeState(BattleState.PlayerTurn);
-
-        Debug.Log("플레이어 턴 시작");
-
-        CostSystem costSystem = player.GetCostSystem();
-
-        if (costSystem != null)
+        bool previousResolving = isResolvingEffects;
+        isResolvingEffects = true;
+        try
         {
-            CostGaugeState state =
-            costSystem.ConsumePendingState();
+            ProcessTurnStartStatusEffects();
 
-            ApplyCostGaugeState(state);
+            ChangeState(BattleState.PlayerTurn);
 
-            costSystem.ResetForTurn();
+            Debug.Log("플레이어 턴 시작");
+
+            CostSystem costSystem = player.GetCostSystem();
+
+            if (costSystem != null)
+            {
+                CostGaugeState state =
+                costSystem.ConsumePendingState();
+
+                ApplyCostGaugeState(state);
+
+                costSystem.ResetForTurn();
+            }
+
+            player.ResetBlock();
+
+            yield return player.ContinuousCards.ProcessTurnStartEffectsRoutine(this);
+            if (target != null) yield return target.ContinuousCards.ProcessTurnStartEffectsRoutine(this);
+            if (!CanContinueEffects) yield break;
+
+            DrawCards(CardDeckType.TypeDream, dreamCardHand);
+            DrawCards(CardDeckType.TypeNightmare, nightmareCardHand);
         }
-
-        player.ResetBlock();
-
-        DrawCards(CardDeckType.TypeDream, dreamCardHand);
-        DrawCards(CardDeckType.TypeNightmare, nightmareCardHand);
+        finally
+        {
+            isResolvingEffects = previousResolving;
+        }
     }
 
     private void ChangeState(BattleState newState)

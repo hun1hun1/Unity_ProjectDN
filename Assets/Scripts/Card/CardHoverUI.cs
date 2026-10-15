@@ -129,16 +129,16 @@ public class CardHoverUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (!pointerInside || !card.CanHover || hoverTime < tooltipDelay || progress < 1f) return;
         if (!tooltipShown)
         {
-            var statuses = CardStatusCollector.Collect(card.GetCardData());
+            string explanation = CardStatusDescriptionBuilder.BuildForCard(card.GetCardData());
             // Empty results are also cached until hover ends or the card is rebound.
             tooltipShown = true;
-            if (statuses.Count == 0 || statusTooltipPrefab == null) return;
+            if (string.IsNullOrEmpty(explanation) || statusTooltipPrefab == null) return;
             if (tooltip == null || tooltip.transform.parent != canvas.transform)
             {
                 tooltip = canvas.GetComponentInChildren<CardStatusTooltipUI>(true);
                 if (tooltip == null) tooltip = Instantiate(statusTooltipPrefab, canvas.transform, false);
             }
-            tooltip.Show(this, hoverVisual, canvas, statuses,
+            tooltip.Show(this, hoverVisual, canvas, explanation,
                 hoverCanvas != null ? hoverCanvas.sortingOrder : canvas.sortingOrder);
         }
         if (tooltip != null) tooltip.Move(this);

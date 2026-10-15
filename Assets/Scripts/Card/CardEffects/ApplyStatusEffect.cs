@@ -16,6 +16,14 @@ public class ApplyStatusEffect : CardEffect
         context.ApplyStatus(status, turns, target);
     }
 
+    public override System.Action ActivateContinuous(BattleManager battleManager, ActiveContinuousCard source)
+    {
+        if (battleManager == null || source == null) return null;
+        BattleCharacter character = target == CardTarget.Player ? battleManager.GetPlayer() :
+            target == CardTarget.Enemy ? battleManager.GetTarget() : null;
+        return character != null ? character.StatusEffects.ApplyContinuous(status, source) : null;
+    }
+
     public override void Execute(BattleManager battleManager)
     {
         if (battleManager == null) return;

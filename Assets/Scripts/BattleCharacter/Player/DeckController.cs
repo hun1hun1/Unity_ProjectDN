@@ -17,6 +17,8 @@ public class DeckController : MonoBehaviour
 
     private List<CardData> nightmareDrawPile = new List<CardData>();
     private List<CardData> nightmareDiscardPile = new List<CardData>();
+    private readonly List<CardData> dreamExhaustPile = new List<CardData>();
+    private readonly List<CardData> nightmareExhaustPile = new List<CardData>();
 
     private void Awake()
     {
@@ -53,6 +55,8 @@ public class DeckController : MonoBehaviour
         nightmareDrawPile.AddRange(runDeck.Nightmare);
         dreamDiscardPile.Clear();
         nightmareDiscardPile.Clear();
+        dreamExhaustPile.Clear();
+        nightmareExhaustPile.Clear();
         Shuffle(dreamDrawPile);
         Shuffle(nightmareDrawPile);
     }
@@ -164,6 +168,34 @@ public class DeckController : MonoBehaviour
             return;
 
         discardPile.Add(cardData);
+    }
+
+    public IReadOnlyList<CardData> GetExhaustPile(CardDeckType deckType)
+    {
+        EnsureInitialized();
+        switch (deckType)
+        {
+            case CardDeckType.TypeDream: return dreamExhaustPile.AsReadOnly();
+            case CardDeckType.TypeNightmare: return nightmareExhaustPile.AsReadOnly();
+            default: return null;
+        }
+    }
+
+    public void ExhaustCard(CardData cardData, CardDeckType deckType)
+    {
+        if (cardData == null || cardData.deckType != deckType) return;
+        EnsureInitialized();
+        if (deckType == CardDeckType.TypeDream) dreamExhaustPile.Add(cardData);
+        else if (deckType == CardDeckType.TypeNightmare) nightmareExhaustPile.Add(cardData);
+    }
+
+    public void ReturnToDrawPile(CardData cardData, CardDeckType deckType)
+    {
+        if (cardData == null || cardData.deckType != deckType) return;
+        EnsureInitialized();
+        List<CardData> pile = deckType == CardDeckType.TypeDream ? dreamDrawPile :
+            deckType == CardDeckType.TypeNightmare ? nightmareDrawPile : null;
+        if (pile != null) pile.Insert(Random.Range(0, pile.Count + 1), cardData);
     }
 
     public void AddCardToDeck(CardData cardData, CardDeckType deckType)

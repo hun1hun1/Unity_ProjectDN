@@ -5,8 +5,8 @@ public static class DamageCalculator
     public static int Calculate(int baseDamage, BattleCharacter attacker, BattleCharacter defender)
     {
         return CalculateWithModifiers(baseDamage,
-            attacker != null && attacker.StatusEffects.GetRemainingTurns(StatusEffectType.Rust) > 0,
-            defender != null && defender.StatusEffects.GetRemainingTurns(StatusEffectType.WeaknessExposure) > 0);
+            attacker != null && attacker.StatusEffects.HasStatus(StatusEffectType.Rust),
+            defender != null && defender.StatusEffects.HasStatus(StatusEffectType.WeaknessExposure));
     }
 
     internal static int CalculateWithModifiers(int baseDamage, bool rust, bool weaknessExposure)

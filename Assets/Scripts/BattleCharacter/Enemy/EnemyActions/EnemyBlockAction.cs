@@ -17,6 +17,12 @@ public class EnemyBlockAction : EnemyAction
         return $"방어 {block}";
     }
 
+    public override string GetActionDescription(BattleManager battleManager)
+    {
+        if (battleManager == null) return GetActionDescription();
+        return $"방어 {BlockCalculator.Calculate(block, battleManager.GetTarget())}";
+    }
+
     public override void Execute(BattleManager battleManager)
     {
         battleManager.GetTarget().AddBlock(block);

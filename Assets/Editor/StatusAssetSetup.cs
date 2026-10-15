@@ -20,6 +20,7 @@ public static class StatusAssetSetup
         CreateIcon();
         StatusEffectData exposure = CreateDefinition("WeaknessExposure", "약점 노출", StatusEffectType.WeaknessExposure);
         StatusEffectData rust = CreateDefinition("Rust", "녹슬음", StatusEffectType.Rust);
+        CreateDefinition("DefenseBreak", "방어 파괴", StatusEffectType.DefenseBreak);
         foreach (CardTarget target in new[] { CardTarget.Player, CardTarget.Enemy })
         {
             CreateCard(exposure, "WeaknessExposure", target);
@@ -86,9 +87,15 @@ public static class StatusAssetSetup
         SerializedObject state = new SerializedObject(data);
         state.FindProperty("statusType").enumValueIndex = (int)type;
         state.FindProperty("displayName").stringValue = name;
-        state.FindProperty("description").stringValue = type == StatusEffectType.WeaknessExposure
-            ? "받는 피해가 50% 증가합니다." : "공격으로 주는 피해가 25% 감소합니다.";
-        state.FindProperty("icon").objectReferenceValue = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
+        state.FindProperty("description").stringValue = type switch
+        {
+            StatusEffectType.WeaknessExposure => "받는 피해가 50% 증가합니다.",
+            StatusEffectType.DefenseBreak => "방어도 획득량이 50% 감소합니다.",
+            _ => "공격으로 주는 피해가 25% 감소합니다."
+        };
+        state.FindProperty("icon").objectReferenceValue = type == StatusEffectType.DefenseBreak
+            ? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Images/UI/Block.png")
+            : AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
         state.ApplyModifiedPropertiesWithoutUndo();
         AssetDatabase.CreateAsset(data, path);
         return data;

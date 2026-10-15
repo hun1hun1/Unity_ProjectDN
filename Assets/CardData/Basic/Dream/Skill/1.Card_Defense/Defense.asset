@@ -17,7 +17,7 @@ MonoBehaviour:
     dreamCost: 1
     nightmareCost: 0
   artwork: {fileID: 0}
-  description: "\uBC29\uC5B4\uB3C4\uB97C 4\uC5BB\uC2B5\uB2C8\uB2E4."
+  description: "\ubc29\uc5b4\ub3c4\ub97c {block:0}\uc5bb\uc2b5\ub2c8\ub2e4."
   deckType: 0
   type: 1
   effects:

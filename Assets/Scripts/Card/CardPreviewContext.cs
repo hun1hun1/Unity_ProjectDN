@@ -14,16 +14,18 @@ public sealed class CardPreviewContext
     private readonly bool hasAmmoSystem;
     private readonly bool hasBattleContext;
     private readonly bool applyStatusModifiers;
+    private readonly bool isContinuous;
     private bool canExecute;
     private int ammo;
     private int maxAmmo;
 
-    internal CardPreviewContext(CardData card, BattleManager battle, bool applyStatusModifiers)
+    internal CardPreviewContext(CardData card, BattleManager battle, bool applyStatusModifiers, bool forTurnStart = false)
     {
         Player player = battle != null ? battle.GetPlayer() : null;
         Enemy enemy = battle != null ? battle.GetTarget() : null;
         AmmoSystem source = player != null ? player.GetAmmoSystem() : null;
         this.applyStatusModifiers = applyStatusModifiers;
+        isContinuous = card.type == CardType.Continuous && !forTurnStart;
         hasPlayer = player != null;
         hasEnemy = enemy != null;
         hasBattleContext = battle != null && hasPlayer;
@@ -34,9 +36,10 @@ public sealed class CardPreviewContext
         enemyStatuses = CopyStatuses(enemy);
         values = new Dictionary<string, string>();
         visiting = new HashSet<CardEffect>();
-        canExecute = hasBattleContext && card.requiredAmmo >= 0 &&
-            (card.requiredAmmo == 0 || hasAmmoSystem && ammo >= card.requiredAmmo);
-        if (canExecute && card.consumeRequiredAmmo && card.requiredAmmo > 0)
+        // Recurring effects are actions of an already active card, not another card use.
+        canExecute = hasBattleContext && (forTurnStart || card.requiredAmmo >= 0 &&
+            (card.requiredAmmo == 0 || hasAmmoSystem && ammo >= card.requiredAmmo));
+        if (!forTurnStart && canExecute && card.consumeRequiredAmmo && card.requiredAmmo > 0)
             ammo -= card.requiredAmmo;
     }
 
@@ -47,6 +50,7 @@ public sealed class CardPreviewContext
         values = source.values;
         visiting = source.visiting;
         applyStatusModifiers = source.applyStatusModifiers;
+        isContinuous = source.isContinuous;
         hasPlayer = source.hasPlayer;
         hasEnemy = source.hasEnemy;
         hasAmmoSystem = source.hasAmmoSystem;
@@ -61,7 +65,7 @@ public sealed class CardPreviewContext
         var copy = new HashSet<StatusEffectType>();
         if (character != null)
             foreach (ActiveStatusEffect effect in character.StatusEffects.ActiveEffects)
-                if (effect.RemainingTurns > 0) copy.Add(effect.Type);
+                if (effect.IsActive) copy.Add(effect.Type);
         return copy;
     }
 
@@ -93,9 +97,20 @@ public sealed class CardPreviewContext
         values["damage:" + path] = value;
     }
 
+    public void RecordBlock(string path, int baseBlock)
+    {
+        // BlockEffect always grants block to the player, matching its Execute implementation.
+        int amount = BlockCalculator.CalculateWithModifiers(baseBlock,
+            applyStatusModifiers && playerStatuses.Contains(StatusEffectType.DefenseBreak));
+        string value = amount.ToString(CultureInfo.InvariantCulture);
+        if (amount < baseBlock) value = "<color=#E57373>" + value + "</color>";
+        else if (amount > baseBlock) value = "<color=#81C784>" + value + "</color>";
+        values["block:" + path] = value;
+    }
+
     public void ApplyStatus(StatusEffectData status, int turns, CardTarget target)
     {
-        if (status == null || turns <= 0 || !Enum.IsDefined(typeof(StatusEffectType), status.Type)) return;
+        if (status == null || (!isContinuous && turns <= 0) || !Enum.IsDefined(typeof(StatusEffectType), status.Type)) return;
         if (target == CardTarget.Player && hasPlayer) playerStatuses.Add(status.Type);
         else if (target == CardTarget.Enemy && hasEnemy) enemyStatuses.Add(status.Type);
     }

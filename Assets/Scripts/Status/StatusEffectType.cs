@@ -1,5 +1,6 @@
 public enum StatusEffectType
 {
     WeaknessExposure,
-    Rust
+    Rust,
+    DefenseBreak
 }

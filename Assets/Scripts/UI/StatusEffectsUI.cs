@@ -7,25 +7,54 @@ public class StatusEffectsUI : MonoBehaviour
     [SerializeField] private StatusTooltipUI tooltipPrefab;
     private StatusTooltipUI tooltip;
     private StatusEffectSystem source;
+    private ContinuousCardSystem continuous;
+    private readonly Dictionary<long, StatusIconUI> continuousIcons = new Dictionary<long, StatusIconUI>();
     private readonly Dictionary<StatusEffectType, StatusIconUI> icons = new Dictionary<StatusEffectType, StatusIconUI>();
 
-    public void Bind(StatusEffectSystem status)
+    public void Bind(StatusEffectSystem status, ContinuousCardSystem continuousCards = null)
     {
         Unsubscribe();
+        // IDs are local to a system, so icons must not survive rebinding to another owner.
+        if (continuous != continuousCards)
+        {
+            foreach (StatusIconUI icon in continuousIcons.Values) RemoveIcon(icon);
+            continuousIcons.Clear();
+        }
         source = status;
-        if (isActiveAndEnabled && source != null) source.Changed += Refresh;
+        continuous = continuousCards;
+        Subscribe();
         Refresh();
     }
 
     private void OnEnable()
     {
         Unsubscribe();
-        if (source != null) source.Changed += Refresh;
+        Subscribe();
         Refresh();
     }
 
     private void OnDisable() { Unsubscribe(); }
-    private void Unsubscribe() { if (source != null) source.Changed -= Refresh; }
+    private void Subscribe()
+    {
+        if (!isActiveAndEnabled) return;
+        if (source != null) source.Changed += Refresh;
+        if (continuous != null) continuous.Changed += Refresh;
+    }
+
+    private void Unsubscribe()
+    {
+        if (source != null) source.Changed -= Refresh;
+        if (continuous != null) continuous.Changed -= Refresh;
+    }
+
+    private static void RemoveIcon(StatusIconUI icon)
+    {
+        if (icon == null) return;
+        icon.CloseTooltip();
+        icon.gameObject.SetActive(false);
+        if (Application.isPlaying) Destroy(icon.gameObject);
+        else DestroyImmediate(icon.gameObject);
+    }
 
     private StatusTooltipUI GetOrCreateTooltip()
     {
@@ -42,20 +71,45 @@ public class StatusEffectsUI : MonoBehaviour
         return tooltip;
     }
 
+    private void RefreshContinuousCards()
+    {
+        var present = new HashSet<long>();
+        if (continuous != null && iconPrefab != null)
+        {
+            foreach (ActiveContinuousCard card in continuous.ActiveCards)
+            {
+                present.Add(card.Id);
+                if (!continuousIcons.TryGetValue(card.Id, out StatusIconUI icon) || icon == null)
+                {
+                    icon = Instantiate(iconPrefab, transform, false);
+                    icon.BindTooltip(GetOrCreateTooltip());
+                    continuousIcons[card.Id] = icon;
+                }
+                icon.SetContinuousCard(card);
+            }
+        }
+        var expired = new List<long>();
+        foreach (var entry in continuousIcons)
+            if (!present.Contains(entry.Key)) expired.Add(entry.Key);
+        foreach (long id in expired)
+        {
+            RemoveIcon(continuousIcons[id]);
+            continuousIcons.Remove(id);
+        }
+    }
+
     private void Refresh()
     {
         var expired = new List<StatusEffectType>();
         foreach (var entry in icons)
-            if (source == null || source.GetRemainingTurns(entry.Key) == 0) expired.Add(entry.Key);
+            if (source == null || !source.HasStatus(entry.Key)) expired.Add(entry.Key);
         foreach (StatusEffectType type in expired)
         {
             StatusIconUI icon = icons[type];
             icons.Remove(type);
-            if (icon == null) continue;
-            icon.gameObject.SetActive(false);
-            if (Application.isPlaying) Destroy(icon.gameObject);
-            else DestroyImmediate(icon.gameObject);
+            RemoveIcon(icon);
         }
+        RefreshContinuousCards();
         if (source == null || iconPrefab == null) return;
         foreach (ActiveStatusEffect status in source.ActiveEffects)
         {
