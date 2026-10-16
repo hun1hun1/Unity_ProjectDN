@@ -104,6 +104,13 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
         restorePending = inputCaptured;
     }
 
+    public static void CloseForBattleEnd()
+    {
+        if (instance == null) return;
+        instance.Close();
+        instance.RestoreInput();
+    }
+
     private void Update()
     {
         if (!IsOpen && inputCaptured && !restorePending) Close();

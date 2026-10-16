@@ -23,4 +23,8 @@ public class DamageEffect : CardEffect
                 break;
         }
     }
+    public override string GetEffectSummary(System.Collections.Generic.HashSet<CardEffect> visiting)
+    {
+        return $"{(target == CardTarget.Player ? "자신" : "적")}에게 기본 피해 {damage}";
+    }
 }

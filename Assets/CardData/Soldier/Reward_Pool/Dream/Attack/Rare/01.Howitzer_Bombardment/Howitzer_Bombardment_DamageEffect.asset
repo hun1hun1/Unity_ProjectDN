@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aeab13a239884f548a3b20092cba29c0, type: 3}
-  m_Name: SoldierDreamReward
+  m_Script: {fileID: 11500000, guid: ab4b40425af7c6b42ba29588a9597c63, type: 3}
+  m_Name: Howitzer_Bombardment_DamageEffect
   m_EditorClassIdentifier: 
-  cards: []
+  target: 1
+  damage: 26

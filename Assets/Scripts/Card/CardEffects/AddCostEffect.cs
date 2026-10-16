@@ -21,4 +21,8 @@ public class AddCostEffect : CardEffect
         costSystem.AddDreamCost(dreamCost);
         costSystem.AddNightmareCost(nightmareCost);
     }
+    public override string GetEffectSummary(System.Collections.Generic.HashSet<CardEffect> visiting)
+    {
+        return $"꿈 코스트 {dreamCost}, 악몽 코스트 {nightmareCost} 획득";
+    }
 }

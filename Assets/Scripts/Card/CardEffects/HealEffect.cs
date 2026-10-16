@@ -18,4 +18,8 @@ public class HealEffect : CardEffect
                 break;
         }
     }
+    public override string GetEffectSummary(System.Collections.Generic.HashSet<CardEffect> visiting)
+    {
+        return $"{(target == CardTarget.Player ? "자신" : "적")}의 HP {heal} 회복";
+    }
 }

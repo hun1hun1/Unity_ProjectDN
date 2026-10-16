@@ -16,4 +16,8 @@ public class ReloadAmmoEffect : CardEffect
         AmmoSystem ammoSystem = player != null ? player.GetAmmoSystem() : null;
         if (ammoSystem != null) ammoSystem.Load(amount);
     }
+    public override string GetEffectSummary(System.Collections.Generic.HashSet<CardEffect> visiting)
+    {
+        return $"총알 {amount} 장전";
+    }
 }

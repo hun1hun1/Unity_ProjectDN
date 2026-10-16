@@ -39,6 +39,7 @@ public static class RunDeckInventory
     public static void ResetForNewGame()
     {
         decks.Clear();
+        RunGoldInventory.ResetForNewGame();
         unchecked { GameVersion++; }
     }
 

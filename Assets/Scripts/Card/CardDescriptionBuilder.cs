@@ -2,12 +2,27 @@ using System.Text.RegularExpressions;
 
 public static class CardDescriptionBuilder
 {
-    private static readonly Regex Tokens = new Regex(@"\{(damage|block|ammoCost|ammoCondition|turnDamage|turnBlock|turnAmmoCost|turnAmmoCondition):(\d+(?:\.\d+)*)\}");
+    private static readonly Regex Tokens = new Regex(@"\{(damage|block|ammoCost|ammoCondition|openingCondition|turnDamage|turnBlock|turnAmmoCost|turnAmmoCondition|turnOpeningCondition):(\d+(?:\.\d+)*)\}");
+
+    public static string BuildEffects(string template, CardEffect[] effects)
+    {
+        var context = new CardPreviewContext(null, null, false, forTurnStart: true);
+        context.PreviewEffects(effects);
+        return Tokens.Replace(template ?? "", match =>
+            context.TryGetValue(match.Groups[1].Value + ":" + match.Groups[2].Value, out string value) ? value : match.Value);
+    }
 
     public static string Build(CardData card, BattleManager battle = null, bool applyStatusModifiers = true)
     {
         if (card == null) return "";
         string template = card.description ?? "";
+        if (template.Contains("{x}"))
+        {
+            CostSystem costs = battle != null ? battle.GetPlayer()?.GetCostSystem() : null;
+            string repeats = card.costMode != CardCostMode.X ? "1" :
+                applyStatusModifiers && costs != null ? costs.GetCurrentCost(card.deckType).ToString() : "X";
+            template = template.Replace("{x}", repeats);
+        }
         if (!Tokens.IsMatch(template)) return template;
         var context = new CardPreviewContext(card, battle, applyStatusModifiers);
         context.PreviewEffects(card.effects);
@@ -27,6 +42,7 @@ public static class CardDescriptionBuilder
                 "turnBlock" => "block",
                 "turnAmmoCost" => "ammoCost",
                 "turnAmmoCondition" => "ammoCondition",
+                "turnOpeningCondition" => "openingCondition",
                 _ => kind
             };
             string key = token + ":" + match.Groups[2].Value;

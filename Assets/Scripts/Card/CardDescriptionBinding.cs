@@ -10,6 +10,8 @@ internal sealed class CardDescriptionBinding
     private StatusEffectSystem playerStatuses;
     private StatusEffectSystem enemyStatuses;
     private AmmoSystem ammo;
+    private CostSystem costs;
+    private BattleManager openingSource;
 
     internal CardDescriptionBinding(Action<string> display) { this.display = display; }
 
@@ -31,6 +33,10 @@ internal sealed class CardDescriptionBinding
         playerStatuses = player != null ? player.StatusEffects : null;
         enemyStatuses = enemy != null ? enemy.StatusEffects : null;
         ammo = player != null ? player.GetAmmoSystem() : null;
+        costs = player != null ? player.GetCostSystem() : null;
+        openingSource = battle;
+        if (openingSource != null) openingSource.OpeningChanged += Refresh;
+        if (costs != null) costs.Changed += Refresh;
         if (playerStatuses != null) playerStatuses.Changed += Refresh;
         if (enemyStatuses != null) enemyStatuses.Changed += Refresh;
         if (ammo != null) ammo.AmmoChanged += OnAmmoChanged;
@@ -39,6 +45,10 @@ internal sealed class CardDescriptionBinding
 
     internal void Disable()
     {
+        if (openingSource != null) openingSource.OpeningChanged -= Refresh;
+        openingSource = null;
+        if (costs != null) costs.Changed -= Refresh;
+        costs = null;
         if (playerStatuses != null) playerStatuses.Changed -= Refresh;
         if (enemyStatuses != null) enemyStatuses.Changed -= Refresh;
         if (ammo != null) ammo.AmmoChanged -= OnAmmoChanged;

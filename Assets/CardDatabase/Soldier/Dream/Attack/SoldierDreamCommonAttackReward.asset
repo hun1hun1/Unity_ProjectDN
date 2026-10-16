@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aeab13a239884f548a3b20092cba29c0, type: 3}
+  m_Name: SoldierDreamCommonAttackReward
+  m_EditorClassIdentifier: 
+  cards:
+  - {fileID: 11400000, guid: 2e1ea91f6995ac741bac63657cfdedd3, type: 2}
+  - {fileID: 11400000, guid: a1d6c60966187f645bf1ae3fe884aab6, type: 2}
+  - {fileID: 11400000, guid: afee74e40972c6c41ae5f91eedb90de4, type: 2}

@@ -1,5 +1,7 @@
 using UnityEngine;
 
+public enum CardCostMode { Fixed, X }
+
 public enum CardType
 {
     Attack,
@@ -19,6 +21,10 @@ public class CardData : ScriptableObject
 {
     public string cardName;
     public Cost cost;
+    [Tooltip("Fixed uses the configured cost. X spends the matching remaining pool and repeats use-time effects that many times.")]
+    public CardCostMode costMode;
+    public string CostLabel => costMode == CardCostMode.X ? "X" :
+        (deckType == CardDeckType.TypeDream ? cost.dreamCost : cost.nightmareCost).ToString();
     public Sprite artwork;
 
     [TextArea]
@@ -30,7 +36,7 @@ public class CardData : ScriptableObject
     public CardEffect[] effects;
 
     [Header("Card Traits")]
-    [Tooltip("Excludes this card from the current battle after use. Permanent continuous cards always absorb instead.")]
+    [Tooltip("Excludes this card from the current battle after use. Permanent continuous cards absorb unless a use-time delayed effect is scheduled.")]
     public bool exhaustOnUse;
 
     public bool ExhaustsOnUse => exhaustOnUse &&

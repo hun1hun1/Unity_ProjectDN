@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Recharging_DamageEffect
   m_EditorClassIdentifier: 
   target: 1
-  damage: 6
+  damage: 5

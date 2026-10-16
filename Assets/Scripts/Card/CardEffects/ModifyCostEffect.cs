@@ -22,4 +22,8 @@ public class ModifyCostEffect : CardEffect
         costSystem.ModifyDreamCost(dreamCost);
         costSystem.ModifyNightmareCost(nightmareCost);
     }
+    public override string GetEffectSummary(System.Collections.Generic.HashSet<CardEffect> visiting)
+    {
+        return $"꿈 코스트 {dreamCost:+0;-0;0}, 악몽 코스트 {nightmareCost:+0;-0;0} 변경";
+    }
 }

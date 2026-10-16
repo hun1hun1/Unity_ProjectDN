@@ -27,4 +27,7 @@ public abstract class CardEffect : ScriptableObject
     }
     public virtual void CollectReferencedStatuses(CardStatusCollector collector) { }
     public virtual void Preview(CardPreviewContext context, string path) { }
+    public virtual bool ContainsDelay(System.Collections.Generic.HashSet<CardEffect> visiting) => false;
+    public virtual bool HasCyclicReferences(System.Collections.Generic.HashSet<CardEffect> visiting) => false;
+    public virtual string GetEffectSummary(System.Collections.Generic.HashSet<CardEffect> visiting) => string.IsNullOrEmpty(name) ? GetType().Name : name;
 }

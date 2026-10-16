@@ -1,196 +1,70 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
+public sealed class CardRewardPool
+{
+    public CardDeckType deckType;
+    public CardType type;
+    public CardRarity rarity;
+    [Min(0)] public int weight;
+    public CardDatabase database;
+}
+
 public class CardRewardSystem : MonoBehaviour
 {
-    [Header("Card Database")]
-    [SerializeField]
-    private CardDatabase cardDatabase;
+    [SerializeField] private CardRewardPool[] pools = Array.Empty<CardRewardPool>();
 
-    [Header("Rarity Chance")]
-    [SerializeField]
-    private float commonChance = 80f;
+    private List<CardData> Candidates(CardRewardPool pool, CardDeckType deck)
+    {
+        var result = new List<CardData>();
+        if (pool == null || pool.deckType != deck || pool.weight <= 0 || pool.database == null) return result;
+        foreach (CardData card in pool.database.GetAllCards())
+            if (card != null && card.deckType == deck && card.type == pool.type && card.rarity == pool.rarity && !result.Contains(card))
+                result.Add(card);
+        return result;
+    }
 
-    [SerializeField]
-    private float uncommonChance = 15f;
-
-    [SerializeField]
-    private float rareChance = 5f;
-
-    [Header("Common Type Chance")]
-    [SerializeField]
-    private float commonAttackChance = 70f;
-
-    [SerializeField]
-    private float commonSkillChance = 30f;
-
-    [Header("Uncommon Type Chance")]
-    [SerializeField]
-    private float uncommonAttackChance = 50f;
-
-    [SerializeField]
-    private float uncommonSkillChance = 50f;
-
-    [Header("Rare Type Chance")]
-    [SerializeField]
-    private float rareAttackChance = 40f;
-
-    [SerializeField]
-    private float rareSkillChance = 40f;
-
-    [SerializeField]
-    private float rareContinuousChance = 20f;
+    public int GetCandidateCount(CardDeckType deck)
+    {
+        var unique = new HashSet<CardData>();
+        foreach (CardRewardPool pool in pools) foreach (CardData card in Candidates(pool, deck)) unique.Add(card);
+        return unique.Count;
+    }
 
     public CardData GetRandomCard(CardDeckType deckType)
     {
-        if (cardDatabase == null)
-        {
-            Debug.LogError("CardDatabase가 설정되지 않았습니다.");
-            return null;
-        }
-
-        CardRarity rarity = GetRandomRarity();
-        CardType type = GetRandomCardType(rarity);
-
-        List<CardData> candidates =
-            GetCandidates(deckType, rarity, type);
-
-        if (candidates.Count == 0)
-        {
-            Debug.LogWarning(
-                $"조건에 맞는 카드가 없습니다. " +
-                $"Deck: {deckType}, " +
-                $"Rarity: {rarity}, " +
-                $"Type: {type}"
-            );
-
-            return null;
-        }
-
-        int randomIndex =
-            Random.Range(0, candidates.Count);
-
-        return candidates[randomIndex];
+        List<CardData> result = GenerateRewards(deckType, 1);
+        return result.Count == 0 ? null : result[0];
     }
 
+    public List<CardData> GenerateRewards(CardDeckType deckType, int rewardCount) => GenerateRewards(deckType, rewardCount, null);
 
-    private List<CardData> GetCandidates(
-    CardDeckType deckType,
-    CardRarity rarity,
-    CardType type)
+    public List<CardData> GenerateRewards(CardDeckType deckType, int rewardCount, System.Random random)
     {
-        List<CardData> candidates =
-            new List<CardData>();
-
-        IReadOnlyList<CardData> allCards =
-            cardDatabase.GetAllCards();
-
-        foreach (CardData card in allCards)
+        var result = new List<CardData>();
+        if (rewardCount <= 0 || GetCandidateCount(deckType) < rewardCount) return result;
+        var candidates = new List<CardData>[pools.Length];
+        for (int i = 0; i < pools.Length; i++) candidates[i] = Candidates(pools[i], deckType);
+        while (result.Count < rewardCount)
         {
-            if (card == null)
-                continue;
-
-            if (card.deckType != deckType)
-                continue;
-
-            if (card.rarity != rarity)
-                continue;
-
-            if (card.type != type)
-                continue;
-
-            candidates.Add(card);
-        }
-
-        return candidates;
-    }
-
-    private CardRarity GetRandomRarity()
-    {
-        float randomValue =
-            Random.Range(0f, 100f);
-
-        if (randomValue < commonChance)
-        {
-            return CardRarity.Common;
-        }
-
-        if (randomValue <
-            commonChance + uncommonChance)
-        {
-            return CardRarity.Uncommon;
-        }
-
-        return CardRarity.Rare;
-    }
-
-
-    private CardType GetRandomCardType(
-        CardRarity rarity)
-    {
-        float randomValue =
-            Random.Range(0f, 100f);
-
-        switch (rarity)
-        {
-            case CardRarity.Common:
-
-                if (randomValue < commonAttackChance)
-                {
-                    return CardType.Attack;
-                }
-
-                return CardType.Skill;
-
-
-            case CardRarity.Uncommon:
-
-                if (randomValue < uncommonAttackChance)
-                {
-                    return CardType.Attack;
-                }
-
-                return CardType.Skill;
-
-
-            case CardRarity.Rare:
-
-                if (randomValue < rareAttackChance)
-                {
-                    return CardType.Attack;
-                }
-
-                if (randomValue <
-                    rareAttackChance + rareSkillChance)
-                {
-                    return CardType.Skill;
-                }
-
-                return CardType.Continuous;
-        }
-
-        return CardType.Attack;
-    }
-
-
-    public List<CardData> GenerateRewards(
-    CardDeckType deckType,
-    int rewardCount)
-    {
-        List<CardData> rewards =
-            new List<CardData>();
-
-        for (int i = 0; i < rewardCount; i++)
-        {
-            CardData card =
-                GetRandomCard(deckType);
-
-            if (card != null)
+            double total = 0;
+            for (int i = 0; i < pools.Length; i++) if (candidates[i].Count > 0) total += pools[i].weight;
+            double roll = (random != null ? random.NextDouble() : UnityEngine.Random.value) * total;
+            int selected = -1;
+            for (int i = 0; i < pools.Length; i++)
             {
-                rewards.Add(card);
+                if (candidates[i].Count == 0) continue;
+                selected = i;
+                roll -= pools[i].weight;
+                if (roll < 0) break;
             }
+            List<CardData> category = candidates[selected];
+            CardData card = category[random != null ? random.Next(category.Count) : UnityEngine.Random.Range(0, category.Count)];
+            result.Add(card);
+            foreach (List<CardData> list in candidates) list.Remove(card);
         }
-
-        return rewards;
+        return result;
     }
 }

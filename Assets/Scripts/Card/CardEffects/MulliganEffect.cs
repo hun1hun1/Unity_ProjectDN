@@ -31,4 +31,8 @@ public class MulliganEffect : CardEffect
 
     public override IEnumerator ActivateContinuousRoutine(BattleManager battle, ActiveContinuousCard source) =>
         ExecuteRoutine(battle);
+    public override string GetEffectSummary(System.Collections.Generic.HashSet<CardEffect> visiting)
+    {
+        return $"{(handScope == MulliganHandScope.Dream ? "꿈" : handScope == MulliganHandScope.Nightmare ? "악몽" : "양쪽")} 손패 {(countMode == MulliganCountMode.All ? "전체" : Count.ToString() + "장")} 교체";
+    }
 }

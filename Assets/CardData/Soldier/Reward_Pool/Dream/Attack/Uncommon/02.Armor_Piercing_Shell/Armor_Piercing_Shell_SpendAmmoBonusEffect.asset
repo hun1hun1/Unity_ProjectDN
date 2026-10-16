@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f5e59177a5098549b4d052bc30c838c, type: 3}
+  m_Name: Armor_Piercing_Shell_SpendAmmoBonusEffect
+  m_EditorClassIdentifier: 
+  target: 0
+  ammoCost: 2
+  bonusEffects:
+  - {fileID: 11400000, guid: 18b82393e7e0778479348af7d79e7c56, type: 2}

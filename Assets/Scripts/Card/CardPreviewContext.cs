@@ -15,6 +15,7 @@ public sealed class CardPreviewContext
     private readonly bool hasBattleContext;
     private readonly bool applyStatusModifiers;
     private readonly bool isContinuous;
+    private readonly bool openingAvailable;
     private bool canExecute;
     private int ammo;
     private int maxAmmo;
@@ -25,7 +26,9 @@ public sealed class CardPreviewContext
         Enemy enemy = battle != null ? battle.GetTarget() : null;
         AmmoSystem source = player != null ? player.GetAmmoSystem() : null;
         this.applyStatusModifiers = applyStatusModifiers;
-        isContinuous = card.type == CardType.Continuous && !forTurnStart;
+        openingAvailable = !forTurnStart && card != null && card.costMode == CardCostMode.Fixed &&
+            battle != null && battle.OpeningAvailable;
+        isContinuous = card != null && card.type == CardType.Continuous && !forTurnStart;
         hasPlayer = player != null;
         hasEnemy = enemy != null;
         hasBattleContext = battle != null && hasPlayer;
@@ -43,14 +46,15 @@ public sealed class CardPreviewContext
             ammo -= card.requiredAmmo;
     }
 
-    private CardPreviewContext(CardPreviewContext source)
+    private CardPreviewContext(CardPreviewContext source, bool delayed = false)
     {
         playerStatuses = new HashSet<StatusEffectType>(source.playerStatuses);
         enemyStatuses = new HashSet<StatusEffectType>(source.enemyStatuses);
         values = source.values;
         visiting = source.visiting;
-        applyStatusModifiers = source.applyStatusModifiers;
-        isContinuous = source.isContinuous;
+        applyStatusModifiers = !delayed && source.applyStatusModifiers;
+        isContinuous = !delayed && source.isContinuous;
+        openingAvailable = !delayed && source.openingAvailable;
         hasPlayer = source.hasPlayer;
         hasEnemy = source.hasEnemy;
         hasAmmoSystem = source.hasAmmoSystem;
@@ -83,6 +87,31 @@ public sealed class CardPreviewContext
     }
 
     internal bool TryGetValue(string token, out string value) => values.TryGetValue(token, out value);
+
+    public void PreviewDelayed(string path, CardEffect[] effects)
+    {
+        var branch = new CardPreviewContext(this, delayed: true);
+        branch.PreviewEffects(effects, path);
+    }
+
+    public void PreviewOpening(string path, CardEffect[] effects)
+    {
+        bool available = canExecute && openingAvailable;
+        values["openingCondition:" + path] = !hasBattleContext || !applyStatusModifiers ? "" : available
+            ? "<color=#81C784>개전 발동 가능</color>"
+            : "<color=#808080>개전 발동 불가</color>";
+        if (available)
+        {
+            PreviewEffects(effects, path);
+        }
+        else
+        {
+            // Keep the bonus's numbers visible without applying its changes to later effects.
+            var branch = new CardPreviewContext(this);
+            branch.canExecute = false;
+            branch.PreviewEffects(effects, path);
+        }
+    }
 
     public void RecordDamage(string path, int baseDamage, CardTarget target)
     {

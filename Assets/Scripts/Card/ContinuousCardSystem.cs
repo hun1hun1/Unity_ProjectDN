@@ -30,16 +30,16 @@ public sealed class ContinuousCardSystem
         return result;
     }
 
-    public IEnumerator ActivateRoutine(CardData card, BattleManager battle, DeckController deck, Action<ActiveContinuousCard> activated = null)
+    public IEnumerator ActivateRoutine(CardData card, BattleManager battle, DeckController deck, Action<ActiveContinuousCard> activated = null, int repeatCount = 1)
     {
-        if (!CanActivate(card) || battle == null || deck == null) yield break;
+        if (!CanActivate(card) || battle == null || deck == null || repeatCount < 1) yield break;
         var entry = new ActiveContinuousCard(++nextId, card, deck);
         active.Add(entry);
         activated?.Invoke(entry);
         bool complete = false;
         try
         {
-            yield return battle.ExecuteEffectsRoutine(card.effects, entry);
+            yield return battle.ExecuteCardEffectsRoutine(card, repeatCount, entry);
             complete = battle.CanContinueEffects;
         }
         finally
@@ -88,7 +88,7 @@ public sealed class ContinuousCardSystem
 
     private void AdvanceDuration(ActiveContinuousCard entry)
     {
-        if (!entry.IsActive || entry.IsPermanent) return;
+        if (!entry.IsActive || entry.IsPermanent || entry.UsesDelayedLifetime) return;
         entry.RemainingTurns--;
         if (entry.RemainingTurns > 0)
         {
@@ -99,6 +99,14 @@ public sealed class ContinuousCardSystem
         entry.ReleaseEffects();
         if (entry.IsAbsorbed && entry.Deck != null)
             entry.Deck.ReturnToDrawPile(entry.Card, entry.DeckType);
+    }
+
+    public void CompleteDelayedCard(ActiveContinuousCard entry)
+    {
+        if (entry == null || !entry.IsActive || entry.HasPendingDelays || !active.Remove(entry)) return;
+        entry.ReleaseEffects();
+        if (entry.IsAbsorbed && entry.Deck != null) entry.Deck.DiscardCard(entry.Card, entry.DeckType);
+        Changed?.Invoke();
     }
 
     // Initializing a battle must not return old absorbed cards into freshly reset piles.

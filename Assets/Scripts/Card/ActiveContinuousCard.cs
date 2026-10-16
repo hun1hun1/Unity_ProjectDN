@@ -18,8 +18,14 @@ public sealed class ActiveContinuousCard
     public long Id { get; }
     public CardData Card { get; }
     public CardDeckType DeckType { get; }
-    public bool IsPermanent { get; }
-    public bool IsAbsorbed { get; }
+    private readonly bool permanent;
+    private int pendingDelays;
+    public bool UsesDelayedLifetime { get; private set; }
+    public bool HasPendingDelays => pendingDelays > 0;
+    public bool HasMaintainedEffects => releases.Count > 0;
+    public bool ExhaustsOnUse => Card.exhaustOnUse && (UsesDelayedLifetime || Card.ExhaustsOnUse);
+    public bool IsPermanent => permanent && !UsesDelayedLifetime;
+    public bool IsAbsorbed => !ExhaustsOnUse;
     public bool IsActive { get; internal set; } = true;
     public int RemainingTurns { get; internal set; }
     internal event Action DurationChanged;
@@ -33,21 +39,18 @@ public sealed class ActiveContinuousCard
         foreach (CardEffect effect in turnStartEffects)
             if (effect != null) { HasTurnStartEffects = true; break; }
         DeckType = card.deckType;
-        IsPermanent = card.continuousDurationType == ContinuousDurationType.UntilBattleEnd;
-        IsAbsorbed = !card.ExhaustsOnUse;
+        permanent = card.continuousDurationType == ContinuousDurationType.UntilBattleEnd;
         RemainingTurns = IsPermanent ? 0 : card.continuousTurns;
     }
 
     internal IEnumerator ExecuteTurnStartEffectsRoutine(BattleManager battle)
     {
-        foreach (CardEffect effect in turnStartEffects)
-        {
-            if (!IsActive || !battle.CanContinueEffects) yield break;
-            if (effect == null) continue;
-            IEnumerator step = effect.ExecuteRoutine(battle);
-            if (step != null) yield return step;
-        }
+        yield return battle.ExecuteEffectsRoutine(turnStartEffects, sourceCard: Card);
     }
+
+    internal void RegisterDelay() { pendingDelays++; UsesDelayedLifetime = true; }
+    internal bool CompleteDelay() { pendingDelays = Math.Max(0, pendingDelays - 1); return pendingDelays == 0; }
+    internal void SetDelayedTurns(int turns) { RemainingTurns = turns; NotifyDurationChanged(); }
 
     internal void AddRelease(Action release)
     {

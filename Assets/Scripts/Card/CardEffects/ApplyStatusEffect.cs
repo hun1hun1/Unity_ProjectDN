@@ -36,4 +36,8 @@ public class ApplyStatusEffect : CardEffect
         }
         if (character != null) character.StatusEffects.Apply(status, turns);
     }
+    public override string GetEffectSummary(System.Collections.Generic.HashSet<CardEffect> visiting)
+    {
+        return status != null ? $"{(target == CardTarget.Player ? "자신" : "적")}에게 {status.DisplayName} {turns}턴 부여" : "상태이상 부여";
+    }
 }

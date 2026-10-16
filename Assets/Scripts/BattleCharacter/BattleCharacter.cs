@@ -12,6 +12,12 @@ public abstract class BattleCharacter : MonoBehaviour
     [Header("UI")]
     [SerializeField] private CharacterInfoUI characterInfoUI;
 
+    public event System.Action<BattleCharacter> Died;
+    public void BindDelayedEffects(DelayedEffectSystem delayed)
+    {
+        if (characterInfoUI != null) characterInfoUI.BindStatusEffects(StatusEffects, ContinuousCards, delayed);
+    }
+
     public StatusEffectSystem StatusEffects { get; } = new StatusEffectSystem();
     public ContinuousCardSystem ContinuousCards { get; } = new ContinuousCardSystem();
 
@@ -30,6 +36,7 @@ public abstract class BattleCharacter : MonoBehaviour
 
     public virtual void TakeDamage(int damage, BattleCharacter attacker)
     {
+        bool wasAlive = currentHP > 0;
         damage = DamageCalculator.Calculate(damage, attacker, this);
         // 방어도가 먼저 피해를 흡수
         int remainingDamage = damage - block;
@@ -51,8 +58,9 @@ public abstract class BattleCharacter : MonoBehaviour
 
         UpdateUI();
 
-        if (currentHP <= 0)
+        if (wasAlive && currentHP <= 0)
         {
+            Died?.Invoke(this);
             Die();
         }
     }

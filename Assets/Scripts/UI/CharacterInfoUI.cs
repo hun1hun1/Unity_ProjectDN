@@ -18,9 +18,9 @@ public class CharacterInfoUI : MonoBehaviour
     [Header("Status")]
     [SerializeField] private StatusEffectsUI statusUI;
 
-    public void BindStatusEffects(StatusEffectSystem status, ContinuousCardSystem continuous = null)
+    public void BindStatusEffects(StatusEffectSystem status, ContinuousCardSystem continuous = null, DelayedEffectSystem delayed = null)
     {
-        if (statusUI != null) statusUI.Bind(status, continuous);
+        if (statusUI != null) statusUI.Bind(status, continuous, delayed);
     }
 
     public void SetHP(int currentHP, int maxHP)

@@ -57,11 +57,11 @@ public class DeckCardUI : MonoBehaviour, IPointerClickHandler
         artwork.sprite = data.artwork;
         if (data.deckType == CardDeckType.TypeDream)
         {
-            costText.text = data.cost.dreamCost.ToString();
+            costText.text = data.CostLabel;
         }
         if (data.deckType == CardDeckType.TypeNightmare)
         {
-            costText.text = data.cost.nightmareCost.ToString();
+            costText.text = data.CostLabel;
         }
         nameText.text = data.cardName;
         if (descriptionBinding == null)

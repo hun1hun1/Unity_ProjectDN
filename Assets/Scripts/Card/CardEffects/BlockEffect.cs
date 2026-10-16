@@ -14,4 +14,8 @@ public class BlockEffect : CardEffect
     {
         battleManager.GetPlayer().AddBlock(block);
     }
+    public override string GetEffectSummary(System.Collections.Generic.HashSet<CardEffect> visiting)
+    {
+        return $"자신에게 기본 방어도 {block} 획득";
+    }
 }

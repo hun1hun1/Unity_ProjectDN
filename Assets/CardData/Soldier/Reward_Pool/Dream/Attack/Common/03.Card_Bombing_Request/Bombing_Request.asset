@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c813815edeae7934380dab4472c7c28c, type: 3}
+  m_Name: Bombing_Request
+  m_EditorClassIdentifier: 
+  cardName: "\uD3ED\uACA9 \uC694\uCCAD"
+  cost:
+    dreamCost: 2
+    nightmareCost: 0
+  artwork: {fileID: 0}
+  description: "1\uD134 \uD6C4 \uC801\uC5D0\uAC8C {damage:0.0}\uC758 \uD53C\uD574\uB97C
+    \uC90D\uB2C8\uB2E4."
+  deckType: 0
+  type: 0
+  rarity: 0
+  effects:
+  - {fileID: 11400000, guid: 236fef909625a0a408b6143bead1ce8b, type: 2}
+  - {fileID: 11400000, guid: 8db4d77123312264c8340401fb4c80c4, type: 2}
+  exhaustOnUse: 0
+  turnStartEffects: []
+  continuousDurationType: 0
+  continuousTurns: 1
+  continuousIcon: {fileID: 0}
+  requiredAmmo: 0
+  consumeRequiredAmmo: 0

@@ -16,12 +16,28 @@ public class BattleManager : MonoBehaviour
     [Header("Card Using Area")]
     [SerializeField] private RectTransform cardUsingPoint;
 
+    public BattleResult Result { get; private set; }
+    public event System.Action<BattleResult> BattleEnded;
     private BattleState currentState;
     private bool isResolvingEffects;
     private int activeCardUses;
+    private int cardsPlayedThisTurn;
+    public CardUseContext CurrentCardUse { get; private set; }
+    public bool OpeningAvailable => currentState == BattleState.PlayerTurn && CanContinueEffects && cardsPlayedThisTurn == 0;
+    public event System.Action OpeningChanged;
+
+    private void ResetOpeningForTurn()
+    {
+        cardsPlayedThisTurn = 0;
+        OpeningChanged?.Invoke();
+    }
     private CardUI resolvingCard;
+    private Player boundPlayer;
+    private Enemy boundEnemy;
     private readonly MulliganSystem mulligans = new MulliganSystem();
     public MulliganSystem Mulligans => mulligans;
+    public DelayedEffectSystem DelayedEffects { get; } = new DelayedEffectSystem();
+    public CardData CurrentEffectCard { get; private set; }
     public bool BlocksCardInteraction => isResolvingEffects;
     public bool CanContinueEffects => isActiveAndEnabled && currentState != BattleState.BattleEnd;
     public bool HasOtherCardUses => activeCardUses > (resolvingCard != null ? 1 : 0);
@@ -41,15 +57,32 @@ public class BattleManager : MonoBehaviour
         return false;
     }
 
-    public IEnumerator ExecuteEffectsRoutine(CardEffect[] effects, ActiveContinuousCard source = null)
+    public IEnumerator ExecuteEffectsRoutine(CardEffect[] effects, ActiveContinuousCard source = null, CardData sourceCard = null)
     {
         if (effects == null) yield break;
-        foreach (CardEffect effect in effects)
+        BindBattleCharacters();
+        CardData previousCard = CurrentEffectCard;
+        CurrentEffectCard = sourceCard ?? source?.Card ?? previousCard;
+        try
         {
-            if (!CanContinueEffects || (source != null && !source.IsActive)) yield break;
-            if (effect == null) continue;
-            IEnumerator step = source == null ? effect.ExecuteRoutine(this) : effect.ActivateContinuousRoutine(this, source);
-            if (step != null) yield return step;
+            foreach (CardEffect effect in effects)
+            {
+                if (!CanContinueEffects || (source != null && !source.IsActive)) yield break;
+                if (effect == null) continue;
+                IEnumerator step = source == null ? effect.ExecuteRoutine(this) : effect.ActivateContinuousRoutine(this, source);
+                if (step != null) yield return step;
+            }
+        }
+        finally { CurrentEffectCard = previousCard; }
+    }
+
+    public IEnumerator ExecuteCardEffectsRoutine(CardData card, int repeatCount, ActiveContinuousCard source = null)
+    {
+        if (card == null) yield break;
+        for (int i = 0; i < repeatCount; i++)
+        {
+            if (!CanContinueEffects || source != null && !source.IsActive) yield break;
+            yield return ExecuteEffectsRoutine(card.effects, source, card);
         }
     }
 
@@ -63,16 +96,69 @@ public class BattleManager : MonoBehaviour
         finally { isResolvingEffects = previous; }
     }
 
+    internal void BindBattleCharacters()
+    {
+        if (boundPlayer != player)
+        {
+            if (boundPlayer != null) boundPlayer.Died -= OnCharacterDied;
+            boundPlayer = player;
+            if (boundPlayer != null) boundPlayer.Died += OnCharacterDied;
+        }
+        // Character Awake may have rebound its HUD after our OnEnable. Restore the HUD independently of death subscriptions.
+        if (player != null) player.BindDelayedEffects(DelayedEffects);
+        if (boundEnemy != target)
+        {
+            if (boundEnemy != null) boundEnemy.Died -= OnCharacterDied;
+            boundEnemy = target;
+            if (boundEnemy != null) boundEnemy.Died += OnCharacterDied;
+        }
+    }
+
+    private void OnEnable() { BindBattleCharacters(); }
+
+    private void OnCharacterDied(BattleCharacter character)
+    {
+        FinishBattle(character == player || player != null && player.GetCurrentHP() <= 0
+            ? BattleResult.Defeat : BattleResult.Victory);
+    }
+
+    public void EndBattle() => FinishBattle(BattleResult.Cancelled);
+
+    public void FinishBattle(BattleResult result)
+    {
+        if (currentState == BattleState.BattleEnd) return;
+        Result = result;
+        ChangeState(BattleState.BattleEnd);
+        DelayedEffects.Clear();
+        mulligans.Cancel();
+        if (player != null) player.ContinuousCards.ResetForBattle();
+        if (target != null) target.ContinuousCards.ResetForBattle();
+        isResolvingEffects = false;
+        CardInspectionUI.CloseForBattleEnd();
+        BattleEnded?.Invoke(Result);
+    }
+
     private void OnDisable()
     {
         StopAllCoroutines();
         EffectSequence.Stop(this);
         mulligans.Cancel();
-        resolvingCard = null; activeCardUses = 0; isResolvingEffects = false;
+        DelayedEffects.Clear();
+        if (player != null) player.ContinuousCards.ResetForBattle();
+        if (target != null) target.ContinuousCards.ResetForBattle();
+        if (boundPlayer != null) boundPlayer.Died -= OnCharacterDied;
+        if (boundEnemy != null) boundEnemy.Died -= OnCharacterDied;
+        boundPlayer = null; boundEnemy = null;
+        resolvingCard = null; CurrentEffectCard = null; CurrentCardUse = null; activeCardUses = 0; isResolvingEffects = false;
+        ResetOpeningForTurn();
     }
 
     private void Start()
     {
+        CurrentCardUse = null;
+        ResetOpeningForTurn();
+        DelayedEffects.Clear();
+        BindBattleCharacters();
         if (player != null)
         {
             player.ContinuousCards.ResetForBattle();
@@ -190,26 +276,31 @@ public class BattleManager : MonoBehaviour
             return false;
 
         CostSystem costSystem = player.GetCostSystem();
+        bool isXCost = cardData.costMode == CardCostMode.X;
+        int paidCost;
+        CardUseContext cardUse;
         isResolvingEffects = true;
         try
         {
-            if (!costSystem.TryPay(cardData))
-                return false;
-
-            // Preserve the preview from before resource payment and effect execution.
+            // Cost notifications must not rewrite the resolving card's pre-payment preview.
             cardUI.PauseDescriptionUpdates();
+            if (!costSystem.TryPay(cardData, out paidCost))
+                return false;
             if (cardData.consumeRequiredAmmo && cardData.requiredAmmo > 0 &&
                 !player.GetAmmoSystem().TrySpend(cardData.requiredAmmo))
             {
                 // Restore the card cost if a resource changed after preflight.
                 if (cardData.deckType == CardDeckType.TypeDream)
-                    costSystem.AddDreamCost(cardData.cost.dreamCost);
+                    costSystem.AddDreamCost(paidCost);
                 else
-                    costSystem.AddNightmareCost(cardData.cost.nightmareCost);
+                    costSystem.AddNightmareCost(paidCost);
                 return false;
             }
 
+            cardUse = new CardUseContext(cardData, cardsPlayedThisTurn == 0);
             cardUI.MarkAsUsed();
+            cardsPlayedThisTurn++;
+            OpeningChanged?.Invoke();
             Debug.Log($"Card used: {cardData.cardName}");
 
         }
@@ -220,13 +311,14 @@ public class BattleManager : MonoBehaviour
         }
 
         activeCardUses++;
-        EffectSequence.Start(this, UseCardRoutine(cardUI, cardData));
+        EffectSequence.Start(this, UseCardRoutine(cardUI, cardData, isXCost ? paidCost : 1, cardUse));
         return true;
     }
 
-    private IEnumerator UseCardRoutine(CardUI cardUI, CardData cardData)
+    private IEnumerator UseCardRoutine(CardUI cardUI, CardData cardData, int repeatCount, CardUseContext cardUse)
     {
         bool settled = false;
+        bool exhausts = repeatCount == 0 ? cardData.exhaustOnUse : cardData.ExhaustsOnUse;
         ActiveContinuousCard continuous = null;
         try
         {
@@ -239,18 +331,21 @@ public class BattleManager : MonoBehaviour
             }
 
             resolvingCard = cardUI;
+            CardUseContext previousUse = CurrentCardUse;
+            CurrentCardUse = cardUse;
             bool previous = isResolvingEffects;
             isResolvingEffects = true;
             try
             {
-                if (cardData.type == CardType.Continuous)
-                    yield return player.ContinuousCards.ActivateRoutine(cardData, this, deckController, entry => continuous = entry);
+                if (cardData.type == CardType.Continuous && repeatCount > 0)
+                    yield return player.ContinuousCards.ActivateRoutine(cardData, this, deckController, entry => continuous = entry, repeatCount);
                 else
-                    yield return ExecuteEffectsRoutine(cardData.effects);
+                    yield return ExecuteCardEffectsRoutine(cardData, repeatCount);
             }
             finally
             {
                 if (resolvingCard == cardUI) resolvingCard = null;
+                CurrentCardUse = previousUse;
                 isResolvingEffects = previous;
             }
 
@@ -258,11 +353,11 @@ public class BattleManager : MonoBehaviour
             if (handController == null) { settled = true; yield break; }
             if (!CanContinueEffects) yield break;
             yield return cardUI.UsedCardAnimation(cardUsingPoint, handController.GetDiscardPilePoint(),
-                cardData.type == CardType.Continuous ? player.transform : null, cardData.ExhaustsOnUse);
+                continuous != null ? player.transform : null, continuous != null ? continuous.ExhaustsOnUse : exhausts);
 
-            if (cardData.type != CardType.Continuous)
+            if (continuous == null)
             {
-                if (cardData.ExhaustsOnUse) deckController.ExhaustCard(cardData, cardData.deckType);
+                if (exhausts) deckController.ExhaustCard(cardData, cardData.deckType);
                 else deckController.DiscardCard(cardData, cardData.deckType);
             }
             settled = true;
@@ -274,9 +369,9 @@ public class BattleManager : MonoBehaviour
             if (!settled && cardUI != null && cardUI.IsUsed)
             {
                 // A suspended use still needs a destination when its owner is disabled.
-                if (deckController != null && (continuous == null || !continuous.IsActive))
+                if (deckController != null && continuous == null)
                 {
-                    if (cardData.ExhaustsOnUse) deckController.ExhaustCard(cardData, cardData.deckType);
+                    if (exhausts) deckController.ExhaustCard(cardData, cardData.deckType);
                     else deckController.DiscardCard(cardData, cardData.deckType);
                 }
                 Destroy(cardUI.gameObject);
@@ -392,6 +487,7 @@ public class BattleManager : MonoBehaviour
 
         while (activeCardUses > 0)
             yield return null;
+        if (!CanContinueEffects) yield break;
 
         Debug.Log("플레이어 턴 종료");
 
@@ -416,7 +512,9 @@ public class BattleManager : MonoBehaviour
         // 2. 적 턴
         // =========================================
 
+        if (!CanContinueEffects) yield break;
         StartEnemyTurn();
+        if (!CanContinueEffects) yield break;
 
         // =========================================
         // 3. 플레이어 턴 시작
@@ -429,10 +527,13 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator StartPlayerTurnRoutine()
     {
+        if (!CanContinueEffects) yield break;
         bool previousResolving = isResolvingEffects;
         isResolvingEffects = true;
         try
         {
+            ResetOpeningForTurn();
+            DelayedEffects.AdvanceTurn();
             ProcessTurnStartStatusEffects();
 
             ChangeState(BattleState.PlayerTurn);
@@ -457,6 +558,8 @@ public class BattleManager : MonoBehaviour
             if (target != null) yield return target.ContinuousCards.ProcessTurnStartEffectsRoutine(this);
             if (!CanContinueEffects) yield break;
 
+            yield return DelayedEffects.ProcessDueEffectsRoutine(this);
+            if (!CanContinueEffects) yield break;
             DrawCards(CardDeckType.TypeDream, dreamCardHand);
             DrawCards(CardDeckType.TypeNightmare, nightmareCardHand);
         }
@@ -469,12 +572,14 @@ public class BattleManager : MonoBehaviour
     private void ChangeState(BattleState newState)
     {
         currentState = newState;
+        OpeningChanged?.Invoke();
 
         Debug.Log($"Battle State : {currentState}");
     }
 
     private void StartEnemyTurn()
     {
+        if (!CanContinueEffects) return;
         ChangeState(BattleState.EnemyTurn);
 
         Debug.Log("적 턴 시작");
@@ -483,7 +588,7 @@ public class BattleManager : MonoBehaviour
 
         target.EnemyTurn(this);
 
-        EndEnemyTurn();
+        if (CanContinueEffects) EndEnemyTurn();
     }
 
     private void EndEnemyTurn()

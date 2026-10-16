@@ -39,56 +39,33 @@ public class CostSystem : MonoBehaviour
         UpdateGaugeUI();
     }
 
+    public event System.Action Changed;
+
+    public int GetCurrentCost(CardDeckType deckType) => deckType == CardDeckType.TypeDream ? currentDreamCost :
+        deckType == CardDeckType.TypeNightmare ? currentNightmareCost : 0;
+
     public bool CanPay(CardData cardData)
     {
-        if (cardData == null) return false;
-
-        switch (cardData.deckType)
-        {
-            case CardDeckType.TypeDream:
-                return cardData.cost.dreamCost >= 0 &&
-                    currentDreamCost >= cardData.cost.dreamCost;
-            case CardDeckType.TypeNightmare:
-                return cardData.cost.nightmareCost >= 0 &&
-                    currentNightmareCost >= cardData.cost.nightmareCost;
-            default:
-                return false;
-        }
+        if (cardData == null || (cardData.deckType != CardDeckType.TypeDream && cardData.deckType != CardDeckType.TypeNightmare)) return false;
+        int available = GetCurrentCost(cardData.deckType);
+        if (cardData.costMode == CardCostMode.X) return available >= 0;
+        if (cardData.costMode != CardCostMode.Fixed) return false;
+        int required = cardData.deckType == CardDeckType.TypeDream ? cardData.cost.dreamCost : cardData.cost.nightmareCost;
+        return required >= 0 && available >= required;
     }
 
-    public bool TryPay(CardData cardData)
+    public bool TryPay(CardData cardData) => TryPay(cardData, out _);
+
+    public bool TryPay(CardData cardData, out int paidCost)
     {
-        switch (cardData.deckType)
-        {
-            case CardDeckType.TypeDream:
-
-                if (currentDreamCost < cardData.cost.dreamCost)
-                {
-                    Debug.Log("Dream 코스트 부족");
-                    return false;
-                }
-
-                currentDreamCost -= cardData.cost.dreamCost;
-
-                UpdateUI();
-                return true;
-
-
-            case CardDeckType.TypeNightmare:
-
-                if (currentNightmareCost < cardData.cost.nightmareCost)
-                {
-                    Debug.Log("Nightmare 코스트 부족");
-                    return false;
-                }       
-
-                currentNightmareCost -= cardData.cost.nightmareCost;
-
-                UpdateUI();
-                return true;
-        }
-
-        return false;
+        paidCost = 0;
+        if (!CanPay(cardData)) return false;
+        paidCost = cardData.costMode == CardCostMode.X ? GetCurrentCost(cardData.deckType) :
+            cardData.deckType == CardDeckType.TypeDream ? cardData.cost.dreamCost : cardData.cost.nightmareCost;
+        if (cardData.deckType == CardDeckType.TypeDream) currentDreamCost -= paidCost;
+        else currentNightmareCost -= paidCost;
+        UpdateUI();
+        return true;
     }
 
     public void AddDreamCost(int amount)
@@ -158,6 +135,7 @@ public class CostSystem : MonoBehaviour
         {
             nightmareCostUI.SetCost(currentNightmareCost,maxNightmareCost);
         }
+        Changed?.Invoke();
     }
 
     public void ResetForTurn()

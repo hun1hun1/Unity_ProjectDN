@@ -101,9 +101,9 @@ public static class SoldierAssetSetup
     private static void ConfigureStartingDeckDatabases()
     {
         CardDatabase dream = AssetDatabase.LoadAssetAtPath<CardDatabase>(
-            "Assets/CardDatabase/Soldier/SoldierDreamStartingDeck.asset");
+            "Assets/CardDatabase/Soldier/Dream/SoldierDreamStartingDeck.asset");
         CardDatabase nightmare = AssetDatabase.LoadAssetAtPath<CardDatabase>(
-            "Assets/CardDatabase/Soldier/SoldierNightmareStartingDeck.asset");
+            "Assets/CardDatabase/Soldier/Nightmare/SoldierNightmareStartingDeck.asset");
         if (dream == null || nightmare == null)
             throw new InvalidOperationException("Soldier starting deck databases are missing.");
         if (AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath) == null)

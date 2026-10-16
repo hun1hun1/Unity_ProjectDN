@@ -11,8 +11,8 @@ using Object = UnityEngine.Object;
 
 public class StartingDeckTests
 {
-    private const string DreamPath = "Assets/CardDatabase/Soldier/SoldierDreamStartingDeck.asset";
-    private const string NightmarePath = "Assets/CardDatabase/Soldier/SoldierNightmareStartingDeck.asset";
+    private const string DreamPath = "Assets/CardDatabase/Soldier/Dream/SoldierDreamStartingDeck.asset";
+    private const string NightmarePath = "Assets/CardDatabase/Soldier/Nightmare/SoldierNightmareStartingDeck.asset";
     private readonly List<Object> created = new List<Object>();
 
     [SetUp]

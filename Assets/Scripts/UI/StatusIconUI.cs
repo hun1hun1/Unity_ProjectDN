@@ -10,6 +10,8 @@ public class StatusIconUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     private StatusTooltipUI tooltip;
     private ActiveStatusEffect status;
     private ActiveContinuousCard continuousCard;
+    private PendingDelayedEffect delayedEffect;
+    public long DelayedEffectId => delayedEffect != null ? delayedEffect.Id : 0;
     public long ContinuousCardId => continuousCard != null ? continuousCard.Id : 0;
     private bool hovered;
 
@@ -22,9 +24,10 @@ public class StatusIconUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!isActiveAndEnabled || tooltip == null || (status == null && continuousCard == null)) return;
+        if (!isActiveAndEnabled || tooltip == null || (status == null && continuousCard == null && delayedEffect == null)) return;
         hovered = true;
-        if (continuousCard != null) tooltip.ShowContinuous(this, continuousCard, eventData.position);
+        if (delayedEffect != null) tooltip.ShowDelayed(this, delayedEffect, eventData.position);
+        else if (continuousCard != null) tooltip.ShowContinuous(this, continuousCard, eventData.position);
         else tooltip.Show(this, status, eventData.position);
     }
 
@@ -42,8 +45,18 @@ public class StatusIconUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         if (tooltip != null) tooltip.Hide(this);
     }
 
+    public void SetDelayedEffect(PendingDelayedEffect entry)
+    {
+        status = null; continuousCard = null; delayedEffect = entry;
+        gameObject.name = entry.Card != null ? entry.Card.cardName : "지연 효과";
+        if (icon != null && entry.Icon != null) icon.sprite = entry.Icon;
+        if (turnsText != null) turnsText.text = entry.RemainingTurns.ToString();
+        if (hovered && tooltip != null) tooltip.RefreshDelayed(this, entry);
+    }
+
     public void SetContinuousCard(ActiveContinuousCard card)
     {
+        delayedEffect = null;
         status = null;
         continuousCard = card;
         gameObject.name = card.Card.cardName;
@@ -58,6 +71,7 @@ public class StatusIconUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public void SetStatus(ActiveStatusEffect effect)
     {
+        delayedEffect = null;
         continuousCard = null;
         status = effect;
         StatusType = effect.Type;

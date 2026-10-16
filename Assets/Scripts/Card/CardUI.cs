@@ -504,12 +504,12 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
         artwork.sprite = data.artwork;
         if (data.deckType == CardDeckType.TypeDream)
         {
-            costText.text = data.cost.dreamCost.ToString();
+            costText.text = data.CostLabel;
             backImage.sprite = dreamBackImage;
         }
         if (data.deckType == CardDeckType.TypeNightmare)
         {
-            costText.text = data.cost.nightmareCost.ToString();
+            costText.text = data.CostLabel;
             backImage.sprite = nightmareBackImage;
         }
         nameText.text = data.cardName;

@@ -23,4 +23,8 @@ public class IncreaseMaxAmmoEffect : CardEffect
         AmmoSystem ammo = player != null ? player.GetAmmoSystem() : null;
         if (ammo != null) ammo.IncreaseMaxForBattle(amount);
     }
+    public override string GetEffectSummary(System.Collections.Generic.HashSet<CardEffect> visiting)
+    {
+        return $"이번 전투 최대 탄약 {amount} 증가";
+    }
 }

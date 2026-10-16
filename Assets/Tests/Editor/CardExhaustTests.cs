@@ -25,13 +25,15 @@ public class CardExhaustTests
     }
 
     [Test]
-    public void ExistingAttackAndSkillAssetsKeepExhaustDisabled()
+    public void NewAttackAndSkillCardsDefaultToExhaustDisabled()
     {
-        foreach (string guid in AssetDatabase.FindAssets("t:CardData", new[] { "Assets/CardData" }))
+        // Authored reward cards may explicitly opt into exhaustion.
+        foreach (CardType type in new[] { CardType.Attack, CardType.Skill })
         {
-            CardData card = AssetDatabase.LoadAssetAtPath<CardData>(AssetDatabase.GUIDToAssetPath(guid));
-            if (card.type != CardType.Continuous)
-                Assert.That(card.exhaustOnUse, Is.False, AssetDatabase.GUIDToAssetPath(guid));
+            CardData card = Asset<CardData>();
+            card.type = type;
+            Assert.That(card.exhaustOnUse, Is.False);
+            Assert.That(card.ExhaustsOnUse, Is.False);
         }
     }
 
