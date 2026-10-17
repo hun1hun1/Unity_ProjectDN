@@ -132,6 +132,13 @@ public class AmmoSystem : MonoBehaviour
         return true;
     }
 
+    public int SpendAll()
+    {
+        int spent = currentAmmo;
+        SetCurrentAmmo(0);
+        return spent;
+    }
+
     private void NormalizeSettings()
     {
         maxAmmo = Mathf.Max(0, maxAmmo);

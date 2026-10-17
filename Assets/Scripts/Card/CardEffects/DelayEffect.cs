@@ -28,7 +28,7 @@ public class DelayEffect : CardEffect
         if (battle != null && battle.CanContinueEffects)
         {
             battle.BindBattleCharacters();
-            battle.DelayedEffects.Schedule(this, battle.CurrentEffectCard);
+            battle.DelayedEffects.Schedule(this, battle.CurrentEffectCard, spentAmmo: battle.CurrentSpentAmmo);
         }
     }
 
@@ -37,7 +37,7 @@ public class DelayEffect : CardEffect
         if (battle != null && battle.CanContinueEffects)
         {
             battle.BindBattleCharacters();
-            battle.DelayedEffects.Schedule(this, source?.Card ?? battle.CurrentEffectCard, source);
+            battle.DelayedEffects.Schedule(this, source?.Card ?? battle.CurrentEffectCard, source, battle.CurrentSpentAmmo);
         }
         return null;
     }

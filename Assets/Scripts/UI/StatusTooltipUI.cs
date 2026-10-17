@@ -66,7 +66,7 @@ public class StatusTooltipUI : MonoBehaviour
     {
         if (owner != icon || entry == null || contentText == null) return;
         string title = entry.Card != null ? entry.Card.cardName : "지연 효과";
-        string description = DelayedEffectDescriptionBuilder.Build(entry.Description, entry.EffectSnapshot);
+        string description = DelayedEffectDescriptionBuilder.Build(entry.Description, entry.EffectSnapshot, entry.SpentAmmo);
         contentText.text = $"<b>{title}</b>\n{entry.RemainingTurns}턴 뒤 발동\n{description}\n실제 수치는 발동 당시 상태를 따릅니다.";
         UpdatePosition();
     }

@@ -23,6 +23,7 @@ public class BattleManager : MonoBehaviour
     private int activeCardUses;
     private int cardsPlayedThisTurn;
     public CardUseContext CurrentCardUse { get; private set; }
+    public int CurrentSpentAmmo { get; private set; }
     public bool OpeningAvailable => currentState == BattleState.PlayerTurn && CanContinueEffects && cardsPlayedThisTurn == 0;
     public event System.Action OpeningChanged;
 
@@ -76,6 +77,15 @@ public class BattleManager : MonoBehaviour
         finally { CurrentEffectCard = previousCard; }
     }
 
+    public IEnumerator ExecuteWithSpentAmmoRoutine(CardEffect[] effects, int spentAmmo,
+        ActiveContinuousCard source = null, CardData sourceCard = null)
+    {
+        int previous = CurrentSpentAmmo;
+        CurrentSpentAmmo = System.Math.Max(0, spentAmmo);
+        try { yield return ExecuteEffectsRoutine(effects, source, sourceCard); }
+        finally { CurrentSpentAmmo = CanContinueEffects ? previous : 0; }
+    }
+
     public IEnumerator ExecuteCardEffectsRoutine(CardData card, int repeatCount, ActiveContinuousCard source = null)
     {
         if (card == null) yield break;
@@ -127,6 +137,7 @@ public class BattleManager : MonoBehaviour
     public void FinishBattle(BattleResult result)
     {
         if (currentState == BattleState.BattleEnd) return;
+        CurrentSpentAmmo = 0;
         Result = result;
         ChangeState(BattleState.BattleEnd);
         DelayedEffects.Clear();
@@ -149,6 +160,7 @@ public class BattleManager : MonoBehaviour
         if (boundPlayer != null) boundPlayer.Died -= OnCharacterDied;
         if (boundEnemy != null) boundEnemy.Died -= OnCharacterDied;
         boundPlayer = null; boundEnemy = null;
+        CurrentSpentAmmo = 0;
         resolvingCard = null; CurrentEffectCard = null; CurrentCardUse = null; activeCardUses = 0; isResolvingEffects = false;
         ResetOpeningForTurn();
     }

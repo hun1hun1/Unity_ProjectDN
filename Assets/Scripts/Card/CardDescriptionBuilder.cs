@@ -2,11 +2,11 @@ using System.Text.RegularExpressions;
 
 public static class CardDescriptionBuilder
 {
-    private static readonly Regex Tokens = new Regex(@"\{(damage|block|ammoCost|ammoCondition|openingCondition|turnDamage|turnBlock|turnAmmoCost|turnAmmoCondition|turnOpeningCondition):(\d+(?:\.\d+)*)\}");
+    private static readonly Regex Tokens = new Regex(@"\{(damage|block|ammoCost|ammoCondition|openingCondition|spentAmmo|spentAmmoCondition|turnDamage|turnBlock|turnAmmoCost|turnAmmoCondition|turnOpeningCondition|turnSpentAmmo|turnSpentAmmoCondition):(\d+(?:\.\d+)*)\}");
 
-    public static string BuildEffects(string template, CardEffect[] effects)
+    public static string BuildEffects(string template, CardEffect[] effects, int? spentAmmo = null)
     {
-        var context = new CardPreviewContext(null, null, false, forTurnStart: true);
+        var context = new CardPreviewContext(null, null, false, forTurnStart: true, capturedSpentAmmo: spentAmmo);
         context.PreviewEffects(effects);
         return Tokens.Replace(template ?? "", match =>
             context.TryGetValue(match.Groups[1].Value + ":" + match.Groups[2].Value, out string value) ? value : match.Value);
@@ -43,6 +43,8 @@ public static class CardDescriptionBuilder
                 "turnAmmoCost" => "ammoCost",
                 "turnAmmoCondition" => "ammoCondition",
                 "turnOpeningCondition" => "openingCondition",
+                "turnSpentAmmo" => "spentAmmo",
+                "turnSpentAmmoCondition" => "spentAmmoCondition",
                 _ => kind
             };
             string key = token + ":" + match.Groups[2].Value;

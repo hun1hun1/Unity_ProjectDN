@@ -8,6 +8,7 @@ public sealed class PendingDelayedEffect
     internal CardEffect[] EffectSnapshot { get; }
     internal DelayEffect Definition { get; }
     public long Id { get; }
+    public int SpentAmmo { get; }
     public CardData Card { get; }
     public long DueTurn { get; }
     public long RemainingTurns => Math.Max(0, DueTurn - owner.CurrentTurn);
@@ -16,8 +17,9 @@ public sealed class PendingDelayedEffect
     public ActiveContinuousCard ContinuousSource { get; }
 
     internal PendingDelayedEffect(DelayedEffectSystem owner, long id, DelayEffect effect,
-        CardData card, ActiveContinuousCard source)
+        CardData card, ActiveContinuousCard source, int spentAmmo)
     {
+        SpentAmmo = spentAmmo;
         this.owner = owner; Id = id; Definition = effect; Card = card; ContinuousSource = source;
         DueTurn = owner.CurrentTurn + effect.DelayTurns;
         EffectSnapshot = (CardEffect[])effect.Effects.Clone();

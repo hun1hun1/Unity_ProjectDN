@@ -9,10 +9,10 @@ public static class DelayedEffectDescriptionBuilder
         return Build(effect.Description, effect.Effects);
     }
 
-    public static string Build(string description, CardEffect[] effects)
+    public static string Build(string description, CardEffect[] effects, int? spentAmmo = null)
     {
         return !string.IsNullOrWhiteSpace(description)
-            ? CardDescriptionBuilder.BuildEffects(description, effects)
+            ? CardDescriptionBuilder.BuildEffects(description, effects, spentAmmo)
             : Summarize(effects, new HashSet<CardEffect>());
     }
 

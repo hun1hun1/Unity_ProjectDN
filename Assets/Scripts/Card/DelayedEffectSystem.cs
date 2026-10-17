@@ -17,10 +17,10 @@ public sealed class DelayedEffectSystem
 
     public DelayedEffectSystem() { view = pending.AsReadOnly(); }
 
-    public PendingDelayedEffect Schedule(DelayEffect effect, CardData card, ActiveContinuousCard source = null)
+    public PendingDelayedEffect Schedule(DelayEffect effect, CardData card, ActiveContinuousCard source = null, int spentAmmo = 0)
     {
         if (effect == null || !effect.IsValid || source != null && !source.IsActive) return null;
-        var entry = new PendingDelayedEffect(this, ++nextId, effect, card, source);
+        var entry = new PendingDelayedEffect(this, ++nextId, effect, card, source, spentAmmo);
         pending.Add(entry);
         source?.RegisterDelay();
         RefreshSourceTurns();
@@ -52,7 +52,7 @@ public sealed class DelayedEffectSystem
                     battle.GetPlayer()?.ContinuousCards.CompleteDelayedCard(source);
                 Changed?.Invoke();
                 if (version != generation || !battle.CanContinueEffects) yield break;
-                yield return battle.ExecuteEffectsRoutine(entry.EffectSnapshot, sourceCard: entry.Card);
+                yield return battle.ExecuteWithSpentAmmoRoutine(entry.EffectSnapshot, entry.SpentAmmo, sourceCard: entry.Card);
             }
         }
         finally { processing = false; }

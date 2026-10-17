@@ -16,6 +16,7 @@ MonoBehaviour:
   cost:
     dreamCost: 1
     nightmareCost: 0
+  costMode: 0
   artwork: {fileID: 0}
   description: "3\uD134 \uC9C0\uC18D \uD6C4 \uC18C\uBA78. \uD134 \uC2DC\uC791 \uC2DC
     \uCCB4\uB825\uC744 2\uD68C\uBCF5\uD569\uB2C8\uB2E4."
@@ -23,11 +24,12 @@ MonoBehaviour:
   type: 2
   rarity: 2
   effects: []
+  exhaustOnUse: 1
   turnStartEffects:
   - {fileID: 11400000, guid: 6ba249475bb560a4a83623a836860d93, type: 2}
+  - {fileID: 11400000, guid: f95a1feeddfc659478d5c22999d078c7, type: 2}
   continuousDurationType: 1
   continuousTurns: 3
-  exhaustOnUse: 1
   continuousIcon: {fileID: 0}
   requiredAmmo: 0
   consumeRequiredAmmo: 0
