@@ -17,12 +17,16 @@ public class CardRewardUI : MonoBehaviour
     [SerializeField] private TMP_Text goldText;
     [SerializeField] private TMP_Text walletText;
     [SerializeField] private TMP_Text finishText;
+    [SerializeField] private Button confirmButton;
+    [SerializeField] private GameObject[] selectionBorders;
+    private int selectedCardIndex = -1;
 
     private void OnEnable() { if (rewards != null) rewards.Changed += Refresh; Refresh(); }
-    private void OnDisable() { if (rewards != null) rewards.Changed -= Refresh; }
+    private void OnDisable() { if (rewards != null) rewards.Changed -= Refresh; selectedCardIndex = -1; RefreshSelection(); }
     private void Refresh()
     {
         if (rewards == null || visibility == null) return;
+        selectedCardIndex = -1;
         BattleRewardState state = rewards.State;
         bool visible = state != BattleRewardState.Closed && state != BattleRewardState.Completed;
         visibility.alpha = visible ? 1 : 0;
@@ -43,6 +47,16 @@ public class CardRewardUI : MonoBehaviour
             rewardCardSlots[i].gameObject.SetActive(show);
             if (show) rewardCardSlots[i].SetCard(rewards.Offers[i], applyStatusModifiers: false);
         }
+        RefreshSelection();
+    }
+    private void RefreshSelection()
+    {
+        bool choosing = rewards != null && rewards.State == BattleRewardState.CardChoice;
+        if (selectionBorders != null)
+            for (int i = 0; i < selectionBorders.Length; i++)
+                if (selectionBorders[i] != null) selectionBorders[i].SetActive(choosing && i == selectedCardIndex);
+        if (confirmButton != null)
+            confirmButton.interactable = choosing && selectedCardIndex >= 0 && selectedCardIndex < rewards.Offers.Count;
     }
     public void ClaimGold() { if (!CardInspectionUI.BlocksGameplayInput) rewards.ClaimGold(); }
     public void ShowReward() { if (!CardInspectionUI.BlocksGameplayInput) rewards.OpenCardReward(); }
@@ -50,5 +64,16 @@ public class CardRewardUI : MonoBehaviour
     public void SelectNightmare() { if (!CardInspectionUI.BlocksGameplayInput) rewards.SelectDeck(CardDeckType.TypeNightmare); }
     public void SkipCard() { if (!CardInspectionUI.BlocksGameplayInput) rewards.SkipCard(); }
     public void SkipRemaining() { if (!CardInspectionUI.BlocksGameplayInput) rewards.SkipRemaining(); }
-    public void SelectCard(int index) { if (!CardInspectionUI.BlocksGameplayInput) rewards.ChooseCard(index); }
+    public void SelectCard(int index)
+    {
+        if (CardInspectionUI.BlocksGameplayInput || rewards == null || rewards.State != BattleRewardState.CardChoice ||
+            index < 0 || index >= rewards.Offers.Count || index >= rewardCardSlots.Length || rewards.Offers[index] == null) return;
+        selectedCardIndex = index;
+        RefreshSelection();
+    }
+    public void ConfirmCard()
+    {
+        if (CardInspectionUI.BlocksGameplayInput || rewards == null || rewards.State != BattleRewardState.CardChoice || selectedCardIndex < 0) return;
+        rewards.ChooseCard(selectedCardIndex);
+    }
 }

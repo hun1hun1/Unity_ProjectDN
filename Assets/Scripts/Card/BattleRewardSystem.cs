@@ -21,6 +21,12 @@ public class BattleRewardSystem : MonoBehaviour
     private List<CardData> offers = new List<CardData>();
     private bool generated;
 
+    public void ConfigureGoldReward(int amount)
+    {
+        if (generated) throw new InvalidOperationException("Rewards have already been generated.");
+        goldReward = Mathf.Max(0, amount);
+    }
+
     private void OnEnable()
     {
         if (battle == null) return;

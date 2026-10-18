@@ -62,12 +62,13 @@ public static class BattleRewardAssetSetup
         Button finish = Button(summary, "SkipRemainingButton", "남은 보상 건너뛰기", ui.SkipRemaining);
         Bind(ui,"summaryPanel",summary.gameObject); Bind(ui,"goldButton",gold); Bind(ui,"cardButton",card);
         Bind(ui,"goldText",gold.GetComponentInChildren<TMP_Text>()); Bind(ui,"walletText",wallet); Bind(ui,"finishText",finish.GetComponentInChildren<TMP_Text>());
-        RectTransform choices = (RectTransform)root.Find("DeckSelectPanel"); Center(choices,new Vector2(460,400)); Vertical(choices,20);
+        RectTransform choices = (RectTransform)root.Find("DeckSelectPanel");
         ConfigureTitle(choices.Find("Title"), "카드 보상 선택");
         Button dream = ConfigureButton(choices.Find("DreamButton"), "꿈 · 3장 중 1장", ui.SelectDream);
         Button nightmare = ConfigureButton(choices.Find("NightmareButton"), "악몽 · 2장 중 1장", ui.SelectNightmare);
         ConfigureButton(choices.Find("SkipButton"), "카드 보상 건너뛰기", ui.SkipCard);
         Bind(ui,"dreamButton",dream); Bind(ui,"nightmareButton",nightmare);
+        ConfigureDeckChoiceLayout(choices);
         RectTransform options = (RectTransform)root.Find("CardRewardPanel"); Center(options,new Vector2(1000,520));
         Transform title = options.Find("Title"); ConfigureTitle(title,"카드를 한 장 선택하세요");
         Center((RectTransform)title,new Vector2(900,64)); ((RectTransform)title).anchoredPosition = new Vector2(0,220);
@@ -91,8 +92,8 @@ public static class BattleRewardAssetSetup
             Object.DestroyImmediate(oldSlot);
             Center((RectTransform)slot.transform, new Vector2(260,338));
             slot.ResizeForList(1.3f);
-            foreach (DeckCardHoverUI hover in slot.GetComponentsInChildren<DeckCardHoverUI>(true)) Object.DestroyImmediate(hover);
             foreach (Canvas childCanvas in slot.GetComponentsInChildren<Canvas>(true)) childCanvas.overrideSorting = false;
+            ConfigureRewardCardHover(slot);
             var slotConfig = new SerializedObject(slot); slotConfig.FindProperty("allowInspection").boolValue = false; slotConfig.ApplyModifiedPropertiesWithoutUndo();
             Button button = slot.GetComponent<Button>(); if (button == null) button = slot.gameObject.AddComponent<Button>();
             button.targetGraphic = slot.GetComponentInChildren<Image>(true);
@@ -100,10 +101,140 @@ public static class BattleRewardAssetSetup
             slot.gameObject.SetActive(false);
         }
         uiConfig.ApplyModifiedPropertiesWithoutUndo();
+        ConfigureCardConfirmation(ui);
         summary.gameObject.SetActive(false); choices.gameObject.SetActive(false); options.gameObject.SetActive(false);
         EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene); AssetDatabase.SaveAssets();
         Debug.Log("Battle reward scene configured.");
     }
+    [MenuItem("ProjectDN/Setup Reward Card Confirmation")]
+    public static void SetupCardConfirmation()
+    {
+        var scene = EditorSceneManager.OpenScene("Assets/Scenes/BattleScene.unity");
+        font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/NotoSansKR-VF SDF.asset");
+        ConfigureCardConfirmation(Object.FindFirstObjectByType<CardRewardUI>(FindObjectsInactive.Include));
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log("Reward card selection borders and confirmation button connected.");
+    }
+
+    private static void ConfigureCardConfirmation(CardRewardUI ui)
+    {
+        var config = new SerializedObject(ui);
+        var slots = config.FindProperty("rewardCardSlots");
+        var borders = config.FindProperty("selectionBorders");
+        borders.arraySize = slots.arraySize;
+        for (int i = 0; i < slots.arraySize; i++)
+        {
+            var card = (DeckCardUI)slots.GetArrayElementAtIndex(i).objectReferenceValue;
+            Transform visual = card.transform.Find("HoverVisual");
+            Transform border = visual.Find("RewardSelectionBorder");
+            if (border == null)
+            {
+                RectTransform rect = Panel(visual, "RewardSelectionBorder", Vector2.zero);
+                Stretch(rect);
+                AddSelectionEdge(rect, "Top", new Vector2(0, 1), Vector2.one, new Vector2(0, 4), new Vector2(0, -2));
+                AddSelectionEdge(rect, "Bottom", Vector2.zero, new Vector2(1, 0), new Vector2(0, 4), new Vector2(0, 2));
+                AddSelectionEdge(rect, "Left", Vector2.zero, new Vector2(0, 1), new Vector2(4, 0), new Vector2(2, 0));
+                AddSelectionEdge(rect, "Right", new Vector2(1, 0), Vector2.one, new Vector2(4, 0), new Vector2(-2, 0));
+                border = rect;
+            }
+            border.gameObject.SetActive(false);
+            borders.GetArrayElementAtIndex(i).objectReferenceValue = border.gameObject;
+        }
+        Transform panel = ui.transform.Find("CardRewardPanel");
+        Transform existing = panel.Find("ConfirmButton");
+        Button confirm;
+        if (existing != null) confirm = ConfigureButton(existing, "확인", ui.ConfirmCard);
+        else
+        {
+            confirm = Button(panel, "ConfirmButton", "확인", ui.ConfirmCard);
+            Center((RectTransform)confirm.transform, new Vector2(220, 60));
+            ((RectTransform)confirm.transform).anchoredPosition =
+                ((RectTransform)panel.Find("Options")).anchoredPosition + new Vector2(0, -280);
+        }
+        confirm.interactable = false;
+        config.FindProperty("confirmButton").objectReferenceValue = confirm;
+        config.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static void AddSelectionEdge(RectTransform border, string name, Vector2 min, Vector2 max, Vector2 size, Vector2 position)
+    {
+        RectTransform edge = Panel(border, name, size);
+        edge.anchorMin = min; edge.anchorMax = max; edge.sizeDelta = size; edge.anchoredPosition = position;
+        var image = edge.gameObject.AddComponent<UnityEngine.UI.Image>();
+        image.color = new Color(.1f, 1f, .2f, 1f);
+        image.raycastTarget = false;
+    }
+
+    [MenuItem("ProjectDN/Connect Reward Card Hover")]
+    public static void ConnectRewardCardHover()
+    {
+        var scene = EditorSceneManager.OpenScene("Assets/Scenes/BattleScene.unity");
+        CardRewardUI ui = Object.FindFirstObjectByType<CardRewardUI>(FindObjectsInactive.Include);
+        var slots = new SerializedObject(ui).FindProperty("rewardCardSlots");
+        for (int i = 0; i < slots.arraySize; i++)
+            ConfigureRewardCardHover((DeckCardUI)slots.GetArrayElementAtIndex(i).objectReferenceValue);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log("Reward card hover connected without changing card layout.");
+    }
+
+    private static void ConfigureRewardCardHover(DeckCardUI card)
+    {
+        var visual = (RectTransform)card.transform.Find("HoverVisual");
+        if (visual == null) throw new System.InvalidOperationException("Reward card is missing HoverVisual.");
+        Canvas visualCanvas = visual.GetComponent<Canvas>();
+        Canvas rewardCanvas = card.GetComponentInParent<CardRewardUI>(true).GetComponent<Canvas>();
+        DeckCardHoverUI hover = card.GetComponent<DeckCardHoverUI>();
+        if (hover == null) hover = card.gameObject.AddComponent<DeckCardHoverUI>();
+        var settings = new SerializedObject(hover);
+        settings.FindProperty("hoverVisual").objectReferenceValue = visual;
+        settings.FindProperty("hoverCanvas").objectReferenceValue = visualCanvas;
+        // DeckCardHoverUI adds its offset to the root Canvas; the reward overlay sorts independently.
+        settings.FindProperty("sortingOrderOffset").intValue =
+            rewardCanvas.sortingOrder - rewardCanvas.rootCanvas.sortingOrder + 10;
+        settings.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    [MenuItem("ProjectDN/Restore Reward Deck Choice Layout")]
+    public static void RestoreDeckChoiceLayout()
+    {
+        var scene = EditorSceneManager.OpenScene("Assets/Scenes/BattleScene.unity");
+        CardRewardUI ui = Object.FindFirstObjectByType<CardRewardUI>(FindObjectsInactive.Include);
+        ConfigureDeckChoiceLayout((RectTransform)ui.transform.Find("DeckSelectPanel"));
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log("Reward deck choices restored to the original left/right layout.");
+    }
+
+    private static void ConfigureDeckChoiceLayout(RectTransform choices)
+    {
+        var layout = choices.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
+        if (layout != null) Object.DestroyImmediate(layout);
+        SetAnchors(choices, new Vector2(.2f, .35f), new Vector2(.8f, .85f));
+        SetChoiceAnchors(choices.Find("Title"), new Vector2(.1f, .85f), new Vector2(.9f, .95f));
+        SetChoiceAnchors(choices.Find("DreamButton"), new Vector2(.1f, .4f), new Vector2(.4f, .7f));
+        SetChoiceAnchors(choices.Find("NightmareButton"), new Vector2(.6f, .4f), new Vector2(.9f, .7f));
+        SetChoiceAnchors(choices.Find("SkipButton"), new Vector2(.35f, .1f), new Vector2(.65f, .3f));
+    }
+
+    private static void SetChoiceAnchors(Transform child, Vector2 min, Vector2 max)
+    {
+        var element = child.GetComponent<UnityEngine.UI.LayoutElement>();
+        if (element != null) Object.DestroyImmediate(element);
+        SetAnchors((RectTransform)child, min, max);
+    }
+
+    private static void SetAnchors(RectTransform rect, Vector2 min, Vector2 max)
+    {
+        rect.anchorMin = min;
+        rect.anchorMax = max;
+        rect.pivot = new Vector2(.5f, .5f);
+        rect.anchoredPosition = Vector2.zero;
+        rect.sizeDelta = Vector2.zero;
+        rect.localScale = Vector3.one;
+    }
+
     private static void Bind(Object target,string field,Object value)
     { var serialized = new SerializedObject(target); serialized.FindProperty(field).objectReferenceValue = value; serialized.ApplyModifiedPropertiesWithoutUndo(); }
     private static void Stretch(RectTransform rect) { rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.offsetMin = rect.offsetMax = Vector2.zero; rect.localScale = Vector3.one; }

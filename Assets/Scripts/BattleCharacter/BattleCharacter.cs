@@ -29,6 +29,16 @@ public abstract class BattleCharacter : MonoBehaviour
         UpdateUI();
     }
 
+    // Apply persistent run HP after Awake, without healing or carrying battle block.
+    public void RestoreHealth(int health, int maximum)
+    {
+        if (maximum < 1) throw new System.ArgumentOutOfRangeException(nameof(maximum));
+        maxHP = maximum;
+        currentHP = Mathf.Clamp(health, 0, maximum);
+        block = 0;
+        UpdateUI();
+    }
+
     public virtual void TakeDamage(int damage)
     {
         TakeDamage(damage, null);

@@ -12,6 +12,16 @@ public class Enemy : BattleCharacter
     private BattleManager battleContext;
     private Player subscribedPlayer;
 
+    public void ConfigureEncounter(BattleEncounterDefinition encounter)
+    {
+        if (encounter == null) throw new System.ArgumentNullException(nameof(encounter));
+        encounter.Validate();
+        behavior = encounter.behavior;
+        currentActionIndex = 0;
+        RestoreHealth(encounter.enemyMaxHP, encounter.enemyMaxHP);
+        RefreshNextActionUI();
+    }
+
     public void BindBattle(BattleManager battleManager)
     {
         UnsubscribeStatuses();

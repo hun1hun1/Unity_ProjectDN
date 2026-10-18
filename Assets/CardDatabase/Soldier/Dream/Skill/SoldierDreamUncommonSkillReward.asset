@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aeab13a239884f548a3b20092cba29c0, type: 3}
   m_Name: SoldierDreamUncommonSkillReward
   m_EditorClassIdentifier: 
-  cards: []
+  cards:
+  - {fileID: 11400000, guid: 3e639a58dbc566340b88dcfb4531e166, type: 2}
+  - {fileID: 11400000, guid: 0fe6e82ae580db247988f99fc143da76, type: 2}
+  - {fileID: 11400000, guid: 9fe753cbf6ef60b40a597d422d00b97b, type: 2}
