@@ -764,8 +764,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 8353654429988929124, guid: c0b577770ad44bf4d83115c867c7eda5, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1312,13 +1312,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   artwork: {fileID: 5186630736015147663}
+  frontImage: {fileID: 1983686077736850225}
+  dreamFrontImage: {fileID: 8353654429988929124, guid: c0b577770ad44bf4d83115c867c7eda5, type: 3}
+  nightmareFrontImage: {fileID: 4786130236884655547, guid: 293f479b83268484e938c6e2019960d3, type: 3}
   costText: {fileID: 6234265002227527140}
   nameText: {fileID: 4039980535205169851}
   descriptionText: {fileID: 935470445870500775}
   typeText: {fileID: 9064845558385343635}
   backImage: {fileID: 3799143203453941438}
-  dreamBackImage: {fileID: -1348625524051424188, guid: 8f2a43535b03f314d99ae2c47c722bdb, type: 3}
-  nightmareBackImage: {fileID: 4453583955929776674, guid: a718694f2b0916a4aa0ab9d987b4d6c6, type: 3}
+  dreamBackImage: {fileID: 5265425827481995452, guid: d13bd2c6bec9ef5408544add64d573f1, type: 3}
+  nightmareBackImage: {fileID: -8605946510400972025, guid: 39f5ee5926f49d6428a6afe81f5b0c71, type: 3}
   front: {fileID: 524027433407525735}
   back: {fileID: 1063015770194844872}
   rarityImage: {fileID: 7091806841845931698}

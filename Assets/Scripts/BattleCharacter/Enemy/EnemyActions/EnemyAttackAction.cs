@@ -17,13 +17,13 @@ public class EnemyAttackAction : EnemyAction
         return $"공격 {damage}";
     }
 
-    public override string GetActionDescription(BattleManager battleManager)
-    {
-        int amount = DamageCalculator.Calculate(damage,
-            battleManager != null ? battleManager.GetTarget() : null,
-            battleManager != null ? battleManager.GetPlayer() : null);
-        return $"공격 {amount}";
-    }
+    public override EnemyActionKinds GetActionKinds() => EnemyActionKinds.Attack;
+
+    public override string GetActionDescription(BattleManager battleManager) =>
+        Preview(new EnemyActionPreviewContext(battleManager));
+
+    internal override string Preview(EnemyActionPreviewContext context) =>
+        $"공격 {context.Attack(damage)}";
 
     public override void Execute(BattleManager battleManager)
     {

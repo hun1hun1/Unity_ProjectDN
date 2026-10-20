@@ -18,6 +18,12 @@ public class CharacterInfoUI : MonoBehaviour
     [Header("Status")]
     [SerializeField] private StatusEffectsUI statusUI;
 
+    public void ValidateBindings()
+    {
+        if (hpFill == null || hpText == null || blockText == null)
+            throw new System.InvalidOperationException("Character HUD needs HP fill, HP text and block text references.");
+    }
+
     public void BindStatusEffects(StatusEffectSystem status, ContinuousCardSystem continuous = null, DelayedEffectSystem delayed = null)
     {
         if (statusUI != null) statusUI.Bind(status, continuous, delayed);

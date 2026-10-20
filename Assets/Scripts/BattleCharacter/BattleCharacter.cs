@@ -12,9 +12,22 @@ public abstract class BattleCharacter : MonoBehaviour
     [Header("UI")]
     [SerializeField] private CharacterInfoUI characterInfoUI;
 
+    private DelayedEffectSystem boundDelayedEffects;
+
+    public void BindCharacterInfoUI(CharacterInfoUI ui)
+    {
+        if (characterInfoUI == ui) return;
+        if (characterInfoUI != null) characterInfoUI.BindStatusEffects(null);
+        characterInfoUI = ui;
+        if (characterInfoUI != null) characterInfoUI.BindStatusEffects(StatusEffects, ContinuousCards, boundDelayedEffects);
+        UpdateUI();
+    }
+
     public event System.Action<BattleCharacter> Died;
+    public event System.Action VitalsChanged;
     public void BindDelayedEffects(DelayedEffectSystem delayed)
     {
+        boundDelayedEffects = delayed;
         if (characterInfoUI != null) characterInfoUI.BindStatusEffects(StatusEffects, ContinuousCards, delayed);
     }
 
@@ -106,10 +119,13 @@ public abstract class BattleCharacter : MonoBehaviour
 
     protected void UpdateUI()
     {
-        if (characterInfoUI == null) return;
-
-        characterInfoUI.SetHP(currentHP, maxHP);
-        characterInfoUI.SetBlock(block);
+        if (characterInfoUI != null)
+        {
+            characterInfoUI.SetHP(currentHP, maxHP);
+            characterInfoUI.SetBlock(block);
+        }
+        // Intent previews also depend on HP and block, even when no character HUD is present.
+        VitalsChanged?.Invoke();
     }
 
     protected virtual void Die()

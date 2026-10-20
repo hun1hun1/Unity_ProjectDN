@@ -11,6 +11,11 @@ public class DeckCardUI : MonoBehaviour, IPointerClickHandler
     [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private TMP_Text typeText;
 
+    [Header("Card Front Images")]
+    [SerializeField] private UnityEngine.UI.Image frontImage;
+    [SerializeField] private Sprite dreamFrontImage;
+    [SerializeField] private Sprite nightmareFrontImage;
+
     [Header("Card Rarity Images")]
     [SerializeField] private UnityEngine.UI.Image rarityImage;
     [SerializeField] private Sprite commonImage;
@@ -55,6 +60,11 @@ public class DeckCardUI : MonoBehaviour, IPointerClickHandler
         battleContext = manager;
         GetComponent<DeckCardHoverUI>()?.ResetHover();
         artwork.sprite = data.artwork;
+        if (frontImage != null)
+        {
+            Sprite selectedFront = data.deckType == CardDeckType.TypeDream ? dreamFrontImage : nightmareFrontImage;
+            if (selectedFront != null) frontImage.sprite = selectedFront;
+        }
         if (data.deckType == CardDeckType.TypeDream)
         {
             costText.text = data.CostLabel;

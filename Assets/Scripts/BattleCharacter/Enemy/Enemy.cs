@@ -57,14 +57,24 @@ public class Enemy : BattleCharacter
     {
         UnsubscribeStatuses();
         StatusEffects.Changed += RefreshNextActionUI;
+        VitalsChanged += RefreshNextActionUI;
         subscribedPlayer = battleContext != null ? battleContext.GetPlayer() : null;
-        if (subscribedPlayer != null) subscribedPlayer.StatusEffects.Changed += RefreshNextActionUI;
+        if (subscribedPlayer != null)
+        {
+            subscribedPlayer.StatusEffects.Changed += RefreshNextActionUI;
+            subscribedPlayer.VitalsChanged += RefreshNextActionUI;
+        }
     }
 
     private void UnsubscribeStatuses()
     {
         StatusEffects.Changed -= RefreshNextActionUI;
-        if (subscribedPlayer != null) subscribedPlayer.StatusEffects.Changed -= RefreshNextActionUI;
+        VitalsChanged -= RefreshNextActionUI;
+        if (subscribedPlayer != null)
+        {
+            subscribedPlayer.StatusEffects.Changed -= RefreshNextActionUI;
+            subscribedPlayer.VitalsChanged -= RefreshNextActionUI;
+        }
         subscribedPlayer = null;
     }
 

@@ -1,0 +1,17 @@
+{
+  "generator": "built-in imagegen",
+  "file": "lizard-v1.png",
+  "width": 1536,
+  "height": 1024,
+  "transparentBackground": true,
+  "facing": "left, three-quarter view",
+  "limbs": "four legs",
+  "palette": "muted slate teal scales, ochre belly, amber eyes",
+  "verification": {
+    "fullBodyVisuallyChecked": true,
+    "maximumCanvasEdgeAlpha": 1,
+    "canvasEdgePixelsWithAlphaAtLeast16": 0,
+    "note": "No visible creature pixels touch the canvas boundary; sampled background alpha is zero."
+  },
+  "notes": "Single enemy sprite only; not imported into Unity or assigned to a prefab."
+}

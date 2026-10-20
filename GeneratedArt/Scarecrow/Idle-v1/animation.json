@@ -1,0 +1,34 @@
+{
+  "name": "scarecrow-idle-v1",
+  "frameWidth": 768,
+  "frameHeight": 768,
+  "columns": 6,
+  "rows": 4,
+  "frameCount": 24,
+  "frameDurationMs": 100,
+  "frameRate": 10.0,
+  "durationMs": 2400,
+  "loop": true,
+  "groundYFromTop": 720,
+  "pivotNormalized": [
+    0.5,
+    0.0625
+  ],
+  "sourceArt": "../scarecrow-v1.png",
+  "sourceArtSha256": "ef13b2f21a582ed34d7e2f670c17c56eaedc6ef2893bbfaa3b2ebee865d558f5",
+  "method": "Existing artwork animated with smooth periodic texture deformation; no AI frame redrawing.",
+  "motion": "Gentle upper-body sway, delayed claw-hand movement and a small head bob; both feet remain fixed.",
+  "placement": {
+    "sourceCrop": [
+      95,
+      11,
+      1208,
+      1231
+    ],
+    "scale": 0.5377049180327869,
+    "left": 85,
+    "top": 64,
+    "resizedWidth": 598,
+    "resizedHeight": 656
+  }
+}

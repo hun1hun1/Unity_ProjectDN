@@ -10,6 +10,12 @@ public class EnemyActionUI : MonoBehaviour
     [SerializeField]
     private TMP_Text actionText;
 
+    public void ValidateBindings()
+    {
+        if (actionIcon == null || actionText == null)
+            throw new System.InvalidOperationException("Enemy intent HUD needs icon and text references.");
+    }
+
     public void SetAction(EnemyAction action)
     {
         SetAction(action, null);
@@ -23,13 +29,17 @@ public class EnemyActionUI : MonoBehaviour
             return;
         }
 
-        actionIcon.sprite = action.GetActionIcon();
-        actionText.text = action.GetActionDescription(battleManager);
+        if (actionIcon != null)
+        {
+            actionIcon.sprite = action.GetActionIcon();
+            actionIcon.enabled = actionIcon.sprite != null;
+        }
+        if (actionText != null) actionText.text = action.GetActionDescription(battleManager);
     }
 
     public void ClearAction()
     {
-        actionIcon.sprite = null;
-        actionText.text = "";
+        if (actionIcon != null) { actionIcon.sprite = null; actionIcon.enabled = false; }
+        if (actionText != null) actionText.text = "";
     }
 }

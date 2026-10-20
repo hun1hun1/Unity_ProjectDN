@@ -1,0 +1,17 @@
+Generator: built-in imagegen
+Opaque background: true
+
+Use case: stylized-concept.
+Asset type: one production texture for the BACKGROUND of a card FRONT in an existing Unity 2D hand-painted dark fantasy deckbuilding game.
+Create a FLAT upright rectangular texture, portrait aspect 10:13, preferably exactly 1000 x 1300 pixels, intended to downsample to 200 x 260. The ENTIRE canvas is the texture; no surrounding space, no photographed card, no perspective. Fully opaque, square rectangular canvas, no transparent holes.
+PRIMARY LOOK: LIGHT SOFT GREEN overall, pale sage, celadon, muted mint and ivory-green. A gentle worn hand-painted parchment / painted enamel feel. Broad subtle angular brush texture consistent with rough hand-painted soldier/slime sprites and ornate painted lunar card backs. A tasteful dark fantasy game UI treatment, subdued and light enough for black text, NOT bright neon, NOT dark forest green overall.
+CRITICAL EXISTING UI OCCLUSION MAP, coordinates measured in percent from TOP LEFT of this texture:
+- Artwork overlay covers x=5..95%, y=17.5..57.5% and is OPAQUE.
+- Cost overlay covers x=3..17%, y=5..15%.
+- Name panel covers x=17.5..95%, y=5..15%; it is semi-transparent.
+- Description panel covers x=5..95%, y=60..90%; it is semi-transparent.
+- Rarity/type panel covers x=30..70%, y=92.5..97.5%.
+These are external Unity UI elements, NOT elements to draw into this image.
+DESIGN FOR THE VISIBLE AREAS: the narrow outer left/right 5% rails, topmost 5% band and the bottom left/right corner areas are the main visible decorative opportunities. Put a confident slim continuous painted frame with a dark muted sage outer contour, pale green-silver inset highlights and gently irregular brush-painted edges entirely within the outer 3.5% width. Overall texture stays LIGHT green. Tiny restrained curling filigree on the two top corners confined to those narrow margins. Slightly larger elegant curved filigree flourishes ONLY at the bottom-left and bottom-right, within the bottom 9% height and outer 25% width, avoiding the bottom center type badge. All decorations must remain legible at 200x260 and must not cross deeply into overlay regions. No delicate dense micro-ornaments. The thin green frame should still read as a coherent card when the center is covered.
+Keep all middle interior regions low-contrast pale sage-green, especially beneath name and description text. Minimal gentle mottled brush texture, no bright specular glare. Slightly richer sage green in the edge frame, but pale green background must dominate. Narrow spaces between the external overlays remain simple green, with no bold extra dividers.
+IMPORTANT DO NOT draw any panel, title bar, cost badge, art window, text box, extra internal frame or placeholder rectangle. This is ONLY the continuous underlying background texture. No central illustration or focal symbol, no moon, no sword, no shield, no characters, no leaves or vines as large subjects, no gems, no text, no runes, no numerals, no labels, no watermark, no UI values. No gold ornate frame, no photorealism, no 3D, no pixel art, no smooth flat vector style.

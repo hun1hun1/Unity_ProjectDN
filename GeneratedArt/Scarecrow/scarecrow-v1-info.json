@@ -1,0 +1,17 @@
+{
+  "generator": "built-in imagegen",
+  "file": "scarecrow-v1.png",
+  "width": 1254,
+  "height": 1254,
+  "transparentBackground": true,
+  "facing": "left, three-quarter view",
+  "limbs": "two arms, two legs",
+  "verification": {
+    "fullBodyVisuallyChecked": true,
+    "maximumCanvasEdgeAlpha": 1,
+    "nonzeroCanvasEdgeAlphaPixels": 12,
+    "canvasEdgePixelsWithAlphaAtLeast16": 0,
+    "note": "Twelve edge pixels have near-transparent alpha 1/255; no visible character pixels touch the canvas boundary."
+  },
+  "notes": "Single enemy sprite only; not imported into Unity or assigned to a prefab."
+}

@@ -12,6 +12,11 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
     [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private TMP_Text typeText;
 
+    [Header("Card Front Images")]
+    [SerializeField] private UnityEngine.UI.Image frontImage;
+    [SerializeField] private Sprite dreamFrontImage;
+    [SerializeField] private Sprite nightmareFrontImage;
+
     [Header("Card BackImages")]
     [SerializeField] private Image backImage;
     [SerializeField] private Sprite dreamBackImage;
@@ -502,6 +507,11 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
         if (usedInputGroup != null) usedInputGroup.blocksRaycasts = true;
 
         artwork.sprite = data.artwork;
+        if (frontImage != null)
+        {
+            Sprite selectedFront = data.deckType == CardDeckType.TypeDream ? dreamFrontImage : nightmareFrontImage;
+            if (selectedFront != null) frontImage.sprite = selectedFront;
+        }
         if (data.deckType == CardDeckType.TypeDream)
         {
             costText.text = data.CostLabel;

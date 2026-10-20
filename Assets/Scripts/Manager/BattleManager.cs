@@ -185,6 +185,7 @@ public class BattleManager : MonoBehaviour
             target.ContinuousCards.ResetForBattle();
             target.StatusEffects.Clear();
             target.BindBattle(this);
+            BindEnemyActionPresentation();
         }
         if (player != null)
         {
@@ -268,6 +269,7 @@ public class BattleManager : MonoBehaviour
             target.ConfigureEncounter(encounter);
             BindBattleCharacters();
             target.BindBattle(this);
+            BindEnemyActionPresentation();
             return;
         }
         if (enemySpawnRoot == null)
@@ -305,9 +307,19 @@ public class BattleManager : MonoBehaviour
         target = spawned;
         BindBattleCharacters();
         target.BindBattle(this);
-        if (enemyActionUI != null) target.BindActionUI(enemyActionUI);
+        BindEnemyActionPresentation();
         target.gameObject.SetActive(true);
         if (previous != null) DisposeEnemy(previous);
+    }
+
+    private void BindEnemyActionPresentation()
+    {
+        if (target == null) return;
+        BattleCharacterPresentation presentation = target.GetComponent<BattleCharacterPresentation>();
+        EnemyActionUI owned = presentation != null ? presentation.ActionUI : null;
+        if (enemyActionUI != null) enemyActionUI.gameObject.SetActive(owned == null);
+        if (owned != null) target.BindActionUI(owned);
+        else if (enemyActionUI != null) target.BindActionUI(enemyActionUI);
     }
 
     private static void DisposeEnemy(Enemy enemy)

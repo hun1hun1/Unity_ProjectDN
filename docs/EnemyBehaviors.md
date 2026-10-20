@@ -6,6 +6,8 @@
 
 적별 외형과 Animator를 가진 프리팹의 연결은 [적 프리팹과 전투 화면](EnemyPrefabs.md)을 참고한다. 전투 데이터의 `Behavior`가 생성한 적에 적용된다.
 
+디버프만 부여하거나 여러 효과를 한 턴에 묶는 행동과 조합 아이콘은 [적 디버프와 복합 행동](EnemyActions.md)을 참고합니다.
+
 ## 설정
 
 1. Project 창에서 `Create → Enemy → Behavior`로 행동 에셋을 만든다.

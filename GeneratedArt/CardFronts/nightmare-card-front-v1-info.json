@@ -1,0 +1,87 @@
+{
+  "generator": "built-in imagegen edit",
+  "target": "Assets/Prefabs/UI/Card.prefab: Front/Background",
+  "nativeSize": {
+    "width": 200,
+    "height": 260
+  },
+  "exportSizes": [
+    [
+      1000,
+      1300
+    ],
+    [
+      200,
+      260
+    ]
+  ],
+  "coordinates": "normalized top-left origin",
+  "overlays": [
+    {
+      "name": "CostImage",
+      "rect": [
+        0.03,
+        0.05,
+        0.14,
+        0.1
+      ],
+      "alpha": 1
+    },
+    {
+      "name": "NamePanel",
+      "rect": [
+        0.175,
+        0.05,
+        0.775,
+        0.1
+      ],
+      "alpha": 0.392
+    },
+    {
+      "name": "Artwork",
+      "rect": [
+        0.05,
+        0.175,
+        0.9,
+        0.4
+      ],
+      "alpha": 1
+    },
+    {
+      "name": "DescriptionPanel",
+      "rect": [
+        0.05,
+        0.6,
+        0.9,
+        0.3
+      ],
+      "alpha": 0.392
+    },
+    {
+      "name": "Rarity",
+      "rect": [
+        0.3,
+        0.925,
+        0.4,
+        0.05
+      ],
+      "alpha": 0.392
+    }
+  ],
+  "notes": "Outer rails, top band and bottom corners prioritized. Export only; prefab unchanged. Panel alpha values reflect serialized Image tint, not pixel-exact rendered occlusion.",
+  "deck": "Nightmare",
+  "filePrefix": "nightmare-card-front-v1",
+  "pairedWith": "dream-card-front-v1",
+  "reference": "dream-card-front-v1-1000x1300.png",
+  "palette": {
+    "base": "#D6C1BE",
+    "border": "#654548",
+    "shadow": "#AA8580",
+    "highlight": "#EADCD0"
+  },
+  "generatedSourceSize": {
+    "height": 1429,
+    "width": 1100
+  },
+  "exportNote": "Full image resampled to exact 10:13 export sizes without cropping; source aspect normalization is below 0.1 percent."
+}

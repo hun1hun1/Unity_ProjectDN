@@ -17,11 +17,13 @@ public class EnemyBlockAction : EnemyAction
         return $"방어 {block}";
     }
 
-    public override string GetActionDescription(BattleManager battleManager)
-    {
-        if (battleManager == null) return GetActionDescription();
-        return $"방어 {BlockCalculator.Calculate(block, battleManager.GetTarget())}";
-    }
+    public override EnemyActionKinds GetActionKinds() => EnemyActionKinds.Block;
+
+    public override string GetActionDescription(BattleManager battleManager) =>
+        Preview(new EnemyActionPreviewContext(battleManager));
+
+    internal override string Preview(EnemyActionPreviewContext context) =>
+        $"방어 {context.Block(block)}";
 
     public override void Execute(BattleManager battleManager)
     {

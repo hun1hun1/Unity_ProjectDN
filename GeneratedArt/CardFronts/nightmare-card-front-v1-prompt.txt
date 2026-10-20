@@ -1,0 +1,15 @@
+Generator: built-in imagegen edit
+Reference: dream-card-front-v1-1000x1300.png
+Opaque background: true
+
+Edit the provided pale green dream card front BACKGROUND into its matching NIGHTMARE card front background. This is a precise palette/material variation of the SAME design, not a new layout.
+INPUT role: edit target and exact frame/layout reference.
+Preserve the exact upright flat rectangular 10:13 canvas, exact border silhouette, line thickness and inset placement, all four corner filigree shapes, ornament scale and positions, brushwork style, and the quiet open middle. No perspective or outer margin. Fully opaque image, preferably 1000x1300.
+Change the palette to the agreed muted, light nightmare scheme:
+- Main broad background base: LIGHT dusty rose-grey / pale greyish reddish brown approximately #D6C1BE. This pale muted tone must dominate. Avoid saturated pink, bright red, purple and dark burgundy as the overall background.
+- Dark outer border/contours: subdued deep wine-brown approximately #654548.
+- Edge shadows and worn painted patches: faded reddish brown approximately #AA8580.
+- Thin inset highlight lines and light filigree: warm off-white approximately #EADCD0, not gold.
+Keep subtle desaturated painterly tonal variation. Preserve the light interior for black UI text. Add only a little understated chipped/worn pigment and fine cracks along the existing outer painted border to suggest nightmare fatigue and worn military gear. Do not add large cracks, dramatic damage, horror symbols, blood or new motifs. The broad center stays quiet and low-contrast.
+Existing Unity UI overlays hide much of the image. Preserve this exact design logic: the outer 5% side rails, topmost 5% band and bottom-left/bottom-right corners carry the visible decoration. The center is mostly occluded. Overlay coordinates measured from top-left: artwork x5..95%,y17.5..57.5%; cost x3..17%,y5..15%; name x17.5..95%,y5..15%; description x5..95%,y60..90%; rarity x30..70%,y92.5..97.5%. Name and description overlays are semi-transparent, so keep those underneath calm and light.
+Do NOT draw the overlays themselves. No title bar, cost badge, internal illustration frame or panel boxes. No text, letters, runes, numerals, symbols, characters, moons, weapons, skulls, watermark or logos. No new prominent decoration. Preserve the same composition and paired identity as the green source; change only palette and a small amount of edge wear. Opaque full-bleed card-front BACKGROUND texture.

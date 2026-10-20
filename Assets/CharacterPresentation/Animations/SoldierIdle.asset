@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ceed63113d6bf4086984f4629237a8, type: 3}
+  m_Name: SoldierIdle
+  m_EditorClassIdentifier: 
+  setupVersion: 1
+  frames:
+  - {fileID: -1454370824, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: -2057179587, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: -1064982361, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: 1865596656, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: 938280797, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: -477415077, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: 1921725758, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: -990541240, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: 1062096214, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: 1265324501, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: 543435266, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: 89231400, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: 1127527801, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: -429977176, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: -1412901470, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: 1951796316, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: -400123994, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: 876167502, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: 1709721067, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: -1704258341, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: -1913951841, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: 1689874002, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: -1685384465, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  - {fileID: -679853657, guid: ebb91807ef75ef54e960576e2fa4935a, type: 3}
+  frameDuration: 0.06
+  groundPivot: {x: 0.5, y: 0.0625}
+  contentBounds:
+    serializedVersion: 2
+    x: 0.071614586
+    y: 0.061197918
+    width: 0.78255206
+    height: 0.82161456

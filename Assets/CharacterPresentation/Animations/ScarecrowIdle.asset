@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ceed63113d6bf4086984f4629237a8, type: 3}
+  m_Name: ScarecrowIdle
+  m_EditorClassIdentifier: 
+  setupVersion: 1
+  frames:
+  - {fileID: 211236756, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: -2006257810, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: 603444732, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: 215075433, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: 729535132, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: 1599296533, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: 1222325613, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: -417351822, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: 919173064, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: -944930208, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: -1291999537, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: -221022403, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: -1623311760, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: 707436975, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: -790232718, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: -1788233504, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: 63241993, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: 1985707646, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: 775614947, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: -1791317996, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: -354504443, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: 2020429023, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: 1801648287, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  - {fileID: -1162551406, guid: c57654c9e2963e342a27891a2201d43d, type: 3}
+  frameDuration: 0.1
+  groundPivot: {x: 0.5, y: 0.0625}
+  contentBounds:
+    serializedVersion: 2
+    x: 0.100260414
+    y: 0.0625
+    width: 0.7890625
+    height: 0.8541667

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccf5b098aec67624ca6264b2f2511b0c, type: 3}
+  m_Name: Large
+  m_EditorClassIdentifier: 
+  setupVersion: 1
+  visualSize: {x: 480, y: 480}
+  visualOffset: {x: 0, y: 0}
+  infoPrefab: {fileID: 3002068279063255807, guid: e960f1275353f5c4e9b5219ef6c8f238, type: 3}
+  infoSize: {x: 360, y: 84}
+  infoOffset: {x: 0, y: -8}
+  actionPrefab: {fileID: 3288526273348707074, guid: 4398f4c83aaffed4798d7a4151ac6377, type: 3}
+  actionSize: {x: 240, y: 112}
+  actionGap: 12

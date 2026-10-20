@@ -25,6 +25,9 @@ public class EnemyBehavior : ScriptableObject
     {
         if (!Enum.IsDefined(typeof(EnemyActionSelectionMode), selectionMode))
             throw new InvalidOperationException($"Behavior '{name}' has an unsupported selection mode.");
+        if (actions != null)
+            foreach (EnemyAction action in actions)
+                if (action != null) action.Validate();
         if (selectionMode == EnemyActionSelectionMode.Sequential) return;
 
         EnemyAction first = null;

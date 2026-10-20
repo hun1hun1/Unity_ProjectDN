@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class EnemyAction : ScriptableObject
@@ -8,9 +9,19 @@ public abstract class EnemyAction : ScriptableObject
     [SerializeField]
     private string actionName;
 
-    public Sprite GetActionIcon()
+    [SerializeField]
+    [Tooltip("Shared icons by action kinds. Composite combinations take priority; Action Icon is the fallback.")]
+    private EnemyActionIconSet iconSet;
+
+    public virtual EnemyActionKinds GetActionKinds() => EnemyActionKinds.None;
+    protected Sprite GetKindIcon(EnemyActionKinds kinds) => iconSet != null ? iconSet.GetIcon(kinds) : null;
+    public void Validate() => Validate(new HashSet<EnemyAction>());
+    internal virtual void Validate(HashSet<EnemyAction> visiting) { }
+    internal virtual string Preview(EnemyActionPreviewContext context) => GetActionDescription(context.Battle);
+
+    public virtual Sprite GetActionIcon()
     {
-        return actionIcon;
+        return actionIcon != null ? actionIcon : GetKindIcon(GetActionKinds());
     }
 
     public string GetActionName()

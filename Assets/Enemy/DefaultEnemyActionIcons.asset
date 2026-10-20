@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d7a5a84385e29e4480e228652f8ddc8, type: 3}
+  m_Name: DefaultEnemyActionIcons
+  m_EditorClassIdentifier: 
+  attack: {fileID: 21300000, guid: 8ea9ce74db1edc04796c404f24799207, type: 3}
+  block: {fileID: 21300000, guid: 3d589e8b9355b734b8dcad657c569d87, type: 3}
+  debuff: {fileID: 21300000, guid: 5693e4a60ffbd344da7992f29a3dbc55, type: 3}
+  attackBlock: {fileID: 21300000, guid: e2025647b4fc64e48b2b268705ba998d, type: 3}
+  attackDebuff: {fileID: 21300000, guid: ba6e8d5bffbda4540a5c39fe866bf709, type: 3}
+  blockDebuff: {fileID: 21300000, guid: b52de1f015a2f914da8f3531339fcc29, type: 3}
+  attackBlockDebuff: {fileID: 21300000, guid: 55a7f52628f950343838b2ba08b5b52a, type: 3}

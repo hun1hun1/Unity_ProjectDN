@@ -2856,7 +2856,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &493691833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7009,6 +7009,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1197379122366739499, guid: 6d4f8a66b5cf00f48a88b37447ab71e9, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4057060681818568473, guid: 6d4f8a66b5cf00f48a88b37447ab71e9, type: 3}
       propertyPath: dreamCostUI
       value: 
@@ -7960,8 +7964,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 493691834}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.2, y: 0.3}
-  m_AnchorMax: {x: 0.8, y: 0.9}
+  m_AnchorMin: {x: 0.2, y: 0.54}
+  m_AnchorMax: {x: 0.8, y: 0.98}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7987,7 +7991,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -7995,7 +7999,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -9180,7 +9184,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1602295543504222188, guid: a2fb4a1ced688c345a2e58be3a2694e9, type: 3}
       propertyPath: actionUI
-      value:
+      value: 
       objectReference: {fileID: 493691833}
     - target: {fileID: 4492522732535461380, guid: a2fb4a1ced688c345a2e58be3a2694e9, type: 3}
       propertyPath: m_Pivot.x
@@ -9285,8 +9289,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d8fb407f1ead3d74f99d2cf0e90a1b21, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1881581992
 GameObject:
   m_ObjectHideFlags: 0
@@ -10492,7 +10496,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -10528,12 +10532,12 @@ MonoBehaviour:
   m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 14
+  m_fontSizeMax: 36
   m_fontStyle: 1
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -10592,8 +10596,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 493691834}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.1, y: 0.05}
-  m_AnchorMax: {x: 0.9, y: 0.25}
+  m_AnchorMin: {x: 0.04, y: 0.02}
+  m_AnchorMax: {x: 0.96, y: 0.52}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -11356,6 +11360,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   artwork: {fileID: 5757056735199476363}
+  frontImage: {fileID: 1412096529367264053}
+  dreamFrontImage: {fileID: 8353654429988929124, guid: c0b577770ad44bf4d83115c867c7eda5, type: 3}
+  nightmareFrontImage: {fileID: 4786130236884655547, guid: 293f479b83268484e938c6e2019960d3, type: 3}
   costText: {fileID: 3601536123276232060}
   nameText: {fileID: 3885688800253162691}
   descriptionText: {fileID: 2231583578482168296}
@@ -11590,8 +11597,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 8353654429988929124, guid: c0b577770ad44bf4d83115c867c7eda5, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -12262,8 +12269,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 8353654429988929124, guid: c0b577770ad44bf4d83115c867c7eda5, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -12601,6 +12608,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   artwork: {fileID: 8554307014326008205}
+  frontImage: {fileID: 3083534450263484467}
+  dreamFrontImage: {fileID: 8353654429988929124, guid: c0b577770ad44bf4d83115c867c7eda5, type: 3}
+  nightmareFrontImage: {fileID: 4786130236884655547, guid: 293f479b83268484e938c6e2019960d3, type: 3}
   costText: {fileID: 624054713595397754}
   nameText: {fileID: 918330878295324613}
   descriptionText: {fileID: 2858098021350724334}
@@ -13109,6 +13119,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   artwork: {fileID: 441186543382780580}
+  frontImage: {fileID: 6512910965865548570}
+  dreamFrontImage: {fileID: 8353654429988929124, guid: c0b577770ad44bf4d83115c867c7eda5, type: 3}
+  nightmareFrontImage: {fileID: 4786130236884655547, guid: 293f479b83268484e938c6e2019960d3, type: 3}
   costText: {fileID: 8647331634389509459}
   nameText: {fileID: 8941608075645375724}
   descriptionText: {fileID: 6269689333801857479}
@@ -13806,8 +13819,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 8353654429988929124, guid: c0b577770ad44bf4d83115c867c7eda5, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4

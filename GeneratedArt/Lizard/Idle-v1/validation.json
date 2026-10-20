@@ -1,0 +1,196 @@
+{
+  "sourceUnchanged": true,
+  "allFramesPassed": true,
+  "periodicMotion": true,
+  "spriteSheetMatchesFrames": true,
+  "loopSeamDisplacementPixels": 1.9794,
+  "largestAdjacentDisplacementPixels": 2.0009,
+  "animated": [
+    {
+      "file": "lizard-idle-preview.gif",
+      "frames": 24,
+      "durationMs": 2880,
+      "infiniteLoop": true,
+      "transparentCorners": true,
+      "uniqueFrames": 24
+    },
+    {
+      "file": "lizard-idle.webp",
+      "frames": 24,
+      "durationMs": 2880,
+      "infiniteLoop": true,
+      "transparentCorners": true,
+      "uniqueFrames": 24
+    }
+  ],
+  "checks": [
+    {
+      "frame": 0,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 0.0,
+      "maxVerticalShiftPixels": 0.0
+    },
+    {
+      "frame": 1,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 1.566,
+      "maxVerticalShiftPixels": 0.982
+    },
+    {
+      "frame": 2,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 3.051,
+      "maxVerticalShiftPixels": 1.636
+    },
+    {
+      "frame": 3,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 4.354,
+      "maxVerticalShiftPixels": 1.918
+    },
+    {
+      "frame": 4,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 5.386,
+      "maxVerticalShiftPixels": 2.029
+    },
+    {
+      "frame": 5,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 6.077,
+      "maxVerticalShiftPixels": 2.722
+    },
+    {
+      "frame": 6,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 6.379,
+      "maxVerticalShiftPixels": 3.4
+    },
+    {
+      "frame": 7,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 6.273,
+      "maxVerticalShiftPixels": 4.016
+    },
+    {
+      "frame": 8,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 5.765,
+      "maxVerticalShiftPixels": 4.529
+    },
+    {
+      "frame": 9,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 4.89,
+      "maxVerticalShiftPixels": 4.904
+    },
+    {
+      "frame": 10,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 3.708,
+      "maxVerticalShiftPixels": 5.115
+    },
+    {
+      "frame": 11,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 2.299,
+      "maxVerticalShiftPixels": 6.417
+    },
+    {
+      "frame": 12,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 0.766,
+      "maxVerticalShiftPixels": 7.66
+    },
+    {
+      "frame": 13,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 0.829,
+      "maxVerticalShiftPixels": 8.642
+    },
+    {
+      "frame": 14,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 2.313,
+      "maxVerticalShiftPixels": 9.296
+    },
+    {
+      "frame": 15,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 3.614,
+      "maxVerticalShiftPixels": 9.578
+    },
+    {
+      "frame": 16,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 4.644,
+      "maxVerticalShiftPixels": 9.468
+    },
+    {
+      "frame": 17,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 5.332,
+      "maxVerticalShiftPixels": 8.974
+    },
+    {
+      "frame": 18,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 5.632,
+      "maxVerticalShiftPixels": 8.129
+    },
+    {
+      "frame": 19,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 5.522,
+      "maxVerticalShiftPixels": 6.991
+    },
+    {
+      "frame": 20,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 5.012,
+      "maxVerticalShiftPixels": 5.638
+    },
+    {
+      "frame": 21,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 4.135,
+      "maxVerticalShiftPixels": 4.162
+    },
+    {
+      "frame": 22,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 2.951,
+      "maxVerticalShiftPixels": 2.663
+    },
+    {
+      "frame": 23,
+      "feetUnchanged": true,
+      "transparentBorder": true,
+      "maxHorizontalShiftPixels": 1.54,
+      "maxVerticalShiftPixels": 1.243
+    }
+  ]
+}
