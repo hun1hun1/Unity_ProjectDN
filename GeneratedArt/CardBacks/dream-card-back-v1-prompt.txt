@@ -1,0 +1,12 @@
+Generator: built-in imagegen
+Target: Card.prefab BackImage, 200 x 260 (10:13).
+Exported at 1000 x 1300 and 200 x 260 without cropping or aspect distortion.
+
+Create one finished DREAM DECK CARD BACK texture for a hand-painted dark fantasy deckbuilding game, visually compatible with Slay the Spire-inspired rough painterly art.
+OUTPUT: exactly 1000 pixels wide by 1300 pixels tall if possible, portrait aspect ratio 10:13. This texture will fill a Unity UI BackImage whose native rectangle is 200 x 260. One FLAT straight-on rectangular full-bleed card-back design filling the entire canvas. No photographed card, no perspective, no surrounding table, no outer margin, no multiple cards. Fully opaque background.
+
+MAIN MOTIF: a single large elegant CRESCENT MOON precisely centered, rendered in brilliant icy blue and pale cyan light, with a clearly open dark concave side and graceful tapered tips. It must unmistakably read as a crescent, never a full moon or a circular disc. The blue crescent is the primary visual focus, occupying approximately half the card's width and slightly under half its height. Subtle hand-painted lunar texture inside the luminous crescent, a concentrated cyan rim, and a restrained soft cobalt aura.
+BACKGROUND: deep midnight navy blue, softly mottled ink-like brush texture and a faint dreamy mist close to the moon. A few very small sparse blue-white stars can frame the main motif without competing with it. Cool blue palette throughout.
+BORDER: restrained ornamental blue-silver frame, broad and simple enough to read at 200 x 260 pixels; subtle symmetrical curling lunar flourishes in the four corners. Dark outer edge, then a thin cyan-blue inner line. Keep the entire decorative frame within the central 90% of the canvas so the edges remain safe. No warm gold. Calm, mysterious, dreamlike rather than threatening.
+STYLE: hand-painted fantasy game UI, dark irregular outlines and angular brushwork, lightly worn painted surfaces, coherent with rough painterly character sprites. Clean readable silhouette and clear values at a small card size; intentionally simplify tiny ornaments. No photorealism, no 3D mockup, no glossy plastic, no pixel art.
+CONSTRAINTS: no text, letters, numbers, runes, labels, logos, watermark, icons, characters, hands, weapons, scenery or UI statistics. The entire output is the card BACK artwork; do not include a card front, illustration window, cost badge or description area. Keep the crescent clean and dominant. No transparency.

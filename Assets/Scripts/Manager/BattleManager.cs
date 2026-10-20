@@ -13,6 +13,10 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private Player player;
     [SerializeField] private Enemy target;
 
+    [Header("Enemy Prefab")]
+    [SerializeField] private RectTransform enemySpawnRoot;
+    [SerializeField] private EnemyActionUI enemyActionUI;
+
     [Header("Card Using Area")]
     [SerializeField] private RectTransform cardUsingPoint;
 
@@ -252,6 +256,65 @@ public class BattleManager : MonoBehaviour
     public Enemy GetTarget()
     {
         return target;
+    }
+
+    public void ConfigureEncounter(BattleEncounterDefinition encounter)
+    {
+        if (encounter == null) throw new System.ArgumentNullException(nameof(encounter));
+        encounter.Validate();
+        if (encounter.enemyPrefab == null)
+        {
+            if (target == null) throw new System.InvalidOperationException("A legacy encounter needs an existing enemy.");
+            target.ConfigureEncounter(encounter);
+            BindBattleCharacters();
+            target.BindBattle(this);
+            return;
+        }
+        if (enemySpawnRoot == null)
+            throw new System.InvalidOperationException("An enemy prefab needs a battle spawn root.");
+
+        // Defer Awake so the selected encounter is applied before inherited prefab settings can execute.
+        GameObject staging = new GameObject("Enemy initialization");
+        staging.SetActive(false);
+        staging.transform.SetParent(enemySpawnRoot, false);
+        Enemy spawned = null;
+        try
+        {
+            spawned = Instantiate(encounter.enemyPrefab, staging.transform, false);
+            spawned.gameObject.SetActive(false);
+            spawned.transform.SetParent(enemySpawnRoot, false);
+            spawned.ConfigureEncounter(encounter);
+        }
+        catch
+        {
+            if (spawned != null) DisposeEnemy(spawned);
+            throw;
+        }
+        finally
+        {
+            if (Application.isPlaying) Destroy(staging);
+            else DestroyImmediate(staging);
+        }
+        Enemy previous = target;
+        if (previous != null)
+        {
+            previous.ContinuousCards.ResetForBattle();
+            previous.StatusEffects.Clear();
+            previous.gameObject.SetActive(false);
+        }
+        target = spawned;
+        BindBattleCharacters();
+        target.BindBattle(this);
+        if (enemyActionUI != null) target.BindActionUI(enemyActionUI);
+        target.gameObject.SetActive(true);
+        if (previous != null) DisposeEnemy(previous);
+    }
+
+    private static void DisposeEnemy(Enemy enemy)
+    {
+        enemy.gameObject.SetActive(false);
+        if (Application.isPlaying) Destroy(enemy.gameObject);
+        else DestroyImmediate(enemy.gameObject);
     }
 
     public bool CanInspectCards => currentState == BattleState.PlayerTurn && !isResolvingEffects &&

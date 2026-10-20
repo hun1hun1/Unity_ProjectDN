@@ -24,7 +24,7 @@ public class RunBattleBridge : MonoBehaviour
         BattleEncounterDefinition encounter = progress.CurrentNode.SelectedChoice.Encounter;
         encounter.Validate();
         battle.GetPlayer().RestoreHealth(progress.CurrentHP, progress.MaxHP);
-        battle.GetTarget().ConfigureEncounter(encounter);
+        battle.ConfigureEncounter(encounter);
         rewards.ConfigureGoldReward(encounter.goldReward);
     }
     private void OnDisable()

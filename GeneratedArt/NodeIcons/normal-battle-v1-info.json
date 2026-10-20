@@ -1,0 +1,34 @@
+{
+  "generator": "built-in imagegen",
+  "subject": "Short sword, point towards upper right",
+  "targetScene": "Assets/Scenes/MapScene.unity",
+  "targetElement": "Choice1/ArtworkFrame/Artwork",
+  "frameSize": [
+    320,
+    220
+  ],
+  "insetEachSide": 12,
+  "nativeArtworkSize": [
+    296,
+    196
+  ],
+  "fit": "contain, no distortion",
+  "sceneReferencesChanged": false,
+  "unityPlaybackChecked": false,
+  "outputs": [
+    {
+      "name": "normal-battle-v1.png",
+      "width": 1184,
+      "height": 784,
+      "hasAlpha": true,
+      "transparentBorders": true
+    },
+    {
+      "name": "normal-battle-v1-296x196.png",
+      "width": 296,
+      "height": 196,
+      "hasAlpha": true,
+      "transparentBorders": true
+    }
+  ]
+}

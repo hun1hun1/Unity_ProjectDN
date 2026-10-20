@@ -1,0 +1,7 @@
+Generator: built-in imagegen edit
+Input: dream-card-back-v1.png
+Change: rotate the central crescent approximately 30 degrees counterclockwise.
+Exports: 1000 x 1300 and 200 x 260, aspect ratio 10:13.
+
+Edit the provided dream card back image. Make ONE localized change only: rotate the large luminous blue crescent in the center approximately 30 degrees COUNTERCLOCKWISE about its own center, as seen by the viewer. This is a small turn to the LEFT, not clockwise. The open side of the current crescent faces roughly right; after the edit it should face upper-right. Both tapered horns must move counterclockwise, with the upper horn moving toward the top and the lower horn toward the right. Keep the moon's original center, exact overall size, painted lunar surface, brightness, blue/cyan color and glow. Rotate the moon and its closely attached halo as one object. Fill its former position naturally with the existing midnight-blue painted background.
+Preserve everything else: the upright rectangular silver-blue ornamental border and all four corner motifs, their positions and shapes, the stars, dark blue brush-textured background, layout and colors. DO NOT rotate the entire card, frame or background. Do not redesign the crescent or add another moon. No other changes, no text, no logos. Preserve portrait aspect ratio 10:13 and output canvas 1000 x 1300 pixels if possible. Opaque full-bleed card-back texture.

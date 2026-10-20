@@ -1,0 +1,19 @@
+{
+  "generator": "built-in imagegen",
+  "targetPrefab": "Assets/Prefabs/UI/Card.prefab",
+  "targetHierarchy": "Card/HoverVisual/CardVisual/Back/BackImage",
+  "nativeUiWidth": 200,
+  "nativeUiHeight": 260,
+  "aspectRatio": "10:13",
+  "highResolution": [
+    1000,
+    1300
+  ],
+  "exactSize": [
+    200,
+    260
+  ],
+  "prefabReferenceChanged": false,
+  "prefabSizeVerification": "Static serialized RectTransform inspection: stretched ancestors, zero offsets, root sizeDelta 200x260.",
+  "unityVisualVerification": false
+}

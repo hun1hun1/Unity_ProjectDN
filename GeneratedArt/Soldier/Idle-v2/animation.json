@@ -1,0 +1,20 @@
+{
+  "name": "soldier-idle-v2",
+  "frameWidth": 768,
+  "frameHeight": 768,
+  "columns": 6,
+  "rows": 4,
+  "frameCount": 24,
+  "frameDurationMs": 60,
+  "durationMs": 1440,
+  "loop": true,
+  "maxUpperBodyDropPixels": 12,
+  "groundYFromTop": 720,
+  "pivotNormalized": [
+    0.5,
+    0.0625
+  ],
+  "sourceArt": "../Idle-v1/frames/soldier-idle-00.png",
+  "method": "Existing artwork rendered with a small leg bend; upper body and rifle are translated rigidly; feet remain fixed.",
+  "generationPrompt": "No new image generation. Preserve existing artwork, reduce knee bend, keep rifle geometry identical."
+}

@@ -1,0 +1,33 @@
+{
+  "name": "soldier-idle",
+  "frameWidth": 768,
+  "frameHeight": 768,
+  "columns": 6,
+  "rows": 1,
+  "frameRate": 5,
+  "durationMs": 1200,
+  "loop": true,
+  "keyframeSequence": [
+    0,
+    1,
+    2,
+    3,
+    2,
+    1
+  ],
+  "frameDurationMs": [
+    200,
+    200,
+    200,
+    200,
+    200,
+    200
+  ],
+  "groundYFromTop": 720,
+  "pivotNormalized": [
+    0.5,
+    0.0625
+  ],
+  "sourceArt": "../soldier-v1.png",
+  "generator": "built-in imagegen; lossless frame extraction and animation assembly"
+}

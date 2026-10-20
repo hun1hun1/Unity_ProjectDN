@@ -1,0 +1,14 @@
+Generator: built-in imagegen
+Style and frame reference: dream-card-back-v2.png
+Target: Card.prefab BackImage, 200 x 260 (10:13).
+Exports: 1000 x 1300 and 200 x 260.
+
+Create the NIGHTMARE DECK CARD BACK that forms a matched pair with the provided blue DREAM card back.
+REFERENCE ROLE: exact visual style, border structure, framing, ornamental placement and painted texture reference. This is a new red nightmare version, not another blue dream card.
+OUTPUT: one flat upright full-bleed card-back texture, portrait aspect ratio exactly 10:13, 1000 pixels wide x 1300 pixels tall if possible. No perspective, tabletop, exterior margin or mockup. Opaque background.
+
+MAIN CHANGE: replace the central blue crescent with ONE LARGE COMPLETE RED FULL MOON. A perfectly circular full lunar disc, the WHOLE circle visible, centered on the card at the same visual focal position as the reference moon. Clearly a moon with cratered, hand-painted mottled lunar terrain, NOT a sun, eye, face, sphere with a dark half, eclipse, crescent or ring. Diameter approximately 55 to 60 percent of the card width. Rich glowing scarlet/crimson terrain, bright ember-red highlights, deep burgundy craters and shadows, a restrained blood-red halo. Keep the complete circular silhouette distinct and readable at 200 x 260.
+PALETTE: transform the blue and cyan palette into dark oxblood, burgundy, charcoal and luminous crimson. Dark painted background with subtle smoky maroon texture. A few tiny dim red sparks in place of the blue stars. An ominous quiet nightmare atmosphere, no gore.
+FRAME: preserve the same rectangular ornamental border geometry, thickness, inset margins, symmetric curling corner ornaments and small pointed center accents as the reference. Recolor the frame from blue-silver to pale desaturated red/silver with crimson reflections. Do not introduce different intricate symbols or additional moons. Keep matching frame weight and layout so the two card backs look like a pair in the same game.
+STYLE: preserve the reference's rough hand-painted fantasy illustration, broad textured strokes, irregular dark contours and lightly worn surface. Simplify small detail for clarity at native 200 x 260 UI size.
+CONSTRAINTS: no text, letters, numbers, runes, logos, watermark, characters, weapons, UI statistics, cost badges, card-front art window or description fields. NO blue crescent remains. The red FULL MOON must be the primary, unambiguous central feature. No transparency.

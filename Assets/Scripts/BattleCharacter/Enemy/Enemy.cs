@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : BattleCharacter
@@ -9,6 +10,12 @@ public class Enemy : BattleCharacter
     private EnemyActionUI actionUI;
 
     private int currentActionIndex;
+    private EnemyBehavior preparedBehavior;
+    private EnemyAction nextAction;
+    private EnemyAction lastAction;
+    private int consecutiveCount;
+    private readonly List<EnemyAction> actionCandidates = new List<EnemyAction>();
+    public EnemyAction NextAction => nextAction;
     private BattleManager battleContext;
     private Player subscribedPlayer;
 
@@ -17,7 +24,7 @@ public class Enemy : BattleCharacter
         if (encounter == null) throw new System.ArgumentNullException(nameof(encounter));
         encounter.Validate();
         behavior = encounter.behavior;
-        currentActionIndex = 0;
+        ResetActionPattern();
         RestoreHealth(encounter.enemyMaxHP, encounter.enemyMaxHP);
         RefreshNextActionUI();
     }
@@ -25,8 +32,16 @@ public class Enemy : BattleCharacter
     public void BindBattle(BattleManager battleManager)
     {
         UnsubscribeStatuses();
+        bool changedBattle = battleContext != null && battleContext != battleManager;
         battleContext = battleManager;
+        if (changedBattle) ResetActionPattern();
         if (isActiveAndEnabled) SubscribeStatuses();
+        RefreshNextActionUI();
+    }
+
+    public void BindActionUI(EnemyActionUI ui)
+    {
+        actionUI = ui;
         RefreshNextActionUI();
     }
 
@@ -55,14 +70,15 @@ public class Enemy : BattleCharacter
 
     private void RefreshNextActionUI()
     {
-        UpdateNextActionUI(behavior != null ? behavior.GetAction(currentActionIndex) : null);
+        PrepareNextAction();
+        UpdateNextActionUI(nextAction);
     }
 
     protected override void Awake()
     {
         base.Awake();
 
-        currentActionIndex = 0;
+        ResetActionPattern();
 
         RefreshNextActionUI();
     }
@@ -76,23 +92,71 @@ public class Enemy : BattleCharacter
 
     public void EnemyTurn(BattleManager battleManager)
     {
+        PrepareNextAction();
         if (behavior == null) return;
 
-        EnemyAction action = behavior.GetAction(currentActionIndex);
-
+        EnemyAction action = nextAction;
         if (action != null)
         {
             action.Execute(battleManager);
+            consecutiveCount = action == lastAction ? Mathf.Min(2, consecutiveCount + 1) : 1;
+            lastAction = action;
         }
 
-        currentActionIndex++;
-
-        if (currentActionIndex >= behavior.GetActionCount())
+        if (behavior.SelectionMode == EnemyActionSelectionMode.Sequential)
         {
-            currentActionIndex = 0;
+            currentActionIndex++;
+            if (currentActionIndex >= behavior.GetActionCount()) currentActionIndex = 0;
+        }
+        nextAction = null;
+        if (battleManager != null && !battleManager.CanContinueEffects)
+        {
+            UpdateNextActionUI(null);
+            return;
+        }
+        SelectNextAction();
+        RefreshNextActionUI();
+    }
+
+    private void ResetActionPattern()
+    {
+        if (behavior != null) behavior.Validate();
+        preparedBehavior = behavior;
+        currentActionIndex = 0;
+        lastAction = null;
+        consecutiveCount = 0;
+        nextAction = null;
+        SelectNextAction();
+    }
+
+    private void PrepareNextAction()
+    {
+        if (preparedBehavior != behavior) ResetActionPattern();
+        // Sequential intent also respects callers that explicitly reset the sequence index.
+        else if (behavior != null && behavior.SelectionMode == EnemyActionSelectionMode.Sequential)
+            nextAction = behavior.GetAction(currentActionIndex);
+    }
+
+    private void SelectNextAction()
+    {
+        nextAction = null;
+        if (behavior == null) return;
+        if (behavior.SelectionMode == EnemyActionSelectionMode.Sequential)
+        {
+            nextAction = behavior.GetAction(currentActionIndex);
+            return;
         }
 
-        RefreshNextActionUI();
+        actionCandidates.Clear();
+        for (int i = 0; i < behavior.GetActionCount(); i++)
+        {
+            EnemyAction candidate = behavior.GetAction(i);
+            if (candidate == null || consecutiveCount >= 2 && candidate == lastAction || actionCandidates.Contains(candidate))
+                continue;
+            actionCandidates.Add(candidate);
+        }
+        if (actionCandidates.Count > 0)
+            nextAction = actionCandidates[Random.Range(0, actionCandidates.Count)];
     }
 
     private void UpdateNextActionUI(EnemyAction action)

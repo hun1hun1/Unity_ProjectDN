@@ -29,6 +29,7 @@ public static class MapAssetSetup
         {
             encounter = ScriptableObject.CreateInstance<BattleEncounterDefinition>();
             encounter.displayName = "일반 전투";
+            encounter.enemyPrefab = PrefabUtility.GetCorrespondingObjectFromSource(battle.GetTarget());
             encounter.behavior = (EnemyBehavior)new SerializedObject(battle.GetTarget()).FindProperty("behavior").objectReferenceValue;
             encounter.enemyMaxHP = battle.GetTarget().GetMaxHP(); encounter.goldReward = rewards.GoldReward;
             AssetDatabase.CreateAsset(encounter, "Assets/MapData/NormalEncounter.asset");
