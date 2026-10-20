@@ -1,0 +1,11 @@
+Generator: built-in imagegen
+Transparent background: true
+Target: MapScene choice artwork, 296 x 196 inside a 320 x 220 frame with 12-pixel insets.
+Exports: 1184 x 784 and 296 x 196 PNG, preserving proportions without cropping.
+
+Create ONE finished normal-battle node icon for a hand-painted dark fantasy deckbuilding roguelike. It must visually fit rough painterly Slay the Spire-inspired soldier and slime sprites.
+OUTPUT: landscape transparent PNG canvas, aspect ratio 74:49 (native Unity UI art area 296 x 196 pixels; high-resolution target 1184 x 784). Exactly one isolated SHORT SWORD. No background.
+COMPOSITION AND DIRECTION: the sword lies diagonally from bottom-left to top-right. Brown leather-wrapped grip and pommel at lower left, crossguard near the center-left, blade rising to a clearly sharp POINT at the UPPER RIGHT. Tip roughly at 78 percent width and 14 percent height; pommel roughly at 22 percent width and 86 percent height. The point must face up-right, not up-left, down-right or straight up. The complete weapon is fully visible with comfortable transparent padding (at least 8 percent on all sides), no cropping.
+DESIGN: a plain practical short sword representing an ordinary battle, with a broad short straight double-edged steel blade, sharp triangular tip, distinct central ridge, simple iron crossguard and small iron pommel. The exposed blade is approximately twice the grip length, not a long sword, rapier or giant fantasy weapon. Dark worn steel, cool silver-grey blade faces, restrained blue-grey highlights and a dark brown leather hilt. Simple readable shape, strong contrast and thick dark charcoal outlines so the icon remains clear at 296 x 196. No jewel, no crown, no wings, no flames, no magical aura, no glow effects, no blood, no ornate gold decoration.
+STYLE: rough hand-painted 2D fantasy game icon; textured angular brushwork, broad shaded planes, bold irregular dark outlines, moderately chunky readable silhouette. Cohesive earthy muted palette and small painted wear marks. No photorealism, no 3D render, no smooth vector art and no pixel art.
+CONSTRAINTS: only ONE sword, not crossed swords. No shield, hand, character, skull, enemy, terrain, card, frame, badge, circle, text, numerals, logo, watermark or cast ground shadow. Genuinely transparent alpha background, not a painted checkerboard.
