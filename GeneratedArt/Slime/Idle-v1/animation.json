@@ -1,0 +1,22 @@
+{
+  "name": "slime-idle-v1",
+  "frameWidth": 768,
+  "frameHeight": 768,
+  "columns": 6,
+  "rows": 4,
+  "frameCount": 24,
+  "frameDurationMs": 80,
+  "frameRate": 12.5,
+  "durationMs": 1920,
+  "loop": true,
+  "groundYFromTop": 720,
+  "pivotNormalized": [
+    0.5,
+    0.0625
+  ],
+  "sourceArt": "../slime-v1.png",
+  "sourceArtSha256": "64e8092ee19d432219550f7ee04f8506755993e405ee88b81610f67897ec544e",
+  "method": "Existing artwork on a deforming sprite: subtle slow compression, widening, and sway; lower contact area fixed.",
+  "maxBodyDropPixels": 18,
+  "maxWidthExpansionPercent": 2.5
+}

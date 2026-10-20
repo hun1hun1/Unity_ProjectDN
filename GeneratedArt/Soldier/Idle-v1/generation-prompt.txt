@@ -1,0 +1,17 @@
+Generator: built-in imagegen
+Input reference: ../soldier-v1.png
+Postprocessing: isolated frame extraction, common foot baseline, PNG sheet and looping GIF/WebP assembly.
+
+EDIT THE PROVIDED SOLDIER INTO A PRECISE FOUR-FRAME IDLE ANIMATION SPRITE SHEET.
+The provided image is the exact character identity and texture source. Preserve the soldier's original painted artwork, helmet covering both eyes, uniform, pouches, boots, hands, and M1 Garand rifle. Preserve his right-facing aim. Do not redesign, simplify or restyle him.
+
+OUTPUT LAYOUT: one wide landscape PNG with a TRANSPARENT alpha background. EXACTLY FOUR equal square cells, in ONE horizontal row and FOUR columns. No gaps between cells, no frame borders, no visible grid, no numbers, no labels. Each cell contains ONE complete full-body soldier and his complete rifle, with generous transparent margin. Each soldier has identical scale and identical camera angle. All boot soles rest at the exact SAME height. Each character occupies the same local position in its cell, with feet at the same local horizontal coordinates. No part crosses cell boundaries. Each cell should look like a direct copy of the supplied sprite, with only the subtle knee bend changed.
+
+ANIMATION left-to-right:
+1. Original relaxed battle-ready stance from reference. This is the highest position.
+2. A very slight knee bend: helmet, shoulders, chest, belt and rifle lowered by about 1 percent of character height. Soles stay fixed.
+3. Slightly deeper knee bend: torso and rifle lowered about 2 percent of height. Soles stay fixed.
+4. Maximum subtle idle knee bend: torso and rifle lowered about 3 percent of height. Soles stay fixed.
+This will play forward then backward (1 2 3 4 3 2) as a breathing idle. The motion is restrained and natural, NOT a squat exercise, walk, attack or recoil. Bend at the knees; don't vertically squash the head, torso or rifle. Thighs and calves articulate subtly while both boots remain planted at identical coordinates. Head, arms, hands and rifle move DOWN together as one rigid upper-body pose. Rifle stays straight, level, aimed to the RIGHT in all frames. Preserve all equipment and body proportions. Preserve palette, linework and brush texture from frame to frame with minimal flicker. All eyes remain entirely hidden under helmet shadow.
+
+The result is a four-cell production sprite sheet of the SAME original soldier, not four different soldiers. True transparent background, no scenery or ground shadow. No text, watermark, UI or extra objects.
