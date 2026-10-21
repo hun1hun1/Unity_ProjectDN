@@ -15,7 +15,7 @@ using Object = UnityEngine.Object;
 
 public class EnemyPrefabTests
 {
-    private const string PrefabPath = "Assets/Prefabs/Enemy/TestEnemy.prefab";
+    private const string PrefabPath = "Assets/Prefabs/Enemy/Slime.prefab";
     private readonly List<Object> created = new List<Object>();
 
     [TearDown] public void Cleanup()
@@ -134,7 +134,7 @@ public class EnemyPrefabTests
         yield return WaitForScene("BattleScene");
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
         Assert.That(battle.GetTarget().GetCurrentHP(), Is.EqualTo(67));
-        Assert.That(battle.GetTarget().name, Does.StartWith("TestEnemy"));
+        Assert.That(battle.GetTarget().name, Does.StartWith("Slime"));
         Assert.That(Object.FindObjectsByType<Enemy>(FindObjectsSortMode.None), Has.Length.EqualTo(1));
         CharacterInfoUI hud = battle.GetTarget().GetComponentInChildren<CharacterInfoUI>();
         Assert.That(((TMP_Text)Get(hud, "hpText")).text, Is.EqualTo("67 / 67"));

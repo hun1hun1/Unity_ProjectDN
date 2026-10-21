@@ -140,7 +140,7 @@ public class CharacterPresentationTests
             Assert.That((Vector2)Field(profile, "visualSize"), Is.EqualTo(Vector2.one * size));
             Assert.That((Vector2)Field(profile, "infoSize"), Is.EqualTo(new Vector2(width, 84)));
         }
-        foreach (string name in new[] { "TestEnemy", "Scarecrow", "Lizard" })
+        foreach (string name in new[] { "Slime", "Scarecrow", "Lizard" })
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemy/" + name + ".prefab");
             Assert.That(prefab, Is.Not.Null); Assert.That(prefab.GetComponent(Type("BattleCharacterPresentation")), Is.Not.Null);
@@ -153,7 +153,7 @@ public class CharacterPresentationTests
 
     [Test] public void SavedHudAndIntentRemainLinkedToTheirEditablePrefabSources()
     {
-        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemy/TestEnemy.prefab");
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemy/Slime.prefab");
         var view = prefab.GetComponent<BattleCharacterPresentation>();
         Assert.That(PrefabUtility.GetCorrespondingObjectFromSource(view.InfoUI), Is.Not.Null);
         Assert.That(PrefabUtility.GetCorrespondingObjectFromSource(view.ActionUI), Is.Not.Null);
@@ -165,7 +165,7 @@ public class CharacterPresentationTests
         Assert.That(AssetDatabase.LoadAssetAtPath<GameObject>(temporary), Is.Null);
         try
         {
-            Assert.That(AssetDatabase.CopyAsset("Assets/Prefabs/Enemy/TestEnemy.prefab", temporary), Is.True);
+            Assert.That(AssetDatabase.CopyAsset("Assets/Prefabs/Enemy/Slime.prefab", temporary), Is.True);
             CharacterUIProfile large = AssetDatabase.LoadAssetAtPath<CharacterUIProfile>("Assets/CharacterPresentation/Profiles/Large.asset");
             UISpriteAnimation lizard = AssetDatabase.LoadAssetAtPath<UISpriteAnimation>("Assets/CharacterPresentation/Animations/LizardIdle.asset");
             GameObject root = PrefabUtility.LoadPrefabContents(temporary);

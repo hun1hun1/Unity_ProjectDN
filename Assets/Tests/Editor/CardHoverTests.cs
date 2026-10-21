@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using TMPro;
@@ -11,6 +12,12 @@ using UnityEngine.TestTools;
 
 public class CardHoverTests
 {
+    [UnityTearDown]
+    public IEnumerator ExitPlay()
+    {
+        if (Application.isPlaying) yield return new ExitPlayMode();
+    }
+
     [Test]
     public void CardPrefabSeparatesHoverAnimationAndPointerArea()
     {
@@ -35,10 +42,11 @@ public class CardHoverTests
     {
         yield return new EnterPlayMode();
         yield return SceneManager.LoadSceneAsync("BattleScene");
-        yield return WaitForPlayTime(1f);
         CardHandController[] hands = Object.FindObjectsByType<CardHandController>(FindObjectsSortMode.None);
+        Assert.That(hands, Is.Not.Empty);
         foreach (CardHandController hand in hands)
         {
+            yield return WaitForHandReady(hand);
             CardUI card = hand.GetComponentsInChildren<CardUI>()[0];
             RectTransform root = (RectTransform)card.transform;
             RectTransform wrapper = (RectTransform)card.transform.Find("HoverVisual");
@@ -55,7 +63,7 @@ public class CardHoverTests
             };
             AssertRaycastCard(pointer, card);
             ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
-            yield return WaitForPlayTime(0.25f);
+            yield return WaitForHoverState(card, wrapper, true);
             Assert.That(wrapper.localScale.x, Is.EqualTo(ConfiguredHoverScale(card)).Within(0.001f));
             Assert.That(visual.localScale, Is.EqualTo(Vector3.one));
             Assert.That(root.rect.size, Is.EqualTo(size));
@@ -69,10 +77,10 @@ public class CardHoverTests
             ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerExitHandler);
             yield return WaitForPlayTime(0.04f);
             ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
-            yield return WaitForPlayTime(0.25f);
+            yield return WaitForHoverState(card, wrapper, true);
             Assert.That(wrapper.localScale.x, Is.EqualTo(ConfiguredHoverScale(card)).Within(0.001f));
             ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerExitHandler);
-            yield return WaitForPlayTime(0.25f);
+            yield return WaitForHoverState(card, wrapper, false);
             Assert.That(wrapper.localScale, Is.EqualTo(Vector3.one));
             Assert.That(wrapper.anchoredPosition, Is.EqualTo(Vector2.zero));
             Assert.That(wrapper.GetComponent<Canvas>().overrideSorting, Is.False);
@@ -95,10 +103,10 @@ public class CardHoverTests
                     edge.y < 0 ? canvasRect.rect.yMin + root.rect.height / 2 : canvasRect.rect.yMax - root.rect.height / 2);
                 root.position = canvasRect.TransformPoint(center);
                 ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
-                yield return WaitForPlayTime(0.25f);
+                yield return WaitForHoverState(card, wrapper, true);
                 AssertInsideCanvas(visual, canvas);
                 ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerExitHandler);
-                yield return WaitForPlayTime(0.25f);
+                yield return WaitForHoverState(card, wrapper, false);
             }
             hand.GetComponent<UnityEngine.UI.HorizontalLayoutGroup>().enabled = true;
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -113,36 +121,33 @@ public class CardHoverTests
     {
         yield return new EnterPlayMode();
         yield return SceneManager.LoadSceneAsync("BattleScene");
-        yield return WaitForPlayTime(1f);
         CardHandController hand = Object.FindObjectsByType<CardHandController>(FindObjectsSortMode.None)[0];
+        yield return WaitForHandReady(hand);
         CardUI card = hand.GetComponentsInChildren<CardUI>()[0];
         RectTransform wrapper = (RectTransform)card.transform.Find("HoverVisual");
         RectTransform visual = (RectTransform)wrapper.Find("CardVisual");
         var pointer = new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left };
         ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
-        yield return WaitForPlayTime(0.25f);
+        yield return WaitForHoverState(card, wrapper, true);
         Assert.That(wrapper.localScale.x, Is.EqualTo(ConfiguredHoverScale(card)).Within(0.001f));
         card.OnPointerDown(pointer);
         Assert.That(wrapper.localScale, Is.EqualTo(Vector3.one));
         Assert.That(wrapper.anchoredPosition, Is.EqualTo(Vector2.zero));
         Assert.That(card.transform.parent, Is.EqualTo(hand.GetCardAnimationLayer()));
         ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
-        yield return WaitForPlayTime(0.2f);
+        yield return WaitForScale(visual, Vector3.one * new SerializedObject(card).FindProperty("selectedScale").floatValue);
         Assert.That(visual.localScale.x, Is.EqualTo(new SerializedObject(card).FindProperty("selectedScale").floatValue).Within(0.001f), "Hover must not compound the drag scale.");
         Assert.That(wrapper.localScale, Is.EqualTo(Vector3.one));
         typeof(CardUI).GetField("isDragging", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(card, false);
         typeof(CardUI).GetMethod("ReturnToHand", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(card, null);
         ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
-        yield return WaitForPlayTime(0.05f);
-        Assert.That(wrapper.localScale, Is.EqualTo(Vector3.one));
+        yield return AssertHoverBlockedWhileMoving(card, wrapper);
         ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerExitHandler);
-        float returnDeadline = Time.realtimeSinceStartup + 10f;
-        while (!card.CanHover && Time.realtimeSinceStartup < returnDeadline) yield return null;
-        Assert.That(card.CanHover, Is.True, "The return animation must finish before checking its final parent.");
+        yield return WaitForHandReady(hand);
         Assert.That(card.transform.parent, Is.EqualTo(hand.transform));
         Assert.That(visual.localScale, Is.EqualTo(Vector3.one));
         ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
-        yield return WaitForPlayTime(0.25f);
+        yield return WaitForHoverState(card, wrapper, true);
         card.gameObject.SetActive(false);
         Assert.That(wrapper.localScale, Is.EqualTo(Vector3.one));
         card.gameObject.SetActive(true);
@@ -152,13 +157,13 @@ public class CardHoverTests
         RectTransform start = (RectTransform)new SerializedObject(hand).FindProperty("drawStartPoint").objectReferenceValue;
         card.PlayDrawAnimation(start);
         ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
-        yield return WaitForPlayTime(0.15f);
-        Assert.That(wrapper.localScale, Is.EqualTo(Vector3.one));
+        yield return AssertHoverBlockedWhileMoving(card, wrapper);
         ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerExitHandler);
-        yield return WaitForPlayTime(0.7f);
+        yield return WaitForHandReady(hand);
+        yield return WaitForHoverState(card, wrapper, false);
         Assert.That(visual.localScale, Is.EqualTo(Vector3.one));
         ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
-        yield return WaitForPlayTime(0.25f);
+        yield return WaitForHoverState(card, wrapper, true);
         card.MarkAsUsed();
         Assert.That(wrapper.localScale, Is.EqualTo(Vector3.one));
         ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
@@ -195,6 +200,48 @@ public class CardHoverTests
             Assert.That(point.x, Is.InRange(root.rect.xMin - 0.05f, root.rect.xMax + 0.05f));
             Assert.That(point.y, Is.InRange(root.rect.yMin - 0.05f, root.rect.yMax + 0.05f));
         }
+    }
+
+    private static IEnumerator WaitForHandReady(CardHandController hand)
+    {
+        yield return WaitUntil(() =>
+        {
+            CardUI[] cards = hand.GetCardsSnapshot();
+            return cards.Length > 0 && cards.All(card => card != null && card.CanHover);
+        }, "The hand must finish drawing or returning before hover input is sent.");
+    }
+
+    private static IEnumerator WaitForHoverState(CardUI card, RectTransform wrapper, bool expanded)
+    {
+        Vector3 expected = expanded ? Vector3.one * ConfiguredHoverScale(card) : Vector3.one;
+        Canvas hoverCanvas = wrapper.GetComponent<Canvas>();
+        yield return WaitUntil(() => wrapper.localScale.Equals(expected) && hoverCanvas.overrideSorting == expanded,
+            $"Hover must finish {(expanded ? "expanding" : "resetting")} both its scale and sorting state.");
+    }
+    private static IEnumerator WaitForScale(RectTransform visual, Vector3 expected)
+    {
+        yield return WaitUntil(() => visual.localScale.Equals(expected),
+            $"{visual.name} must finish scaling to {expected}.");
+    }
+
+    private static IEnumerator AssertHoverBlockedWhileMoving(CardUI card, RectTransform wrapper)
+    {
+        Assert.That(card.IsMoving, Is.True, "The blocked-hover check must start during an animation.");
+        Assert.That(wrapper.localScale, Is.EqualTo(Vector3.one), "Moving cards must not enlarge on hover.");
+        yield return WaitUntil(() =>
+        {
+            if (!card.IsMoving) return true;
+            Assert.That(wrapper.localScale, Is.EqualTo(Vector3.one), "Moving cards must not enlarge on hover.");
+            return false;
+        }, "The card animation must finish before checking the restored layout.");
+    }
+
+    private static IEnumerator WaitUntil(System.Func<bool> condition, string message)
+    {
+        float deadline = Time.realtimeSinceStartup + 10f;
+        do { yield return null; }
+        while (!condition() && Time.realtimeSinceStartup < deadline);
+        Assert.That(condition(), Is.True, message);
     }
 
     private static IEnumerator WaitForPlayTime(float seconds)
