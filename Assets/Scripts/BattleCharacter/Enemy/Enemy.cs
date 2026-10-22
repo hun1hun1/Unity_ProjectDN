@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public class Enemy : BattleCharacter
     [SerializeField]
     private EnemyActionUI actionUI;
 
+    private bool isActing;
     private int currentActionIndex;
     private EnemyBehavior preparedBehavior;
     private EnemyAction nextAction;
@@ -100,15 +102,29 @@ public class Enemy : BattleCharacter
         // Àû »ç¸Á Ã³¸®
     }
 
-    public void EnemyTurn(BattleManager battleManager)
-    {
-        PrepareNextAction();
-        if (behavior == null) return;
+    public void EnemyTurn(BattleManager battleManager) =>
+        EffectSequence.Start(battleManager, EnemyTurnRoutine(battleManager));
 
-        EnemyAction action = nextAction;
+    public IEnumerator EnemyTurnRoutine(BattleManager battleManager)
+    {
+        if (this == null || isActing || !isActiveAndEnabled || battleManager == null || !battleManager.CanContinueEffects) yield break;
+        PrepareNextAction();
+        if (behavior == null) yield break;
+        isActing = true;
+        try
+        {
+            EnemyAction action = nextAction;
+            if (action != null) yield return action.ExecuteRoutine(battleManager);
+            if (this == null || !battleManager.CanContinueEffects || !isActiveAndEnabled) yield break;
+            CompleteAction(action, battleManager);
+        }
+        finally { isActing = false; }
+    }
+
+    private void CompleteAction(EnemyAction action, BattleManager battleManager)
+    {
         if (action != null)
         {
-            action.Execute(battleManager);
             consecutiveCount = action == lastAction ? Mathf.Min(2, consecutiveCount + 1) : 1;
             lastAction = action;
         }

@@ -40,5 +40,10 @@ public class CharacterInfoUI : MonoBehaviour
     public void SetBlock(int block)
     {
         blockText.text = block.ToString();
+
+        // Hide the badge together with its number, without disabling the rest of the HUD.
+        Transform display = blockText.transform.parent;
+        if (display == null || display == transform) display = blockText.transform;
+        display.gameObject.SetActive(block > 0);
     }
 }

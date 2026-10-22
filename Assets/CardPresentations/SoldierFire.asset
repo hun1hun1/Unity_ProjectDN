@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac7e0cda678149c48667766b6b0c95a4, type: 3}
+  m_Name: SoldierFire
+  m_EditorClassIdentifier: 
+  beforeImpact:
+  - {fileID: 11400000, guid: 9708c3774a6af334ba70cc30276db71e, type: 2}
+  - {fileID: 11400000, guid: 46b4e6685336c5741ad4a770493b38cb, type: 2}
+  afterImpact:
+  - {fileID: 11400000, guid: 303e3a5da8e5cb44d94d626bfa5d3331, type: 2}

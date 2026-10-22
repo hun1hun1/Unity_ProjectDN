@@ -100,6 +100,26 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    // Only explicit card uses enter this bridge; delayed/turn-start effects remain unchanged.
+    public IEnumerator ExecutePresentedCardRoutine(CardData card, IEnumerator effects)
+    {
+        CardPresentation definition = card != null ? card.presentation : null;
+        if (definition == null) { if (effects != null) yield return effects; yield break; }
+        definition.Validate();
+        using (var context = new CardPresentationContext(this))
+        {
+            if (context.Visual(PresentationTarget.Player) == null)
+            {
+                if (effects != null) yield return effects;
+                yield break;
+            }
+            yield return definition.PlayBefore(context);
+            if (!context.CanContinue) yield break;
+            if (effects != null) yield return effects;
+            if (context.CanContinue) yield return definition.PlayAfter(context);
+        }
+    }
+
     public void RunEffectRoutine(IEnumerator sequence) => EffectSequence.Start(this, LockedEffects(sequence));
 
     private IEnumerator LockedEffects(IEnumerator sequence)
@@ -338,6 +358,13 @@ public class BattleManager : MonoBehaviour
             cardData == null || cardData.requiredAmmo < 0 || player == null)
             return false;
 
+        if (cardData.presentation != null)
+        {
+            try { cardData.presentation.Validate(); }
+            catch (System.ArgumentException) { return false; }
+            catch (System.InvalidOperationException) { return false; }
+        }
+
         if (cardData.type == CardType.Continuous &&
             (deckController == null || !ContinuousCardSystem.CanActivate(cardData)))
             return false;
@@ -424,10 +451,11 @@ public class BattleManager : MonoBehaviour
             isResolvingEffects = true;
             try
             {
-                if (cardData.type == CardType.Continuous && repeatCount > 0)
-                    yield return player.ContinuousCards.ActivateRoutine(cardData, this, deckController, entry => continuous = entry, repeatCount);
-                else
-                    yield return ExecuteCardEffectsRoutine(cardData, repeatCount);
+                IEnumerator effects = cardData.type == CardType.Continuous && repeatCount > 0
+                    ? player.ContinuousCards.ActivateRoutine(cardData, this, deckController, entry => continuous = entry, repeatCount)
+                    : ExecuteCardEffectsRoutine(cardData, repeatCount);
+                if (repeatCount > 0) yield return ExecutePresentedCardRoutine(cardData, effects);
+                else yield return effects;
             }
             finally
             {
@@ -559,7 +587,7 @@ public class BattleManager : MonoBehaviour
     public void EndPlayerTurn()
     {
         if (CardInspectionUI.BlocksGameplayInput || isResolvingEffects) return;
-        StartCoroutine(EndPlayerTurnRoutine());
+        EffectSequence.Start(this, EndPlayerTurnRoutine());
     }
 
     private IEnumerator EndPlayerTurnRoutine()
@@ -600,7 +628,7 @@ public class BattleManager : MonoBehaviour
         // =========================================
 
         if (!CanContinueEffects) yield break;
-        StartEnemyTurn();
+        yield return StartEnemyTurn();
         if (!CanContinueEffects) yield break;
 
         // =========================================
@@ -664,18 +692,23 @@ public class BattleManager : MonoBehaviour
         Debug.Log($"Battle State : {currentState}");
     }
 
-    private void StartEnemyTurn()
+    private IEnumerator StartEnemyTurn()
     {
-        if (!CanContinueEffects) return;
+        if (!CanContinueEffects || currentState == BattleState.EnemyTurn) yield break;
         ChangeState(BattleState.EnemyTurn);
 
         Debug.Log("적 턴 시작");
 
         target.ResetBlock();
 
-        target.EnemyTurn(this);
-
-        if (CanContinueEffects) EndEnemyTurn();
+        bool previousResolving = isResolvingEffects;
+        isResolvingEffects = true;
+        try
+        {
+            yield return target.EnemyTurnRoutine(this);
+            if (CanContinueEffects) EndEnemyTurn();
+        }
+        finally { isResolvingEffects = previousResolving; }
     }
 
     private void EndEnemyTurn()

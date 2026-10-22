@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95406dc8777b282499c8869b64befe2a, type: 3}
+  m_Name: MeleeAttack
+  m_EditorClassIdentifier: 
+  actionIcon: {fileID: 0}
+  actionName: "\uACF5\uACA9"
+  iconSet: {fileID: 11400000, guid: 5fd87de9b8e3fbc48bac86f889a6e7e3, type: 2}
+  presentation: {fileID: 11400000, guid: e31d25317174432986531d6d5c1b3506, type: 2}
+  damage: 10

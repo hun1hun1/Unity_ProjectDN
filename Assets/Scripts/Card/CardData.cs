@@ -35,6 +35,9 @@ public class CardData : ScriptableObject
     public CardRarity rarity;
     public CardEffect[] effects;
 
+    [Header("Use Presentation")]
+    public CardPresentation presentation;
+
     [Header("Card Traits")]
     [Tooltip("Excludes this card from the current battle after use. Permanent continuous cards absorb unless a use-time delayed effect is scheduled.")]
     public bool exhaustOnUse;

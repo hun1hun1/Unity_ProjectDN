@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ public class EnemyCompositeAction : EnemyAction
 
     internal override void Validate(HashSet<EnemyAction> visiting)
     {
+        base.Validate(visiting);
         if (!visiting.Add(this)) throw new InvalidOperationException($"Composite action '{name}' contains a cycle.");
         try
         {
@@ -51,6 +53,14 @@ public class EnemyCompositeAction : EnemyAction
             if (action != null) descriptions.Add(action.Preview(context));
         }
         return string.Join("\n", descriptions);
+    }
+    protected override IEnumerator ExecuteEffectsRoutine(BattleManager battle)
+    {
+        foreach (EnemyAction action in actions)
+        {
+            if (!battle.CanContinueEffects) yield break;
+            if (action != null) yield return action.ExecuteRoutine(battle);
+        }
     }
     public override void Execute(BattleManager battle)
     {

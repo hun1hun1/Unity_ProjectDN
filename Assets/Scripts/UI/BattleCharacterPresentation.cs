@@ -16,6 +16,23 @@ public class BattleCharacterPresentation : MonoBehaviour
     private Vector2 lastRootSize;
     private int lastLayoutHash;
     private bool initialized;
+    private Vector2 visualBasePosition;
+    private Vector2 presentationOffset;
+    private float presentationRotation;
+    public Vector2 PresentationOffset => presentationOffset;
+    public float PresentationRotation => presentationRotation;
+
+    public void SetPresentationOffset(Vector2 offset, float rotation)
+    {
+        presentationOffset = offset; presentationRotation = rotation;
+        ApplyVisualMotion();
+    }
+    private void ApplyVisualMotion()
+    {
+        if (visual == null) return;
+        visual.anchoredPosition = visualBasePosition + presentationOffset;
+        visual.localRotation = Quaternion.Euler(0, 0, presentationRotation);
+    }
     public CharacterUIProfile Profile => profile;
     public UISpriteAnimation IdleAnimation => idleAnimation;
     public CharacterInfoUI InfoUI => infoUI;
@@ -111,6 +128,8 @@ public class BattleCharacterPresentation : MonoBehaviour
             visibleHeight *= reduction;
         }
         SetRect(visual, pivot, size, profile.visualOffset);
+        visualBasePosition = profile.visualOffset;
+        ApplyVisualMotion();
         if (infoUI != null) SetRect((RectTransform)infoUI.transform, new Vector2(0.5f, 1), profile.infoSize, profile.infoOffset);
         if (actionUI != null)
             SetRect((RectTransform)actionUI.transform, new Vector2(0.5f, 0), profile.actionSize,

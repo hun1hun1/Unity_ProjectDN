@@ -1,0 +1,167 @@
+{
+  "allFramesPassed": true,
+  "sourceUnchanged": true,
+  "firstAndLastFramesIdentical": true,
+  "checks": [
+    {
+      "frame": 0,
+      "recoilPixels": 0,
+      "verticalOffset": 0,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    },
+    {
+      "frame": 1,
+      "recoilPixels": 0,
+      "verticalOffset": 0,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    },
+    {
+      "frame": 2,
+      "recoilPixels": 8,
+      "verticalOffset": -1,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": true,
+      "transparentBorders": true
+    },
+    {
+      "frame": 3,
+      "recoilPixels": 15,
+      "verticalOffset": -3,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": true,
+      "transparentBorders": true
+    },
+    {
+      "frame": 4,
+      "recoilPixels": 16,
+      "verticalOffset": -3,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    },
+    {
+      "frame": 5,
+      "recoilPixels": 14,
+      "verticalOffset": -2,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    },
+    {
+      "frame": 6,
+      "recoilPixels": 12,
+      "verticalOffset": -2,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    },
+    {
+      "frame": 7,
+      "recoilPixels": 9,
+      "verticalOffset": -1,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    },
+    {
+      "frame": 8,
+      "recoilPixels": 7,
+      "verticalOffset": -1,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    },
+    {
+      "frame": 9,
+      "recoilPixels": 5,
+      "verticalOffset": 0,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    },
+    {
+      "frame": 10,
+      "recoilPixels": 3,
+      "verticalOffset": 0,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    },
+    {
+      "frame": 11,
+      "recoilPixels": 2,
+      "verticalOffset": 0,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    },
+    {
+      "frame": 12,
+      "recoilPixels": 1,
+      "verticalOffset": 0,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    },
+    {
+      "frame": 13,
+      "recoilPixels": 0,
+      "verticalOffset": 0,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    },
+    {
+      "frame": 14,
+      "recoilPixels": 0,
+      "verticalOffset": 0,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    },
+    {
+      "frame": 15,
+      "recoilPixels": 0,
+      "verticalOffset": 0,
+      "rifleGeometryIdentical": true,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "transparentBorders": true
+    }
+  ],
+  "animated": [
+    {
+      "file": "soldier-fire.webp",
+      "pages": 13,
+      "durationMs": 800,
+      "loop": 1,
+      "hasAlpha": true
+    },
+    {
+      "file": "soldier-fire-preview.gif",
+      "pages": 13,
+      "durationMs": 2000,
+      "loop": 0,
+      "hasAlpha": true
+    }
+  ]
+}

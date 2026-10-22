@@ -1,0 +1,10 @@
+Use case: stylized-concept, production game HUD icon.
+Create ONE standalone defense/block counter SHIELD BADGE for the left side of a health bar in a hand-painted dark fantasy deckbuilding roguelike.
+The attached health bar is a STYLE AND MATERIAL REFERENCE ONLY. Match its weathered dark charcoal iron, restrained antique brass bevel line, strong dark ink edge and hand-painted brush texture. Do not reproduce the health bar or any of its text.
+The icon is shared by player and enemy.
+COMPOSITION: one centered front-facing symmetrical short broad shield, nearly square proportions, a gently arched or near-flat top with clipped shoulders, subtly tapering lower sides and one shallow bottom point. It must read as a protective shield at only about 29 pixels tall. No perspective tilt. Plain, compact silhouette. A modest thick dark iron rim with a very thin warm worn brass inset line. Only a few tiny rivets at the extreme rim, none in the center. Sparse chips and painted bevel highlights similar to the HP frame; avoid elaborate decoration.
+NUMERICAL DISPLAY AREA: large solid opaque flat dark desaturated blue-gray/slate inner plate. Keep the central 70% width and 55% height visually calm, even dark tone, subtle restrained texture, unobstructed and relatively rectangular so white two-digit and three-digit numbers can be placed later. There must be NO embossed boss, crest, cross, emblem, scratches across the middle, center highlight or central seam. It is an empty counter badge, not a heraldic illustration.
+A muted blue steel rim highlight may help distinguish defense from red HP; no saturated blue jewel, no glow, no magic particles.
+Transparent background outside the shield, entirely opaque inner plate, clean silhouette, generous 6% transparent padding on all sides.
+Only one shield. No labels, letters, numbers, watermark, heart, sword, wings, horns, crown, skull, character or health bar. No scene, backdrop, ground shadow, checkerboard or display board. Do not bake in any numeral.
+Output high quality hand-painted 2D raster sprite on true transparent alpha; square image.

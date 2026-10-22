@@ -1,0 +1,279 @@
+{
+  "allFramesPassed": true,
+  "sourceUnchanged": true,
+  "firstAndLastFramesIdentical": true,
+  "checks": [
+    {
+      "frame": 0,
+      "recoilPixels": 0,
+      "verticalOffset": 0,
+      "muzzleRisePixels": 0,
+      "upperBodyRotationDegrees": 0,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 656,
+        "y": 216
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 1,
+      "recoilPixels": 0,
+      "verticalOffset": 0,
+      "muzzleRisePixels": 0,
+      "upperBodyRotationDegrees": 0,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 656,
+        "y": 216
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 2,
+      "recoilPixels": 8,
+      "verticalOffset": -1,
+      "muzzleRisePixels": 5.239,
+      "upperBodyRotationDegrees": -0.6,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": true,
+      "muzzle": {
+        "x": 645.6320591203588,
+        "y": 210.7607377109295
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 3,
+      "recoilPixels": 15,
+      "verticalOffset": -3,
+      "muzzleRisePixels": 14.249,
+      "upperBodyRotationDegrees": -1.6,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": true,
+      "muzzle": {
+        "x": 634.5872596323045,
+        "y": 201.75114890919164
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 4,
+      "recoilPixels": 16,
+      "verticalOffset": -5,
+      "muzzleRisePixels": 20.42,
+      "upperBodyRotationDegrees": -2.2,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 631.1018748271076,
+        "y": 195.57965623448774
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 5,
+      "recoilPixels": 14,
+      "verticalOffset": -4,
+      "muzzleRisePixels": 16.642,
+      "upperBodyRotationDegrees": -1.8,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 634.7636534749863,
+        "y": 199.35776229235606
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 6,
+      "recoilPixels": 12,
+      "verticalOffset": -3,
+      "muzzleRisePixels": 12.853,
+      "upperBodyRotationDegrees": -1.4,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 638.405996944966,
+        "y": 203.14740195903778
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 7,
+      "recoilPixels": 9,
+      "verticalOffset": -2,
+      "muzzleRisePixels": 9.052,
+      "upperBodyRotationDegrees": -1,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 643.0288251915433,
+        "y": 206.94843927143123
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 8,
+      "recoilPixels": 7,
+      "verticalOffset": -1,
+      "muzzleRisePixels": 5.591,
+      "upperBodyRotationDegrees": -0.65,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 646.43272912349,
+        "y": 210.4085892427873
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 9,
+      "recoilPixels": 5,
+      "verticalOffset": 0,
+      "muzzleRisePixels": 2.476,
+      "upperBodyRotationDegrees": -0.35,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 649.6240953263573,
+        "y": 213.52408189538778
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 10,
+      "recoilPixels": 3,
+      "verticalOffset": 0,
+      "muzzleRisePixels": 0.708,
+      "upperBodyRotationDegrees": -0.1,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 652.6084280728335,
+        "y": 215.2917378548688
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 11,
+      "recoilPixels": 2,
+      "verticalOffset": 0,
+      "muzzleRisePixels": 0,
+      "upperBodyRotationDegrees": 0,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 654,
+        "y": 216
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 12,
+      "recoilPixels": 1,
+      "verticalOffset": 0,
+      "muzzleRisePixels": 0,
+      "upperBodyRotationDegrees": 0,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 655,
+        "y": 216
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 13,
+      "recoilPixels": 0,
+      "verticalOffset": 0,
+      "muzzleRisePixels": 0,
+      "upperBodyRotationDegrees": 0,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 656,
+        "y": 216
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 14,
+      "recoilPixels": 0,
+      "verticalOffset": 0,
+      "muzzleRisePixels": 0,
+      "upperBodyRotationDegrees": 0,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 656,
+        "y": 216
+      },
+      "transparentBorders": true
+    },
+    {
+      "frame": 15,
+      "recoilPixels": 0,
+      "verticalOffset": 0,
+      "muzzleRisePixels": 0,
+      "upperBodyRotationDegrees": 0,
+      "rifleLengthPreserved": true,
+      "rifleLengthPixels": 434,
+      "fixedFeet": true,
+      "muzzleFlash": false,
+      "muzzle": {
+        "x": 656,
+        "y": 216
+      },
+      "transparentBorders": true
+    }
+  ],
+  "animated": [
+    {
+      "file": "soldier-fire.webp",
+      "pages": 13,
+      "durationMs": 800,
+      "loop": 1,
+      "hasAlpha": true
+    },
+    {
+      "file": "soldier-fire-preview.gif",
+      "pages": 13,
+      "durationMs": 2000,
+      "loop": 0,
+      "hasAlpha": true
+    }
+  ]
+}

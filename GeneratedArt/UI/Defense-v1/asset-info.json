@@ -1,0 +1,69 @@
+{
+  "generator": "built-in image_gen",
+  "source": {
+    "width": 1254,
+    "height": 1254,
+    "crop": {
+      "left": 133,
+      "top": 129,
+      "width": 989,
+      "height": 996
+    }
+  },
+  "logicalBlockSlot": {
+    "width": 41.6,
+    "height": 29.4
+  },
+  "slotExport": {
+    "width": 416,
+    "height": 294,
+    "icon": {
+      "x": 71,
+      "y": 10,
+      "width": 274,
+      "height": 274
+    }
+  },
+  "files": [
+    {
+      "name": "defense-icon-512.png",
+      "width": 512,
+      "height": 512,
+      "hasAlpha": true,
+      "transparentPixels": 78502,
+      "centerAlpha": 253
+    },
+    {
+      "name": "defense-icon-256.png",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": true,
+      "transparentPixels": 18941,
+      "centerAlpha": 253
+    },
+    {
+      "name": "defense-icon-128.png",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparentPixels": 4394,
+      "centerAlpha": 253
+    },
+    {
+      "name": "defense-icon-64.png",
+      "width": 64,
+      "height": 64,
+      "hasAlpha": true,
+      "transparentPixels": 945,
+      "centerAlpha": 253
+    },
+    {
+      "name": "defense-slot-416x294.png",
+      "width": 416,
+      "height": 294,
+      "hasAlpha": true,
+      "transparentPixels": 68999,
+      "centerAlpha": 253
+    }
+  ]
+}

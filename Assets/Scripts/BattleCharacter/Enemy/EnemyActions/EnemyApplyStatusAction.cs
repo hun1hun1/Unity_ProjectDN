@@ -13,6 +13,7 @@ public class EnemyApplyStatusAction : EnemyAction
     public override EnemyActionKinds GetActionKinds() => EnemyActionKinds.Debuff;
     internal override void Validate(HashSet<EnemyAction> visiting)
     {
+        base.Validate(visiting);
         if (status == null || turns < 1 || !Enum.IsDefined(typeof(StatusEffectType), status.Type) ||
             !Enum.IsDefined(typeof(EnemyTargetType), target))
             throw new InvalidOperationException($"Status action '{name}' needs a valid status, target and positive duration.");
