@@ -1,0 +1,41 @@
+{
+  "generator": "built-in image_gen",
+  "cardBase": {
+    "width": 200,
+    "height": 260
+  },
+  "artworkAnchors": {
+    "min": [
+      0.05,
+      0.425
+    ],
+    "max": [
+      0.95,
+      0.825
+    ]
+  },
+  "artworkSlot": {
+    "width": 180,
+    "height": 104
+  },
+  "files": [
+    {
+      "name": "soldier-attack-original.png",
+      "width": 1649,
+      "height": 954,
+      "format": "png"
+    },
+    {
+      "name": "soldier-attack-900x520.png",
+      "width": 900,
+      "height": 520,
+      "format": "png"
+    },
+    {
+      "name": "soldier-attack-180x104.png",
+      "width": 180,
+      "height": 104,
+      "format": "png"
+    }
+  ]
+}

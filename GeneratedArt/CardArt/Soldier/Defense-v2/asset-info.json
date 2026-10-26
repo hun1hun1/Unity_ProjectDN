@@ -1,0 +1,29 @@
+{
+  "generator": "built-in image_gen",
+  "styleReference": "GeneratedArt/Soldier/soldier-v1.png",
+  "concept": "Central military helmet deflecting falling rubble and scrap in daylight ruins",
+  "artworkSlot": {
+    "width": 180,
+    "height": 104
+  },
+  "files": [
+    {
+      "name": "soldier-defense-original.png",
+      "width": 1650,
+      "height": 953,
+      "format": "png"
+    },
+    {
+      "name": "soldier-defense-900x520.png",
+      "width": 900,
+      "height": 520,
+      "format": "png"
+    },
+    {
+      "name": "soldier-defense-180x104.png",
+      "width": 180,
+      "height": 104,
+      "format": "png"
+    }
+  ]
+}
