@@ -1,0 +1,29 @@
+{
+  "generator": "built-in image_gen",
+  "concept": "Guarded soldier gives healing medicine to enemy slime",
+  "cardEffects": "Player gains block and enemy heals",
+  "artworkSlot": {
+    "width": 180,
+    "height": 104
+  },
+  "files": [
+    {
+      "name": "cat-and-mouse-original.png",
+      "width": 1649,
+      "height": 954,
+      "format": "png"
+    },
+    {
+      "name": "cat-and-mouse-900x520.png",
+      "width": 900,
+      "height": 520,
+      "format": "png"
+    },
+    {
+      "name": "cat-and-mouse-180x104.png",
+      "width": 180,
+      "height": 104,
+      "format": "png"
+    }
+  ]
+}

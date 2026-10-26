@@ -1,0 +1,28 @@
+{
+  "generator": "built-in image_gen",
+  "concept": "Practical double-edged sword with contrasting silver-blue and crimson edge highlights",
+  "artworkSlot": {
+    "width": 180,
+    "height": 104
+  },
+  "files": [
+    {
+      "name": "double-edged-sword-original.png",
+      "width": 1649,
+      "height": 954,
+      "format": "png"
+    },
+    {
+      "name": "double-edged-sword-900x520.png",
+      "width": 900,
+      "height": 520,
+      "format": "png"
+    },
+    {
+      "name": "double-edged-sword-180x104.png",
+      "width": 180,
+      "height": 104,
+      "format": "png"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "generator": "built-in image_gen",
+  "logicalPanel": {
+    "width": 155,
+    "height": 26
+  },
+  "originalColor": "#7F7F7F",
+  "sourceCrop": {
+    "left": 34,
+    "top": 316,
+    "width": 1865,
+    "height": 182
+  },
+  "grayscaleCenter": {
+    "min": 116.33333333333333,
+    "max": 125.33333333333333,
+    "mean": 120.3131435185022,
+    "approxMinimumContrastWithBlack": 4.514477584534294
+  },
+  "transparentPixels": 6763,
+  "preview": {
+    "font": "Noto Sans KR Bold",
+    "logicalFontSize": 20,
+    "imageOpacity": 1,
+    "samples": [
+      {
+        "text": "공격",
+        "logicalFontSize": 20,
+        "logicalInkWidth": 33.833333333333336,
+        "logicalInkHeight": 18.666666666666668
+      },
+      {
+        "text": "양날의 검",
+        "logicalFontSize": 20,
+        "logicalInkWidth": 76.16666666666667,
+        "logicalInkHeight": 18.666666666666668
+      },
+      {
+        "text": "병 주고 약 주기",
+        "logicalFontSize": 20,
+        "logicalInkWidth": 123.33333333333333,
+        "logicalInkHeight": 18.666666666666668
+      }
+    ]
+  },
+  "files": [
+    {
+      "name": "common-nameplate-930x156.png",
+      "width": 930,
+      "height": 156,
+      "hasAlpha": true
+    },
+    {
+      "name": "common-nameplate-310x52.png",
+      "width": 310,
+      "height": 52,
+      "hasAlpha": true
+    },
+    {
+      "name": "common-nameplate-155x26.png",
+      "width": 155,
+      "height": 26,
+      "hasAlpha": true
+    }
+  ]
+}
