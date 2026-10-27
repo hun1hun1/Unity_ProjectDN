@@ -136,7 +136,14 @@ public class CardExhaustTests
             used.Add(data);
             CardUI ui = Hand(battle, deckType).GetComponentsInChildren<CardUI>().First(c => c.CanHover);
             ui.SetCard(data, battle);
+            if (deckType == CardDeckType.TypeDream) Set(ui, "moveDuration", 1f);
             Assert.That(battle.UseCard(ui), Is.True);
+            float arrivalDeadline = Time.realtimeSinceStartup + 15f;
+            while (battle.BlocksCardInteraction)
+            {
+                Assert.That(Time.realtimeSinceStartup, Is.LessThan(arrivalDeadline));
+                yield return null;
+            }
         }
         Assert.That((int)Get(battle, "activeCardUses"), Is.EqualTo(2));
         battle.EndPlayerTurn();

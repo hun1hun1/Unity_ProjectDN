@@ -1,0 +1,27 @@
+{
+  "font": "Noto Sans KR Bold",
+  "logicalFontSize": 25,
+  "imageOpacity": 1,
+  "left": "dream",
+  "right": "nightmare",
+  "samples": [
+    {
+      "text": "1",
+      "logicalFontSize": 25,
+      "logicalInkWidth": 11.15,
+      "logicalInkHeight": 18.55
+    },
+    {
+      "text": "3",
+      "logicalFontSize": 25,
+      "logicalInkWidth": 12.7,
+      "logicalInkHeight": 19.2
+    },
+    {
+      "text": "X",
+      "logicalFontSize": 25,
+      "logicalInkWidth": 15,
+      "logicalInkHeight": 18.55
+    }
+  ]
+}

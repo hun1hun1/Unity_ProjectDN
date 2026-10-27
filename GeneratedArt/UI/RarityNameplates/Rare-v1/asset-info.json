@@ -1,0 +1,73 @@
+{
+  "generator": "built-in image_gen",
+  "logicalPanel": {
+    "width": 155,
+    "height": 26
+  },
+  "originalColor": "#FFF200",
+  "references": [
+    "GeneratedArt/UI/RarityNameplates/Common-v1/common-nameplate-930x156.png",
+    "Assets/Images/UI/RareRarity.png"
+  ],
+  "sourceCrop": {
+    "left": 9,
+    "top": 187,
+    "width": 2154,
+    "height": 341
+  },
+  "center": {
+    "meanRgb": [
+      250.99494444444446,
+      237.13168055555556,
+      2.2648055555555557
+    ],
+    "minimumContrastWithBlack": 16.720802359959322,
+    "minimumAlpha": 247
+  },
+  "transparentPixels": 6888,
+  "preview": {
+    "font": "Noto Sans KR Bold",
+    "logicalFontSize": 20,
+    "imageOpacity": 1,
+    "samples": [
+      {
+        "text": "공격",
+        "logicalFontSize": 20,
+        "logicalInkWidth": 33.833333333333336,
+        "logicalInkHeight": 18.666666666666668
+      },
+      {
+        "text": "양날의 검",
+        "logicalFontSize": 20,
+        "logicalInkWidth": 76.16666666666667,
+        "logicalInkHeight": 18.666666666666668
+      },
+      {
+        "text": "병 주고 약 주기",
+        "logicalFontSize": 20,
+        "logicalInkWidth": 123.33333333333333,
+        "logicalInkHeight": 18.666666666666668
+      }
+    ]
+  },
+  "files": [
+    {
+      "name": "rare-nameplate-930x156.png",
+      "width": 930,
+      "height": 156,
+      "hasAlpha": true
+    },
+    {
+      "name": "rare-nameplate-310x52.png",
+      "width": 310,
+      "height": 52,
+      "hasAlpha": true
+    },
+    {
+      "name": "rare-nameplate-155x26.png",
+      "width": 155,
+      "height": 26,
+      "hasAlpha": true
+    }
+  ]
+}

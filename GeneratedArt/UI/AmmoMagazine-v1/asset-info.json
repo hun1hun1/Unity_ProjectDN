@@ -1,0 +1,173 @@
+{
+  "generator": "built-in image_gen",
+  "referencePanelAt1920x1080": {
+    "width": 67.2,
+    "height": 259.2
+  },
+  "exportPanel": {
+    "width": 280,
+    "height": 1080
+  },
+  "logicalPanel": {
+    "width": 70,
+    "height": 270
+  },
+  "magazineSourceCrop": {
+    "left": 112,
+    "top": 35,
+    "width": 547,
+    "height": 1970
+  },
+  "cartridgeSourceCrop": {
+    "left": 87,
+    "top": 205,
+    "width": 2000,
+    "height": 315
+  },
+  "fillRectPixels": {
+    "left": 52,
+    "top": 96,
+    "width": 176,
+    "height": 900
+  },
+  "fillAnchors": {
+    "min": {
+      "x": 0.18571428571428572,
+      "y": 0.07777777777777778
+    },
+    "max": {
+      "x": 0.8142857142857143,
+      "y": 0.9111111111111111
+    }
+  },
+  "fillImage": {
+    "width": 176,
+    "height": 900,
+    "capacity": 10,
+    "rowPitch": 90,
+    "fillMethod": "Vertical",
+    "fillOrigin": "Bottom",
+    "fillAmount": "current / 10"
+  },
+  "integerFillVerification": [
+    {
+      "current": 0,
+      "visible": 0
+    },
+    {
+      "current": 1,
+      "visible": 1
+    },
+    {
+      "current": 2,
+      "visible": 2
+    },
+    {
+      "current": 3,
+      "visible": 3
+    },
+    {
+      "current": 4,
+      "visible": 4
+    },
+    {
+      "current": 5,
+      "visible": 5
+    },
+    {
+      "current": 6,
+      "visible": 6
+    },
+    {
+      "current": 7,
+      "visible": 7
+    },
+    {
+      "current": 8,
+      "visible": 8
+    },
+    {
+      "current": 9,
+      "visible": 9
+    },
+    {
+      "current": 10,
+      "visible": 10
+    }
+  ],
+  "capacityNote": "The ten-round fill is only for a maximum capacity of 10. Use the separate cartridge sprite to rebuild rows for a different maximum.",
+  "files": [
+    {
+      "name": "ammo-fill-10-176x900.png",
+      "width": 176,
+      "height": 900,
+      "hasAlpha": true
+    },
+    {
+      "name": "ammo-fill-10-88x450.png",
+      "width": 88,
+      "height": 450,
+      "hasAlpha": true
+    },
+    {
+      "name": "ammo-magazine-preview.png",
+      "width": 1240,
+      "height": 1190,
+      "hasAlpha": true
+    },
+    {
+      "name": "cartridge-556-1000x170.png",
+      "width": 1000,
+      "height": 170,
+      "hasAlpha": true
+    },
+    {
+      "name": "cartridge-556-100x17.png",
+      "width": 100,
+      "height": 17,
+      "hasAlpha": true
+    },
+    {
+      "name": "cartridge-556-200x34.png",
+      "width": 200,
+      "height": 34,
+      "hasAlpha": true
+    },
+    {
+      "name": "cartridge-original.png",
+      "width": 2172,
+      "height": 724,
+      "hasAlpha": true
+    },
+    {
+      "name": "magazine-background-140x540.png",
+      "width": 140,
+      "height": 540,
+      "hasAlpha": true
+    },
+    {
+      "name": "magazine-background-280x1080.png",
+      "width": 280,
+      "height": 1080,
+      "hasAlpha": true
+    },
+    {
+      "name": "magazine-background-70x270.png",
+      "width": 70,
+      "height": 270,
+      "hasAlpha": true
+    },
+    {
+      "name": "magazine-original.png",
+      "width": 771,
+      "height": 2039,
+      "hasAlpha": true
+    },
+    {
+      "name": "ammo-cell-176x90.png",
+      "width": 176,
+      "height": 90,
+      "hasAlpha": true
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "generator": "built-in image_gen",
+  "logicalPanel": {
+    "width": 80,
+    "height": 13
+  },
+  "sourceCrop": {
+    "left": 77,
+    "top": 307,
+    "width": 1829,
+    "height": 178
+  },
+  "center": {
+    "meanRgb": [
+      178.02763026506898,
+      177.83480846042121,
+      166.33497866739287
+    ],
+    "minimumAlpha": 252
+  },
+  "transparentPixels": 7866,
+  "preview": {
+    "font": "Noto Sans KR Bold",
+    "logicalFontSize": 12,
+    "imageOpacity": 1,
+    "samples": [
+      {
+        "text": "공격",
+        "logicalFontSize": 12,
+        "logicalInkWidth": 20.416666666666668,
+        "logicalInkHeight": 11.166666666666666
+      },
+      {
+        "text": "스킬",
+        "logicalFontSize": 12,
+        "logicalInkWidth": 20.583333333333332,
+        "logicalInkHeight": 11.166666666666666
+      },
+      {
+        "text": "능력",
+        "logicalFontSize": 12,
+        "logicalInkWidth": 20.333333333333332,
+        "logicalInkHeight": 11.166666666666666
+      }
+    ]
+  },
+  "files": [
+    {
+      "name": "type-panel-960x156.png",
+      "width": 960,
+      "height": 156,
+      "hasAlpha": true
+    },
+    {
+      "name": "type-panel-160x26.png",
+      "width": 160,
+      "height": 26,
+      "hasAlpha": true
+    },
+    {
+      "name": "type-panel-80x13.png",
+      "width": 80,
+      "height": 13,
+      "hasAlpha": true
+    }
+  ]
+}

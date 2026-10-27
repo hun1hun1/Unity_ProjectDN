@@ -16,6 +16,11 @@ public class DeckCardUI : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Sprite dreamFrontImage;
     [SerializeField] private Sprite nightmareFrontImage;
 
+    [Header("Cost Images")]
+    [SerializeField] private UnityEngine.UI.Image costImage;
+    [SerializeField] private Sprite dreamCostImage;
+    [SerializeField] private Sprite nightmareCostImage;
+
     [Header("Card Rarity Images")]
     [SerializeField] private UnityEngine.UI.Image rarityImage;
     [SerializeField] private Sprite commonImage;
@@ -65,6 +70,12 @@ public class DeckCardUI : MonoBehaviour, IPointerClickHandler
             Sprite selectedFront = data.deckType == CardDeckType.TypeDream ? dreamFrontImage : nightmareFrontImage;
             if (selectedFront != null) frontImage.sprite = selectedFront;
         }
+        if (costImage != null)
+        {
+            costImage.sprite = data.deckType == CardDeckType.TypeDream
+                ? dreamCostImage
+                : nightmareCostImage;
+        }
         if (data.deckType == CardDeckType.TypeDream)
         {
             costText.text = data.CostLabel;
@@ -80,7 +91,7 @@ public class DeckCardUI : MonoBehaviour, IPointerClickHandler
                 if (descriptionText != null) descriptionText.text = text;
             });
         descriptionBinding.Bind(data, manager, isActiveAndEnabled, applyStatusModifiers);
-        typeText.text = data.type.ToString();
+        typeText.text = data.TypeLabel;
         if (rarityImage != null)
             rarityImage.sprite = data.rarity == CardRarity.Common ? commonImage
                 : data.rarity == CardRarity.Uncommon ? uncommonImage : rareImage;

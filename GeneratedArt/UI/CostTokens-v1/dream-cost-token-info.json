@@ -1,0 +1,44 @@
+{
+  "generator": "built-in image_gen",
+  "variant": "dream",
+  "logicalSlot": {
+    "width": 28,
+    "height": 26
+  },
+  "sourceCrop": {
+    "left": 86,
+    "top": 82,
+    "width": 1088,
+    "height": 1081
+  },
+  "center": {
+    "meanRgb": [
+      167.9444671201814,
+      169.55684807256236,
+      168.8188888888889
+    ],
+    "minimumAlpha": 252,
+    "minimumContrastWithBlack": 7.325754676235896
+  },
+  "transparentPixels": 84440,
+  "files": [
+    {
+      "name": "dream-cost-token-560x520.png",
+      "width": 560,
+      "height": 520,
+      "hasAlpha": true
+    },
+    {
+      "name": "dream-cost-token-56x52.png",
+      "width": 56,
+      "height": 52,
+      "hasAlpha": true
+    },
+    {
+      "name": "dream-cost-token-28x26.png",
+      "width": 28,
+      "height": 26,
+      "hasAlpha": true
+    }
+  ]
+}

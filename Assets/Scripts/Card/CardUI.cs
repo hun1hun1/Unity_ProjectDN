@@ -26,6 +26,11 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
     [SerializeField] private GameObject front;
     [SerializeField] private GameObject back;
 
+    [Header("Cost Images")]
+    [SerializeField] private UnityEngine.UI.Image costImage;
+    [SerializeField] private Sprite dreamCostImage;
+    [SerializeField] private Sprite nightmareCostImage;
+
     [Header("Card Rarity Images")]
     [SerializeField] private Image rarityImage;
     [SerializeField] private Sprite commonImage;
@@ -406,95 +411,105 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
     }
 
     public IEnumerator UsedCardAnimation(
-    RectTransform cardUsingPoint,
-    RectTransform discardPilePoint,
-    Transform absorbPoint = null,
-    bool exhaust = false)
+        RectTransform cardUsingPoint, RectTransform discardPilePoint,
+        Transform absorbPoint = null, bool exhaust = false)
     {
-        if (cardVisual == null ||
-            cardUsingPoint == null ||
-            discardPilePoint == null)
+        yield return MoveToUsingAreaAnimation(cardUsingPoint);
+        yield return CompleteUsedCardAnimation(discardPilePoint, absorbPoint, exhaust);
+    }
+
+    public IEnumerator MoveToUsingAreaAnimation(RectTransform cardUsingPoint)
+    {
+        if (cardVisual == null || cardUsingPoint == null) yield break;
+        try
         {
-            yield break;
-        }
+            ResetHover();
+            StopScaleAnimation();
+            presentationBusy = true;
 
-        ResetHover();
-        StopScaleAnimation();
-        presentationBusy = true;
+            // 카드 사용 연출 중에는 카드 뒷면을 표시
+            SetFaceUp(true);
 
-        // 카드 사용 연출 중에는 카드 뒷면을 표시
-        SetFaceUp(true);
+            // 1. CardUsingArea로 이동
+            Vector3 startPosition = cardVisual.position;
+            Vector3 usingPosition = cardUsingPoint.position;
 
-        // 1. CardUsingArea로 이동
-        Vector3 startPosition = cardVisual.position;
-        Vector3 usingPosition = cardUsingPoint.position;
+            // 시작 스케일
+            Vector3 startScale = cardVisual.localScale;
 
-        // 시작 스케일
-        Vector3 startScale = cardVisual.localScale;
+            // CardUsingArea에 맞는 목표 스케일 계산
+            RectTransform usingArea = cardUsingPoint;
 
-        // CardUsingArea에 맞는 목표 스케일 계산
-        RectTransform usingArea = cardUsingPoint;
+            float scaleX =
+                usingArea.rect.width / cardVisual.rect.width;
 
-        float scaleX =
-            usingArea.rect.width / cardVisual.rect.width;
+            float scaleY =
+                usingArea.rect.height / cardVisual.rect.height;
 
-        float scaleY =
-            usingArea.rect.height / cardVisual.rect.height;
+            // 카드 비율을 유지하면서 영역 안에 맞춤
+            float targetScaleFactor = Mathf.Min(scaleX, scaleY);
 
-        // 카드 비율을 유지하면서 영역 안에 맞춤
-        float targetScaleFactor = Mathf.Min(scaleX, scaleY);
+            Vector3 targetScale =
+                startScale * targetScaleFactor;
 
-        Vector3 targetScale =
-            startScale * targetScaleFactor;
+            float elapsed = 0f;
 
-        float elapsed = 0f;
-
-        while (elapsed < moveDuration)
-        {
-            elapsed += Time.deltaTime;
-
-            float t = Mathf.Clamp01(elapsed / moveDuration);
-            t = Mathf.SmoothStep(0f, 1f, t);
-
-            cardVisual.position = Vector3.Lerp(
-                startPosition,
-                usingPosition,
-                t
-            );
-
-            // 크기 축소
-            cardVisual.localScale = Vector3.Lerp(
-                startScale,
-                targetScale,
-                t
-            );
-
-            yield return null;
-        }
-
-        cardVisual.position = usingPosition;
-        cardVisual.localScale = targetScale;
-
-        // 2. CardUsingArea에 도착한 뒤 기존 버림 애니메이션 실행
-        if (absorbPoint != null || exhaust)
-        {
-            Vector3 destination = absorbPoint != null && !exhaust ? absorbPoint.position : cardVisual.position;
-            Vector3 fromPosition = cardVisual.position;
-            Vector3 fromScale = cardVisual.localScale;
-            elapsed = 0f;
             while (elapsed < moveDuration)
             {
                 elapsed += Time.deltaTime;
-                float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / moveDuration));
-                cardVisual.position = Vector3.Lerp(fromPosition, destination, t);
-                cardVisual.localScale = Vector3.Lerp(fromScale, Vector3.zero, t);
+
+                float t = Mathf.Clamp01(elapsed / moveDuration);
+                t = Mathf.SmoothStep(0f, 1f, t);
+
+                cardVisual.position = Vector3.Lerp(
+                    startPosition,
+                    usingPosition,
+                    t
+                );
+
+                // 크기 축소
+                cardVisual.localScale = Vector3.Lerp(
+                    startScale,
+                    targetScale,
+                    t
+                );
+
                 yield return null;
             }
-            cardVisual.localScale = Vector3.zero;
+
+            cardVisual.position = usingPosition;
+            cardVisual.localScale = targetScale;
         }
-        else
-            yield return StartCoroutine(DiscardAnimation(discardPilePoint));
-        presentationBusy = false;
+        finally { presentationBusy = false; }
+    }
+
+    public IEnumerator CompleteUsedCardAnimation(
+        RectTransform discardPilePoint, Transform absorbPoint = null, bool exhaust = false)
+    {
+        if (cardVisual == null || discardPilePoint == null) yield break;
+        presentationBusy = true;
+        try
+        {
+            if (absorbPoint != null || exhaust)
+            {
+                Vector3 destination = absorbPoint != null && !exhaust ? absorbPoint.position : cardVisual.position;
+                Vector3 fromPosition = cardVisual.position;
+                Vector3 fromScale = cardVisual.localScale;
+                float elapsed = 0f;
+                while (elapsed < moveDuration)
+                {
+                    elapsed += Time.deltaTime;
+                    float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / moveDuration));
+                    cardVisual.position = Vector3.Lerp(fromPosition, destination, t);
+                    cardVisual.localScale = Vector3.Lerp(fromScale, Vector3.zero, t);
+                    yield return null;
+                }
+                cardVisual.localScale = Vector3.zero;
+            }
+            else
+                yield return DiscardAnimation(discardPilePoint);
+        }
+        finally { presentationBusy = false; }
     }
 
     public void SetCard(CardData data, BattleManager manager)
@@ -511,6 +526,12 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
         {
             Sprite selectedFront = data.deckType == CardDeckType.TypeDream ? dreamFrontImage : nightmareFrontImage;
             if (selectedFront != null) frontImage.sprite = selectedFront;
+        }
+        if (costImage != null)
+        {
+            costImage.sprite = data.deckType == CardDeckType.TypeDream
+                ? dreamCostImage
+                : nightmareCostImage;
         }
         if (data.deckType == CardDeckType.TypeDream)
         {
@@ -529,7 +550,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
                 if (descriptionText != null) descriptionText.text = text;
             });
         descriptionBinding.Bind(data, manager, isActiveAndEnabled);
-        typeText.text = data.type.ToString();
+        typeText.text = data.TypeLabel;
 
         if (data.rarity == CardRarity.Common)
         {

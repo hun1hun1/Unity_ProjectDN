@@ -1,0 +1,51 @@
+{
+  "generator": "built-in image_gen",
+  "logicalPanel": {
+    "width": 180,
+    "height": 78
+  },
+  "sourceCrop": {
+    "left": 47,
+    "top": 132,
+    "width": 1811,
+    "height": 562
+  },
+  "center": {
+    "meanRgb": [
+      212.99849070340503,
+      204.85024921594982,
+      189.88511424731183
+    ],
+    "minimumAlpha": 251,
+    "minimumContrastWithBlack": 6.421688210529089
+  },
+  "transparentPixels": 10570,
+  "preview": {
+    "font": "Noto Sans KR Bold",
+    "logicalFontSize": 12,
+    "imageOpacity": 1,
+    "text": "방어도를 5 얻습니다.\n적의 체력을 3\n회복시킵니다.",
+    "logicalInkWidth": 102.5,
+    "logicalInkHeight": 40.166666666666664
+  },
+  "files": [
+    {
+      "name": "description-panel-1080x468.png",
+      "width": 1080,
+      "height": 468,
+      "hasAlpha": true
+    },
+    {
+      "name": "description-panel-360x156.png",
+      "width": 360,
+      "height": 156,
+      "hasAlpha": true
+    },
+    {
+      "name": "description-panel-180x78.png",
+      "width": 180,
+      "height": 78,
+      "hasAlpha": true
+    }
+  ]
+}

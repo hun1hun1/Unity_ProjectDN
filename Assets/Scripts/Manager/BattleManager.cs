@@ -451,6 +451,11 @@ public class BattleManager : MonoBehaviour
             isResolvingEffects = true;
             try
             {
+                if (handController != null)
+                {
+                    yield return cardUI.MoveToUsingAreaAnimation(cardUsingPoint);
+                    if (cardUI == null || !CanContinueEffects) yield break;
+                }
                 IEnumerator effects = cardData.type == CardType.Continuous && repeatCount > 0
                     ? player.ContinuousCards.ActivateRoutine(cardData, this, deckController, entry => continuous = entry, repeatCount)
                     : ExecuteCardEffectsRoutine(cardData, repeatCount);
@@ -467,7 +472,7 @@ public class BattleManager : MonoBehaviour
             // Effect execution also supports callers without a hand/presentation binding.
             if (handController == null) { settled = true; yield break; }
             if (!CanContinueEffects) yield break;
-            yield return cardUI.UsedCardAnimation(cardUsingPoint, handController.GetDiscardPilePoint(),
+            yield return cardUI.CompleteUsedCardAnimation(handController.GetDiscardPilePoint(),
                 continuous != null ? player.transform : null, continuous != null ? continuous.ExhaustsOnUse : exhausts);
 
             if (continuous == null)

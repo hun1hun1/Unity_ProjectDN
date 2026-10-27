@@ -32,6 +32,13 @@ public class CardData : ScriptableObject
 
     public CardDeckType deckType;
     public CardType type;
+    public string TypeLabel => type switch
+    {
+        CardType.Attack => "\uACF5\uACA9",
+        CardType.Skill => "\uC2A4\uD0AC",
+        CardType.Continuous => "\uC9C0\uC18D",
+        _ => type.ToString()
+    };
     public CardRarity rarity;
     public CardEffect[] effects;
 

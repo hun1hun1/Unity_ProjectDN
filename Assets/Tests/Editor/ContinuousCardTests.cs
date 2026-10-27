@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using TMPro;
@@ -379,6 +380,12 @@ public class ContinuousCardTests
         CardUI ui = ((List<CardUI>)GetField(hand, "cards"))[0];
         ui.SetCard(card, battle);
         Assert.That(battle.UseCard(ui), Is.True);
+        float activationDeadline = Time.realtimeSinceStartup + 15f;
+        while (player.ContinuousCards.ActiveCards.Count == 0 || battle.BlocksCardInteraction)
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(activationDeadline));
+            yield return null;
+        }
         Assert.That(player.ContinuousCards.ActiveCards, Has.Count.EqualTo(1));
         Assert.That(player.StatusEffects.HasStatus(StatusEffectType.Rust), Is.True);
         var observation = new ReturnObservation(battle, player, deck, hand, card);
@@ -413,6 +420,12 @@ public class ContinuousCardTests
         CardUI ui = ((List<CardUI>)GetField(hand, "cards"))[0];
         ui.SetCard(card, battle);
         Assert.That(battle.UseCard(ui), Is.True);
+        float activationDeadline = Time.realtimeSinceStartup + 15f;
+        while (!deck.GetExhaustPile(card.deckType).Contains(card) || battle.BlocksCardInteraction)
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(activationDeadline));
+            yield return null;
+        }
         Assert.That(deck.GetExhaustPile(card.deckType), Has.Member(card), "Exhaustion happens before animation completes.");
         Assert.That(battle.UseCard(ui), Is.False);
         battle.EndPlayerTurn();

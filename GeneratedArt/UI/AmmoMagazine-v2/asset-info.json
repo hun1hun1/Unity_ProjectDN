@@ -1,0 +1,157 @@
+{
+  "generator": "built-in image_gen",
+  "logicalPanel": {
+    "width": 70,
+    "height": 105
+  },
+  "exportPanel": {
+    "width": 280,
+    "height": 420
+  },
+  "magazineSourceCrop": {
+    "left": 109,
+    "top": 111,
+    "width": 812,
+    "height": 1333
+  },
+  "fillRectPixels": {
+    "left": 52,
+    "top": 84,
+    "width": 176,
+    "height": 260
+  },
+  "fillAnchors": {
+    "min": {
+      "x": 0.18571428571428572,
+      "y": 0.18095238095238095
+    },
+    "max": {
+      "x": 0.8142857142857143,
+      "y": 0.8
+    }
+  },
+  "fillImage": {
+    "capacity": 10,
+    "width": 176,
+    "height": 260,
+    "rowPitch": 26,
+    "cartridgeHeight": 26,
+    "fillMethod": "Vertical",
+    "fillOrigin": "Bottom"
+  },
+  "integerFillVerification": [
+    {
+      "current": 0,
+      "visible": 0
+    },
+    {
+      "current": 1,
+      "visible": 1
+    },
+    {
+      "current": 2,
+      "visible": 2
+    },
+    {
+      "current": 3,
+      "visible": 3
+    },
+    {
+      "current": 4,
+      "visible": 4
+    },
+    {
+      "current": 5,
+      "visible": 5
+    },
+    {
+      "current": 6,
+      "visible": 6
+    },
+    {
+      "current": 7,
+      "visible": 7
+    },
+    {
+      "current": 8,
+      "visible": 8
+    },
+    {
+      "current": 9,
+      "visible": 9
+    },
+    {
+      "current": 10,
+      "visible": 10
+    }
+  ],
+  "originalCartridgePreserved": true,
+  "files": [
+    {
+      "name": "ammo-cell-176x26.png",
+      "width": 176,
+      "height": 26,
+      "hasAlpha": true
+    },
+    {
+      "name": "ammo-fill-10-176x260.png",
+      "width": 176,
+      "height": 260,
+      "hasAlpha": true
+    },
+    {
+      "name": "ammo-fill-10-352x520.png",
+      "width": 352,
+      "height": 520,
+      "hasAlpha": true
+    },
+    {
+      "name": "ammo-magazine-preview.png",
+      "width": 1240,
+      "height": 530,
+      "hasAlpha": true
+    },
+    {
+      "name": "cartridge-556-1000x170.png",
+      "width": 1000,
+      "height": 170,
+      "hasAlpha": true
+    },
+    {
+      "name": "cartridge-556-200x34.png",
+      "width": 200,
+      "height": 34,
+      "hasAlpha": true
+    },
+    {
+      "name": "magazine-background-140x210.png",
+      "width": 140,
+      "height": 210,
+      "hasAlpha": true
+    },
+    {
+      "name": "magazine-background-280x420.png",
+      "width": 280,
+      "height": 420,
+      "hasAlpha": true
+    },
+    {
+      "name": "magazine-background-560x840.png",
+      "width": 560,
+      "height": 840,
+      "hasAlpha": true
+    },
+    {
+      "name": "magazine-background-70x105.png",
+      "width": 70,
+      "height": 105,
+      "hasAlpha": true
+    },
+    {
+      "name": "magazine-original.png",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": true
+    }
+  ]
+}
