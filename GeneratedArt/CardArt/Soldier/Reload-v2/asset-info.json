@@ -1,0 +1,32 @@
+{
+  "generator": "built-in image_gen",
+  "artworkSlot": {
+    "width": 180,
+    "height": 104
+  },
+  "export": {
+    "method": "center-fit",
+    "resampling": "Lanczos",
+    "sourcePreserved": true
+  },
+  "files": [
+    {
+      "name": "reload.png",
+      "width": 1649,
+      "height": 954,
+      "format": "png"
+    },
+    {
+      "name": "reload-900x520.png",
+      "width": 900,
+      "height": 520,
+      "format": "png"
+    },
+    {
+      "name": "reload-180x104.png",
+      "width": 180,
+      "height": 104,
+      "format": "png"
+    }
+  ]
+}

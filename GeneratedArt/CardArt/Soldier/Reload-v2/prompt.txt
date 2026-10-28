@@ -1,0 +1,5 @@
+Use case: precise-object-edit / background replacement.
+Edit the supplied Reload card artwork. Change ONLY THE BACKGROUND.
+Remove the entire cloth / fabric / military canvas behind and beneath the magazine, including every fabric fold, weave, seam, and draped shape. Replace it with a simple, very subdued deep-charcoal background with a soft dark-gray tonal gradient and only minimal broad painterly brush texture. No recognizable background object, no fabric, no drapery, no detailed ground, no added props. Keep the background opaque.
+Preserve the single loaded rifle magazine exactly: same silhouette, angle, placement and scale, ribbed olive-gray metal body, worn painted edges, top feed lips, brass cartridges and copper bullet tips. Keep the existing lighting on the magazine, its crisp readable outline, existing hand-painted style and landscape composition. Do not redraw or redesign the weapon accessory. The loaded top round remains the focal point.
+No text, numbers, UI, frame, watermark, firearms, hands, people, extra magazines or loose bullets.

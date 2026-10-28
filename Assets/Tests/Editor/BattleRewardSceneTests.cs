@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Reflection;
 using NUnit.Framework;
+using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -14,6 +16,38 @@ public class BattleRewardSceneTests
         RunDeckInventory.ResetForNewGame();
         typeof(MulliganSelectionUI).GetMethod("ResetStatics", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null,null);
         typeof(CardInspectionUI).GetMethod("ResetStatics", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null,null);
+    }
+    [Test] public void RewardCardsKeepTheirDeckCardPrefabConnection()
+    {
+        const string path = "Assets/Scenes/BattleScene.unity";
+        Scene scene = SceneManager.GetSceneByPath(path);
+        bool opened = !scene.isLoaded;
+        if (opened) scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+        try
+        {
+            CardRewardUI ui = null;
+            foreach (GameObject root in scene.GetRootGameObjects())
+                if (ui == null) ui = root.GetComponentInChildren<CardRewardUI>(true);
+            Assert.That(ui, Is.Not.Null);
+            var slots = new SerializedObject(ui).FindProperty("rewardCardSlots");
+            Assert.That(slots.arraySize, Is.EqualTo(3));
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/DeckCard.prefab");
+            for (int i = 0; i < slots.arraySize; i++)
+            {
+                var slot = (DeckCardUI)slots.GetArrayElementAtIndex(i).objectReferenceValue;
+                Assert.That(slot, Is.Not.Null);
+                Assert.That(PrefabUtility.GetCorrespondingObjectFromSource(slot),
+                    Is.EqualTo(prefab.GetComponent<DeckCardUI>()), "Reward cards must inherit future DeckCard prefab changes.");
+                var fields = new SerializedObject(slot);
+                foreach (string name in new[] { "costImage", "dreamCostImage", "nightmareCostImage",
+                    "commonImage", "uncommonImage", "rareImage" })
+                {
+                    Assert.That(fields.FindProperty(name).objectReferenceValue, Is.Not.Null, name);
+                    Assert.That(fields.FindProperty(name).prefabOverride, Is.False, name + " must inherit its prefab binding.");
+                }
+            }
+        }
+        finally { if (opened) EditorSceneManager.CloseScene(scene, true); }
     }
     [UnityTest] public IEnumerator EnemyDeathOpensRewardsAndOnlyConfirmAddsTheSelectedCardToRunDeck()
     {

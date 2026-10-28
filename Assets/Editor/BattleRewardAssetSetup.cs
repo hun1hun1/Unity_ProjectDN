@@ -78,34 +78,66 @@ public static class BattleRewardAssetSetup
         horizontal.spacing = 30; horizontal.childAlignment = TextAnchor.MiddleCenter;
         horizontal.childControlWidth = horizontal.childControlHeight = false;
         horizontal.childForceExpandWidth = horizontal.childForceExpandHeight = false;
-        var uiConfig = new SerializedObject(ui); var slots = uiConfig.FindProperty("rewardCardSlots");
-        for (int i = 0; i < slots.arraySize; i++)
-        {
-            DeckCardUI slot = (DeckCardUI)slots.GetArrayElementAtIndex(i).objectReferenceValue;
-            GameObject oldSlot = slot.gameObject;
-            GameObject cardPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/DeckCard.prefab");
-            GameObject replacement = (GameObject)PrefabUtility.InstantiatePrefab(cardPrefab, row);
-            PrefabUtility.UnpackPrefabInstance(replacement, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
-            replacement.name = "RewardCard" + (i + 1);
-            slot = replacement.GetComponent<DeckCardUI>();
-            slots.GetArrayElementAtIndex(i).objectReferenceValue = slot;
-            Object.DestroyImmediate(oldSlot);
-            Center((RectTransform)slot.transform, new Vector2(260,338));
-            slot.ResizeForList(1.3f);
-            foreach (Canvas childCanvas in slot.GetComponentsInChildren<Canvas>(true)) childCanvas.overrideSorting = false;
-            ConfigureRewardCardHover(slot);
-            var slotConfig = new SerializedObject(slot); slotConfig.FindProperty("allowInspection").boolValue = false; slotConfig.ApplyModifiedPropertiesWithoutUndo();
-            Button button = slot.GetComponent<Button>(); if (button == null) button = slot.gameObject.AddComponent<Button>();
-            button.targetGraphic = slot.GetComponentInChildren<Image>(true);
-            button.onClick = new Button.ButtonClickedEvent(); UnityEventTools.AddIntPersistentListener(button.onClick,ui.SelectCard,i);
-            slot.gameObject.SetActive(false);
-        }
-        uiConfig.ApplyModifiedPropertiesWithoutUndo();
+        ReplaceRewardCardSlots(ui);
         ConfigureCardConfirmation(ui);
         summary.gameObject.SetActive(false); choices.gameObject.SetActive(false); options.gameObject.SetActive(false);
         EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene); AssetDatabase.SaveAssets();
         Debug.Log("Battle reward scene configured.");
     }
+    [MenuItem("ProjectDN/Connect Reward Card Prefabs")]
+    public static void ConnectRewardCardPrefabs()
+    {
+        var scene = EditorSceneManager.OpenScene("Assets/Scenes/BattleScene.unity");
+        ReplaceRewardCardSlots(Object.FindFirstObjectByType<CardRewardUI>(FindObjectsInactive.Include));
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log("Reward cards connected to the DeckCard prefab.");
+    }
+
+    private static void ReplaceRewardCardSlots(CardRewardUI ui)
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/DeckCard.prefab");
+        var config = new SerializedObject(ui);
+        var slots = config.FindProperty("rewardCardSlots");
+        for (int i = 0; i < slots.arraySize; i++)
+        {
+            var previous = (DeckCardUI)slots.GetArrayElementAtIndex(i).objectReferenceValue;
+            if (PrefabUtility.GetCorrespondingObjectFromSource(previous) == prefab.GetComponent<DeckCardUI>())
+                continue;
+
+            GameObject replacement = (GameObject)PrefabUtility.InstantiatePrefab(prefab, previous.transform.parent);
+            replacement.name = previous.name;
+            replacement.transform.SetSiblingIndex(previous.transform.GetSiblingIndex());
+            var card = replacement.GetComponent<DeckCardUI>();
+            Center((RectTransform)card.transform, new Vector2(260, 338));
+            card.ResizeForList(1.3f);
+            foreach (TMP_Text text in card.GetComponentsInChildren<TMP_Text>(true))
+                PrefabUtility.RecordPrefabInstancePropertyModifications(text);
+            foreach (Canvas canvas in card.GetComponentsInChildren<Canvas>(true))
+                canvas.overrideSorting = false;
+            ConfigureRewardCardHover(card);
+            var fields = new SerializedObject(card);
+            fields.FindProperty("allowInspection").boolValue = false;
+            fields.ApplyModifiedPropertiesWithoutUndo();
+            Button button = card.GetComponent<Button>();
+            if (button == null) button = replacement.AddComponent<Button>();
+            button.targetGraphic = card.GetComponent<UnityEngine.UI.Image>();
+            button.onClick = new Button.ButtonClickedEvent();
+            UnityEventTools.AddIntPersistentListener(button.onClick, ui.SelectCard, i);
+            EditorUtility.SetDirty(button);
+
+            // Keep the existing selection border and its CardRewardUI reference.
+            Transform border = previous.transform.Find("HoverVisual/RewardSelectionBorder");
+            if (border != null) border.SetParent(card.transform.Find("HoverVisual"), false);
+            replacement.SetActive(previous.gameObject.activeSelf);
+            PrefabUtility.RecordPrefabInstancePropertyModifications(replacement);
+            PrefabUtility.RecordPrefabInstancePropertyModifications(card.transform);
+            slots.GetArrayElementAtIndex(i).objectReferenceValue = card;
+            Object.DestroyImmediate(previous.gameObject);
+        }
+        config.ApplyModifiedPropertiesWithoutUndo();
+    }
+
     [MenuItem("ProjectDN/Setup Reward Card Confirmation")]
     public static void SetupCardConfirmation()
     {
