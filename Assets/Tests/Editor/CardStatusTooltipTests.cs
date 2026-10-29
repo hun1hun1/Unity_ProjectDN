@@ -25,26 +25,28 @@ public class CardStatusTooltipTests
     }
 
     [UnityTest]
-    public IEnumerator HoverWaitsOneSecondShowsDefinitionAndResetsOnExit()
+    public IEnumerator HoverUsesConfiguredDelayShowsDefinitionAndResetsOnExit()
     {
         yield return new EnterPlayMode();
         yield return SceneManager.LoadSceneAsync("BattleScene");
         yield return WaitForCards();
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
         CardUI card = Cards()[0];
-        card.SetCard(AssetDatabase.LoadAssetAtPath<CardData>(
-            "Assets/CardData/Soldier/Starting/Nightmare/Attack/02.Corrosion/Corrosion.asset"), battle);
+        CardData corrosion = AssetDatabase.LoadAssetAtPath<CardData>(
+            "Assets/CardData/Soldier/Starting/Nightmare/Attack/02.Card_Corrosion/Corrosion.asset");
+        Assert.That(corrosion, Is.Not.Null, "The current Corrosion card asset must load before testing its tooltip.");
+        card.SetCard(corrosion, battle);
         var hoverState = new SerializedObject(card.GetComponent<CardHoverUI>());
-        hoverState.FindProperty("tooltipDelay").floatValue = 1f;
-        hoverState.ApplyModifiedPropertiesWithoutUndo();
+        float tooltipDelay = hoverState.FindProperty("tooltipDelay").floatValue;
+        Assert.That(tooltipDelay, Is.GreaterThan(0f));
         var pointer = new PointerEventData(EventSystem.current);
         float hoverStartedAt = Time.unscaledTime;
         Enter(card, pointer);
         Time.timeScale = 0f;
-        yield return AssertHiddenBeforeDelay(card, hoverStartedAt);
+        yield return AssertHiddenBeforeDelay(card, hoverStartedAt, tooltipDelay);
         yield return Wait(0.15f);
         TMP_Text text = VisibleTooltip(card);
-        Assert.That(text, Is.Not.Null, "A status card must show its tooltip after one second of hover.");
+        Assert.That(text, Is.Not.Null, "A status card must show its tooltip after the configured hover delay.");
         Assert.That(text.text, Does.Contain("녹슬음").And.Contain("25%"));
         Assert.That(text.text, Does.Not.Contain("남은 턴"));
         Assert.That(battle.GetPlayer().StatusEffects.ActiveEffects, Is.Empty);
@@ -53,7 +55,7 @@ public class CardStatusTooltipTests
         Assert.That(VisibleTooltip(card), Is.Null);
         hoverStartedAt = Time.unscaledTime;
         Enter(card, pointer);
-        yield return AssertHiddenBeforeDelay(card, hoverStartedAt);
+        yield return AssertHiddenBeforeDelay(card, hoverStartedAt, tooltipDelay);
         yield return Wait(0.15f);
         Assert.That(VisibleTooltip(card), Is.Not.Null);
         card.MarkAsUsed();
@@ -203,14 +205,14 @@ public class CardStatusTooltipTests
     private static void SetField(object value, string name, object fieldValue) => value.GetType()
         .GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(value, fieldValue);
 
-    private static IEnumerator AssertHiddenBeforeDelay(CardUI card, float hoverStartedAt)
+    private static IEnumerator AssertHiddenBeforeDelay(CardUI card, float hoverStartedAt, float delay)
     {
-        float end = hoverStartedAt + 1f;
+        float end = hoverStartedAt + delay;
         float deadline = Time.realtimeSinceStartup + 10f;
-        // A slow Editor frame may cross the deadline; only assert while hover is under one second.
+        // A slow Editor frame may cross the configured delay; assert only before that deadline.
         while (Time.unscaledTime < end && Time.realtimeSinceStartup < deadline)
         {
-            Assert.That(VisibleTooltip(card), Is.Null, "Every hover must wait one second before showing the tooltip.");
+            Assert.That(VisibleTooltip(card), Is.Null, "Every hover must wait for the configured delay before showing the tooltip.");
             yield return null;
         }
         Assert.That(Time.unscaledTime, Is.GreaterThanOrEqualTo(end));

@@ -10,6 +10,12 @@ public class DeckListUI : MonoBehaviour
     [SerializeField]
     private DeckCardUI cardPrefab;
 
+    [SerializeField, Min(0.1f)]
+    private float cardScale = 1f;
+
+    [SerializeField] private bool sortByName;
+    [SerializeField, Min(0)] private int maxColumns;
+
     [SerializeField]
     private GameObject panel;
 
@@ -35,14 +41,18 @@ public class DeckListUI : MonoBehaviour
         // 원본 DrawPile은 건드리지 않고 복사
         List<CardData> shuffledCards = new List<CardData>(cards);
 
-        // Fisher-Yates Shuffle
-        for (int i = shuffledCards.Count - 1; i > 0; i--)
+        if (sortByName)
+            shuffledCards.Sort((left, right) => System.StringComparer.Ordinal.Compare(left.cardName, right.cardName));
+        else
         {
-            int randomIndex = Random.Range(0, i + 1);
-
-            CardData temp = shuffledCards[i];
-            shuffledCards[i] = shuffledCards[randomIndex];
-            shuffledCards[randomIndex] = temp;
+            // Preserve the pile viewer's random presentation.
+            for (int i = shuffledCards.Count - 1; i > 0; i--)
+            {
+                int randomIndex = Random.Range(0, i + 1);
+                CardData temp = shuffledCards[i];
+                shuffledCards[i] = shuffledCards[randomIndex];
+                shuffledCards[randomIndex] = temp;
+            }
         }
 
         foreach (CardData cardData in shuffledCards)
@@ -67,8 +77,19 @@ public class DeckListUI : MonoBehaviour
         }
 
         Vector2 prefabSize = ((RectTransform)cardPrefab.transform).rect.size;
-        Vector2 size = sourceHand != null ? sourceHand.GetHandCardSize() : prefabSize;
-        if (!force && size == appliedCardSize) return;
+        float scale = Mathf.Max(0.1f, cardScale);
+        Vector2 size = prefabSize * scale;
+        bool columnsChanged = false;
+        if (maxColumns > 0)
+        {
+            float availableWidth = ((RectTransform)content).rect.width - grid.padding.horizontal;
+            int columns = Mathf.Clamp(Mathf.FloorToInt((availableWidth + originalSpacing.x * scale) /
+                Mathf.Max(1f, size.x + originalSpacing.x * scale)), 1, maxColumns);
+            columnsChanged = grid.constraintCount != columns;
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            grid.constraintCount = columns;
+        }
+        if (!force && size == appliedCardSize && !columnsChanged) return;
 
         appliedCardSize = size;
         float ratio = prefabSize.y > 0f ? size.y / prefabSize.y : 1f;
@@ -83,6 +104,11 @@ public class DeckListUI : MonoBehaviour
     public void Close()
     {
         if (CardInspectionUI.BlocksGameplayInput) return;
+        HideAndClear();
+    }
+
+    internal void HideAndClear()
+    {
         panel.SetActive(false);
         Clear();
         sourceHand = null;

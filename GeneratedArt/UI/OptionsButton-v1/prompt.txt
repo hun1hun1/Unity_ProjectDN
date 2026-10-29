@@ -1,0 +1,8 @@
+Use case: stylized-concept.
+Asset type: transparent settings/options button icon for a hand-painted 2D dark fantasy military deckbuilding game.
+Primary request: ONE clearly recognizable mechanical COGWHEEL, matching an existing UI of aged dark iron, thin worn brass edges, small antique metal details, olive-charcoal panels, and painterly fantasy card artwork.
+Composition: centered single gear, nearly straight-on orthographic front view with only a subtle bevel thickness, eight broad evenly spaced teeth, a round open central axle hole, clean balanced circular silhouette. Square canvas. Entire object contained with about 8 percent transparent safety margin on all sides, no clipped teeth.
+Materials: dark desaturated forged steel main body, worn pale steel highlights on tooth bevels, restrained antique brass accent ring around the center hole and subtle warm brass edging. Fine hand-painted scuffs and small worn patches, calm midtone surfaces rather than noisy rust. Enough bright edge contrast to read against a very dark olive header at 108-pixel display size.
+Style: high-quality illustrated game UI sprite, hand-painted realistic metal finish, crisp readable edges, modest soft lighting from upper left, consistent with ornate worn metal card frames and battlefield UI. Practical military fantasy aesthetic, understated decoration.
+Transparency: genuine transparent PNG outside the gear AND through the central circular hole. No opaque black disk in the hole. No background, ground, cloth, panel, button frame, external shadow or glow.
+Text: NONE. No letters, numbers, logos, watermark, arrows, moon symbols, stars, jewels, clocks, extra gears, tools or other objects. Only one cogwheel.

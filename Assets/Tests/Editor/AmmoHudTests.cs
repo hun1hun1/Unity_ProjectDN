@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 public class AmmoHudTests
 {
     [UnityTest]
-    public IEnumerator BattleAreaHudMovesOffSoldierAndFillTracksAmmoAndCapacity()
+    public IEnumerator BattleAreaHudUsesTwentyRoundFillScaleAndDisplaysActualCapacity()
     {
         yield return new EnterPlayMode();
         SceneManager.LoadScene("BattleScene");
@@ -39,10 +39,15 @@ public class AmmoHudTests
         Assert.That(text.text, Is.EqualTo("총알 0 / 10"));
         Assert.That(fill.fillAmount, Is.Zero);
         Assert.That(GetFillVertexCount(fill), Is.Zero);
+        // Fill uses twenty artwork slots; the label still shows actual capacity.
         ammo.Load(5);
         Assert.That(text.text, Is.EqualTo("총알 5 / 10"));
-        Assert.That(fill.fillAmount, Is.EqualTo(0.5f).Within(0.0001f));
+        Assert.That(fill.fillAmount, Is.EqualTo(0.25f).Within(0.0001f));
         Assert.That(GetFillVertexCount(fill), Is.GreaterThan(0));
+        ammo.Load(5);
+        Assert.That(text.text, Is.EqualTo("총알 10 / 10"));
+        Assert.That(fill.fillAmount, Is.EqualTo(0.5f).Within(0.0001f), "A full ten-round magazine fills only half of the twenty-slot artwork.");
+        Assert.That(ammo.TrySpend(5), Is.True);
         ammo.IncreaseMaxForBattle(10);
         Assert.That(text.text, Is.EqualTo("총알 5 / 20"));
         Assert.That(fill.fillAmount, Is.EqualTo(0.25f).Within(0.0001f));
@@ -58,7 +63,7 @@ public class AmmoHudTests
         hud.Bind(otherAmmo);
         ammo.Load(99);
         Assert.That(text.text, Is.EqualTo("총알 1 / 10"), "Rebinding must detach the previous source.");
-        Assert.That(fill.fillAmount, Is.EqualTo(0.1f).Within(0.0001f));
+        Assert.That(fill.fillAmount, Is.EqualTo(0.05f).Within(0.0001f));
         hud.Bind(null);
         Assert.That(text.text, Is.EqualTo("총알 0 / 0"));
         Assert.That(fill.fillAmount, Is.Zero);

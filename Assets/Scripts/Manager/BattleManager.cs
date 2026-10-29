@@ -354,7 +354,7 @@ public class BattleManager : MonoBehaviour
 
     public bool CanUseCard(CardData cardData)
     {
-        if (CardInspectionUI.BlocksGameplayInput || currentState != BattleState.PlayerTurn || isResolvingEffects ||
+        if (CardInspectionUI.BlocksGameplayInput || DeckOverviewUI.BlocksBattleInput || currentState != BattleState.PlayerTurn || isResolvingEffects ||
             cardData == null || cardData.requiredAmmo < 0 || player == null)
             return false;
 
@@ -591,7 +591,7 @@ public class BattleManager : MonoBehaviour
 
     public void EndPlayerTurn()
     {
-        if (CardInspectionUI.BlocksGameplayInput || isResolvingEffects) return;
+        if (CardInspectionUI.BlocksGameplayInput || DeckOverviewUI.BlocksBattleInput || isResolvingEffects) return;
         EffectSequence.Start(this, EndPlayerTurnRoutine());
     }
 

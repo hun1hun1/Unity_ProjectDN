@@ -1,0 +1,41 @@
+{
+  "generator": "built-in image_gen",
+  "sourceDimensions": {
+    "width": 1671,
+    "height": 941
+  },
+  "crop": {
+    "left": 0,
+    "top": 0,
+    "width": 1671,
+    "height": 98
+  },
+  "exports": [
+    {
+      "name": "top-area-1920x108.png",
+      "width": 1920,
+      "height": 108,
+      "channels": 3,
+      "hasAlpha": false,
+      "fullyOpaque": true
+    },
+    {
+      "name": "top-area-3840x216.png",
+      "width": 3840,
+      "height": 216,
+      "channels": 3,
+      "hasAlpha": false,
+      "fullyOpaque": true
+    }
+  ],
+  "referenceResolution": [
+    1920,
+    1080
+  ],
+  "referenceSlot": [
+    1920,
+    108
+  ],
+  "unityApplied": false,
+  "processing": "Removed the lower white export padding and mechanically resampled the selected header using Lanczos3. Both final PNGs are fully opaque RGB."
+}

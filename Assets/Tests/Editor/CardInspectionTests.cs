@@ -62,7 +62,7 @@ public class CardInspectionTests
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
         CardUI card = Cards()[0];
         CardData data = Object.Instantiate(AssetDatabase.LoadAssetAtPath<CardData>(
-            "Assets/CardData/Soldier/Starting/Nightmare/Attack/02.Corrosion/Corrosion.asset"));
+            "Assets/CardData/Soldier/Starting/Nightmare/Attack/02.Card_Corrosion/Corrosion.asset"));
         created.Add(data);
         data.requiredAmmo = 0;
         data.cost.dreamCost = data.cost.nightmareCost = 0;
@@ -101,7 +101,7 @@ public class CardInspectionTests
         var down = new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left };
         card.OnPointerDown(down);
         Assert.That(card.transform.parent, Is.EqualTo(parent));
-        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0];
+        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None).Single(candidate => candidate.name == "DeckListPanel");
         list.ShowCards(new[] { data });
         Assert.That(new SerializedObject(list).FindProperty("panel").objectReferenceValue,
             Is.Not.Null);
@@ -131,7 +131,7 @@ public class CardInspectionTests
         DeckController deck = Object.FindFirstObjectByType<DeckController>();
         foreach (CardDeckType type in new[] { CardDeckType.TypeDream, CardDeckType.TypeNightmare })
             deck.DiscardCard(deck.GetDeck(type)[0], type);
-        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0];
+        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None).Single(candidate => candidate.name == "DeckListPanel");
         Transform content = (Transform)new SerializedObject(list).FindProperty("content").objectReferenceValue;
         foreach (DeckPileButton button in Object.FindObjectsByType<DeckPileButton>(FindObjectsSortMode.None))
         {
@@ -284,7 +284,7 @@ public class CardInspectionTests
         data.description = "적 {damage:0}, 자신 {damage:1}, 추가 {damage:2.1}; {ammoCost:2}알; {ammoCondition:2}";
         data.effects = new CardEffect[] { enemyDamage, selfDamage, bonus };
         hand.SetCard(data, battle);
-        DeckListUI list = Object.FindFirstObjectByType<DeckListUI>(FindObjectsInactive.Include);
+        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None).Single(candidate => candidate.name == "DeckListPanel");
         CardHandController sourceHand = hand.GetHandController();
         foreach (bool fromPile in new[] { false, true })
         {

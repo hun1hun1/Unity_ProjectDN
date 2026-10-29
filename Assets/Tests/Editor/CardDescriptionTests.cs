@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -184,6 +185,13 @@ public class CardDescriptionTests
         Assert.That(Description(ui), Is.EqualTo("6; 현재 발동 가능"));
         int initialHP = enemy.GetCurrentHP();
         Assert.That(battle.UseCard(ui), Is.True);
+        Assert.That(Description(ui), Is.EqualTo("6; 현재 발동 가능"));
+        float deadline = Time.realtimeSinceStartup + 15f;
+        while (ammo.CurrentAmmo != 0)
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline), "Wait for the card presentation and bonus effect.");
+            yield return null;
+        }
         Assert.That(ammo.CurrentAmmo, Is.Zero);
         Assert.That(enemy.GetCurrentHP(), Is.EqualTo(initialHP - 6));
         Assert.That(Description(ui), Is.EqualTo("6; 현재 발동 가능"));
@@ -232,7 +240,7 @@ public class CardDescriptionTests
         Assert.That(Description(dreamCard), Does.Contain("4의 피해"));
         Assert.That(Description(nightmareCard), Does.Contain("3의 피해").And.Contain("2의 피해"));
 
-        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0];
+        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None).Single(candidate => candidate.name == "DeckListPanel");
         list.ShowCards(new[] { attack }, dream);
         Transform content = (Transform)new SerializedObject(list).FindProperty("content").objectReferenceValue;
         DeckCardUI entry = content.GetComponentInChildren<DeckCardUI>();
@@ -298,7 +306,7 @@ public class CardDescriptionTests
         Assert.That(description, Does.Contain("3의 피해").And.Contain("4의 피해"));
         Assert.That(description, Does.Not.Contain("{damage:"));
         CardData tracking = AssetDatabase.LoadAssetAtPath<CardData>(
-            "Assets/CardData/Soldier/Starting/Nightmare/Skill/02.Target_Tracking/Target_Tracking.asset");
+            "Assets/CardData/Soldier/Starting/Nightmare/Skill/02.Card_Target_Tracking/Target_Tracking.asset");
         Assert.That(Description(HandCard(tracking)), Does.Contain("3의 피해"));
     }
 

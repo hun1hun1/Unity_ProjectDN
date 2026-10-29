@@ -21,7 +21,7 @@ public class DeckCardHoverTests
         DeckController deck = Object.FindFirstObjectByType<DeckController>();
         foreach (CardDeckType type in new[] { CardDeckType.TypeDream, CardDeckType.TypeNightmare })
             deck.DiscardCard(deck.GetDeck(type)[0], type);
-        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0];
+        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None).Single(candidate => candidate.name == "DeckListPanel");
         Transform content = (Transform)new SerializedObject(list).FindProperty("content").objectReferenceValue;
         foreach (DeckPileButton button in Object.FindObjectsByType<DeckPileButton>(FindObjectsSortMode.None))
         {
@@ -74,7 +74,7 @@ public class DeckCardHoverTests
         yield return new EnterPlayMode();
         yield return SceneManager.LoadSceneAsync("BattleScene");
         yield return WaitForHand();
-        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0];
+        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None).Single(candidate => candidate.name == "DeckListPanel");
         Transform content = (Transform)new SerializedObject(list).FindProperty("content").objectReferenceValue;
         list.ShowCards(Object.FindFirstObjectByType<DeckController>().GetDrawPile(CardDeckType.TypeDream));
         yield return null;

@@ -28,7 +28,7 @@ public class DeckPileButton : MonoBehaviour
 
     private void OnClick()
     {
-        if (CardInspectionUI.BlocksGameplayInput) return;
+        if (CardInspectionUI.BlocksGameplayInput || DeckOverviewUI.BlocksBattleInput) return;
         if (isDiscardPile)
         {
             deckListUI.ShowCards(deckController.GetDiscardPile(deckType), handController);

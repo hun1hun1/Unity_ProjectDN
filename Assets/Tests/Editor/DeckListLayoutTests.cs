@@ -11,7 +11,7 @@ using UnityEngine.SceneManagement;
 public class DeckListLayoutTests
 {
     [UnityTest]
-    public IEnumerator AllFourPileButtonsShowCardsAtTheirHandSizeWithoutChangingThePile()
+    public IEnumerator AllFourPileButtonsUsePrefabSizeWithoutChangingThePile()
     {
         yield return new EnterPlayMode();
         yield return SceneManager.LoadSceneAsync("BattleScene");
@@ -19,7 +19,7 @@ public class DeckListLayoutTests
         DeckController deck = Object.FindFirstObjectByType<DeckController>();
         foreach (CardDeckType type in new[] { CardDeckType.TypeDream, CardDeckType.TypeNightmare })
             deck.DiscardCard(deck.GetDeck(type)[0], type);
-        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0];
+        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None).Single(candidate => candidate.name == "DeckListPanel");
         Transform content = Content(list);
         Canvas canvas = content.GetComponentInParent<Canvas>().rootCanvas;
         canvas.renderMode = RenderMode.WorldSpace;
@@ -28,7 +28,7 @@ public class DeckListLayoutTests
         DeckPileButton[] buttons = Object.FindObjectsByType<DeckPileButton>(FindObjectsSortMode.None);
         Assert.That(buttons, Has.Length.EqualTo(4));
         float[] heights = { 810f, 540f, 1080f };
-        Vector2[] sizes = { new Vector2(149.61538f, 194.5f), new Vector2(97.69231f, 127f), new Vector2(200f, 260f) };
+        Vector2 expectedSize = new Vector2(200f, 260f);
         for (int i = 0; i < heights.Length; i++)
         {
             canvasRect.sizeDelta = new Vector2(1920f, heights[i]);
@@ -48,12 +48,12 @@ public class DeckListLayoutTests
                 Assert.That(pile, Is.EqualTo(before), "Opening the viewer must not reorder or change the pile.");
                 CollectionAssert.AreEquivalent(before.Select(card => card.cardName), cards.Select(card =>
                     ((TMP_Text)new SerializedObject(card).FindProperty("nameText").objectReferenceValue).text));
-                AssertCardsAndGrid(content, sizes[i]);
+                AssertCardsAndGrid(content, expectedSize);
                 CardHandController hand = Object.FindObjectsByType<CardHandController>(FindObjectsSortMode.None)
                     .Single(candidate => candidate.name == (type == CardDeckType.TypeDream ? "DreamCardContainer" : "NightmareCardContainer"));
                 Vector2 handSize = ((RectTransform)hand.GetComponentInChildren<CardUI>().transform).rect.size;
-                Assert.That(handSize.x, Is.EqualTo(sizes[i].x).Within(0.02f));
-                Assert.That(handSize.y, Is.EqualTo(sizes[i].y).Within(0.02f));
+                Assert.That(handSize, Is.EqualTo(hand.GetHandCardSize()));
+                Assert.That(handSize.y, Is.LessThan(expectedSize.y), "Hand padding must not shrink the list cards.");
                 list.Close();
                 yield return null;
             }
@@ -62,7 +62,7 @@ public class DeckListLayoutTests
     }
 
     [UnityTest]
-    public IEnumerator OpenListResizesWithAnEmptyHandAndReopeningDoesNotCompoundFontsOrDuplicateCards()
+    public IEnumerator IndependentListScaleWorksWithAnEmptyHandAndReopeningDoesNotCompoundFontsOrDuplicateCards()
     {
         yield return new EnterPlayMode();
         yield return SceneManager.LoadSceneAsync("BattleScene");
@@ -77,33 +77,43 @@ public class DeckListLayoutTests
             .Single(candidate => candidate.name == "DreamCardContainer");
         hand.RemoveAllCards();
         yield return null;
-        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0];
+        DeckListUI list = Object.FindObjectsByType<DeckListUI>(FindObjectsInactive.Include, FindObjectsSortMode.None).Single(candidate => candidate.name == "DeckListPanel");
         Transform content = Content(list);
         Canvas canvas = hand.GetComponentInParent<Canvas>().rootCanvas;
         canvas.renderMode = RenderMode.WorldSpace;
         canvas.transform.localScale = Vector3.one;
         RectTransform canvasRect = (RectTransform)canvas.transform;
         canvasRect.sizeDelta = new Vector2(1920f, 1080f);
+        var listState = new SerializedObject(list);
+        listState.FindProperty("cardScale").floatValue = 1.25f;
+        listState.ApplyModifiedPropertiesWithoutUndo();
         button.GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
         yield return null;
         DeckCardUI[] originalCards = content.GetComponentsInChildren<DeckCardUI>();
         Assert.That(originalCards.Length, Is.GreaterThan(0));
         float[] heights = { 810f, 540f, 1080f };
-        Vector2[] sizes = { new Vector2(149.61538f, 194.5f), new Vector2(97.69231f, 127f), new Vector2(200f, 260f) };
+        Vector2 expectedSize = new Vector2(250f, 325f);
         for (int i = 0; i < heights.Length; i++)
         {
             canvasRect.sizeDelta = new Vector2(1920f, heights[i]);
             yield return null;
             yield return null;
             Canvas.ForceUpdateCanvases();
-            AssertCardsAndGrid(content, sizes[i]);
+            AssertCardsAndGrid(content, expectedSize);
             CollectionAssert.AreEqual(originalCards, content.GetComponentsInChildren<DeckCardUI>());
         }
+        listState.Update();
+        listState.FindProperty("cardScale").floatValue = 0.8f;
+        listState.ApplyModifiedPropertiesWithoutUndo();
+        yield return null;
+        yield return null;
+        Canvas.ForceUpdateCanvases();
+        AssertCardsAndGrid(content, new Vector2(160f, 208f));
         button.GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
         button.GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
         Canvas.ForceUpdateCanvases();
         Assert.That(content.GetComponentsInChildren<DeckCardUI>().Length, Is.EqualTo(originalCards.Length));
-        AssertCardsAndGrid(content, new Vector2(200f, 260f));
+        AssertCardsAndGrid(content, new Vector2(160f, 208f));
         list.Close();
         yield return new ExitPlayMode();
     }

@@ -1,0 +1,69 @@
+{
+  "generator": "built-in image_gen",
+  "concept": "A single worn iron and antique brass options cogwheel",
+  "referenceButton": {
+    "scene": "BattleScene",
+    "object": "Canvas/TopArea/Settings",
+    "referenceSlot": [
+      105.6,
+      108
+    ],
+    "iconCanvas": [
+      108,
+      108
+    ]
+  },
+  "sourceDimensions": [
+    1254,
+    1254
+  ],
+  "sourcePreserved": true,
+  "exports": [
+    {
+      "name": "options-gear-512x512.png",
+      "width": 512,
+      "height": 512,
+      "channels": 4,
+      "minAlpha": 0,
+      "maxAlpha": 255,
+      "transparentPixels": 127652,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "centerAlpha": 0,
+      "visibleBounds": [
+        19,
+        20,
+        491,
+        486
+      ]
+    },
+    {
+      "name": "options-gear-108x108.png",
+      "width": 108,
+      "height": 108,
+      "channels": 4,
+      "minAlpha": 0,
+      "maxAlpha": 255,
+      "transparentPixels": 5114,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "centerAlpha": 0,
+      "visibleBounds": [
+        4,
+        4,
+        103,
+        102
+      ]
+    }
+  ],
+  "processing": "Whole square canvas Lanczos3 resizing, no cropping or alpha replacement.",
+  "unityApplied": false
+}

@@ -1,0 +1,9 @@
+Use case: precise-object-edit.
+Edit target: image 1, the tilted BLUE dream draw-pile icon. Supporting style/reference: image 2, the RED nightmare draw-pile icon.
+Create a new combined DECK TOGGLE button sprite by editing the dream stack. Preserve image 1's single neatly stacked pile of five cards, its oblique top-down camera, rectangular card proportions, slight tilt, painterly dark fantasy materials, metallic worn gold page edges, ornate silver border style and overall compact square silhouette.
+Change the TOP CARD BACK so it is divided into two equal halves along its own long center line (a straight seam running from the middle of the short top edge to the middle of the short bottom edge, following the card's perspective).
+The LEFT HALF is deep sapphire/navy DREAM styling with a luminous icy-blue CRESCENT moon emblem.
+The RIGHT HALF is rich crimson/black NIGHTMARE styling with a luminous red FULL moon emblem, matching image 2.
+Place one compact crescent emblem fully within the left half and one compact full moon emblem fully within the right half, side by side, equal visual importance and each instantly readable at small UI size. Keep both halves equally large, a crisp clean color division, and keep their outer ornamental frame connected as one continuous card frame. Each half's frame and surface take on its own blue or red light. The cards beneath form one unified orderly stack with subtle dark blue/red edge accents.
+This is ONE stack, ONE unified top card with two styles, NOT two separate piles or two cards fanned apart. No toggle arrows, words, numbers, extra symbols, labels, UI button container, border outside the card, ground plane, cloth, backdrop or external drop shadow.
+Square transparent PNG canvas. Center the entire stack with 6 percent transparent safety margin on every side, no clipped corners, ample genuine transparent background. High-quality sharply readable game icon, hand-painted finish consistent with both references.

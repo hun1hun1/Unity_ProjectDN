@@ -408,9 +408,14 @@ public class SoldierAmmoTests
     public IEnumerator SoldierPlaysInBattleSceneAndTurnEndWaitsForCardAnimation()
     {
         yield return new EnterPlayMode();
-        SceneManager.LoadScene("BattleScene");
-        yield return null;
-        yield return new WaitForSeconds(0.8f);
+        yield return VerifySoldierCardAndTurnFlow();
+        yield return new ExitPlayMode();
+    }
+
+    // Initialize captured locals after EnterPlayMode has completed its domain reload.
+    private IEnumerator VerifySoldierCardAndTurnFlow()
+    {
+        yield return LoadBattleScene();
 
         BattleManager manager = Object.FindFirstObjectByType<BattleManager>();
         Soldier soldier = manager.GetPlayer() as Soldier;
@@ -431,16 +436,22 @@ public class SoldierAmmoTests
         ui.SetCard(reload, manager);
         Assert.That(manager.UseCard(ui), Is.True);
         Assert.That(manager.UseCard(ui), Is.False);
-        Assert.That(soldier.GetAmmoSystem().CurrentAmmo, Is.EqualTo(1));
+        Assert.That(manager.BlocksCardInteraction, Is.True);
+        Assert.That(soldier.GetAmmoSystem().CurrentAmmo, Is.Zero, "Reload waits for the card to reach the using area.");
         Assert.That(hand.GetCurrentHandSize(), Is.EqualTo(2));
+        manager.EndPlayerTurn();
+        Assert.That((BattleState)GetField(manager, "currentState"), Is.EqualTo(BattleState.PlayerTurn),
+            "Turn end is blocked while the card moves and its effects resolve.");
+        yield return Until(() => !manager.BlocksCardInteraction,
+            "Reload did not finish its effects before the discard animation.");
+        Assert.That(soldier.GetAmmoSystem().CurrentAmmo, Is.EqualTo(1));
+        Assert.That((int)GetField(manager, "activeCardUses"), Is.EqualTo(1));
 
         manager.EndPlayerTurn();
         Assert.That((BattleState)GetField(manager, "currentState"), Is.EqualTo(BattleState.PlayerTurnEnd));
         Assert.That((int)GetField(manager, "activeCardUses"), Is.EqualTo(1));
-        float deadline = Time.realtimeSinceStartup + 12;
-        while ((BattleState)GetField(manager, "currentState") != BattleState.PlayerTurn &&
-            Time.realtimeSinceStartup < deadline)
-            yield return null;
+        yield return Until(() => (BattleState)GetField(manager, "currentState") == BattleState.PlayerTurn && manager.CanInspectCards,
+            "Turn end did not wait for card completion and return to a ready player hand.");
         Assert.That((BattleState)GetField(manager, "currentState"), Is.EqualTo(BattleState.PlayerTurn));
         Assert.That((int)GetField(manager, "activeCardUses"), Is.Zero);
         Assert.That(hand.GetCurrentHandSize(), Is.EqualTo(hand.GetMaxHandSize()));
@@ -452,17 +463,18 @@ public class SoldierAmmoTests
         ui.SetCard(consume, manager);
         int targetHP = manager.GetTarget().GetCurrentHP();
         Assert.That(manager.UseCard(ui), Is.True);
-        Assert.That(soldier.GetAmmoSystem().CurrentAmmo, Is.Zero);
+        Assert.That(soldier.GetAmmoSystem().CurrentAmmo, Is.Zero, "Required ammo is paid immediately when use is accepted.");
+        Assert.That(manager.GetTarget().GetCurrentHP(), Is.EqualTo(targetHP), "Damage waits for the card to reach the using area.");
+        yield return Until(() => !manager.BlocksCardInteraction,
+            "The ammo-consuming card did not finish its damage effects.");
         Assert.That(manager.GetTarget().GetCurrentHP(), Is.LessThan(targetHP));
         Assert.That(Object.FindFirstObjectByType<AmmoUI>().GetComponentInChildren<TMP_Text>().text, Is.EqualTo("총알 0 / 10"));
-        deadline = Time.realtimeSinceStartup + 5;
-        while ((int)GetField(manager, "activeCardUses") > 0 && Time.realtimeSinceStartup < deadline)
-            yield return null;
+        yield return Until(() => ui == null && !manager.HasOtherCardUses && !manager.HandsAreMoving,
+            "The ammo-consuming card did not settle and refill the hand.");
         Assert.That((int)GetField(manager, "activeCardUses"), Is.Zero);
         Assert.That(hand.GetCurrentHandSize(), Is.EqualTo(hand.GetMaxHandSize()));
         Assert.That(manager.CanUseCard(consume), Is.False);
 
-        yield return new ExitPlayMode();
     }
 
     [UnityTest]
@@ -483,6 +495,28 @@ public class SoldierAmmoTests
         Assert.That(label.text, Is.EqualTo("총알 0 / 5"));
         Assert.That(ammo.CurrentAmmo, Is.Zero, "Changing starting ammo does not reset a running battle.");
         yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator LoadBattleScene()
+    {
+        AsyncOperation loading = SceneManager.LoadSceneAsync("BattleScene");
+        Assert.That(loading, Is.Not.Null);
+        yield return Until(() => loading.isDone, "BattleScene did not complete loading.");
+        yield return Until(() =>
+        {
+            BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
+            return battle != null && battle.GetPlayer() != null && battle.CanInspectCards;
+        }, "BattleScene did not finish initializing its player and hand animations.");
+    }
+
+    private static IEnumerator Until(System.Func<bool> ready, string message)
+    {
+        float deadline = Time.realtimeSinceStartup + 15f;
+        while (!ready())
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline), message);
+            yield return null;
+        }
     }
 
     private AmmoSystem CreateAmmo(int max, int start)

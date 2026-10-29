@@ -1,0 +1,156 @@
+{
+  "generator": "built-in image_gen",
+  "concept": "Four tilted dream and nightmare draw/discard card piles",
+  "transparentBackground": true,
+  "export": {
+    "method": "resize full square canvas without cropping",
+    "resampling": "Lanczos",
+    "sourcePreserved": true
+  },
+  "files": [
+    {
+      "name": "dream-draw-pile-original.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alphaBounds": [
+        0,
+        17,
+        1246,
+        1254
+      ]
+    },
+    {
+      "name": "dream-draw-pile-512x512.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "alphaBounds": [
+        20,
+        8,
+        509,
+        492
+      ]
+    },
+    {
+      "name": "dream-draw-pile-128x128.png",
+      "width": 128,
+      "height": 128,
+      "mode": "RGBA",
+      "alphaBounds": [
+        6,
+        7,
+        127,
+        123
+      ]
+    },
+    {
+      "name": "dream-discard-pile-original.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alphaBounds": [
+        0,
+        24,
+        1222,
+        1246
+      ]
+    },
+    {
+      "name": "dream-discard-pile-512x512.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "alphaBounds": [
+        36,
+        11,
+        499,
+        508
+      ]
+    },
+    {
+      "name": "dream-discard-pile-128x128.png",
+      "width": 128,
+      "height": 128,
+      "mode": "RGBA",
+      "alphaBounds": [
+        10,
+        14,
+        125,
+        120
+      ]
+    },
+    {
+      "name": "nightmare-draw-pile-original.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alphaBounds": [
+        0,
+        48,
+        1213,
+        1254
+      ]
+    },
+    {
+      "name": "nightmare-draw-pile-512x512.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "alphaBounds": [
+        0,
+        38,
+        495,
+        499
+      ]
+    },
+    {
+      "name": "nightmare-draw-pile-128x128.png",
+      "width": 128,
+      "height": 128,
+      "mode": "RGBA",
+      "alphaBounds": [
+        0,
+        8,
+        124,
+        124
+      ]
+    },
+    {
+      "name": "nightmare-discard-pile-original.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alphaBounds": [
+        0,
+        38,
+        1246,
+        1254
+      ]
+    },
+    {
+      "name": "nightmare-discard-pile-512x512.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "alphaBounds": [
+        0,
+        44,
+        487,
+        485
+      ]
+    },
+    {
+      "name": "nightmare-discard-pile-128x128.png",
+      "width": 128,
+      "height": 128,
+      "mode": "RGBA",
+      "alphaBounds": [
+        1,
+        12,
+        124,
+        121
+      ]
+    }
+  ]
+}

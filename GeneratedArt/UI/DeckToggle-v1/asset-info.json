@@ -1,0 +1,63 @@
+{
+  "generator": "built-in image_gen",
+  "concept": "One tilted card stack with an equally split dream/nightmare top card",
+  "referenceButton": {
+    "scene": "BattleScene",
+    "object": "Canvas/TopArea/Decks",
+    "size": [
+      108,
+      108
+    ]
+  },
+  "sourceDimensions": [
+    1254,
+    1254
+  ],
+  "sourcePreserved": true,
+  "exports": [
+    {
+      "name": "deck-toggle-512x512.png",
+      "width": 512,
+      "height": 512,
+      "channels": 4,
+      "minAlpha": 0,
+      "maxAlpha": 255,
+      "transparentPixels": 133411,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBounds": [
+        34,
+        47,
+        499,
+        482
+      ]
+    },
+    {
+      "name": "deck-toggle-108x108.png",
+      "width": 108,
+      "height": 108,
+      "channels": 4,
+      "minAlpha": 0,
+      "maxAlpha": 255,
+      "transparentPixels": 5589,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBounds": [
+        7,
+        9,
+        105,
+        101
+      ]
+    }
+  ],
+  "processing": "Whole square canvas Lanczos3 resizing, no cropping or alpha replacement.",
+  "unityApplied": false
+}

@@ -237,9 +237,14 @@ public class AmmoCapacityTests
     public IEnumerator CapacityCardAndRelicUpdateUiAndRelicSurvivesSceneReload()
     {
         yield return new EnterPlayMode();
-        SceneManager.LoadScene("BattleScene");
-        yield return null;
-        yield return new WaitForSeconds(0.8f);
+        yield return VerifyCapacityCardAndRelicAcrossSceneReload();
+        yield return new ExitPlayMode();
+    }
+
+    // Initialize captured locals after EnterPlayMode has completed its domain reload.
+    private IEnumerator VerifyCapacityCardAndRelicAcrossSceneReload()
+    {
+        yield return LoadBattleScene();
         BattleManager manager = Object.FindFirstObjectByType<BattleManager>();
         Soldier soldier = manager.GetPlayer() as Soldier;
         Assert.That(soldier, Is.Not.Null);
@@ -249,6 +254,10 @@ public class AmmoCapacityTests
         CardUI ui = ((List<CardUI>)GetField(hand, "cards"))[0];
         ui.SetCard(CreateCapacityCard(3, true), manager);
         Assert.That(manager.UseCard(ui), Is.True);
+        Assert.That(manager.BlocksCardInteraction, Is.True);
+        Assert.That(ammo.CurrentAmmo, Is.Zero, "The capacity and reload effects wait for the card to reach the using area.");
+        yield return Until(() => ui == null && !manager.HasOtherCardUses && !manager.HandsAreMoving,
+            "The capacity card did not finish resolving and refilling the hand.");
         Assert.That(ammo.CurrentAmmo, Is.EqualTo(13));
         Assert.That(label.text, Is.EqualTo("총알 13 / 13"));
         Assert.That(soldier.GetCostSystem().GetDreamCost(), Is.EqualTo(2));
@@ -256,9 +265,7 @@ public class AmmoCapacityTests
         relic.Acquire();
         Assert.That(label.text, Is.EqualTo("총알 13 / 15"));
 
-        SceneManager.LoadScene("BattleScene");
-        yield return null;
-        yield return new WaitForSeconds(0.8f);
+        yield return LoadBattleScene();
         manager = Object.FindFirstObjectByType<BattleManager>();
         soldier = manager.GetPlayer() as Soldier;
         Assert.That(soldier, Is.Not.Null);
@@ -270,7 +277,6 @@ public class AmmoCapacityTests
         Assert.That(relic.Acquire(), Is.False);
         RunRelicInventory.ResetForNewGame();
         Assert.That(label.text, Is.EqualTo("총알 0 / 10"));
-        yield return new ExitPlayMode();
     }
 
     [UnityTest]
@@ -318,6 +324,28 @@ public class AmmoCapacityTests
         Object.Destroy(obj);
         yield return null;
         yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator LoadBattleScene()
+    {
+        AsyncOperation loading = SceneManager.LoadSceneAsync("BattleScene");
+        Assert.That(loading, Is.Not.Null);
+        yield return Until(() => loading.isDone, "BattleScene did not complete loading.");
+        yield return Until(() =>
+        {
+            BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
+            return battle != null && battle.GetPlayer() != null && battle.CanInspectCards;
+        }, "BattleScene did not finish initializing its player and hand animations.");
+    }
+
+    private static IEnumerator Until(System.Func<bool> ready, string message)
+    {
+        float deadline = Time.realtimeSinceStartup + 15f;
+        while (!ready())
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline), message);
+            yield return null;
+        }
     }
 
     private AmmoSystem CreateAmmo(int starting = 0)

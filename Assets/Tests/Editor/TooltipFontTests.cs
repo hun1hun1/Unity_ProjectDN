@@ -10,6 +10,7 @@ using Object = UnityEngine.Object;
 public class TooltipFontTests
 {
     private const string FontPath = "Assets/Fonts/NotoSansKR-VF SDF.asset";
+    private const string CardFontPath = "Assets/Fonts/NotoSansKR-Bold SDF.asset";
     private const string PreviouslyMissing = "능증으며감남";
     private readonly List<TMP_FontAsset> fonts = new List<TMP_FontAsset>();
     private readonly List<GameObject> objects = new List<GameObject>();
@@ -29,27 +30,29 @@ public class TooltipFontTests
         fonts.Clear();
     }
 
-    [Test]
-    public void SharedTooltipFontIsDynamicAndAllowsAdditionalAtlases()
+    [TestCase("Assets/Prefabs/UI/Card.prefab", CardFontPath)]
+    [TestCase("Assets/Prefabs/UI/DeckCard.prefab", CardFontPath)]
+    [TestCase("Assets/Prefabs/UI/StatusTooltip.prefab", FontPath)]
+    [TestCase("Assets/Prefabs/UI/CardStatusTooltip.prefab", FontPath)]
+    [TestCase("Assets/Prefabs/UI/DeckPileTooltip.prefab", FontPath)]
+    public void DescriptionsUseTheirConfiguredDynamicFontAndAllowAdditionalAtlases(string prefabPath, string fontPath)
     {
-        TMP_FontAsset font = SourceFont();
+        TMP_FontAsset font = SourceFont(fontPath);
         Assert.That(font.sourceFontFile, Is.Not.Null);
         Assert.That(font.atlasPopulationMode, Is.EqualTo(AtlasPopulationMode.Dynamic));
         Assert.That(font.isMultiAtlasTexturesEnabled, Is.True);
-        foreach (string path in new[] { "Assets/Prefabs/UI/Card.prefab", "Assets/Prefabs/UI/DeckCard.prefab",
-            "Assets/Prefabs/UI/StatusTooltip.prefab" })
-        {
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            TMP_Text description = prefab.GetComponentsInChildren<TMP_Text>(true)
-                .Single(text => text.name == "Description" || text.name == "Content");
-            Assert.That(description.font, Is.SameAs(font), path);
-        }
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        Assert.That(prefab, Is.Not.Null, prefabPath);
+        TMP_Text description = prefab.GetComponentsInChildren<TMP_Text>(true)
+            .Single(text => text.name == "Description" || text.name == "Content");
+        Assert.That(description.font, Is.SameAs(font), prefabPath);
     }
 
-    [Test]
-    public void AllCardAndStatusTooltipTextRendersWithoutReplacementGlyphs()
+    [TestCase(FontPath)]
+    [TestCase(CardFontPath)]
+    public void AllCardAndStatusTooltipTextRendersWithoutReplacementGlyphs(string fontPath)
     {
-        TMP_FontAsset font = IsolatedFont();
+        TMP_FontAsset font = IsolatedFont(fontPath: fontPath);
         TMP_Text label = Label(font);
         var strings = new List<string>();
         foreach (string guid in AssetDatabase.FindAssets("t:CardData", new[] { "Assets/CardData" }))
@@ -97,16 +100,16 @@ public class TooltipFontTests
         Assert.That(font.atlasTextureCount, Is.EqualTo(1));
     }
 
-    private static TMP_FontAsset SourceFont()
+    private static TMP_FontAsset SourceFont(string fontPath = FontPath)
     {
-        TMP_FontAsset font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
+        TMP_FontAsset font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(fontPath);
         Assert.That(font, Is.Not.Null);
         return font;
     }
 
-    private TMP_FontAsset IsolatedFont(bool? multiAtlas = null)
+    private TMP_FontAsset IsolatedFont(bool? multiAtlas = null, string fontPath = FontPath)
     {
-        TMP_FontAsset source = SourceFont();
+        TMP_FontAsset source = SourceFont(fontPath);
         // Generate independent textures/tables so verification cannot alter the user's saved font.
         TMP_FontAsset font = TMP_FontAsset.CreateFontAsset(source.sourceFontFile, (int)source.faceInfo.pointSize,
             source.atlasPadding, source.atlasRenderMode, source.atlasWidth, source.atlasHeight,
