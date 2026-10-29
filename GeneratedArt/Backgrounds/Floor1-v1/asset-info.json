@@ -1,0 +1,52 @@
+{
+  "generator": "built-in image_gen",
+  "source": {
+    "width": 1672,
+    "height": 941,
+    "hasAlpha": false
+  },
+  "exports": [
+    {
+      "name": "floor1-battle-background-1920x1080.png",
+      "width": 1920,
+      "height": 1080,
+      "hasAlpha": false,
+      "upscaledFromOriginal": true
+    },
+    {
+      "name": "floor1-battle-background-1280x720.png",
+      "width": 1280,
+      "height": 720,
+      "hasAlpha": false,
+      "upscaledFromOriginal": false
+    },
+    {
+      "name": "floor1-battle-background-preview.png",
+      "width": 960,
+      "height": 540,
+      "hasAlpha": false,
+      "upscaledFromOriginal": false
+    }
+  ],
+  "canvasAspectRatio": "16:9",
+  "styleReferences": [
+    "GeneratedArt/Soldier/soldier-v1.png",
+    "GeneratedArt/Scarecrow/scarecrow-v1.png"
+  ],
+  "features": [
+    "Rural village outskirts after rain at dusk",
+    "Open horizontal battle clearing",
+    "Grounded fences, shed, utility poles, houses and hills",
+    "Low blue-gray mist and faint warm dusk glow",
+    "Small blue crescent reflected only in a puddle, no moon in sky",
+    "Dark lower foreground for card UI"
+  ],
+  "exportMethod": "Aspect-preserving cover resize to 16:9, opaque PNG exports",
+  "unityApplied": false,
+  "notes": [
+    "1920 export is modestly upscaled from generated original; native original is included.",
+    "Background has no characters or HUD.",
+    "No layered/parallax source is included.",
+    "Image inspection and dimensions verified; no Unity runtime verification."
+  ]
+}

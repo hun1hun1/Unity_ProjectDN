@@ -1,0 +1,4 @@
+Precise upper-background cleanup of the supplied red UI panel. Keep the filled lower corners and lower half EXACTLY as they are: full opaque burgundy backing to left, right and bottom edges. Do NOT fade or erase any lower pixels.
+Change ONLY the small area ABOVE and OUTSIDE the top metal rail and its rounded upper corners: remove that exterior burgundy padding to true alpha transparency. This is a local top-strip cleanup, not global background removal. Keep the metal rail and full moon opaque and unaltered. The lower rectangular panel must remain completely filled, with no curved cutout or alpha fade at bottom left/right.
+Also soften the brightest RED CLOUD TEXTURE in the lower center slightly, keeping same dark burgundy fill and opacity, so the corner aura is visible but the central card area stays quiet like the blue DREAM reference.
+No bottom border. Same16:5 full-width layout, same rails reaching bottom, no zoom or padding, no text, cards or extra details.

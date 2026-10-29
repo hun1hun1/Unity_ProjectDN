@@ -1,0 +1,52 @@
+{
+  "generator": "built-in image_gen",
+  "source": {
+    "width": 1650,
+    "height": 953
+  },
+  "logicalOuter": {
+    "width": 180,
+    "height": 104
+  },
+  "recommendedArtworkRect": {
+    "width": 174,
+    "height": 101,
+    "preserveAspect": true,
+    "centered": true
+  },
+  "frameAspectRatio": "45:26",
+  "exports": [
+    {
+      "name": "soldier-artwork-frame-900x520.png",
+      "width": 900,
+      "height": 520,
+      "hasAlpha": true,
+      "centerAlpha": 0
+    },
+    {
+      "name": "soldier-artwork-frame-360x208.png",
+      "width": 360,
+      "height": 208,
+      "hasAlpha": true,
+      "centerAlpha": 0
+    },
+    {
+      "name": "soldier-artwork-frame-180x104.png",
+      "width": 180,
+      "height": 104,
+      "hasAlpha": true,
+      "centerAlpha": 0
+    }
+  ],
+  "edgeExport": {
+    "topBandSource": 28,
+    "bottomBandSource": 26,
+    "topBandAt900": 8,
+    "bottomBandAt900": 8,
+    "method": "Three horizontal strips resized; generated metal texture and alpha preserved, thin upper/lower lips standardized during export"
+  },
+  "textIncluded": false,
+  "previewArtwork": "C:/Users/aa093/Documents/github/Unity_ProjectDN/Assets/Images/UI/Card/SoldierCardArtworks/soldier-attack-900x520.png",
+  "previewIsUnityRuntime": false,
+  "unityApplied": false
+}

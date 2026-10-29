@@ -16,7 +16,8 @@ MonoBehaviour:
   cost:
     dreamCost: 1
     nightmareCost: 0
-  artwork: {fileID: 0}
+  costMode: 0
+  artwork: {fileID: 21300000, guid: 70381a6dd2ff7af47bf323359f7e9865, type: 3}
   description: "\uCD1D\uC54C\uC744 2\uC54C \uC7A5\uC804\uD569\uB2C8\uB2E4."
   deckType: 0
   type: 1
@@ -24,10 +25,11 @@ MonoBehaviour:
   effects:
   - {fileID: 11400000, guid: 553d2713af0ea434391b537472643d36, type: 2}
   - {fileID: 11400000, guid: c464252842ed2124992b01027aa52a99, type: 2}
+  presentation: {fileID: 0}
+  exhaustOnUse: 0
   turnStartEffects: []
   continuousDurationType: 0
   continuousTurns: 1
-  exhaustOnUse: 0
   continuousIcon: {fileID: 0}
   requiredAmmo: 0
   consumeRequiredAmmo: 0

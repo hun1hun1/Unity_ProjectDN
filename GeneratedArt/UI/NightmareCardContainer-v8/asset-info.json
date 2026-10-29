@@ -1,0 +1,123 @@
+{
+  "generator": "built-in image_gen",
+  "canvasAspectRatio": "16:5",
+  "referenceDisplay": {
+    "width": 864,
+    "height": 270
+  },
+  "crop": {
+    "originalWidth": 2172,
+    "originalHeight": 724,
+    "top": 13,
+    "bottom": 723,
+    "cropHeight": 711
+  },
+  "exports": [
+    {
+      "name": "nightmare-container-1728x540.png",
+      "width": 1728,
+      "height": 540,
+      "stats": {
+        "leftLower": {
+          "minAlpha": 36,
+          "meanAlpha": 214.26856324923958,
+          "filledPixelRatio": 0.6217570227232063
+        },
+        "rightLower": {
+          "minAlpha": 71,
+          "meanAlpha": 218.35313971045386,
+          "filledPixelRatio": 0.633004707345235
+        },
+        "centerAlpha": 252,
+        "bottomCenterAlpha": 252
+      }
+    },
+    {
+      "name": "nightmare-container-864x270.png",
+      "width": 864,
+      "height": 270,
+      "stats": {
+        "leftLower": {
+          "minAlpha": 36,
+          "meanAlpha": 214.5691056910569,
+          "filledPixelRatio": 0.6246023329798516
+        },
+        "rightLower": {
+          "minAlpha": 72,
+          "meanAlpha": 218.87456445993033,
+          "filledPixelRatio": 0.6376306620209059
+        },
+        "centerAlpha": 252,
+        "bottomCenterAlpha": 252
+      }
+    },
+    {
+      "name": "nightmare-container-432x135.png",
+      "width": 432,
+      "height": 135,
+      "stats": {
+        "leftLower": {
+          "minAlpha": 37,
+          "meanAlpha": 215.00280112044817,
+          "filledPixelRatio": 0.6246498599439776
+        },
+        "rightLower": {
+          "minAlpha": 73,
+          "meanAlpha": 219.74013605442178,
+          "filledPixelRatio": 0.6476190476190476
+        },
+        "centerAlpha": 252,
+        "bottomCenterAlpha": 252
+      }
+    }
+  ],
+  "comparisons": {
+    "dreamV7": {
+      "leftLower": {
+        "minAlpha": 7,
+        "meanAlpha": 219.48389694041867,
+        "filledPixelRatio": 0.7914653784219001
+      },
+      "rightLower": {
+        "minAlpha": 13,
+        "meanAlpha": 224.32072120081713,
+        "filledPixelRatio": 0.8039790389910294
+      },
+      "centerAlpha": 251,
+      "bottomCenterAlpha": 249
+    },
+    "nightmareV7": {
+      "leftLower": {
+        "minAlpha": 3,
+        "meanAlpha": 110.97906602254429,
+        "filledPixelRatio": 0.037484344247629274
+      },
+      "rightLower": {
+        "minAlpha": 9,
+        "meanAlpha": 162.03712585487165,
+        "filledPixelRatio": 0.3821831423749889
+      },
+      "centerAlpha": 251,
+      "bottomCenterAlpha": 250
+    },
+    "nightmareV8": {
+      "leftLower": {
+        "minAlpha": 36,
+        "meanAlpha": 214.26856324923958,
+        "filledPixelRatio": 0.6217570227232063
+      },
+      "rightLower": {
+        "minAlpha": 71,
+        "meanAlpha": 218.35313971045386,
+        "filledPixelRatio": 0.633004707345235
+      },
+      "centerAlpha": 252,
+      "bottomCenterAlpha": 252
+    }
+  },
+  "comparisonRegion": "Lower 15% of image height, outer 8% at each side; includes fading bar edge",
+  "exportMethod": "Same edge-fit five-column resize as v7; generated alpha preserved",
+  "dreamReferenceUnchanged": true,
+  "unityApplied": false,
+  "previewIsUnityRuntime": false
+}

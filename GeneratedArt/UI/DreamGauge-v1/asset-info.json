@@ -1,0 +1,150 @@
+{
+  "generator": "built-in image_gen",
+  "rootPixels": {
+    "width": 384,
+    "height": 1080
+  },
+  "logicalRoot": {
+    "width": 96,
+    "height": 270
+  },
+  "backgroundAndFillRectPixels": {
+    "left": 104,
+    "top": 90,
+    "width": 176,
+    "height": 824
+  },
+  "backgroundAndFillRectLogical": {
+    "left": 26,
+    "top": 22.5,
+    "width": 44,
+    "height": 206
+  },
+  "backgroundAnchors": {
+    "min": {
+      "x": 0.2708333333333333,
+      "y": 0.15370370370370368
+    },
+    "max": {
+      "x": 0.7291666666666666,
+      "y": 0.9166666666666666
+    }
+  },
+  "fillAnchors": {
+    "min": {
+      "x": 0,
+      "y": 0
+    },
+    "max": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  "textRectPixels": {
+    "left": 52,
+    "top": 960,
+    "width": 280,
+    "height": 80
+  },
+  "textAnchors": {
+    "min": {
+      "x": 0.13541666666666666,
+      "y": 0.03703703703703709
+    },
+    "max": {
+      "x": 0.8645833333333334,
+      "y": 0.11111111111111116
+    }
+  },
+  "text": {
+    "font": "Noto Sans KR Bold",
+    "logicalFontSize": 20,
+    "color": "#F2ECD8",
+    "includedInSprites": false
+  },
+  "frameAnchors": {
+    "min": {
+      "x": 0,
+      "y": 0
+    },
+    "max": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  "fillSettings": {
+    "imageType": "Filled",
+    "method": "Vertical",
+    "origin": "Bottom",
+    "formula": "amount / maxAmount"
+  },
+  "frameValidation": {
+    "centerHoleAlpha": 0,
+    "exteriorAlpha": 0
+  },
+  "files": [
+    {
+      "name": "dream-gauge-frame-384x1080.png",
+      "width": 384,
+      "height": 1080,
+      "hasAlpha": true
+    },
+    {
+      "name": "dream-gauge-frame-192x540.png",
+      "width": 192,
+      "height": 540,
+      "hasAlpha": true
+    },
+    {
+      "name": "dream-gauge-frame-96x270.png",
+      "width": 96,
+      "height": 270,
+      "hasAlpha": true
+    },
+    {
+      "name": "dream-gauge-background-176x824.png",
+      "width": 176,
+      "height": 824,
+      "hasAlpha": false
+    },
+    {
+      "name": "dream-gauge-background-88x412.png",
+      "width": 88,
+      "height": 412,
+      "hasAlpha": false
+    },
+    {
+      "name": "dream-gauge-background-44x206.png",
+      "width": 44,
+      "height": 206,
+      "hasAlpha": false
+    },
+    {
+      "name": "dream-gauge-fill-176x824.png",
+      "width": 176,
+      "height": 824,
+      "hasAlpha": false
+    },
+    {
+      "name": "dream-gauge-fill-88x412.png",
+      "width": 88,
+      "height": 412,
+      "hasAlpha": false
+    },
+    {
+      "name": "dream-gauge-fill-44x206.png",
+      "width": 44,
+      "height": 206,
+      "hasAlpha": false
+    }
+  ],
+  "previewAmounts": [
+    0,
+    1,
+    5,
+    10
+  ],
+  "previewUsesUnityRuntime": false,
+  "unityApplied": false,
+  "exportMethod": "Generated textures resized/cropped to track rectangle; frame alpha preserved; preview layers composed mechanically without repainting"
+}

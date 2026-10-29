@@ -1,0 +1,58 @@
+{
+  "generator": "built-in image_gen",
+  "source": {
+    "width": 2172,
+    "height": 724
+  },
+  "canvasAspectRatio": "16:5",
+  "referenceDisplay": {
+    "width": 864,
+    "height": 270,
+    "referenceResolution": [
+      1920,
+      1080
+    ]
+  },
+  "exports": [
+    {
+      "name": "dream-card-container-1728x540.png",
+      "width": 1728,
+      "height": 540,
+      "hasAlpha": true,
+      "bottomRowMaxAlpha": 0,
+      "lowerCenterMaxAlpha": 1,
+      "centerAlpha": 0,
+      "transparentPixelRatio": 0.8917866941015089
+    },
+    {
+      "name": "dream-card-container-864x270.png",
+      "width": 864,
+      "height": 270,
+      "hasAlpha": true,
+      "bottomRowMaxAlpha": 0,
+      "lowerCenterMaxAlpha": 0,
+      "centerAlpha": 0,
+      "transparentPixelRatio": 0.8932913237311385
+    },
+    {
+      "name": "dream-card-container-432x135.png",
+      "width": 432,
+      "height": 135,
+      "hasAlpha": true,
+      "bottomRowMaxAlpha": 0,
+      "lowerCenterMaxAlpha": 0,
+      "centerAlpha": 0,
+      "transparentPixelRatio": 0.8846707818930041
+    }
+  ],
+  "unityApplied": false,
+  "features": [
+    "Open bottom with no bottom rail",
+    "Worn iron top trim and extended vertical side rails",
+    "Small blue crescent moon at top center",
+    "Sides dissolve into blue mist",
+    "Transparent center and lower entrance"
+  ],
+  "exportMethod": "Aspect-preserving contain resize onto transparent 16:5 canvas; generated alpha preserved",
+  "preview": "Dark and checkerboard backgrounds are preview-only; not included in UI sprites"
+}

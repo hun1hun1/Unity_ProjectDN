@@ -43,6 +43,6 @@ public class AmmoUI : MonoBehaviour
         maximum = Mathf.Max(0, maximum);
         current = Mathf.Clamp(current, 0, maximum);
         if (ammoText != null) ammoText.text = $"총알 {current} / {maximum}";
-        if (ammoFill != null) ammoFill.fillAmount = maximum > 0 ? (float)current / maximum : 0;
+        if (ammoFill != null) ammoFill.fillAmount = Mathf.Clamp01(current / 20f);
     }
 }

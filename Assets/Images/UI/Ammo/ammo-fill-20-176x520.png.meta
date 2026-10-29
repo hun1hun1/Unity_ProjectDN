@@ -1,0 +1,650 @@
+fileFormatVersion: 2
+guid: 1a72314771122634c98e374b4730d9ba
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4520566785600948286
+    second: ammo-fill-20-176x520_0
+  - first:
+      213: 4636354381773717775
+    second: ammo-fill-20-176x520_1
+  - first:
+      213: 3901552917086714986
+    second: ammo-fill-20-176x520_2
+  - first:
+      213: -3068603681419091899
+    second: ammo-fill-20-176x520_3
+  - first:
+      213: -1345432889457985404
+    second: ammo-fill-20-176x520_4
+  - first:
+      213: 1432941046035383176
+    second: ammo-fill-20-176x520_5
+  - first:
+      213: 805086878868534806
+    second: ammo-fill-20-176x520_6
+  - first:
+      213: 4681848499673028431
+    second: ammo-fill-20-176x520_7
+  - first:
+      213: 8235265551978377760
+    second: ammo-fill-20-176x520_8
+  - first:
+      213: 7814618384199178702
+    second: ammo-fill-20-176x520_9
+  - first:
+      213: -834354460646594439
+    second: ammo-fill-20-176x520_10
+  - first:
+      213: 5436508455565318096
+    second: ammo-fill-20-176x520_11
+  - first:
+      213: -3781200497227463927
+    second: ammo-fill-20-176x520_12
+  - first:
+      213: -1728511524374341486
+    second: ammo-fill-20-176x520_13
+  - first:
+      213: -3927192305895319373
+    second: ammo-fill-20-176x520_14
+  - first:
+      213: -5315304707565396900
+    second: ammo-fill-20-176x520_15
+  - first:
+      213: 8015297637348090302
+    second: ammo-fill-20-176x520_16
+  - first:
+      213: 2590689099004896343
+    second: ammo-fill-20-176x520_17
+  - first:
+      213: -1575234047011624331
+    second: ammo-fill-20-176x520_18
+  - first:
+      213: -4785115723635142029
+    second: ammo-fill-20-176x520_19
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_0
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 494
+        width: 162
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e388c2f5a874cbe30800000000000000
+      internalID: 4520566785600948286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_1
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 468
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f01c27aeeb3a75040800000000000000
+      internalID: 4636354381773717775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_2
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 442
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6cb75fe4b9152630800000000000000
+      internalID: 3901552917086714986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_3
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 416
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5402f8cb5312a65d0800000000000000
+      internalID: -3068603681419091899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_4
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 390
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 488baba5aef045de0800000000000000
+      internalID: -1345432889457985404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_5
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 364
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88304011a44d2e310800000000000000
+      internalID: 1432941046035383176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_6
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 338
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6167944304e3c2b00800000000000000
+      internalID: 805086878868534806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_7
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 312
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f47d43ba76449f040800000000000000
+      internalID: 4681848499673028431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_8
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 286
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 022bea0236a894270800000000000000
+      internalID: 8235265551978377760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_9
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 260
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec9dd6d440a137c60800000000000000
+      internalID: 7814618384199178702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_10
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 234
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 978a564e907cb64f0800000000000000
+      internalID: -834354460646594439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_11
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 208
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d7d060f2ab527b40800000000000000
+      internalID: 5436508455565318096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_12
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 182
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9030a327e2a768bc0800000000000000
+      internalID: -3781200497227463927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_13
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 156
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2989f773de71308e0800000000000000
+      internalID: -1728511524374341486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_14
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 130
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b8567aa76fcf79c0800000000000000
+      internalID: -3927192305895319373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_15
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 104
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5c5a98b78e3c36b0800000000000000
+      internalID: -5315304707565396900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_16
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 78
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb1292bfbbe0c3f60800000000000000
+      internalID: 8015297637348090302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_17
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 52
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 754e9ad620af3f320800000000000000
+      internalID: 2590689099004896343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_18
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 26
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57a65cdeaf4a32ae0800000000000000
+      internalID: -1575234047011624331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ammo-fill-20-176x520_19
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 0
+        width: 162
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 372579b1a9ad79db0800000000000000
+      internalID: -4785115723635142029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      ammo-fill-20-176x520_0: 4520566785600948286
+      ammo-fill-20-176x520_1: 4636354381773717775
+      ammo-fill-20-176x520_10: -834354460646594439
+      ammo-fill-20-176x520_11: 5436508455565318096
+      ammo-fill-20-176x520_12: -3781200497227463927
+      ammo-fill-20-176x520_13: -1728511524374341486
+      ammo-fill-20-176x520_14: -3927192305895319373
+      ammo-fill-20-176x520_15: -5315304707565396900
+      ammo-fill-20-176x520_16: 8015297637348090302
+      ammo-fill-20-176x520_17: 2590689099004896343
+      ammo-fill-20-176x520_18: -1575234047011624331
+      ammo-fill-20-176x520_19: -4785115723635142029
+      ammo-fill-20-176x520_2: 3901552917086714986
+      ammo-fill-20-176x520_3: -3068603681419091899
+      ammo-fill-20-176x520_4: -1345432889457985404
+      ammo-fill-20-176x520_5: 1432941046035383176
+      ammo-fill-20-176x520_6: 805086878868534806
+      ammo-fill-20-176x520_7: 4681848499673028431
+      ammo-fill-20-176x520_8: 8235265551978377760
+      ammo-fill-20-176x520_9: 7814618384199178702
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

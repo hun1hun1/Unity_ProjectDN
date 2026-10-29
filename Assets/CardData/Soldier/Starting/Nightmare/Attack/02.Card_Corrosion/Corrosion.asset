@@ -16,13 +16,21 @@ MonoBehaviour:
   cost:
     dreamCost: 0
     nightmareCost: 2
-  artwork: {fileID: 0}
-  description: "\uc801\uc5d0\uac8c {damage:0}\uc758 \ud53c\ud574\ub97c \uc90d\ub2c8\ub2e4. \uc790\uc2e0\uc740 2\ud134\uac04 \ub179\uc2ac\uc74c \uc0c1\ud0dc\uac00 \ub429\ub2c8\ub2e4."
+  costMode: 0
+  artwork: {fileID: 21300000, guid: 71a9c8f3a7b75ec4a95fd97a256c9f49, type: 3}
+  description: "\uC801\uC5D0\uAC8C {damage:0}\uC758 \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4.
+    \uC790\uC2E0\uC740 2\uD134\uAC04 \uB179\uC2AC\uC74C \uC0C1\uD0DC\uAC00 \uB429\uB2C8\uB2E4."
   deckType: 1
   type: 0
   rarity: 0
   effects:
   - {fileID: 11400000, guid: 7b20ae51bd3274a4e975c286f5413012, type: 2}
   - {fileID: 11400000, guid: 85f677fa88f4ebb4bad2b921255bb4a3, type: 2}
+  presentation: {fileID: 0}
+  exhaustOnUse: 0
+  turnStartEffects: []
+  continuousDurationType: 0
+  continuousTurns: 1
+  continuousIcon: {fileID: 0}
   requiredAmmo: 0
   consumeRequiredAmmo: 0

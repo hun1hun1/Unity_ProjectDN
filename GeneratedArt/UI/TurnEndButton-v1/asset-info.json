@@ -1,0 +1,78 @@
+{
+  "generator": "built-in image_gen",
+  "asset": "Normal state end-turn button",
+  "sourceDimensions": {
+    "format": "png",
+    "mediaType": "image/png",
+    "width": 1747,
+    "height": 900,
+    "space": "srgb",
+    "channels": 4,
+    "depth": "uchar",
+    "density": 72,
+    "isProgressive": false,
+    "isPalette": false,
+    "bitsPerSample": 8,
+    "hasProfile": false,
+    "hasAlpha": true,
+    "autoOrient": {
+      "width": 1747,
+      "height": 900
+    }
+  },
+  "exports": [
+    {
+      "name": "turn-end-button-1008x518.png",
+      "width": 1008,
+      "height": 518,
+      "hasAlpha": true,
+      "transparentPixels": 51194,
+      "opaquePixels": 1803,
+      "centerAlpha": 251
+    },
+    {
+      "name": "turn-end-button-672x346.png",
+      "width": 672,
+      "height": 346,
+      "hasAlpha": true,
+      "transparentPixels": 21960,
+      "opaquePixels": 1607,
+      "centerAlpha": 251
+    },
+    {
+      "name": "turn-end-button-336x173.png",
+      "width": 336,
+      "height": 173,
+      "hasAlpha": true,
+      "transparentPixels": 4768,
+      "opaquePixels": 730,
+      "centerAlpha": 251
+    }
+  ],
+  "textIncluded": false,
+  "unityApplied": false,
+  "referenceSlot": {
+    "width": 336,
+    "height": 172.8,
+    "referenceResolution": [
+      1920,
+      1080
+    ]
+  },
+  "preview": {
+    "font": "Noto Sans KR Bold",
+    "fontSize": 32,
+    "textColor": "#F2ECD8"
+  },
+  "suggestedUnityColorTint": {
+    "normal": "#FFFFFFFF",
+    "highlighted": "#FFF3D8FF",
+    "pressed": "#B5B8A6FF",
+    "disabled": "#7E8178FF"
+  },
+  "notes": [
+    "Transparent exterior and opaque quiet olive center.",
+    "Normal-state sprite; interaction states use Unity Color Tint.",
+    "Resizing and text preview are mechanical exports. No scene or prefab was modified."
+  ]
+}

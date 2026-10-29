@@ -1,0 +1,102 @@
+{
+  "generator": "built-in image_gen",
+  "canvasAspectRatio": "16:5",
+  "referenceArea": {
+    "name": "RightCardArea",
+    "width": 864,
+    "height": 270,
+    "referenceResolution": [
+      1920,
+      1080
+    ]
+  },
+  "exportMethod": "No outer letterboxing. Five-column resize preserves side rails and moon aspect while widening horizontal rail spans to full canvas width.",
+  "reports": [
+    {
+      "kind": "dream",
+      "exports": [
+        {
+          "name": "dream-container-1728x540.png",
+          "width": 1728,
+          "height": 540,
+          "centerAlpha": 251,
+          "bottomCenterMaxAlpha": 1
+        },
+        {
+          "name": "dream-container-864x270.png",
+          "width": 864,
+          "height": 270,
+          "centerAlpha": 251,
+          "bottomCenterMaxAlpha": 1
+        },
+        {
+          "name": "dream-container-432x135.png",
+          "width": 432,
+          "height": 135,
+          "centerAlpha": 251,
+          "bottomCenterMaxAlpha": 1
+        }
+      ],
+      "railLandmarks": {
+        "file": "C:/Users/aa093/Documents/github/Unity_ProjectDN/GeneratedArt/UI/CardContainers-v5/dream-container-1728x540.png",
+        "width": 1728,
+        "height": 540,
+        "left": 8,
+        "right": 1702,
+        "top": 22,
+        "end": 345
+      },
+      "railCenterSpanRatio": 0.9803240740740741
+    },
+    {
+      "kind": "nightmare",
+      "exports": [
+        {
+          "name": "nightmare-container-1728x540.png",
+          "width": 1728,
+          "height": 540,
+          "centerAlpha": 252,
+          "bottomCenterMaxAlpha": 1
+        },
+        {
+          "name": "nightmare-container-864x270.png",
+          "width": 864,
+          "height": 270,
+          "centerAlpha": 252,
+          "bottomCenterMaxAlpha": 1
+        },
+        {
+          "name": "nightmare-container-432x135.png",
+          "width": 432,
+          "height": 135,
+          "centerAlpha": 252,
+          "bottomCenterMaxAlpha": 0
+        }
+      ],
+      "railLandmarks": {
+        "file": "C:/Users/aa093/Documents/github/Unity_ProjectDN/GeneratedArt/UI/CardContainers-v5/nightmare-container-1728x540.png",
+        "width": 1728,
+        "height": 540,
+        "left": 28,
+        "right": 1700,
+        "top": 22,
+        "end": 357
+      },
+      "railCenterSpanRatio": 0.9675925925925926
+    }
+  ],
+  "recommendedCardLayoutPadding": {
+    "left": 16,
+    "right": 16,
+    "top": 40,
+    "bottom": 4
+  },
+  "previewIsUnityRuntime": false,
+  "unityApplied": false,
+  "notes": [
+    "Filled dark interior; top and side rails remain at image edges.",
+    "Bottom entrance stays open; no bottom rail.",
+    "Layout example is a schematic with placeholder cards, not a Unity screenshot.",
+    "Existing card layout needs inner padding to avoid covering the frame."
+  ]
+}

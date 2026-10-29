@@ -1,0 +1,80 @@
+{
+  "generator": "built-in image_gen",
+  "canvasAspectRatio": "16:5",
+  "reference": "NightmareCardContainer-v2/nightmare-card-container-1728x540.png",
+  "targetRailLandmarks": {
+    "file": "C:/Users/aa093/Documents/github/Unity_ProjectDN/GeneratedArt/UI/NightmareCardContainer-v2/nightmare-card-container-1728x540.png",
+    "width": 1728,
+    "height": 540,
+    "left": 207,
+    "right": 1521,
+    "top": 76,
+    "end": 385
+  },
+  "generatedRailLandmarks": {
+    "file": "C:/Users/aa093/.codex/generated_images/01a157b9-d6e8-7442-8d57-8da6ce125874/exec-e1da12b3-03b6-4652-9436-5a247afc1b5d.png",
+    "width": 2172,
+    "height": 724,
+    "left": 219,
+    "right": 1950,
+    "top": 116,
+    "end": 522
+  },
+  "exportedRailLandmarks": {
+    "file": "C:/Users/aa093/Documents/github/Unity_ProjectDN/GeneratedArt/UI/DreamCardContainer-v3/dream-card-container-1728x540.png",
+    "width": 1728,
+    "height": 540,
+    "left": 207,
+    "right": 1521,
+    "top": 76,
+    "end": 375
+  },
+  "alignmentDeltasPixels": {
+    "left": 0,
+    "right": 0,
+    "top": 0,
+    "end": -10
+  },
+  "alignment": {
+    "uniformScale": 0.7590987868284229,
+    "exportSize": [
+      1649,
+      550
+    ],
+    "offset": [
+      41,
+      -12
+    ],
+    "method": "Uniform resize and translation based on neutral metal rail landmarks; no recoloring or mist painting outside image_gen"
+  },
+  "exports": [
+    {
+      "name": "dream-card-container-1728x540.png",
+      "width": 1728,
+      "height": 540,
+      "centerAlpha": 0,
+      "bottomRowMaxAlpha": 0
+    },
+    {
+      "name": "dream-card-container-864x270.png",
+      "width": 864,
+      "height": 270,
+      "centerAlpha": 0,
+      "bottomRowMaxAlpha": 0
+    },
+    {
+      "name": "dream-card-container-432x135.png",
+      "width": 432,
+      "height": 135,
+      "centerAlpha": 0,
+      "bottomRowMaxAlpha": 0
+    }
+  ],
+  "unityApplied": false,
+  "notes": [
+    "Visible metal rail positions aligned to existing Nightmare v2.",
+    "Blue aura restored around side rails and beneath top rail.",
+    "Nightmare v2 reference is unchanged.",
+    "Original alpha preserved during export."
+  ]
+}

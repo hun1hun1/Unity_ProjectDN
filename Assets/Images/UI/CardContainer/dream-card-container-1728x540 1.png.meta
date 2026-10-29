@@ -1,0 +1,728 @@
+fileFormatVersion: 2
+guid: 208110881c55d5f4ab1cba6914a24e5f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6070146761416614926
+    second: dream-card-container-1728x540 1_0
+  - first:
+      213: -4999836011399880589
+    second: dream-card-container-1728x540 1_1
+  - first:
+      213: 3113751217828543102
+    second: dream-card-container-1728x540 1_2
+  - first:
+      213: 554443501057891005
+    second: dream-card-container-1728x540 1_3
+  - first:
+      213: -5190955374945216124
+    second: dream-card-container-1728x540 1_4
+  - first:
+      213: -99862399009003691
+    second: dream-card-container-1728x540 1_5
+  - first:
+      213: 4899499927261922897
+    second: dream-card-container-1728x540 1_6
+  - first:
+      213: -7520349060351268416
+    second: dream-card-container-1728x540 1_7
+  - first:
+      213: 134699040697980845
+    second: dream-card-container-1728x540 1_8
+  - first:
+      213: 4864237086387425819
+    second: dream-card-container-1728x540 1_9
+  - first:
+      213: -4209673891152738725
+    second: dream-card-container-1728x540 1_10
+  - first:
+      213: 3275989775382906454
+    second: dream-card-container-1728x540 1_11
+  - first:
+      213: -6671645091792539429
+    second: dream-card-container-1728x540 1_12
+  - first:
+      213: 5245821012329727526
+    second: dream-card-container-1728x540 1_13
+  - first:
+      213: 8117627727009913662
+    second: dream-card-container-1728x540 1_14
+  - first:
+      213: -4697167965578247484
+    second: dream-card-container-1728x540 1_15
+  - first:
+      213: 5892105709897373555
+    second: dream-card-container-1728x540 1_16
+  - first:
+      213: -971856263637416810
+    second: dream-card-container-1728x540 1_17
+  - first:
+      213: -3574929128485472323
+    second: dream-card-container-1728x540 1_18
+  - first:
+      213: 3543585222107990066
+    second: dream-card-container-1728x540 1_19
+  - first:
+      213: 2884911852732560106
+    second: dream-card-container-1728x540 1_20
+  - first:
+      213: -6305395219942210497
+    second: dream-card-container-1728x540 1_21
+  - first:
+      213: 793545751302819777
+    second: dream-card-container-1728x540 1_22
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_0
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 369
+        width: 71
+        height: 171
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e04a9b8815e7d3450800000000000000
+      internalID: 6070146761416614926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_1
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 1
+        width: 1639
+        height: 536
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 370ed4d43a30d9ab0800000000000000
+      internalID: -4999836011399880589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_2
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 522
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7a3c993c34463b20800000000000000
+      internalID: 3113751217828543102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_3
+      rect:
+        serializedVersion: 2
+        x: 429
+        y: 530
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dba54983d67c1b700800000000000000
+      internalID: 554443501057891005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_4
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 528
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4895c7fd69506f7b0800000000000000
+      internalID: -5190955374945216124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_5
+      rect:
+        serializedVersion: 2
+        x: 1389
+        y: 521
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55766ac5da73d9ef0800000000000000
+      internalID: -99862399009003691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_6
+      rect:
+        serializedVersion: 2
+        x: 1529
+        y: 527
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 156cf75a9358ef340800000000000000
+      internalID: 4899499927261922897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_7
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 504
+        width: 19
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c9e1d6cf5a52a790800000000000000
+      internalID: -7520349060351268416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_8
+      rect:
+        serializedVersion: 2
+        x: 1507
+        y: 517
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da79368501c8ed100800000000000000
+      internalID: 134699040697980845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_9
+      rect:
+        serializedVersion: 2
+        x: 1586
+        y: 516
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b125765bbdd318340800000000000000
+      internalID: 4864237086387425819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_10
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 479
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b56ca9956eb3495c0800000000000000
+      internalID: -4209673891152738725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_11
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 471
+        width: 23
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65682810857a67d20800000000000000
+      internalID: 3275989775382906454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_12
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 482
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd03a3c032e8963a0800000000000000
+      internalID: -6671645091792539429
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_13
+      rect:
+        serializedVersion: 2
+        x: 1610
+        y: 477
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 626813bca66ecc840800000000000000
+      internalID: 5245821012329727526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_14
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 435
+        width: 28
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3b994f986b97a070800000000000000
+      internalID: 8117627727009913662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_15
+      rect:
+        serializedVersion: 2
+        x: 1622
+        y: 447
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c24d593f9e40deb0800000000000000
+      internalID: -4697167965578247484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_16
+      rect:
+        serializedVersion: 2
+        x: 1627
+        y: 445
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 377db79ece6f4c150800000000000000
+      internalID: 5892105709897373555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_17
+      rect:
+        serializedVersion: 2
+        x: 1615
+        y: 410
+        width: 18
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 694472990e54382f0800000000000000
+      internalID: -971856263637416810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_18
+      rect:
+        serializedVersion: 2
+        x: 1609
+        y: 228
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db73d6ff5ec436ec0800000000000000
+      internalID: -3574929128485472323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_19
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 96
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 238021b1cf75d2130800000000000000
+      internalID: 3543585222107990066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_20
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 75
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae2307e8b04490820800000000000000
+      internalID: 2884911852732560106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_21
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 77
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3406e2747cbe78a0800000000000000
+      internalID: -6305395219942210497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-card-container-1728x540 1_22
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 56
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cfcc6b08ad330b00800000000000000
+      internalID: 793545751302819777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      dream-card-container-1728x540 1_0: 6070146761416614926
+      dream-card-container-1728x540 1_1: -4999836011399880589
+      dream-card-container-1728x540 1_10: -4209673891152738725
+      dream-card-container-1728x540 1_11: 3275989775382906454
+      dream-card-container-1728x540 1_12: -6671645091792539429
+      dream-card-container-1728x540 1_13: 5245821012329727526
+      dream-card-container-1728x540 1_14: 8117627727009913662
+      dream-card-container-1728x540 1_15: -4697167965578247484
+      dream-card-container-1728x540 1_16: 5892105709897373555
+      dream-card-container-1728x540 1_17: -971856263637416810
+      dream-card-container-1728x540 1_18: -3574929128485472323
+      dream-card-container-1728x540 1_19: 3543585222107990066
+      dream-card-container-1728x540 1_2: 3113751217828543102
+      dream-card-container-1728x540 1_20: 2884911852732560106
+      dream-card-container-1728x540 1_21: -6305395219942210497
+      dream-card-container-1728x540 1_22: 793545751302819777
+      dream-card-container-1728x540 1_3: 554443501057891005
+      dream-card-container-1728x540 1_4: -5190955374945216124
+      dream-card-container-1728x540 1_5: -99862399009003691
+      dream-card-container-1728x540 1_6: 4899499927261922897
+      dream-card-container-1728x540 1_7: -7520349060351268416
+      dream-card-container-1728x540 1_8: 134699040697980845
+      dream-card-container-1728x540 1_9: 4864237086387425819
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

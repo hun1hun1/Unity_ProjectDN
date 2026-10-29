@@ -1,0 +1,81 @@
+{
+  "generator": "Deterministic alpha-mask extraction from existing frame; no AI image generation",
+  "logicalRoot": {
+    "width": 180,
+    "height": 104
+  },
+  "extraction": {
+    "seed": "Frame center",
+    "method": "Four-connected flood fill through alpha < 8",
+    "output": "White RGB, binary alpha 0 or 255",
+    "reason": "Exact existing clipped-corner contour instead of independently generated shape"
+  },
+  "exports": [
+    {
+      "name": "soldier-artwork-mask-900x520.png",
+      "width": 900,
+      "height": 520,
+      "alphaValues": [
+        0,
+        255
+      ],
+      "opaquePixelCount": 437116,
+      "innerBounds": {
+        "left": 15,
+        "top": 8,
+        "width": 870,
+        "height": 504
+      },
+      "touchesOuter": 0,
+      "sourceFrame": "C:/Users/aa093/Documents/github/Unity_ProjectDN/GeneratedArt/UI/SoldierArtworkFrame-v1/soldier-artwork-frame-900x520.png"
+    },
+    {
+      "name": "soldier-artwork-mask-360x208.png",
+      "width": 360,
+      "height": 208,
+      "alphaValues": [
+        0,
+        255
+      ],
+      "opaquePixelCount": 69279,
+      "innerBounds": {
+        "left": 6,
+        "top": 4,
+        "width": 348,
+        "height": 200
+      },
+      "touchesOuter": 0,
+      "sourceFrame": "C:/Users/aa093/Documents/github/Unity_ProjectDN/GeneratedArt/UI/SoldierArtworkFrame-v1/soldier-artwork-frame-360x208.png"
+    },
+    {
+      "name": "soldier-artwork-mask-180x104.png",
+      "width": 180,
+      "height": 104,
+      "alphaValues": [
+        0,
+        255
+      ],
+      "opaquePixelCount": 17268,
+      "innerBounds": {
+        "left": 4,
+        "top": 2,
+        "width": 173,
+        "height": 100
+      },
+      "touchesOuter": 0,
+      "sourceFrame": "C:/Users/aa093/Documents/github/Unity_ProjectDN/GeneratedArt/UI/SoldierArtworkFrame-v1/soldier-artwork-frame-180x104.png"
+    }
+  ],
+  "verification": {
+    "visibleCompositePixelsOutsideFrameBefore": 982,
+    "visibleCompositePixelsOutsideFrameAfter": 0,
+    "includesOldPreviewRectangularBacking": true
+  },
+  "uiStructure": {
+    "maskRect": "Full ArtworkArea 180x104",
+    "artworkRect": "174x101 centered, Preserve Aspect on",
+    "frameRect": "Full ArtworkArea 180x104, drawn after mask"
+  },
+  "previewIsUnityRuntime": false,
+  "unityApplied": false
+}

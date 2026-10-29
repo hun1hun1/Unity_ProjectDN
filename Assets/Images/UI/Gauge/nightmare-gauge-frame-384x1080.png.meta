@@ -1,0 +1,754 @@
+fileFormatVersion: 2
+guid: e982e6b8ac65b48448c5eb92391c140f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5272966033319196471
+    second: nightmare-gauge-frame-384x1080_0
+  - first:
+      213: 9161336966662728586
+    second: nightmare-gauge-frame-384x1080_1
+  - first:
+      213: -1212806919693922743
+    second: nightmare-gauge-frame-384x1080_2
+  - first:
+      213: -1349110194404322705
+    second: nightmare-gauge-frame-384x1080_3
+  - first:
+      213: -5149744335411953415
+    second: nightmare-gauge-frame-384x1080_4
+  - first:
+      213: -4254508529747757329
+    second: nightmare-gauge-frame-384x1080_5
+  - first:
+      213: -1080349674190825242
+    second: nightmare-gauge-frame-384x1080_6
+  - first:
+      213: -1532070835208010749
+    second: nightmare-gauge-frame-384x1080_7
+  - first:
+      213: 8862927238861181197
+    second: nightmare-gauge-frame-384x1080_8
+  - first:
+      213: -7442172488855963801
+    second: nightmare-gauge-frame-384x1080_9
+  - first:
+      213: -6298209668900524491
+    second: nightmare-gauge-frame-384x1080_10
+  - first:
+      213: -6874397797810850939
+    second: nightmare-gauge-frame-384x1080_11
+  - first:
+      213: 6566821538377288168
+    second: nightmare-gauge-frame-384x1080_12
+  - first:
+      213: 5164503410941791084
+    second: nightmare-gauge-frame-384x1080_13
+  - first:
+      213: 1009290607671690075
+    second: nightmare-gauge-frame-384x1080_14
+  - first:
+      213: 4521274215789149957
+    second: nightmare-gauge-frame-384x1080_15
+  - first:
+      213: -7332580155840443153
+    second: nightmare-gauge-frame-384x1080_16
+  - first:
+      213: -3430799118088206111
+    second: nightmare-gauge-frame-384x1080_17
+  - first:
+      213: -7627455786689732373
+    second: nightmare-gauge-frame-384x1080_18
+  - first:
+      213: 8001284384976852838
+    second: nightmare-gauge-frame-384x1080_19
+  - first:
+      213: -8463177897989720255
+    second: nightmare-gauge-frame-384x1080_20
+  - first:
+      213: 4803827401005603095
+    second: nightmare-gauge-frame-384x1080_21
+  - first:
+      213: -3201120199142074295
+    second: nightmare-gauge-frame-384x1080_22
+  - first:
+      213: -538085207210428358
+    second: nightmare-gauge-frame-384x1080_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 976
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 737f0b08ba65d2940800000000000000
+      internalID: 5272966033319196471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_1
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 7
+        width: 364
+        height: 1063
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8b269dae6b932f70800000000000000
+      internalID: 9161336966662728586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_2
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 921
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94e0282488e3b2fe0800000000000000
+      internalID: -1212806919693922743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_3
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 920
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f621ca31d6ff64de0800000000000000
+      internalID: -1349110194404322705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_4
+      rect:
+        serializedVersion: 2
+        x: 366
+        y: 918
+        width: 10
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f0c0bbbfce6888b0800000000000000
+      internalID: -5149744335411953415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 799
+        width: 27
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe6f3869803f4f4c0800000000000000
+      internalID: -4254508529747757329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_6
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 777
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e895acf1b3d101f0800000000000000
+      internalID: -1080349674190825242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_7
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 734
+        width: 13
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 304c0b051bdfcbae0800000000000000
+      internalID: -1532070835208010749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_8
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 731
+        width: 9
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d01547ead517ffa70800000000000000
+      internalID: 8862927238861181197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_9
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 687
+        width: 9
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7673e8c3d8718b890800000000000000
+      internalID: -7442172488855963801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_10
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 622
+        width: 13
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53ee04ceca34898a0800000000000000
+      internalID: -6298209668900524491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_11
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 571
+        width: 14
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 583b1c000ab3990a0800000000000000
+      internalID: -6874397797810850939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_12
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 605
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e9cc5a8569022b50800000000000000
+      internalID: 6566821538377288168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_13
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 535
+        width: 10
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6b8a725d700ca740800000000000000
+      internalID: 5164503410941791084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_14
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 502
+        width: 13
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b53c861d578b10e00800000000000000
+      internalID: 1009290607671690075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_15
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 494
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50fbe3cc1facebe30800000000000000
+      internalID: 4521274215789149957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_16
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 485
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fec4d0ca2317d3a90800000000000000
+      internalID: -7332580155840443153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_17
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 469
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e801a6116a5360d0800000000000000
+      internalID: -3430799118088206111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_18
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 410
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be06c5ebf55d52690800000000000000
+      internalID: -7627455786689732373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_19
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 388
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 667dc6961c54a0f60800000000000000
+      internalID: 8001284384976852838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_20
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 285
+        width: 15
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 147b267aa80cc8a80800000000000000
+      internalID: -8463177897989720255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_21
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 296
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7191a37c19f9aa240800000000000000
+      internalID: 4803827401005603095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_22
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 221
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9481fce93265393d0800000000000000
+      internalID: -3201120199142074295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nightmare-gauge-frame-384x1080_23
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 8
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a38745dda565888f0800000000000000
+      internalID: -538085207210428358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      nightmare-gauge-frame-384x1080_0: 5272966033319196471
+      nightmare-gauge-frame-384x1080_1: 9161336966662728586
+      nightmare-gauge-frame-384x1080_10: -6298209668900524491
+      nightmare-gauge-frame-384x1080_11: -6874397797810850939
+      nightmare-gauge-frame-384x1080_12: 6566821538377288168
+      nightmare-gauge-frame-384x1080_13: 5164503410941791084
+      nightmare-gauge-frame-384x1080_14: 1009290607671690075
+      nightmare-gauge-frame-384x1080_15: 4521274215789149957
+      nightmare-gauge-frame-384x1080_16: -7332580155840443153
+      nightmare-gauge-frame-384x1080_17: -3430799118088206111
+      nightmare-gauge-frame-384x1080_18: -7627455786689732373
+      nightmare-gauge-frame-384x1080_19: 8001284384976852838
+      nightmare-gauge-frame-384x1080_2: -1212806919693922743
+      nightmare-gauge-frame-384x1080_20: -8463177897989720255
+      nightmare-gauge-frame-384x1080_21: 4803827401005603095
+      nightmare-gauge-frame-384x1080_22: -3201120199142074295
+      nightmare-gauge-frame-384x1080_23: -538085207210428358
+      nightmare-gauge-frame-384x1080_3: -1349110194404322705
+      nightmare-gauge-frame-384x1080_4: -5149744335411953415
+      nightmare-gauge-frame-384x1080_5: -4254508529747757329
+      nightmare-gauge-frame-384x1080_6: -1080349674190825242
+      nightmare-gauge-frame-384x1080_7: -1532070835208010749
+      nightmare-gauge-frame-384x1080_8: 8862927238861181197
+      nightmare-gauge-frame-384x1080_9: -7442172488855963801
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
