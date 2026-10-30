@@ -9,8 +9,8 @@ using Object = UnityEngine.Object;
 
 public class CardFrontTests
 {
-    private const string Dream = "Assets/Images/UI/SoldierCardFronts/dream-card-front-v1-200x260.png";
-    private const string Nightmare = "Assets/Images/UI/SoldierCardFronts/nightmare-card-front-v1-200x260.png";
+    private const string Dream = "Assets/Images/UI/Card/SoldierCardFronts/dream-card-front-v1-200x260.png";
+    private const string Nightmare = "Assets/Images/UI/Card/SoldierCardFronts/nightmare-card-front-v1-200x260.png";
 
     [TestCase("Assets/Prefabs/UI/Card.prefab")]
     [TestCase("Assets/Prefabs/UI/DeckCard.prefab")]
@@ -80,10 +80,10 @@ public class CardFrontTests
         Assert.That(front.type, Is.EqualTo(Image.Type.Simple));
         Assert.That(front.raycastTarget, Is.False);
         Assert.That(front.color, Is.EqualTo(Color.white));
-        data.artwork = AssetDatabase.LoadAllAssetsAtPath(Nightmare).OfType<Sprite>().Single();
+        data.artwork = LoadFront(Nightmare);
         foreach (CardDeckType deck in new[] { CardDeckType.TypeDream, CardDeckType.TypeNightmare, CardDeckType.TypeDream })
         {
-            Sprite expected = AssetDatabase.LoadAllAssetsAtPath(deck == CardDeckType.TypeDream ? Dream : Nightmare).OfType<Sprite>().Single();
+            Sprite expected = LoadFront(deck == CardDeckType.TypeDream ? Dream : Nightmare);
             string field = deck == CardDeckType.TypeDream ? "dreamFrontImage" : "nightmareFrontImage";
             Assert.That(fields.FindProperty(field).objectReferenceValue, Is.EqualTo(expected));
             data.deckType = deck; Bind(view, data);
@@ -95,6 +95,13 @@ public class CardFrontTests
                 Assert.That(ImageField(fields, "backImage").sprite, Is.EqualTo(fields.FindProperty(back).objectReferenceValue));
             }
         }
+    }
+
+    private static Sprite LoadFront(string path)
+    {
+        Sprite[] sprites = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().ToArray();
+        Assert.That(sprites, Has.Length.EqualTo(1), "Expected one card-front sprite at " + path);
+        return sprites[0];
     }
 
     private static Component FindView(GameObject root)

@@ -275,10 +275,18 @@ public class ContinuousTurnEffectTests
     public IEnumerator BattleSceneFiresNextTurnAfterResetsThenReturnsBeforeDrawWithoutPayingUseCostsAgain()
     {
         yield return new EnterPlayMode();
-        yield return SceneManager.LoadSceneAsync("BattleScene");
-        yield return null;
-        yield return new WaitForSeconds(0.8f);
+        yield return VerifyNextTurnEffectsAndReturn();
+        yield return new ExitPlayMode();
+    }
+
+    private IEnumerator VerifyNextTurnEffectsAndReturn()
+    {
+        AsyncOperation loading = SceneManager.LoadSceneAsync("BattleScene");
+        Assert.That(loading, Is.Not.Null);
+        yield return Until(() => loading.isDone, "BattleScene did not finish loading.");
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
+        Assert.That(battle, Is.Not.Null);
+        yield return Until(() => battle.CanInspectCards, "The initial hand did not finish drawing.");
         Player player = battle.GetPlayer();
         Enemy enemy = battle.GetTarget();
         SetField(enemy, "behavior", null);
@@ -302,11 +310,14 @@ public class ContinuousTurnEffectTests
         Assert.That(enemy.GetCurrentHP(), Is.EqualTo(previousHP));
         Assert.That(player.GetBlock(), Is.Zero);
         Assert.That(player.GetAmmoSystem().CurrentAmmo, Is.EqualTo(2));
+        Assert.That(battle.BlocksCardInteraction, Is.True);
+        yield return Until(() => battle.CanInspectCards, "The continuous card did not finish activating.");
+        Assert.That(player.ContinuousCards.ActiveCards, Has.Count.EqualTo(1));
         var observation = new PeriodicExpiryObservation(player, enemy, deck, hand, card, previousHP - 4);
         battle.EndPlayerTurn();
-        float deadline = Time.realtimeSinceStartup + 15;
-        while ((BattleState)GetField(battle, "currentState") != BattleState.PlayerTurn && Time.realtimeSinceStartup < deadline)
-            yield return null;
+        Assert.That((BattleState)GetField(battle, "currentState"), Is.EqualTo(BattleState.PlayerTurnEnd),
+            "The test must actually end the current turn before waiting for the next one.");
+        yield return Until(() => battle.CanInspectCards, "The next player turn did not finish resolving and drawing.");
         observation.Stop();
         Assert.That((BattleState)GetField(battle, "currentState"), Is.EqualTo(BattleState.PlayerTurn));
         Assert.That(observation.FiredThenReturnedBeforeDraw, Is.True);
@@ -316,7 +327,16 @@ public class ContinuousTurnEffectTests
         Assert.That(GetField(player.GetCostSystem(), "currentNightmareCost"), Is.Zero);
         Assert.That(HandContains(hand, card), Is.True);
         Assert.That(player.ContinuousCards.ActiveCards, Is.Empty);
-        yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator Until(Func<bool> ready, string message)
+    {
+        float deadline = Time.realtimeSinceStartup + 15f;
+        while (!ready())
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline), message);
+            yield return null;
+        }
     }
 
     private sealed class PeriodicExpiryObservation

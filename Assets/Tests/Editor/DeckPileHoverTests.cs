@@ -13,6 +13,134 @@ using UnityEngine.UI;
 public class DeckPileHoverTests
 {
     [Test]
+    public void DeckButtonHasEditableTooltipAndIndependentVisualWithoutChangingItsToggle()
+    {
+        Scene scene = EditorSceneManager.OpenScene("Assets/Scenes/BattleScene.unity", OpenSceneMode.Additive);
+        try
+        {
+            DeckOverviewUI overview = scene.GetRootGameObjects().SelectMany(root =>
+                root.GetComponentsInChildren<DeckOverviewUI>(true)).Single();
+            var overviewState = new SerializedObject(overview);
+            var button = (UnityEngine.UI.Button)overviewState.FindProperty("toggleButton").objectReferenceValue;
+            DeckPileHoverUI hover = button.GetComponent<DeckPileHoverUI>();
+            Assert.That(hover, Is.Not.Null, "DeckButton needs the same hover and tooltip behaviour as the pile buttons.");
+            var state = new SerializedObject(hover);
+            var visual = (RectTransform)state.FindProperty("hoverVisual").objectReferenceValue;
+            Assert.That(visual, Is.Not.Null);
+            Assert.That(visual.parent, Is.EqualTo(button.transform));
+            Assert.That(visual.GetComponent<UnityEngine.UI.Image>().sprite, Is.Not.Null);
+            Assert.That(visual.GetComponent<UnityEngine.UI.Image>().raycastTarget, Is.False);
+            Assert.That(button.GetComponent<UnityEngine.UI.Image>().raycastTarget, Is.True);
+            Assert.That(button.targetGraphic, Is.EqualTo(visual.GetComponent<UnityEngine.UI.Image>()));
+            Assert.That(((RectTransform)button.transform).sizeDelta, Is.EqualTo(new Vector2(108, 108)));
+            Assert.That(state.FindProperty("tooltipText").stringValue, Is.Not.Empty);
+            Assert.That(state.FindProperty("tooltipPrefab").objectReferenceValue, Is.Not.Null);
+            Assert.That(state.FindProperty("allowWhileDeckOverviewOpen").boolValue, Is.True);
+            Assert.That(Enumerable.Range(0, button.onClick.GetPersistentEventCount()).Count(index =>
+                button.onClick.GetPersistentTarget(index) == overview &&
+                button.onClick.GetPersistentMethodName(index) == "Toggle"), Is.EqualTo(1));
+        }
+        finally { EditorSceneManager.CloseScene(scene, true); }
+    }
+
+    [UnityTest]
+    public IEnumerator DeckButtonHoverWorksBeforeAndDuringOverviewAndResetsOnClickInspectionAndDisable()
+    {
+        yield return new EnterPlayMode();
+        yield return VerifyDeckButton();
+        yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator VerifyDeckButton()
+    {
+        yield return LoadBattle();
+        DeckOverviewUI overview = Object.FindFirstObjectByType<DeckOverviewUI>();
+        var overviewState = new SerializedObject(overview);
+        var button = (UnityEngine.UI.Button)overviewState.FindProperty("toggleButton").objectReferenceValue;
+        DeckPileHoverUI hover = button.GetComponent<DeckPileHoverUI>();
+        Assert.That(hover, Is.Not.Null);
+        var state = new SerializedObject(hover);
+        var visual = (RectTransform)state.FindProperty("hoverVisual").objectReferenceValue;
+        var layer = (Canvas)state.FindProperty("hoverCanvas").objectReferenceValue;
+        var rect = (RectTransform)button.transform;
+        Vector3 position = rect.position;
+        Vector2 size = rect.rect.size;
+        Time.timeScale = 0;
+        hover.OnPointerEnter(null);
+        yield return Until(() => Tooltip() != null && Mathf.Abs(visual.localScale.x - 1.1f) < .001f && layer.overrideSorting);
+        Assert.That(rect.localScale, Is.EqualTo(Vector3.one));
+        Assert.That(rect.position, Is.EqualTo(position));
+        Assert.That(rect.rect.size, Is.EqualTo(size));
+        Assert.That(Tooltip().GetComponentInChildren<TMP_Text>().text, Is.EqualTo(state.FindProperty("tooltipText").stringValue));
+        Assert.That(Tooltip().GetComponentsInChildren<Graphic>().All(graphic => !graphic.raycastTarget), Is.True);
+        var root = (RectTransform)button.GetComponentInParent<Canvas>().rootCanvas.transform;
+        var corners = new Vector3[4];
+        ((RectTransform)Tooltip().transform).GetWorldCorners(corners);
+        foreach (Vector3 corner in corners)
+        {
+            Vector3 point = root.InverseTransformPoint(corner);
+            Assert.That(point.x, Is.InRange(root.rect.xMin - .1f, root.rect.xMax + .1f));
+            Assert.That(point.y, Is.InRange(root.rect.yMin - .1f, root.rect.yMax + .1f));
+        }
+        var hits = new System.Collections.Generic.List<RaycastResult>();
+        EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current)
+        { position = RectTransformUtility.WorldToScreenPoint(null, button.transform.position) }, hits);
+        Assert.That(hits[0].gameObject, Is.EqualTo(button.gameObject));
+        Time.timeScale = 1;
+        button.onClick.Invoke();
+        Assert.That(overview.IsOpen, Is.True);
+        Assert.That(Tooltip(), Is.Null);
+        Assert.That(visual.localScale, Is.EqualTo(Vector3.one));
+        hover.OnPointerEnter(null);
+        yield return Until(() => Tooltip() != null && Mathf.Abs(visual.localScale.x - 1.1f) < .001f);
+        foreach (DeckPileButton pile in Object.FindObjectsByType<DeckPileButton>(FindObjectsSortMode.None))
+        {
+            Enter(pile);
+            var pileState = new SerializedObject(pile.GetComponent<DeckPileHoverUI>());
+            var pileVisual = (RectTransform)pileState.FindProperty("hoverVisual").objectReferenceValue;
+            Assert.That(pileVisual.localScale, Is.EqualTo(Vector3.one), "Pile hover must remain blocked by the overview.");
+        }
+        hover.OnPointerExit(null);
+        Assert.That(Tooltip(), Is.Null);
+        yield return Until(() => visual.localScale == Vector3.one && !layer.overrideSorting);
+        hover.OnPointerEnter(null);
+        yield return Until(() => Tooltip() != null);
+        var list = (DeckListUI)overviewState.FindProperty("dreamList").objectReferenceValue;
+        var content = (Transform)new SerializedObject(list).FindProperty("content").objectReferenceValue;
+        content.GetComponentInChildren<DeckCardUI>().OnPointerClick(new PointerEventData(EventSystem.current)
+        { button = PointerEventData.InputButton.Right });
+        CardInspectionUI inspection = Object.FindFirstObjectByType<CardInspectionUI>();
+        Assert.That(inspection.IsOpen, Is.True);
+        yield return Until(() => Tooltip() == null && visual.localScale == Vector3.one && !layer.overrideSorting);
+        hover.OnPointerEnter(null);
+        yield return Wait(.3f);
+        Assert.That(Tooltip(), Is.Null);
+        inspection.Close();
+        yield return Until(() => !CardInspectionUI.BlocksGameplayInput);
+        hover.OnPointerEnter(null);
+        yield return Until(() => Tooltip() != null);
+        button.onClick.Invoke();
+        Assert.That(overview.IsOpen, Is.False);
+        Assert.That(Tooltip(), Is.Null);
+        Assert.That(visual.localScale, Is.EqualTo(Vector3.one));
+        yield return null;
+        hover.OnPointerEnter(null);
+        yield return Until(() => Tooltip() != null);
+        button.interactable = false;
+        yield return Until(() => Tooltip() == null && visual.localScale == Vector3.one && !layer.overrideSorting);
+        button.interactable = true;
+        hover.OnPointerEnter(null);
+        yield return Until(() => Tooltip() != null);
+        button.gameObject.SetActive(false);
+        Assert.That(Tooltip(), Is.Null);
+        Assert.That(visual.localScale, Is.EqualTo(Vector3.one));
+        // Inactive nested Canvases report root sorting; check restoration after re-enabling.
+        button.gameObject.SetActive(true);
+        yield return null;
+        Assert.That(layer.overrideSorting, Is.False);
+    }
+
+    [Test]
     public void AllFourPilesHaveEditableTooltipAndIndependentVisual()
     {
         Scene scene = EditorSceneManager.OpenScene("Assets/Scenes/BattleScene.unity", OpenSceneMode.Additive);

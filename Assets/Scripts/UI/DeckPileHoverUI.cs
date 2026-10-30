@@ -11,6 +11,7 @@ public class DeckPileHoverUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
     [SerializeField, TextArea(3, 10)] private string tooltipText;
     [SerializeField] private DeckPileTooltipUI tooltipPrefab;
     [SerializeField, Min(0f)] private float tooltipDelay = 0.2f;
+    [SerializeField] private bool allowWhileDeckOverviewOpen;
 
     private UnityEngine.UI.Button button;
     private DeckPileTooltipUI tooltip;
@@ -47,7 +48,7 @@ public class DeckPileHoverUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
     }
 
     private bool CanHover() => isActiveAndEnabled && button != null && button.IsInteractable() &&
-        !CardInspectionUI.BlocksGameplayInput && !DeckOverviewUI.BlocksBattleInput;
+        !CardInspectionUI.BlocksGameplayInput && (allowWhileDeckOverviewOpen || !DeckOverviewUI.BlocksBattleInput);
 
     private void LateUpdate()
     {

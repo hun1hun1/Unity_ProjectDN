@@ -66,7 +66,7 @@ public class SharedHudArtworkTests
         finally { Object.DestroyImmediate(root); }
     }
 
-    [UnityTest] public IEnumerator BattleSceneRendersSharedArtworkForBothSidesAndReplacementEnemies()
+    [UnityTest, Category("RequiresGraphics")] public IEnumerator BattleSceneRendersSharedArtworkForBothSidesAndReplacementEnemies()
     {
         yield return new EnterPlayMode();
         yield return SceneManager.LoadSceneAsync("BattleScene");

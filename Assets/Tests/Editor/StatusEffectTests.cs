@@ -196,10 +196,23 @@ public class StatusEffectTests
     public IEnumerator CardsShowStatusIconsAndBothSidesUpdateIntentAndDamageAtPlayerTurnStart()
     {
         yield return new EnterPlayMode();
-        SceneManager.LoadScene("BattleScene");
-        yield return null;
-        yield return new WaitForSeconds(0.8f);
+        yield return VerifyCardStatusUpdatesAndTurns();
+        yield return new ExitPlayMode();
+    }
+
+    private IEnumerator VerifyCardStatusUpdatesAndTurns()
+    {
+        AsyncOperation loading = SceneManager.LoadSceneAsync("BattleScene");
+        Assert.That(loading, Is.Not.Null);
+        float loadDeadline = Time.realtimeSinceStartup + 15f;
+        while (!loading.isDone)
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(loadDeadline), "BattleScene did not finish loading.");
+            yield return null;
+        }
         BattleManager manager = Object.FindFirstObjectByType<BattleManager>();
+        Assert.That(manager, Is.Not.Null);
+        yield return WaitForCards(manager);
         Player player = manager.GetPlayer();
         Enemy enemy = manager.GetTarget();
         EnemyAttackAction attack = CreateAsset<EnemyAttackAction>();
@@ -213,22 +226,24 @@ public class StatusEffectTests
         Assert.That(intent.text, Is.EqualTo("공격 10"));
         CardHandController hand = (CardHandController)GetField(manager, "dreamCardHand");
         UseCard(manager, hand, AssetDatabase.LoadAssetAtPath<CardData>($"{StatusAssetSetup.ExampleFolder}/WeaknessExposure_Player.asset"));
+        yield return WaitForCards(manager);
         Assert.That(intent.text, Is.EqualTo("공격 15"));
         AssertIcon(player, StatusEffectType.WeaknessExposure, 2);
-        yield return WaitForCards(manager);
         CardData rust = CreateAsset<CardData>();
         rust.deckType = CardDeckType.TypeDream;
         rust.cost = new Cost(1, 0);
         rust.effects = new CardEffect[] { CreateEffect(CreateStatus(StatusEffectType.Rust), CardTarget.Enemy, 1) };
         UseCard(manager, hand, rust);
+        yield return WaitForCards(manager);
         Assert.That(intent.text, Is.EqualTo("공격 11"));
         AssertIcon(enemy, StatusEffectType.Rust, 1);
-        yield return WaitForCards(manager);
         UseCard(manager, hand, AssetDatabase.LoadAssetAtPath<CardData>($"{StatusAssetSetup.ExampleFolder}/WeaknessExposure_Enemy.asset"));
+        yield return WaitForCards(manager);
         Assert.That(enemy.GetComponentInChildren<StatusEffectsUI>().GetComponentsInChildren<StatusIconUI>(), Has.Length.EqualTo(2));
         Assert.That(intent.text, Is.EqualTo("공격 11"));
         int hp = player.GetCurrentHP();
         manager.EndPlayerTurn();
+        Assert.That((BattleState)GetField(manager, "currentState"), Is.EqualTo(BattleState.PlayerTurnEnd));
         yield return WaitForPlayerTurn(manager);
         Assert.That(player.GetCurrentHP(), Is.EqualTo(hp - 11));
         AssertIcon(player, StatusEffectType.WeaknessExposure, 1);
@@ -237,13 +252,13 @@ public class StatusEffectTests
         Assert.That(enemy.GetComponentInChildren<StatusEffectsUI>().GetComponentsInChildren<StatusIconUI>(), Has.Length.EqualTo(1));
         Assert.That(intent.text, Is.EqualTo("공격 15"));
         manager.EndPlayerTurn();
+        Assert.That((BattleState)GetField(manager, "currentState"), Is.EqualTo(BattleState.PlayerTurnEnd));
         yield return WaitForPlayerTurn(manager);
         Assert.That(player.GetCurrentHP(), Is.EqualTo(hp - 26), "Player exposure remains active through the second enemy attack and expires at the next player turn start.");
         Assert.That(intent.text, Is.EqualTo("공격 10"));
         Assert.That(player.GetComponentInChildren<StatusIconUI>(), Is.Null);
         Assert.That(enemy.GetComponentInChildren<StatusIconUI>(), Is.Null);
         Assert.That(attack.GetDamage(), Is.EqualTo(10));
-        yield return new ExitPlayMode();
     }
 
     [UnityTest]
@@ -380,15 +395,18 @@ public class StatusEffectTests
 
     private static IEnumerator WaitForCards(BattleManager manager)
     {
-        float deadline = Time.realtimeSinceStartup + 5;
-        while ((int)GetField(manager, "activeCardUses") != 0 && Time.realtimeSinceStartup < deadline) yield return null;
+        float deadline = Time.realtimeSinceStartup + 15f;
+        while (!manager.CanInspectCards)
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline), "Card effects and hand animations did not finish.");
+            yield return null;
+        }
         Assert.That((int)GetField(manager, "activeCardUses"), Is.Zero);
     }
 
     private static IEnumerator WaitForPlayerTurn(BattleManager manager)
     {
-        float deadline = Time.realtimeSinceStartup + 12;
-        while ((BattleState)GetField(manager, "currentState") != BattleState.PlayerTurn && Time.realtimeSinceStartup < deadline) yield return null;
+        yield return WaitForCards(manager);
         Assert.That((BattleState)GetField(manager, "currentState"), Is.EqualTo(BattleState.PlayerTurn));
     }
 

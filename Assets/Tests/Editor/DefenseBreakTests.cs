@@ -197,10 +197,18 @@ public class DefenseBreakTests
     public IEnumerator BattleSceneDefenseCardRefreshesItsDescriptionAndGainsTheDisplayedBlock()
     {
         yield return new EnterPlayMode();
-        yield return SceneManager.LoadSceneAsync("BattleScene");
-        yield return null;
-        yield return new WaitForSeconds(0.8f);
+        yield return VerifyDefenseCardResolution();
+        yield return new ExitPlayMode();
+    }
+
+    private IEnumerator VerifyDefenseCardResolution()
+    {
+        AsyncOperation loading = SceneManager.LoadSceneAsync("BattleScene");
+        Assert.That(loading, Is.Not.Null);
+        yield return Until(() => loading.isDone, "BattleScene did not finish loading.");
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
+        Assert.That(battle, Is.Not.Null);
+        yield return Until(() => battle.CanInspectCards, "The initial hand did not finish drawing.");
         Player player = battle.GetPlayer();
         CardHandController hand = (CardHandController)GetField(battle, "dreamCardHand");
         CardData card = AssetDatabase.LoadAssetAtPath<CardData>("Assets/CardData/Soldier/Starting/Dream/Skill/01.Card_Defense/Defense.asset");
@@ -213,11 +221,19 @@ public class DefenseBreakTests
         player.StatusEffects.Apply(status, 2);
         Assert.That(Plain(label.text), Does.StartWith("방어도를 2"));
         Assert.That(battle.UseCard(ui), Is.True);
+        yield return Until(() => battle.CanInspectCards, "The defense card did not finish resolving and refilling its hand.");
         Assert.That(player.GetBlock(), Is.EqualTo(2));
-        float deadline = Time.realtimeSinceStartup + 8;
-        while ((int)GetField(battle, "activeCardUses") != 0 && Time.realtimeSinceStartup < deadline) yield return null;
         Assert.That((int)GetField(battle, "activeCardUses"), Is.Zero);
-        yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator Until(Func<bool> ready, string message)
+    {
+        float deadline = Time.realtimeSinceStartup + 15f;
+        while (!ready())
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline), message);
+            yield return null;
+        }
     }
 
     private static string Plain(string text) => Regex.Replace(text, "<.*?>", "");

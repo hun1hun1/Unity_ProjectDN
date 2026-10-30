@@ -28,9 +28,10 @@ public class HandLayoutTests
 
         // Logical Canvas heights for 16:9, 2560x1080, 32:9, and back to 16:9.
         float[] heights = { 1080f, 810f, 540f, 1080f };
-        float[] widths = { 200f, 149.61538f, 97.69231f, 200f };
-        float[] cardHeights = { 260f, 194.5f, 127f, 260f };
-        float[] nameFontSizes = { 20f, 14.961538f, 9.769231f, 20f };
+        // Current hand padding is 40px above and 4px below the cards.
+        float[] widths = { 173.84615f, 121.92308f, 70f, 173.84615f };
+        float[] cardHeights = { 226f, 158.5f, 91f, 226f };
+        float[] nameFontSizes = { 17.384615f, 12.192308f, 7f, 17.384615f };
         for (int i = 0; i < heights.Length; i++)
         {
             canvasRect.sizeDelta = new Vector2(1920f, heights[i]);
@@ -57,7 +58,7 @@ public class HandLayoutTests
                 Assert.That(hand.AddCard(data, Object.FindFirstObjectByType<BattleManager>()), Is.True);
                 yield return WaitForPlayTime(1f);
                 foreach (CardUI card in hand.GetComponentsInChildren<CardUI>())
-                    AssertCardFits(hand, card, 149.61538f, 194.5f, 14.961538f);
+                    AssertCardFits(hand, card, 121.92308f, 158.5f, 12.192308f);
             }
         }
 
@@ -83,20 +84,20 @@ public class HandLayoutTests
         yield return WaitForPlayTime(1f);
         CardHandController hand = Object.FindObjectsByType<CardHandController>(FindObjectsSortMode.None)[0];
         CardUI card = hand.GetComponentsInChildren<CardUI>()[0];
-        AssertCardFits(hand, card, 149.61538f, 194.5f, 14.961538f);
+        AssertCardFits(hand, card, 121.92308f, 158.5f, 12.192308f);
 
         RectTransform drawPoint = (RectTransform)new SerializedObject(hand).FindProperty("drawStartPoint").objectReferenceValue;
         card.PlayDrawAnimation(drawPoint);
         yield return WaitForPlayTime(1f);
-        AssertCardFits(hand, card, 149.61538f, 194.5f, 14.961538f);
+        AssertCardFits(hand, card, 121.92308f, 158.5f, 12.192308f);
 
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
         RectTransform usingPoint = (RectTransform)new SerializedObject(battle).FindProperty("cardUsingPoint").objectReferenceValue;
         hand.RemoveCard(card);
         card.transform.SetParent(hand.GetCardAnimationLayer(), true);
         yield return WaitForAnimation(card, card.UsedCardAnimation(usingPoint, hand.GetDiscardPilePoint()));
-        Assert.That(((RectTransform)card.transform).rect.width, Is.EqualTo(149.61538f).Within(0.02f));
-        Assert.That(((RectTransform)card.transform).rect.height, Is.EqualTo(194.5f).Within(0.02f));
+        Assert.That(((RectTransform)card.transform).rect.width, Is.EqualTo(121.92308f).Within(0.02f));
+        Assert.That(((RectTransform)card.transform).rect.height, Is.EqualTo(158.5f).Within(0.02f));
         RectTransform visual = (RectTransform)new SerializedObject(card).FindProperty("cardVisual").objectReferenceValue;
         Assert.That(Vector3.Distance(visual.position, hand.GetDiscardPilePoint().position), Is.LessThan(0.02f));
 
@@ -119,12 +120,14 @@ public class HandLayoutTests
         yield return WaitForPlayTime(1f);
         CardHandController hand = Object.FindObjectsByType<CardHandController>(FindObjectsSortMode.None)[0];
         CardUI card = hand.GetComponentsInChildren<CardUI>()[0];
+        AssertCardFits(hand, card, 173.84615f, 226f, 17.384615f);
+        Vector2 dragSize = ((RectTransform)card.transform).rect.size;
         card.OnPointerDown(new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left });
         Assert.That(card.transform.parent, Is.SameAs(hand.GetCardAnimationLayer()));
         ((RectTransform)canvas.transform).sizeDelta = new Vector2(1920f, 540f);
         yield return null;
         yield return null;
-        Assert.That(((RectTransform)card.transform).rect.size, Is.EqualTo(new Vector2(200f, 260f)));
+        Assert.That(((RectTransform)card.transform).rect.size, Is.EqualTo(dragSize));
 
         // EndDrag normally clears this flag before starting the return coroutine.
         typeof(CardUI).GetField("isDragging", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(card, false);
@@ -135,7 +138,7 @@ public class HandLayoutTests
             yield return null;
         }
         Assert.That(card.transform.parent, Is.EqualTo(hand.transform));
-        AssertCardFits(hand, card, 97.69231f, 127f, 9.769231f);
+        AssertCardFits(hand, card, 70f, 91f, 7f);
         yield return new ExitPlayMode();
     }
 
@@ -145,12 +148,14 @@ public class HandLayoutTests
         Assert.That(rect.rect.width, Is.EqualTo(width).Within(0.02f), hand.name);
         Assert.That(rect.rect.height, Is.EqualTo(height).Within(0.02f), hand.name);
         RectTransform handRect = (RectTransform)hand.transform;
+        RectOffset padding = hand.GetComponent<UnityEngine.UI.HorizontalLayoutGroup>().padding;
         Vector3[] corners = new Vector3[4];
         rect.GetWorldCorners(corners);
         foreach (Vector3 corner in corners)
         {
             Vector3 local = handRect.InverseTransformPoint(corner);
-            Assert.That(local.y, Is.InRange(handRect.rect.yMin + 3.98f, handRect.rect.yMax - 3.98f), hand.name);
+            Assert.That(local.y, Is.InRange(handRect.rect.yMin + padding.bottom - 0.02f,
+                handRect.rect.yMax - padding.top + 0.02f), hand.name);
             Assert.That(local.x, Is.InRange(handRect.rect.xMin - 0.02f, handRect.rect.xMax + 0.02f), hand.name);
         }
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Card.prefab");

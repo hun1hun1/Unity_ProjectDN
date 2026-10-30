@@ -24,10 +24,14 @@ public static class DeckPileHoverSetup
                 root.GetComponentsInChildren<DeckPileButton>(true)).ToArray();
             foreach (DeckPileButton pile in piles) Configure(pile, tooltip);
             if (piles.Length != 4) throw new System.InvalidOperationException("Expected four deck pile buttons.");
+            UnityEngine.UI.Button deckButton = scene.GetRootGameObjects().SelectMany(root =>
+                root.GetComponentsInChildren<UnityEngine.UI.Button>(true)).Single(button => button.name == "DeckButton");
+            ConfigureButton(deckButton, tooltip,
+                "꿈과 악몽의 전체 보유 덱을 확인합니다. 클릭하면 덱 목록을 열거나 닫습니다.", true);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
-            Debug.Log("Configured hover visuals and tooltips for all four deck piles.");
+            Debug.Log("Configured hover visuals and tooltips for all four deck piles and DeckButton.");
         }
         finally { if (openedHere) EditorSceneManager.CloseScene(scene, true); }
     }
@@ -56,15 +60,25 @@ public static class DeckPileHoverSetup
 
     private static void Configure(DeckPileButton pile, DeckPileTooltipUI tooltip)
     {
-        UnityEngine.UI.Image hitArea = pile.GetComponent<UnityEngine.UI.Image>();
-        Transform child = pile.transform.Find("HoverVisual");
+        var pileState = new SerializedObject(pile);
+        bool dream = pileState.FindProperty("deckType").intValue == 0;
+        bool discard = pileState.FindProperty("isDiscardPile").boolValue;
+        ConfigureButton(pile.GetComponent<UnityEngine.UI.Button>(), tooltip,
+            (dream ? "꿈" : "악몽") + (discard ? " 버린 카드 더미" : " 뽑을 카드 더미"), false);
+    }
+
+    private static void ConfigureButton(UnityEngine.UI.Button button, DeckPileTooltipUI tooltip,
+        string defaultTooltipText, bool allowWhileDeckOverviewOpen)
+    {
+        UnityEngine.UI.Image hitArea = button.GetComponent<UnityEngine.UI.Image>();
+        Transform child = button.transform.Find("HoverVisual");
         RectTransform visual;
         if (child == null)
         {
             visual = new GameObject("HoverVisual", typeof(RectTransform), typeof(CanvasRenderer),
                 typeof(UnityEngine.UI.Image), typeof(Canvas)).GetComponent<RectTransform>();
-            visual.gameObject.layer = pile.gameObject.layer;
-            visual.SetParent(pile.transform, false);
+            visual.gameObject.layer = button.gameObject.layer;
+            visual.SetParent(button.transform, false);
             visual.SetAsFirstSibling();
             visual.anchorMin = Vector2.zero;
             visual.anchorMax = Vector2.one;
@@ -77,23 +91,17 @@ public static class DeckPileHoverSetup
         UnityEngine.UI.Image image = visual.GetComponent<UnityEngine.UI.Image>();
         image.raycastTarget = false;
         hitArea.raycastTarget = true;
-        pile.GetComponent<UnityEngine.UI.Button>().targetGraphic = image;
-        DeckPileHoverUI hover = pile.GetComponent<DeckPileHoverUI>();
+        button.targetGraphic = image;
+        DeckPileHoverUI hover = button.GetComponent<DeckPileHoverUI>();
         bool isNew = hover == null;
-        if (isNew) hover = pile.gameObject.AddComponent<DeckPileHoverUI>();
+        if (isNew) hover = button.gameObject.AddComponent<DeckPileHoverUI>();
         Bind(hover, "hoverVisual", visual);
         Bind(hover, "hoverCanvas", visual.GetComponent<Canvas>());
         Bind(hover, "tooltipPrefab", tooltip);
-        if (isNew)
-        {
-            var pileState = new SerializedObject(pile);
-            bool dream = pileState.FindProperty("deckType").intValue == 0;
-            bool discard = pileState.FindProperty("isDiscardPile").boolValue;
-            var hoverState = new SerializedObject(hover);
-            hoverState.FindProperty("tooltipText").stringValue = (dream ? "꿈" : "악몽") +
-                (discard ? " 버린 카드 더미" : " 뽑을 카드 더미");
-            hoverState.ApplyModifiedPropertiesWithoutUndo();
-        }
+        var hoverState = new SerializedObject(hover);
+        hoverState.FindProperty("allowWhileDeckOverviewOpen").boolValue = allowWhileDeckOverviewOpen;
+        if (isNew) hoverState.FindProperty("tooltipText").stringValue = defaultTooltipText;
+        hoverState.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private static void Bind(Object target, string name, Object value)
