@@ -34,5 +34,7 @@
 - [x] Update ContinuousTurnEffectTests.cs to wait for accepted card resolution, assert accepted turn end, and observe expiry before the next draw.
 - [x] Mark the SharedHudArtworkTests rendering test RequiresGraphics without weakening its rendering requirement.
 - [x] Run the affected classes with Unity rendering enabled; investigate any newly exposed failures.
-- [ ] Run the complete EditMode suite with rendering enabled, including its PlayMode transitions.
-- [ ] Review the final test diff, restore only automatic serialization changes to the captured baseline, and report exact test results.
+- [x] Run the complete EditMode suite with rendering enabled, including its PlayMode transitions.
+- [x] Review the final test diff, restore only automatic serialization changes to the captured baseline, and report exact test results.
+
+Verification: Unity 6000.0.77f1, rendering enabled, complete EditMode suite 487/487 passed with zero failures and zero skipped tests. The eleven previously failing cases all passed. Read-only review found no material issues. Automatic scene/prefab serialization was restored after verification. A concurrent user commit b466f82 included font cache changes; those committed font changes were preserved instead of restoring the older font snapshot. Results: Logs/TestRegressionFix-20261030/all.xml.
