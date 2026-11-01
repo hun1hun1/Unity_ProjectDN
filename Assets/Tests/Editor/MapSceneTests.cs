@@ -23,14 +23,15 @@ public class MapSceneTests
         RunDeckInventory.ResetForNewGame(); RunRelicInventory.ResetForNewGame();
     }
 
-    [Test] public void SerializedTemporaryRunContainsFiveNormalBattlesAndIsTheBuildEntry()
+    [Test] public void SerializedTemporaryRunContainsFiveNormalBattlesAndIsEnabledAfterTitle()
     {
         RunDefinition definition = AssetDatabase.LoadAssetAtPath<RunDefinition>(MapAssetSetup.RunPath);
         Assert.That(definition, Is.Not.Null);
         var state = new RunProgress(definition, 12);
         Assert.That(state.Nodes.Count, Is.EqualTo(5));
         Assert.That(state.Nodes.All(n => n.Choices.Count == 1 && n.Choices[0].Type == MapContentType.NormalBattle), Is.True);
-        Assert.That(EditorBuildSettings.scenes[0].path, Is.EqualTo(MapAssetSetup.MapScenePath));
+        Assert.That(EditorBuildSettings.scenes[0].path, Is.EqualTo("Assets/Scenes/TitleScene.unity"));
+        Assert.That(EditorBuildSettings.scenes.Any(s => s.enabled && s.path == MapAssetSetup.MapScenePath), Is.True);
         Assert.That(EditorBuildSettings.scenes[0].enabled, Is.True);
         Assert.That(EditorBuildSettings.scenes.Any(s => s.enabled && s.path == "Assets/Scenes/BattleScene.unity"), Is.True);
     }

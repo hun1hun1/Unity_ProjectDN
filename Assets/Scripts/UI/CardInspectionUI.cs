@@ -53,7 +53,7 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
     public static bool TryOpen(CardData data, BattleManager battle)
     {
         if (instance == null || !instance.isActiveAndEnabled || data == null || battle == null ||
-            BlocksGameplayInput || battle.gameObject.scene != instance.gameObject.scene || !battle.CanInspectCards)
+            BlocksGameplayInput || SettingsUI.BlocksBattleInput || battle.gameObject.scene != instance.gameObject.scene || !battle.CanInspectCards)
             return false;
         return instance.Open(data, battle);
     }

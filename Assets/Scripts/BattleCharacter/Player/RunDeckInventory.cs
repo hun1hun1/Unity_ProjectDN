@@ -36,6 +36,30 @@ public static class RunDeckInventory
         return state;
     }
 
+    internal static RunDeckData[] Capture(RunAssetCatalog catalog)
+    {
+        var result = new List<RunDeckData>();
+        foreach (var item in decks)
+            result.Add(new RunDeckData { dreamDatabase = catalog.Key(item.Key.Item1), nightmareDatabase = catalog.Key(item.Key.Item2),
+                dream = item.Value.Dream.ConvertAll(card => catalog.Key(card)).ToArray(),
+                nightmare = item.Value.Nightmare.ConvertAll(card => catalog.Key(card)).ToArray() });
+        return result.ToArray();
+    }
+    internal static void Restore(RunDeckData[] saved, RunAssetCatalog catalog)
+    {
+        decks.Clear();
+        foreach (RunDeckData entry in saved)
+        {
+            var dream = catalog.Resolve<CardDatabase>(entry.dreamDatabase);
+            var nightmare = catalog.Resolve<CardDatabase>(entry.nightmareDatabase);
+            var state = new RunDeckState(null, null);
+            foreach (string id in entry.dream) state.Dream.Add(catalog.Resolve<CardData>(id));
+            foreach (string id in entry.nightmare) state.Nightmare.Add(catalog.Resolve<CardData>(id));
+            decks.Add((dream, nightmare), state);
+        }
+        unchecked { GameVersion++; }
+    }
+
     public static void ResetForNewGame()
     {
         decks.Clear();

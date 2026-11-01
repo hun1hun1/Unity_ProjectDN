@@ -23,6 +23,7 @@ public class EnemyPrefabTests
         for (int i = created.Count - 1; i >= 0; i--)
             if (created[i] != null) Object.DestroyImmediate(created[i]);
         created.Clear();
+        RunAssetCatalog.SetRuntimeCatalog(null);
     }
     [UnityTearDown] public IEnumerator ExitPlay()
     { if (Application.isPlaying) yield return new ExitPlayMode(); }
@@ -128,6 +129,8 @@ public class EnemyPrefabTests
         encounter.enemyMaxHP = 67; encounter.goldReward = 29;
         floor.mode = FloorMapMode.NormalBattlesOnly; floor.nodeCount = 1; floor.normalBattles = new[] { encounter };
         definition.floors = new[] { floor };
+        Track(RunSaveTestCatalog.Register(definition));
+        Track(RunSaveTestCatalog.Register(encounter));
         session.StartNewRun(definition, 21);
         yield return WaitForScene("MapScene");
         Assert.That(session.SelectOption(0), Is.True);

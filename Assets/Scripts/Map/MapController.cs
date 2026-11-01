@@ -31,6 +31,18 @@ public class MapController : MonoBehaviour
                 if (handler != null && handler.isActiveAndEnabled) available.Add(handler.ContentType);
             session.StartNewRun(runDefinition, Environment.TickCount, available);
         }
+        if(session.Progress.Phase==RunPhase.Content)
+        {
+            RunProgress expected=session.Progress;int floor=expected.FloorIndex,node=expected.NodeIndex;
+            MapContentHandler handler=FindHandler(expected.CurrentNode.SelectedChoice.Type);
+            if(handler!=null)
+            {
+                string saved=session.SavedContentState;
+                handler.Begin(expected.CurrentNode.SelectedChoice,expected,()=>session.CompleteContent(expected,floor,node));
+                handler.RestoreState(saved);
+            }
+            else statusText.text="저장된 노드를 처리할 기능이 연결되지 않았습니다.";
+        }
         Refresh();
     }
     private MapContentHandler FindHandler(MapContentType type)
@@ -55,7 +67,12 @@ public class MapController : MonoBehaviour
         MapChoice choice = expected.CurrentNode.Choices[index];
         MapContentHandler handler = choice.IsBattle ? null : FindHandler(choice.Type);
         if (!session.SelectOption(index)) return;
-        if (handler != null) handler.Begin(choice, expected, () => session.CompleteContent(expected, floor, node));
+        if (handler != null)
+        {
+            handler.Begin(choice, expected, () => session.CompleteContent(expected, floor, node));
+            if(ReferenceEquals(expected,session.Progress) && expected.Phase==RunPhase.Content)
+                session.SaveCheckpoint(contentState:handler.CaptureState());
+        }
     }
     private void Refresh()
     {
@@ -65,6 +82,7 @@ public class MapController : MonoBehaviour
         progressText.text = $"{state.FloorIndex + 1}층 · {Math.Min(state.NodeIndex + 1, state.Nodes.Count)} / {state.Nodes.Count}";
         resourcesText.text = $"HP {state.CurrentHP} / {state.MaxHP}     골드 {RunGoldInventory.Gold}";
         statusText.text = state.Phase == RunPhase.Completed ? $"총 {state.CompletedNodes}개 노드를 완료했습니다." :
+            !string.IsNullOrEmpty(session.SaveError) ? "진행 저장에 실패했습니다. 다시 시도해 주세요." :
             state.Phase == RunPhase.Defeated ? "전투에서 패배하여 런이 종료되었습니다." :
             state.Phase == RunPhase.Cancelled ? "전투가 중단되어 런이 종료되었습니다." :
             session.IsTransitioning ? "이동 중입니다." : state.Phase == RunPhase.Content ? "선택한 장소를 이용 중입니다." : "진행할 행동을 선택하세요.";

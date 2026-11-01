@@ -38,6 +38,8 @@ public class CardRewardUI : MonoBehaviour
         cardButton.gameObject.SetActive(rewards.CardAvailable);
         goldText.text = $"골드 {rewards.GoldReward} 받기";
         walletText.text = $"보유 골드: {RunGoldInventory.Gold}";
+        if(RunSession.Instance!=null && !string.IsNullOrEmpty(RunSession.Instance.SaveError))
+            walletText.text += "\n저장에 실패했습니다. 다시 시도해 주세요.";
         finishText.text = rewards.GoldAvailable || rewards.CardAvailable ? "남은 보상 건너뛰기" : "완료";
         dreamButton.interactable = rewards.CanSelectDeck(CardDeckType.TypeDream);
         nightmareButton.interactable = rewards.CanSelectDeck(CardDeckType.TypeNightmare);

@@ -48,7 +48,7 @@ public class DeckPileHoverUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
     }
 
     private bool CanHover() => isActiveAndEnabled && button != null && button.IsInteractable() &&
-        !CardInspectionUI.BlocksGameplayInput && (allowWhileDeckOverviewOpen || !DeckOverviewUI.BlocksBattleInput);
+        !CardInspectionUI.BlocksGameplayInput && !SettingsUI.BlocksBattleInput && (allowWhileDeckOverviewOpen || !DeckOverviewUI.BlocksBattleInput);
 
     private void LateUpdate()
     {

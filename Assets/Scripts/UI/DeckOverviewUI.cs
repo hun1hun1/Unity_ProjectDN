@@ -34,7 +34,7 @@ public class DeckOverviewUI : MonoBehaviour
 
     public void Toggle()
     {
-        if (!isActiveAndEnabled || CardInspectionUI.BlocksGameplayInput) return;
+        if (!isActiveAndEnabled || CardInspectionUI.BlocksGameplayInput || SettingsUI.BlocksBattleInput) return;
         if (IsOpen) { Close(); return; }
         if (Time.frameCount <= blockedUntilFrame || battle == null || !battle.CanInspectCards ||
             deckController == null || panel == null || dreamList == null || nightmareList == null) return;

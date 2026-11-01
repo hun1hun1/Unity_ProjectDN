@@ -12,11 +12,14 @@ public class MapChoiceLayoutTests
 {
     private RunDefinition previewRun;
     private FloorMapDefinition previewFloor;
+    private RunAssetCatalog previewCatalog;
     [UnityTearDown] public IEnumerator Cleanup()
     {
         if (RunSession.Instance != null) Object.Destroy(RunSession.Instance.gameObject);
         if (previewRun != null) Object.Destroy(previewRun);
         if (previewFloor != null) Object.Destroy(previewFloor);
+        RunAssetCatalog.SetRuntimeCatalog(null);
+        if(previewCatalog!=null)Object.Destroy(previewCatalog);
         if (Application.isPlaying) { yield return null; yield return new ExitPlayMode(); }
         RunDeckInventory.ResetForNewGame(); RunRelicInventory.ResetForNewGame();
     }
@@ -67,6 +70,7 @@ public class MapChoiceLayoutTests
         yield return SceneManager.LoadSceneAsync("MapScene"); yield return null; yield return null;
         RunSession session = RunSession.Instance;
         previewRun = Object.Instantiate(session.Progress.Definition);
+        previewCatalog=RunSaveTestCatalog.Register(previewRun);
         previewFloor = Object.Instantiate(previewRun.floors[0]);
         previewRun.floors = new[] { previewFloor };
         previewRun.enabledContent = (MapContentType[])System.Enum.GetValues(typeof(MapContentType));
@@ -117,6 +121,7 @@ public class MapChoiceLayoutTests
         yield return SceneManager.LoadSceneAsync("MapScene"); yield return null; yield return null;
         RunSession session = RunSession.Instance;
         previewRun = Object.Instantiate(session.Progress.Definition);
+        previewCatalog=RunSaveTestCatalog.Register(previewRun);
         previewFloor = Object.Instantiate(previewRun.floors[0]); previewRun.floors = new[] { previewFloor };
         for (int count = 12; count <= 21; count += 9)
         {

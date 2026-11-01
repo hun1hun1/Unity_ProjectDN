@@ -70,7 +70,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
     public bool CanMulligan => isActiveAndEnabled && cardData != null && !isUsed && !IsMoving &&
         handController != null && transform.parent == handController.transform;
 
-    public bool CanHover => !CardInspectionUI.BlocksGameplayInput && !DeckOverviewUI.BlocksBattleInput &&
+    public bool CanHover => !CardInspectionUI.BlocksGameplayInput && !DeckOverviewUI.BlocksBattleInput && !SettingsUI.BlocksBattleInput &&
         (battleManager == null || !battleManager.BlocksCardInteraction) && CanMulligan;
 
     public static bool HasBusyCards(BattleManager battle)
@@ -189,7 +189,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
 
     private void Update()
     {
-        if (!isDragging || CardInspectionUI.BlocksGameplayInput || DeckOverviewUI.BlocksBattleInput)
+        if (!isDragging || CardInspectionUI.BlocksGameplayInput || DeckOverviewUI.BlocksBattleInput || SettingsUI.BlocksBattleInput)
             return;
 
         transform.position =

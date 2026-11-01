@@ -15,6 +15,7 @@ public sealed class RunProgress
     public IReadOnlyList<MapNode> Nodes { get; private set; }
     public MapNode CurrentNode => NodeIndex < Nodes.Count ? Nodes[NodeIndex] : null;
     public bool IsFinished => Phase == RunPhase.Completed || Phase == RunPhase.Defeated || Phase == RunPhase.Cancelled;
+    public int NodeSeed => unchecked(Seed ^ (FloorIndex+1)*73856093 ^ (NodeIndex+1)*19349663);
     private readonly MapContentType[] enabledContent;
 
     public RunProgress(RunDefinition definition, int seed, IReadOnlyCollection<MapContentType> supportedContent = null)
@@ -39,6 +40,72 @@ public sealed class RunProgress
 
     private IReadOnlyList<MapNode> GenerateFloor(int floor) =>
         MapGenerator.Generate(Definition.floors[floor], enabledContent, unchecked(Seed + floor * 7919));
+
+    public RunProgressData Capture(RunAssetCatalog catalog)
+    {
+        var saved=new RunNodeData[Nodes.Count];
+        for(int i=0;i<Nodes.Count;i++)
+        {
+            MapNode node=Nodes[i];var choices=new RunChoiceData[node.Choices.Count];int selected=-1;
+            for(int j=0;j<choices.Length;j++)
+            {
+                MapChoice choice=node.Choices[j];if(ReferenceEquals(node.SelectedChoice,choice))selected=j;
+                choices[j]=new RunChoiceData {type=choice.Type,encounter=catalog.Key(choice.Encounter),content=catalog.Key(choice.ContentData)};
+            }
+            saved[i]=new RunNodeData {rule=node.Rule,status=node.Status,selected=selected,choices=choices};
+        }
+        return new RunProgressData {definition=catalog.Key(Definition),seed=Seed,floor=FloorIndex,node=NodeIndex,completed=CompletedNodes,
+            hp=CurrentHP,maxHP=MaxHP,phase=Phase,enabled=(MapContentType[])enabledContent.Clone(),nodes=saved};
+    }
+    public static RunProgress Restore(RunProgressData data,RunAssetCatalog catalog)
+    {
+        if(data==null || data.enabled==null || data.nodes==null)throw new InvalidOperationException("Missing run progress.");
+        RunDefinition definition=catalog.Resolve<RunDefinition>(data.definition);
+        if(definition==null || data.floor<0 || data.floor>=definition.floors.Length || data.node<0 ||
+            data.node>=data.nodes.Length || data.nodes.Length!=definition.floors[data.floor].nodeCount ||
+            data.maxHP<1 || data.hp<1 || data.hp>data.maxHP || data.phase<RunPhase.Map || data.phase>RunPhase.Content)
+            throw new InvalidOperationException("Invalid run progress.");
+        int completed=data.node;
+        for(int i=0;i<data.floor;i++)completed+=definition.floors[i].nodeCount;
+        if(data.completed!=completed)throw new InvalidOperationException("Invalid completed node count.");
+        var result=new RunProgress(definition,data.seed,data.enabled);
+        var nodes=new List<MapNode>();
+        for(int i=0;i<data.nodes.Length;i++)
+        {
+            RunNodeData saved=data.nodes[i];
+            if(saved==null || saved.choices==null || saved.choices.Length<1 || saved.choices.Length>3 ||
+                !Enum.IsDefined(typeof(MapNodeRule),saved.rule) || !Enum.IsDefined(typeof(MapNodeStatus),saved.status) ||
+                saved.selected< -1 || saved.selected>=saved.choices.Length)
+                throw new InvalidOperationException("Invalid map node.");
+            bool resolving=i==data.node && data.phase!=RunPhase.Map;
+            MapNodeStatus expected=i<data.node?MapNodeStatus.Completed:resolving?MapNodeStatus.Resolving:MapNodeStatus.Pending;
+            if(saved.status!=expected || (expected==MapNodeStatus.Pending)!=(saved.selected==-1))throw new InvalidOperationException("Invalid node selection.");
+            var choices=new List<MapChoice>();
+            foreach(RunChoiceData c in saved.choices)
+            {
+                if(c==null || !Enum.IsDefined(typeof(MapContentType),c.type) || Array.IndexOf(data.enabled,c.type)<0)
+                    throw new InvalidOperationException("Invalid map choice.");
+                var choice=new MapChoice(c.type,catalog.Resolve<BattleEncounterDefinition>(c.encounter),catalog.Resolve<UnityEngine.ScriptableObject>(c.content));
+                if(choice.IsBattle){if(choice.Encounter==null)throw new InvalidOperationException("Missing encounter.");choice.Encounter.Validate();}
+                choices.Add(choice);
+            }
+            var node=new MapNode(saved.rule,choices) {Status=saved.status,SelectedChoice=saved.selected>=0?choices[saved.selected]:null};
+            if(resolving && node.SelectedChoice.IsBattle!=(data.phase!=RunPhase.Content))throw new InvalidOperationException("Invalid node phase.");
+            nodes.Add(node);
+        }
+        result.FloorIndex=data.floor;result.NodeIndex=data.node;result.CompletedNodes=data.completed;
+        result.CurrentHP=data.hp;result.MaxHP=data.maxHP;result.Phase=data.phase;result.Nodes=nodes.AsReadOnly();
+        return result;
+    }
+    internal void RestoreCheckpointInPlace(RunProgressData data,RunAssetCatalog catalog)
+    {
+        RunProgress restored=Restore(data,catalog);
+        if(restored.Definition!=Definition || restored.Seed!=Seed)throw new InvalidOperationException("Checkpoint belongs to a different run.");
+        FloorIndex=restored.FloorIndex;NodeIndex=restored.NodeIndex;CompletedNodes=restored.CompletedNodes;
+        CurrentHP=restored.CurrentHP;MaxHP=restored.MaxHP;Phase=restored.Phase;Nodes=restored.Nodes;
+    }
+    internal void UndoNodeEntry()
+    {CurrentNode.SelectedChoice=null;CurrentNode.Status=MapNodeStatus.Pending;Phase=RunPhase.Map;}
 
     public bool TrySelectOption(int index)
     {

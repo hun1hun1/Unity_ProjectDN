@@ -10,38 +10,70 @@ public class RunBattleBridge : MonoBehaviour
     private RunProgress progress;
     private int floor;
     private int node;
+    private bool restoring;
 
     private void OnEnable()
     {
         if (battle != null) battle.BattleEnded += OnBattleEnded;
-        if (rewards != null) rewards.Completed += OnRewardsCompleted;
+        if (rewards != null) { rewards.Completed += OnRewardsCompleted; rewards.Changed += OnRewardsChanged; }
     }
     private void Start()
     {
         session = RunSession.Instance;
-        if (session == null || session.Progress == null || session.Progress.Phase != RunPhase.Battle) return;
+        if (session == null || session.Progress == null || (session.Progress.Phase != RunPhase.Battle && session.Progress.Phase != RunPhase.Rewards)) return;
         progress = session.Progress; floor = progress.FloorIndex; node = progress.NodeIndex;
         BattleEncounterDefinition encounter = progress.CurrentNode.SelectedChoice.Encounter;
         encounter.Validate();
+        rewards.BindRun(progress);
         battle.GetPlayer().RestoreHealth(progress.CurrentHP, progress.MaxHP);
         battle.ConfigureEncounter(encounter);
-        rewards.ConfigureGoldReward(encounter.goldReward);
+        if(progress.Phase == RunPhase.Rewards)
+        {
+            restoring=true;
+            rewards.RestoreCheckpoint(session.SavedRewards,RunAssetCatalog.Load());
+            battle.FinishBattle(BattleResult.Victory);
+            restoring=false;
+        }
+        else
+        {
+            rewards.ConfigureGoldReward(encounter.goldReward);
+            // Deck Awakes have populated the persistent inventory, before starting hands are drawn.
+            session.SaveCheckpoint();
+        }
     }
     private void OnDisable()
     {
         if (battle != null) battle.BattleEnded -= OnBattleEnded;
-        if (rewards != null) rewards.Completed -= OnRewardsCompleted;
+        if (rewards != null) { rewards.Completed -= OnRewardsCompleted; rewards.Changed -= OnRewardsChanged; }
     }
     private void OnBattleEnded(BattleResult result)
     {
-        if (session == null || progress == null) return;
+        if (restoring || session == null || progress == null || !ReferenceEquals(session.Progress,progress)) return;
         Player player = battle.GetPlayer();
-        session.RecordBattleResult(progress, floor, node, result, player.GetCurrentHP(), player.GetMaxHP());
+        if(session.RecordBattleResult(progress, floor, node, result, player.GetCurrentHP(), player.GetMaxHP()) && result==BattleResult.Victory)
+        {
+            rewards.PrepareVictory();OnRewardsChanged();
+        }
+    }
+    private void OnRewardsChanged()
+    {
+        if(restoring || session==null || progress==null || !ReferenceEquals(session.Progress,progress) || progress.Phase!=RunPhase.Rewards ||
+            rewards.State==BattleRewardState.Closed || rewards.State==BattleRewardState.Completed)return;
+        if(!session.SaveRewards(progress,floor,node,rewards.CaptureCheckpoint(RunAssetCatalog.Load())) && session.SavedRewards!=null)
+        {
+            restoring=true;rewards.RestoreCheckpoint(session.SavedRewards,RunAssetCatalog.Load());restoring=false;
+        }
     }
     private void OnRewardsCompleted()
     {
         if (session == null || progress == null || battle.Result != BattleResult.Victory) return;
         Player player = battle.GetPlayer();
-        session.CompleteBattle(progress, floor, node, player.GetCurrentHP(), player.GetMaxHP());
+        if(!session.CompleteBattle(progress, floor, node, player.GetCurrentHP(), player.GetMaxHP()) &&
+            ReferenceEquals(session.Progress,progress) && progress.Phase==RunPhase.Rewards && session.SavedRewards!=null)
+        {
+            restoring=true;
+            rewards.RestoreCheckpoint(session.SavedRewards,RunAssetCatalog.Load());
+            restoring=false;
+        }
     }
 }

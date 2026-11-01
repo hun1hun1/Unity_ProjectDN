@@ -191,6 +191,8 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
+        // A restored reward checkpoint is already a finished battle.
+        if (Result == BattleResult.Victory) return;
         CurrentCardUse = null;
         ResetOpeningForTurn();
         DelayedEffects.Clear();
@@ -354,7 +356,7 @@ public class BattleManager : MonoBehaviour
 
     public bool CanUseCard(CardData cardData)
     {
-        if (CardInspectionUI.BlocksGameplayInput || DeckOverviewUI.BlocksBattleInput || currentState != BattleState.PlayerTurn || isResolvingEffects ||
+        if (CardInspectionUI.BlocksGameplayInput || DeckOverviewUI.BlocksBattleInput || SettingsUI.BlocksBattleInput || currentState != BattleState.PlayerTurn || isResolvingEffects ||
             cardData == null || cardData.requiredAmmo < 0 || player == null)
             return false;
 
@@ -591,7 +593,7 @@ public class BattleManager : MonoBehaviour
 
     public void EndPlayerTurn()
     {
-        if (CardInspectionUI.BlocksGameplayInput || DeckOverviewUI.BlocksBattleInput || isResolvingEffects) return;
+        if (CardInspectionUI.BlocksGameplayInput || DeckOverviewUI.BlocksBattleInput || SettingsUI.BlocksBattleInput || isResolvingEffects) return;
         EffectSequence.Start(this, EndPlayerTurnRoutine());
     }
 

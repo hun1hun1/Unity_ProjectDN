@@ -49,6 +49,8 @@ public class DeckController : MonoBehaviour
 
     private void ResetBattlePiles()
     {
+        RunProgress progress = RunSession.Instance != null ? RunSession.Instance.Progress : null;
+        shuffleRandom = progress != null && progress.Phase == RunPhase.Battle ? new System.Random(progress.NodeSeed) : null;
         dreamDrawPile.Clear();
         dreamDrawPile.AddRange(runDeck.Dream);
         nightmareDrawPile.Clear();
@@ -61,11 +63,12 @@ public class DeckController : MonoBehaviour
         Shuffle(nightmareDrawPile);
     }
 
+    private System.Random shuffleRandom;
     private void Shuffle(List<CardData> cards)
     {
         for (int i = cards.Count - 1; i > 0; i--)
         {
-            int randomIndex = Random.Range(0, i + 1);
+            int randomIndex = shuffleRandom != null ? shuffleRandom.Next(i + 1) : Random.Range(0, i + 1);
 
             CardData temp = cards[i];
             cards[i] = cards[randomIndex];

@@ -75,7 +75,9 @@ public sealed class CardPresentationContext : IDisposable
         if (clip == null) return null;
         GameObject item = new GameObject("Card presentation sound"); temporary.Add(item);
         AudioSource source = item.AddComponent<AudioSource>();
-        source.playOnAwake = false; source.spatialBlend = 0; source.volume = volume; source.clip = clip; source.Play();
+        source.playOnAwake = false; source.spatialBlend = 0; source.volume = volume; source.clip = clip;
+        item.AddComponent<SettingsAudioSource>();
+        source.Play();
         return source;
     }
     public void Release(GameObject item)
