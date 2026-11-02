@@ -154,13 +154,16 @@ public class SettingsUI : MonoBehaviour
     public void Close() { ForceClose(); }
     private void ForceClose()
     {
+        bool wasOpen=opened;
         if(opened)blockedUntilFrame=Time.frameCount;
         opened=false;dropdownWasExpanded=false;
         if(resolutionDropdown!=null)resolutionDropdown.Hide();
         if(quitConfirmation!=null)quitConfirmation.SetActive(false);
         if(mainControls!=null){mainControls.interactable=true;mainControls.blocksRaycasts=true;}
         if(panel!=null)panel.SetActive(false);
-        if(previousSelection!=null && previousSelection.activeInHierarchy && EventSystem.current!=null)
+        if(wasOpen && !requireBattle && EventSystem.current!=null)
+            EventSystem.current.SetSelectedGameObject(null);
+        else if(previousSelection!=null && previousSelection.activeInHierarchy && EventSystem.current!=null)
             EventSystem.current.SetSelectedGameObject(previousSelection);
         previousSelection=null;
     }

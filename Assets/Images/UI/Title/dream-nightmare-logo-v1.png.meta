@@ -1,0 +1,1586 @@
+fileFormatVersion: 2
+guid: 87a38af2dfbf7894cac66b7ac813785c
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3185068509613718131
+    second: dream-nightmare-logo-v1_0
+  - first:
+      213: -7779875208479662716
+    second: dream-nightmare-logo-v1_1
+  - first:
+      213: 4121389843960434386
+    second: dream-nightmare-logo-v1_2
+  - first:
+      213: 6751578678258375787
+    second: dream-nightmare-logo-v1_3
+  - first:
+      213: -2856321293181185482
+    second: dream-nightmare-logo-v1_4
+  - first:
+      213: -7121299796336529439
+    second: dream-nightmare-logo-v1_5
+  - first:
+      213: -1005957927380389833
+    second: dream-nightmare-logo-v1_6
+  - first:
+      213: -8745323056648030534
+    second: dream-nightmare-logo-v1_7
+  - first:
+      213: -9214741897530354500
+    second: dream-nightmare-logo-v1_8
+  - first:
+      213: 259352727452778181
+    second: dream-nightmare-logo-v1_9
+  - first:
+      213: -8361585757580798120
+    second: dream-nightmare-logo-v1_10
+  - first:
+      213: 5104944116996145299
+    second: dream-nightmare-logo-v1_11
+  - first:
+      213: -2729323712263539231
+    second: dream-nightmare-logo-v1_12
+  - first:
+      213: 3023538908138020747
+    second: dream-nightmare-logo-v1_13
+  - first:
+      213: -9049367150204157330
+    second: dream-nightmare-logo-v1_14
+  - first:
+      213: -8614825319475907011
+    second: dream-nightmare-logo-v1_15
+  - first:
+      213: 5471835454462424235
+    second: dream-nightmare-logo-v1_16
+  - first:
+      213: 3593142436491875134
+    second: dream-nightmare-logo-v1_17
+  - first:
+      213: 3593265224768900100
+    second: dream-nightmare-logo-v1_18
+  - first:
+      213: 2626815866311401179
+    second: dream-nightmare-logo-v1_19
+  - first:
+      213: -6605669948503996028
+    second: dream-nightmare-logo-v1_20
+  - first:
+      213: -5050389666219276472
+    second: dream-nightmare-logo-v1_21
+  - first:
+      213: -478985969636583717
+    second: dream-nightmare-logo-v1_22
+  - first:
+      213: -2931629551248558666
+    second: dream-nightmare-logo-v1_23
+  - first:
+      213: 4456606530588327367
+    second: dream-nightmare-logo-v1_24
+  - first:
+      213: 557842067490481731
+    second: dream-nightmare-logo-v1_25
+  - first:
+      213: -3493546633657473285
+    second: dream-nightmare-logo-v1_26
+  - first:
+      213: -2471076283859435845
+    second: dream-nightmare-logo-v1_27
+  - first:
+      213: 6480544138762086677
+    second: dream-nightmare-logo-v1_28
+  - first:
+      213: -3573073320253524415
+    second: dream-nightmare-logo-v1_29
+  - first:
+      213: 8095543458823253285
+    second: dream-nightmare-logo-v1_30
+  - first:
+      213: 6063886829802970512
+    second: dream-nightmare-logo-v1_31
+  - first:
+      213: 7501379711947899047
+    second: dream-nightmare-logo-v1_32
+  - first:
+      213: 2969582043691386199
+    second: dream-nightmare-logo-v1_33
+  - first:
+      213: 80170608404777436
+    second: dream-nightmare-logo-v1_34
+  - first:
+      213: -578182309463939113
+    second: dream-nightmare-logo-v1_35
+  - first:
+      213: 4930296433047029474
+    second: dream-nightmare-logo-v1_36
+  - first:
+      213: 2848587579789600720
+    second: dream-nightmare-logo-v1_37
+  - first:
+      213: -293750843161686784
+    second: dream-nightmare-logo-v1_38
+  - first:
+      213: 717932443890185239
+    second: dream-nightmare-logo-v1_39
+  - first:
+      213: -8198225991224877968
+    second: dream-nightmare-logo-v1_40
+  - first:
+      213: -7772914189754646807
+    second: dream-nightmare-logo-v1_41
+  - first:
+      213: 7736804807391952340
+    second: dream-nightmare-logo-v1_42
+  - first:
+      213: -3575615424298303775
+    second: dream-nightmare-logo-v1_43
+  - first:
+      213: -1868771164887008496
+    second: dream-nightmare-logo-v1_44
+  - first:
+      213: -8887319050085858027
+    second: dream-nightmare-logo-v1_45
+  - first:
+      213: 6712816940830042842
+    second: dream-nightmare-logo-v1_46
+  - first:
+      213: 2152239450253338560
+    second: dream-nightmare-logo-v1_47
+  - first:
+      213: 7917440167019293506
+    second: dream-nightmare-logo-v1_48
+  - first:
+      213: 212629277899114331
+    second: dream-nightmare-logo-v1_49
+  - first:
+      213: 4740921665770681700
+    second: dream-nightmare-logo-v1_50
+  - first:
+      213: 3246993742309046693
+    second: dream-nightmare-logo-v1_51
+  - first:
+      213: -2069970482219374983
+    second: dream-nightmare-logo-v1_52
+  - first:
+      213: -2684259741798469795
+    second: dream-nightmare-logo-v1_53
+  - first:
+      213: 3913423996373314050
+    second: dream-nightmare-logo-v1_54
+  - first:
+      213: 4512140101400060617
+    second: dream-nightmare-logo-v1_55
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1650
+        height: 946
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d850133d01d5cc3d0800000000000000
+      internalID: -3185068509613718131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_1
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 913
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48d93b9a7b4580490800000000000000
+      internalID: -7779875208479662716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_2
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 927
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2de0a2e1a3e123930800000000000000
+      internalID: 4121389843960434386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_3
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 927
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6c11b6590d62bd50800000000000000
+      internalID: 6751578678258375787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_4
+      rect:
+        serializedVersion: 2
+        x: 420
+        y: 899
+        width: 31
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6321d83daee4c58d0800000000000000
+      internalID: -2856321293181185482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_5
+      rect:
+        serializedVersion: 2
+        x: 969
+        y: 921
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1efac44c09f0c2d90800000000000000
+      internalID: -7121299796336529439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_6
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 898
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 730f087489e1a02f0800000000000000
+      internalID: -1005957927380389833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_7
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 882
+        width: 28
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab6f572c30f52a680800000000000000
+      internalID: -8745323056648030534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 826
+        width: 56
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb45bc4e019ae1080800000000000000
+      internalID: -9214741897530354500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_9
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 817
+        width: 18
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cef9577ee7699300800000000000000
+      internalID: 259352727452778181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_10
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 867
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8575e681e0ea5fb80800000000000000
+      internalID: -8361585757580798120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_11
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 783
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39086c390a768d640800000000000000
+      internalID: 5104944116996145299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_12
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 793
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e53b755b8e7f1ad0800000000000000
+      internalID: -2729323712263539231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_13
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 779
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8f93281e94c5f920800000000000000
+      internalID: 3023538908138020747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_14
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 771
+        width: 13
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e620ef1c5803a6280800000000000000
+      internalID: -9049367150204157330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_15
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 676
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d36f896e30ef17880800000000000000
+      internalID: -8614825319475907011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_16
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 662
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba4fe94da5ddfeb40800000000000000
+      internalID: 5471835454462424235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_17
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 615
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e33da7a32086dd130800000000000000
+      internalID: 3593142436491875134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_18
+      rect:
+        serializedVersion: 2
+        x: 1621
+        y: 584
+        width: 40
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40c4d1a1fa7ddd130800000000000000
+      internalID: 3593265224768900100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_19
+      rect:
+        serializedVersion: 2
+        x: 1612
+        y: 606
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bded9d9ec13547420800000000000000
+      internalID: 2626815866311401179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_20
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 576
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48942ff1e22f354a0800000000000000
+      internalID: -6605669948503996028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_21
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 544
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84742bf4b5969e9b0800000000000000
+      internalID: -5050389666219276472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_22
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 259
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd65a636ccc4a59f0800000000000000
+      internalID: -478985969636583717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_23
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 234
+        width: 18
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b5bac0a472c057d0800000000000000
+      internalID: -2931629551248558666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_24
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 203
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cd3767070c09dd30800000000000000
+      internalID: 4456606530588327367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_25
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 173
+        width: 16
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3462a81a76addb700800000000000000
+      internalID: 557842067490481731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_26
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 201
+        width: 7
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf6a596a8dd648fc0800000000000000
+      internalID: -3493546633657473285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_27
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 191
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbe7aaf4639f4bdd0800000000000000
+      internalID: -2471076283859435845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_28
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 164
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 519672e0f848fe950800000000000000
+      internalID: 6480544138762086677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_29
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 129
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 146fcd50fb4e96ec0800000000000000
+      internalID: -3573073320253524415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_30
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 107
+        width: 30
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52da5ee32e5295070800000000000000
+      internalID: 8095543458823253285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_31
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 31
+        width: 20
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09d5390a1f0472450800000000000000
+      internalID: 6063886829802970512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_32
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 15
+        width: 17
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a00aff9a114a1860800000000000000
+      internalID: 7501379711947899047
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_33
+      rect:
+        serializedVersion: 2
+        x: 345
+        y: 0
+        width: 60
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7558a9d9223163920800000000000000
+      internalID: 2969582043691386199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_34
+      rect:
+        serializedVersion: 2
+        x: 983
+        y: 15
+        width: 9
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd9c46b5eb2dc1100800000000000000
+      internalID: 80170608404777436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_35
+      rect:
+        serializedVersion: 2
+        x: 1108
+        y: 0
+        width: 146
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d7acfcb042e9f7f0800000000000000
+      internalID: -578182309463939113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_36
+      rect:
+        serializedVersion: 2
+        x: 1118
+        y: 6
+        width: 70
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e6c429eb7eeb6440800000000000000
+      internalID: 4930296433047029474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_37
+      rect:
+        serializedVersion: 2
+        x: 1249
+        y: 31
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d7e2f4bf47388720800000000000000
+      internalID: 2848587579789600720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_38
+      rect:
+        serializedVersion: 2
+        x: 1265
+        y: 13
+        width: 30
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00d40ec1a236cebf0800000000000000
+      internalID: -293750843161686784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_39
+      rect:
+        serializedVersion: 2
+        x: 1483
+        y: 31
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7147dc201cb96f900800000000000000
+      internalID: 717932443890185239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_40
+      rect:
+        serializedVersion: 2
+        x: 1497
+        y: 19
+        width: 24
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07c9aa4a5ec0a3e80800000000000000
+      internalID: -8198225991224877968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_41
+      rect:
+        serializedVersion: 2
+        x: 1516
+        y: 33
+        width: 9
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9eeb4122abf012490800000000000000
+      internalID: -7772914189754646807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_42
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 0
+        width: 67
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ddb1212bf6ae5b60800000000000000
+      internalID: 7736804807391952340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_43
+      rect:
+        serializedVersion: 2
+        x: 483
+        y: 15
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1eeba4d47bcd06ec0800000000000000
+      internalID: -3575615424298303775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_44
+      rect:
+        serializedVersion: 2
+        x: 494
+        y: 19
+        width: 16
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01bba66d68ac016e0800000000000000
+      internalID: -1868771164887008496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_45
+      rect:
+        serializedVersion: 2
+        x: 597
+        y: 25
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51502163966e9a480800000000000000
+      internalID: -8887319050085858027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_46
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 18
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ada26601177b82d50800000000000000
+      internalID: 6712816940830042842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_47
+      rect:
+        serializedVersion: 2
+        x: 1084
+        y: 15
+        width: 13
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c7aeef706a4edd10800000000000000
+      internalID: 2152239450253338560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_48
+      rect:
+        serializedVersion: 2
+        x: 1300
+        y: 17
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24b289d22e560ed60800000000000000
+      internalID: 7917440167019293506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_49
+      rect:
+        serializedVersion: 2
+        x: 1479
+        y: 2
+        width: 26
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b574602a33963f200800000000000000
+      internalID: 212629277899114331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_50
+      rect:
+        serializedVersion: 2
+        x: 1516
+        y: 15
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 465f634f2232bc140800000000000000
+      internalID: 4740921665770681700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_51
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 10
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a93f36fa93af0d20800000000000000
+      internalID: 3246993742309046693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_52
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 7
+        width: 18
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97625c740dcf543e0800000000000000
+      internalID: -2069970482219374983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_53
+      rect:
+        serializedVersion: 2
+        x: 454
+        y: 7
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5f68359cf79fbad0800000000000000
+      internalID: -2684259741798469795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_54
+      rect:
+        serializedVersion: 2
+        x: 1247
+        y: 13
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20a2257f3664f4630800000000000000
+      internalID: 3913423996373314050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dream-nightmare-logo-v1_55
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 0
+        width: 62
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c2eeb014875e9e30800000000000000
+      internalID: 4512140101400060617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      dream-nightmare-logo-v1_0: -3185068509613718131
+      dream-nightmare-logo-v1_1: -7779875208479662716
+      dream-nightmare-logo-v1_10: -8361585757580798120
+      dream-nightmare-logo-v1_11: 5104944116996145299
+      dream-nightmare-logo-v1_12: -2729323712263539231
+      dream-nightmare-logo-v1_13: 3023538908138020747
+      dream-nightmare-logo-v1_14: -9049367150204157330
+      dream-nightmare-logo-v1_15: -8614825319475907011
+      dream-nightmare-logo-v1_16: 5471835454462424235
+      dream-nightmare-logo-v1_17: 3593142436491875134
+      dream-nightmare-logo-v1_18: 3593265224768900100
+      dream-nightmare-logo-v1_19: 2626815866311401179
+      dream-nightmare-logo-v1_2: 4121389843960434386
+      dream-nightmare-logo-v1_20: -6605669948503996028
+      dream-nightmare-logo-v1_21: -5050389666219276472
+      dream-nightmare-logo-v1_22: -478985969636583717
+      dream-nightmare-logo-v1_23: -2931629551248558666
+      dream-nightmare-logo-v1_24: 4456606530588327367
+      dream-nightmare-logo-v1_25: 557842067490481731
+      dream-nightmare-logo-v1_26: -3493546633657473285
+      dream-nightmare-logo-v1_27: -2471076283859435845
+      dream-nightmare-logo-v1_28: 6480544138762086677
+      dream-nightmare-logo-v1_29: -3573073320253524415
+      dream-nightmare-logo-v1_3: 6751578678258375787
+      dream-nightmare-logo-v1_30: 8095543458823253285
+      dream-nightmare-logo-v1_31: 6063886829802970512
+      dream-nightmare-logo-v1_32: 7501379711947899047
+      dream-nightmare-logo-v1_33: 2969582043691386199
+      dream-nightmare-logo-v1_34: 80170608404777436
+      dream-nightmare-logo-v1_35: -578182309463939113
+      dream-nightmare-logo-v1_36: 4930296433047029474
+      dream-nightmare-logo-v1_37: 2848587579789600720
+      dream-nightmare-logo-v1_38: -293750843161686784
+      dream-nightmare-logo-v1_39: 717932443890185239
+      dream-nightmare-logo-v1_4: -2856321293181185482
+      dream-nightmare-logo-v1_40: -8198225991224877968
+      dream-nightmare-logo-v1_41: -7772914189754646807
+      dream-nightmare-logo-v1_42: 7736804807391952340
+      dream-nightmare-logo-v1_43: -3575615424298303775
+      dream-nightmare-logo-v1_44: -1868771164887008496
+      dream-nightmare-logo-v1_45: -8887319050085858027
+      dream-nightmare-logo-v1_46: 6712816940830042842
+      dream-nightmare-logo-v1_47: 2152239450253338560
+      dream-nightmare-logo-v1_48: 7917440167019293506
+      dream-nightmare-logo-v1_49: 212629277899114331
+      dream-nightmare-logo-v1_5: -7121299796336529439
+      dream-nightmare-logo-v1_50: 4740921665770681700
+      dream-nightmare-logo-v1_51: 3246993742309046693
+      dream-nightmare-logo-v1_52: -2069970482219374983
+      dream-nightmare-logo-v1_53: -2684259741798469795
+      dream-nightmare-logo-v1_54: 3913423996373314050
+      dream-nightmare-logo-v1_55: 4512140101400060617
+      dream-nightmare-logo-v1_6: -1005957927380389833
+      dream-nightmare-logo-v1_7: -8745323056648030534
+      dream-nightmare-logo-v1_8: -9214741897530354500
+      dream-nightmare-logo-v1_9: 259352727452778181
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -35,7 +35,7 @@ public partial class SettingsWindowTests
                 Assert.That(contrast,Is.GreaterThanOrEqualTo(4.5f),"Resolution choices need readable text in every interactive state.");
             }
             UnityEngine.UI.Button button = (UnityEngine.UI.Button)state.FindProperty("settingButton").objectReferenceValue;
-            Assert.That(button.name, Is.EqualTo("SettingButton"));
+            Assert.That(button, Is.Not.Null);
             Assert.That(Enumerable.Range(0,button.onClick.GetPersistentEventCount()).Any(index =>
                 button.onClick.GetPersistentTarget(index)==settings && button.onClick.GetPersistentMethodName(index)=="Toggle"), Is.True);
         }

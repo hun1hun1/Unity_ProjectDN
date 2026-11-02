@@ -28,6 +28,8 @@ public partial class SettingsWindowTests
         BattleManager battle=Object.FindFirstObjectByType<BattleManager>();
         CardUI hand=Object.FindObjectsByType<CardUI>(FindObjectsSortMode.None).First(card=>battle.CanUseCard(card.GetCardData()));
         DeckOverviewUI overview=Object.FindFirstObjectByType<DeckOverviewUI>();overview.Toggle();Assert.That(overview.IsOpen,Is.True);
+        GameObject settingButton=Ref<Button>(ui,"settingButton").gameObject;
+        EventSystem.current.SetSelectedGameObject(settingButton);
         Ref<Button>(ui,"settingButton").onClick.Invoke();
         Assert.That(ui.IsOpen,Is.True);Assert.That(overview.IsOpen,Is.False);
         Assert.That(hand.CanHover,Is.False);Assert.That(battle.CanUseCard(hand.GetCardData()),Is.False);Assert.That(battle.UseCard(hand),Is.False);
@@ -37,6 +39,7 @@ public partial class SettingsWindowTests
         foreach(DeckPileButton pile in Object.FindObjectsByType<DeckPileButton>(FindObjectsSortMode.None))pile.GetComponent<Button>().onClick.Invoke();
         Assert.That(Ref<DeckListUI>(ui,"pileList").gameObject.activeSelf,Is.False);
         Ref<Button>(ui,"returnButton").onClick.Invoke();Assert.That(ui.IsOpen,Is.False);
+        Assert.That(EventSystem.current.currentSelectedGameObject,Is.EqualTo(settingButton),"Battle settings must retain focus restoration.");
         Assert.That(battle.CanUseCard(hand.GetCardData()),Is.False,"The closing frame must not reach the battle.");
         yield return null;yield return null;
         Assert.That(hand.CanHover,Is.True);Assert.That(battle.CanUseCard(hand.GetCardData()),Is.True);
@@ -124,6 +127,53 @@ public partial class SettingsWindowTests
         Ref<Slider>(ui,"masterSlider").value=.25f;Assert.That(platform.Saves,Is.Zero);
         ui.enabled=true;ui.Toggle();Assert.That(ui.IsOpen,Is.True);Assert.That(Ref<CanvasGroup>(ui,"mainControls").interactable,Is.True);
         Object.FindFirstObjectByType<BattleManager>().EndBattle();Assert.That(ui.IsOpen,Is.False);yield return null;yield return null;Assert.That(SettingsUI.BlocksBattleInput,Is.False);
+    }
+
+    [UnityTest]
+    public IEnumerator OptionsIconRotatesOnHoverWithoutMovingItsHitAreaAndRestoresOnExit()
+    {yield return new EnterPlayMode();yield return VerifyOptionsRotation();yield return new ExitPlayMode();}
+    private static IEnumerator VerifyOptionsRotation()
+    {
+        yield return LoadBattle();
+        SettingsUI settings=Object.FindFirstObjectByType<SettingsUI>();
+        settings.BindSettings(new GameSettingsService(new FakeGameSettingsPlatform()));
+        Button button=Ref<Button>(settings,"settingButton");
+        Component hover=button.GetComponent("ButtonHoverRotation");
+        Assert.That(hover,Is.Not.Null,"OptionsButton needs a hover rotation component.");
+        RectTransform visual=Ref<RectTransform>(hover,"visual");
+        Assert.That(visual,Is.Not.Null);
+        Assert.That(visual.parent,Is.EqualTo(button.transform));
+        Assert.That(button.targetGraphic,Is.EqualTo(visual.GetComponent<UnityEngine.UI.Image>()));
+        Assert.That(button.GetComponent<UnityEngine.UI.Image>().color.a,Is.Zero);
+        Assert.That(button.GetComponent<UnityEngine.UI.Image>().raycastTarget,Is.True);
+        Assert.That(visual.GetComponent<UnityEngine.UI.Image>().raycastTarget,Is.False);
+        Quaternion original=visual.localRotation;
+        Quaternion hitRotation=button.transform.localRotation;
+        var pointer=new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left};
+        float oldTimeScale=Time.timeScale;
+        try
+        {
+            Time.timeScale=0;
+            ExecuteEvents.Execute(button.gameObject,pointer,ExecuteEvents.pointerEnterHandler);
+            yield return Wait(.25f);
+            Assert.That(Quaternion.Angle(visual.localRotation,original*Quaternion.Euler(0,0,60)),Is.LessThan(.1f));
+            Assert.That(Quaternion.Angle(button.transform.localRotation,hitRotation),Is.LessThan(.01f));
+            ExecuteEvents.Execute(button.gameObject,pointer,ExecuteEvents.pointerExitHandler);
+            yield return Wait(.25f);
+            Assert.That(Quaternion.Angle(visual.localRotation,original),Is.LessThan(.1f));
+            ExecuteEvents.Execute(button.gameObject,pointer,ExecuteEvents.pointerEnterHandler);
+            yield return Wait(.25f);
+            button.onClick.Invoke();
+            Assert.That(settings.IsOpen,Is.True,"Hover must preserve the existing settings callback.");
+            yield return Wait(.25f);
+            Assert.That(Quaternion.Angle(visual.localRotation,original),Is.LessThan(.1f));
+            settings.Close();yield return null;yield return null;
+            ExecuteEvents.Execute(button.gameObject,pointer,ExecuteEvents.pointerEnterHandler);
+            yield return Wait(.25f);
+            button.gameObject.SetActive(false);
+            Assert.That(Quaternion.Angle(visual.localRotation,original),Is.LessThan(.01f));
+        }
+        finally{Time.timeScale=oldTimeScale;}
     }
 
     private static T Ref<T>(Object owner,string field) where T:Object => (T)new SerializedObject(owner).FindProperty(field).objectReferenceValue;

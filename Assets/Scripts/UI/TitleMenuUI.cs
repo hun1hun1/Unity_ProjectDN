@@ -46,7 +46,7 @@ public class TitleMenuUI : MonoBehaviour
     {
         bool canContinue=RunSaves.HasContinue;
         if(continueButton!=null)continueButton.gameObject.SetActive(canContinue);
-        RefreshMenu();Select(canContinue?continueButton:startButton);
+        RefreshMenu();ClearSelection();
     }
     public void ContinueGame()
     {
@@ -56,7 +56,7 @@ public class TitleMenuUI : MonoBehaviour
         if(session.ResumeSavedRun())return;
         starting=false;RefreshMenu();
         if(statusText!=null)statusText.text="저장된 진행을 불러오지 못했습니다. 저장 데이터와 실행 설정을 확인해 주세요.";
-        continueButton.gameObject.SetActive(RunSaves.HasContinue);Select(startButton);
+        continueButton.gameObject.SetActive(RunSaves.HasContinue);ClearSelection();
     }
     public void BindSettings(GameSettingsService settings)
     {
@@ -76,7 +76,7 @@ public class TitleMenuUI : MonoBehaviour
             starting=false;RefreshMenu();
             if(statusText!=null)statusText.text="게임을 시작하지 못했습니다. 실행 설정을 확인해 주세요.";
             Debug.LogException(error,this);
-            Select(startButton);
+            ClearSelection();
         }
     }
     public void OpenTutorial()
@@ -107,7 +107,7 @@ public class TitleMenuUI : MonoBehaviour
     public void CloseTutorial()
     {
         if(!TutorialOpen)return;
-        tutorialPanel.SetActive(false);FinishModal(tutorialButton);
+        tutorialPanel.SetActive(false);FinishModal();
     }
     public void OpenOptions()
     {
@@ -123,7 +123,7 @@ public class TitleMenuUI : MonoBehaviour
     public void CancelQuit()
     {
         if(!QuitOpen)return;
-        quitPanel.SetActive(false);quitRequested=false;FinishModal(quitButton);
+        quitPanel.SetActive(false);quitRequested=false;FinishModal();
     }
     public void ConfirmQuit()
     {
@@ -137,12 +137,14 @@ public class TitleMenuUI : MonoBehaviour
         if(settingsUI!=null && settingsUI.IsOpen)return;
         if(QuitOpen)CancelQuit();else if(TutorialOpen)CloseTutorial();
     }
-    private void FinishModal(Button focus)
-    {blockedUntilFrame=Time.frameCount;RefreshMenu();Select(focus);}
+    private void FinishModal()
+    {blockedUntilFrame=Time.frameCount;RefreshMenu();ClearSelection();}
     private void RefreshMenu()
     {if(mainMenu!=null){mainMenu.interactable=CanActivate;mainMenu.blocksRaycasts=CanActivate;}}
     private static void Select(Button button)
     {if(EventSystem.current!=null && button!=null)EventSystem.current.SetSelectedGameObject(button.gameObject);}
+    private static void ClearSelection()
+    {if(EventSystem.current!=null)EventSystem.current.SetSelectedGameObject(null);}
     private void Update() { if(Input.GetKeyDown(KeyCode.Escape))HandleEscape(); }
     private void LateUpdate() { RefreshMenu(); }
 }

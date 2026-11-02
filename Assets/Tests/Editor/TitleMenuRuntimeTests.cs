@@ -4,6 +4,7 @@ using NUnit.Framework;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
@@ -92,6 +93,58 @@ public partial class TitleMenuTests
         yield return Until(()=>SceneManager.GetActiveScene().name=="MapScene"&&!session.IsTransitioning);
         Assert.That(session.Progress.Definition,Is.SameAs(Object.FindFirstObjectByType<MapController>().Definition));
         Assert.That(session.Progress.Phase,Is.EqualTo(RunPhase.Map));Assert.That(session.Progress.CurrentHP,Is.EqualTo(session.Progress.MaxHP));
+    }
+
+    [UnityTest]
+    public IEnumerator MenuButtonsReturnToNormalAfterPointerExitWithoutKeepingSelection()
+    {yield return new EnterPlayMode();yield return VerifyMouseOnlyMenu();yield return new ExitPlayMode();}
+    private static IEnumerator VerifyMouseOnlyMenu()
+    {
+        RunSaves.UseStore(new RunSaveStore(System.IO.Path.GetFullPath(".utmp/title-hover/pointer-"+Guid.NewGuid().ToString("N")+".json")));
+        yield return LoadTitle();
+        TitleMenuUI menu=Object.FindFirstObjectByType<TitleMenuUI>();
+        Assert.That(EventSystem.current.currentSelectedGameObject,Is.Null,"The title must not select its first button automatically.");
+        foreach(string field in new[]{"continueButton","startButton","tutorialButton","optionsButton","quitButton"})
+        {
+            Button button=Ref<Button>(menu,field);
+            Assert.That(button.navigation.mode,Is.EqualTo(Navigation.Mode.None),field);
+            if(!button.gameObject.activeInHierarchy)continue;
+            var pointer=new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left};
+            ExecuteEvents.Execute(button.gameObject,pointer,ExecuteEvents.pointerEnterHandler);
+            Assert.That(button.image.overrideSprite,Is.EqualTo(button.spriteState.highlightedSprite),field+" hover");
+            ExecuteEvents.Execute(button.gameObject,pointer,ExecuteEvents.pointerDownHandler);
+            Assert.That(button.image.overrideSprite,Is.EqualTo(button.spriteState.pressedSprite),field+" press");
+            ExecuteEvents.Execute(button.gameObject,pointer,ExecuteEvents.pointerUpHandler);
+            Assert.That(EventSystem.current.currentSelectedGameObject,Is.Null,field+" must not retain click selection");
+            ExecuteEvents.Execute(button.gameObject,pointer,ExecuteEvents.pointerExitHandler);
+            Assert.That(button.image.overrideSprite,Is.EqualTo(button.image.sprite),field+" pointer exit");
+        }
+        menu.StartGame();
+        yield return Until(()=>SceneManager.GetActiveScene().name=="MapScene"&&!RunSession.Instance.IsTransitioning);
+        yield return LoadTitle();
+        menu=Object.FindFirstObjectByType<TitleMenuUI>();
+        Assert.That(Ref<Button>(menu,"continueButton").gameObject.activeSelf,Is.True);
+        Assert.That(EventSystem.current.currentSelectedGameObject,Is.Null,"Continue must not be selected automatically either.");
+    }
+
+    [UnityTest]
+    public IEnumerator ReturningFromTitlePopupsDoesNotSelectAMenuButton()
+    {yield return new EnterPlayMode();yield return VerifyPopupSelectionClearing();yield return new ExitPlayMode();}
+    private static IEnumerator VerifyPopupSelectionClearing()
+    {
+        yield return LoadTitle();TitleMenuUI menu=Object.FindFirstObjectByType<TitleMenuUI>();
+        menu.BindSettings(new GameSettingsService(new FakeGameSettingsPlatform()));
+        menu.OpenTutorial();menu.CloseTutorial();
+        Assert.That(EventSystem.current.currentSelectedGameObject,Is.Null,"Closing the tutorial must clear selection.");
+        yield return null;yield return null;
+        menu.RequestQuit();menu.CancelQuit();
+        Assert.That(EventSystem.current.currentSelectedGameObject,Is.Null,"Cancelling quit must clear selection.");
+        yield return null;yield return null;
+        EventSystem.current.SetSelectedGameObject(Ref<Button>(menu,"optionsButton").gameObject);
+        menu.OpenOptions();SettingsUI options=Ref<SettingsUI>(menu,"settingsUI");
+        Assert.That(options.IsOpen,Is.True);
+        options.Close();
+        Assert.That(EventSystem.current.currentSelectedGameObject,Is.Null,"Title settings must not restore an old menu selection.");
     }
 
     private static T Ref<T>(Object owner,string name) where T:Object=>(T)new SerializedObject(owner).FindProperty(name).objectReferenceValue;
