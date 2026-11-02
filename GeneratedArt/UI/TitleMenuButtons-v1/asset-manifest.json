@@ -1,0 +1,74 @@
+[
+  {
+    "File": "title-button-normal.png",
+    "Role": "공용 기본",
+    "Width": 2172,
+    "Height": 724,
+    "TransparentSamples": 7376,
+    "VisibleSamples": 3665,
+    "MaxAlpha": 255
+  },
+  {
+    "File": "title-button-selected.png",
+    "Role": "공용 마우스 올림 / 키보드 선택",
+    "Width": 2172,
+    "Height": 724,
+    "TransparentSamples": 7431,
+    "VisibleSamples": 3610,
+    "MaxAlpha": 254
+  },
+  {
+    "File": "title-button-pressed.png",
+    "Role": "공용 누름",
+    "Width": 2171,
+    "Height": 724,
+    "TransparentSamples": 7368,
+    "VisibleSamples": 3673,
+    "MaxAlpha": 255
+  },
+  {
+    "File": "title-button-disabled.png",
+    "Role": "공용 사용 불가",
+    "Width": 2172,
+    "Height": 724,
+    "TransparentSamples": 7368,
+    "VisibleSamples": 3673,
+    "MaxAlpha": 255
+  },
+  {
+    "File": "title-confirm-red-normal.png",
+    "Role": "종료 확인 기본",
+    "Width": 2172,
+    "Height": 724,
+    "TransparentSamples": 7357,
+    "VisibleSamples": 3684,
+    "MaxAlpha": 254
+  },
+  {
+    "File": "title-confirm-red-selected.png",
+    "Role": "종료 확인 마우스 올림 / 키보드 선택",
+    "Width": 2171,
+    "Height": 724,
+    "TransparentSamples": 7296,
+    "VisibleSamples": 3745,
+    "MaxAlpha": 254
+  },
+  {
+    "File": "title-confirm-red-pressed.png",
+    "Role": "종료 확인 누름",
+    "Width": 2172,
+    "Height": 724,
+    "TransparentSamples": 7456,
+    "VisibleSamples": 3585,
+    "MaxAlpha": 254
+  },
+  {
+    "File": "title-selection-diamond.png",
+    "Role": "독립 선택 표시",
+    "Width": 1254,
+    "Height": 1254,
+    "TransparentSamples": 9825,
+    "VisibleSamples": 1200,
+    "MaxAlpha": 255
+  }
+]
