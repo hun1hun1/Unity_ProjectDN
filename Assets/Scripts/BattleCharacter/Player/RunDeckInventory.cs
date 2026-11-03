@@ -25,6 +25,12 @@ public static class RunDeckInventory
         new Dictionary<(CardDatabase, CardDatabase), RunDeckState>();
     internal static uint GameVersion { get; private set; }
 
+    internal static RunDeckState Find(CardDatabase dream, CardDatabase nightmare)
+    {
+        decks.TryGetValue((dream, nightmare), out RunDeckState state);
+        return state;
+    }
+
     internal static RunDeckState GetOrCreate(CardDatabase dream, CardDatabase nightmare)
     {
         var key = (dream, nightmare);

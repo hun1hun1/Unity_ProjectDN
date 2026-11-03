@@ -1,10 +1,12 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
@@ -70,6 +72,8 @@ public class MapSceneTests
         AmmoCapacityRelic relic = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/CardData/Soldier/Examples/AmmoCapacityRelic.asset");
         Assert.That(relic.Acquire(), Is.True);
         int initialDeckCount = -1;
+        int expectedTotalGold = progress.Definition.startingGold;
+        Assert.That(RunGoldInventory.Gold, Is.EqualTo(expectedTotalGold));
         for (int i = 0; i < 5; i++)
         {
             MapController map = Object.FindFirstObjectByType<MapController>();
@@ -92,7 +96,11 @@ public class MapSceneTests
             Assert.That(progress.CompletedNodes, Is.EqualTo(i));
             Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("BattleScene"));
             Assert.That(session.SelectOption(0), Is.False);
+            int nodeBonus = i + 1;
+            int goldReward = rewards.GoldReward;
+            Assert.That(goldReward, Is.InRange(20 + nodeBonus, 25 + nodeBonus), $"Node {nodeBonus} gold reward");
             Assert.That(rewards.ClaimGold(), Is.True);
+            expectedTotalGold += goldReward;
             if (i == 0)
             {
                 Assert.That(rewards.OpenCardReward(), Is.True);
@@ -105,14 +113,14 @@ public class MapSceneTests
             yield return WaitForMap();
             Assert.That(session.Progress, Is.SameAs(progress));
             Assert.That(progress.CurrentHP, Is.EqualTo(80 - (i + 1) * 7));
-            Assert.That(RunGoldInventory.Gold, Is.EqualTo((i + 1) * 20));
+            Assert.That(RunGoldInventory.Gold, Is.EqualTo(expectedTotalGold));
             Assert.That(RunRelicInventory.Contains(relic), Is.True);
             Assert.That(progress.CompletedNodes, Is.EqualTo(i + 1));
         }
         Assert.That(progress.Phase, Is.EqualTo(RunPhase.Completed)); Assert.That(finished.Count, Is.EqualTo(1));
         Assert.That(Object.FindFirstObjectByType<MapController>().CanChoose(0), Is.False);
         Assert.That(GameObject.Find("Heading").GetComponent<TMP_Text>().text, Is.EqualTo("런 완료"));
-        Assert.That(Object.FindObjectsByType<Button>(FindObjectsSortMode.None).Any(b => b.interactable), Is.False);
+        Assert.That(GameObject.Find("Choices").GetComponentsInChildren<Button>().Any(b => b.interactable), Is.False);
         Assert.That(Object.FindFirstObjectByType<BattleManager>(), Is.Null);
         Assert.That(session.SelectOption(0), Is.False);
         CaptureMap("map-completed.png");
@@ -140,7 +148,8 @@ public class MapSceneTests
         Assert.That(Object.FindFirstObjectByType<MapController>().CanChoose(0), Is.False);
         RunProgress old = session.Progress;
         session.StartNewRun(definition, 81);
-        Assert.That(RunGoldInventory.Gold, Is.Zero); Assert.That(RunRelicInventory.Count, Is.Zero);
+        Assert.That(RunGoldInventory.Gold, Is.EqualTo(definition.startingGold));
+        Assert.That(RunRelicInventory.Count, Is.Zero);
         Assert.That(session.Progress.CurrentHP, Is.EqualTo(80));
         Assert.That(session.CompleteContent(old, 0, 0), Is.False);
         session.SelectOption(0); yield return WaitForScene("BattleScene");
@@ -166,6 +175,9 @@ public class MapSceneTests
         yield return null;
         yield return SceneManager.LoadSceneAsync("BattleScene"); yield return WaitForScene("BattleScene");
         Assert.That(RunSession.Instance, Is.Null);
+        var topArea = GameObject.Find("TopArea").transform;
+        Assert.That(topArea.Find("RunInfo/FloorNode").GetComponent<TMP_Text>().text, Is.EqualTo("—"));
+        Assert.That(topArea.Find("RunInfo/GoldValue").GetComponent<TMP_Text>().text, Is.EqualTo("0"));
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
         Assert.That(battle.GetPlayer().GetCurrentHP(), Is.EqualTo(battle.GetPlayer().GetMaxHP()));
         battle.GetTarget().TakeDamage(100000);
@@ -173,6 +185,150 @@ public class MapSceneTests
         Assert.That(rewards.State, Is.EqualTo(BattleRewardState.Summary));
         rewards.SkipRemaining(); yield return null; yield return null;
         Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("BattleScene"));
+    }
+
+
+    [UnityTest]
+    public IEnumerator UtilityButtonsOpenRunDeckAndSettingsAndBlockMapChoices()
+    {
+        yield return new EnterPlayMode();
+        var savePath = System.IO.Path.Combine(".utmp", "map-utility", System.Guid.NewGuid() + ".json");
+        RunSaves.UseStore(new RunSaveStore(System.IO.Path.GetFullPath(savePath)));
+        try
+        {
+            yield return SceneManager.LoadSceneAsync("MapScene");
+            yield return WaitForMap();
+            var map = Object.FindFirstObjectByType<MapController>();
+            var canvas = FindMapCanvas();
+            var toolbar = canvas.transform.Find("MapUtilityButtons");
+            Assert.That(toolbar, Is.Not.Null);
+            Assert.That(toolbar.GetComponent<Image>().sprite.name, Is.EqualTo("map-utility-buttons-backplate"));
+
+            var deckButton = toolbar.Find("DeckButton").GetComponent<Button>();
+            var deck = Object.FindFirstObjectByType<DeckOverviewUI>();
+            var settings = Object.FindFirstObjectByType<SettingsUI>();
+            Assert.That(deck.IsOpen || settings.IsOpen, Is.False);
+
+            ClickUtilityButton(deckButton);
+            yield return null;
+            Assert.That(deck.IsOpen, Is.True);
+            var lists = canvas.transform.Find("DeckOverviewPanel").GetComponentsInChildren<DeckListUI>();
+            Assert.That(lists.Length, Is.EqualTo(2));
+            Assert.That(lists.All(list => list.GetComponentsInChildren<DeckCardUI>().Length > 0), Is.True);
+            var inspection = Object.FindFirstObjectByType<CardInspectionUI>();
+            var card = lists[0].GetComponentInChildren<DeckCardUI>();
+            card.OnPointerClick(new PointerEventData(EventSystem.current)
+                { button = PointerEventData.InputButton.Right });
+            Assert.That(inspection.IsOpen, Is.True);
+            inspection.Close();
+            yield return null;
+            yield return null;
+            map.SelectOption(0);
+            Assert.That(RunSession.Instance.Progress.Phase, Is.EqualTo(RunPhase.Map));
+
+            int dreamCount = canvas.transform.Find("DeckOverviewPanel/DreamSection")
+                .GetComponentsInChildren<DeckCardUI>().Length;
+            canvas.transform.Find("DeckOverviewPanel/CloseButton").GetComponent<Button>().onClick.Invoke();
+            Assert.That(deck.IsOpen, Is.False);
+            yield return null;
+
+            map.SelectOption(0);
+            yield return WaitForScene("BattleScene");
+            Object.FindFirstObjectByType<BattleManager>().GetTarget().TakeDamage(100000);
+            var rewards = Object.FindFirstObjectByType<BattleRewardSystem>();
+            Assert.That(rewards.OpenCardReward(), Is.True);
+            Assert.That(rewards.SelectDeck(CardDeckType.TypeDream), Is.True);
+            Assert.That(rewards.ChooseCard(0), Is.True);
+            Assert.That(rewards.SkipRemaining(), Is.True);
+            yield return WaitForMap();
+
+            map = Object.FindFirstObjectByType<MapController>();
+            canvas = FindMapCanvas();
+            toolbar = canvas.transform.Find("MapUtilityButtons");
+            deck = Object.FindFirstObjectByType<DeckOverviewUI>();
+            settings = Object.FindFirstObjectByType<SettingsUI>();
+            ClickUtilityButton(toolbar.Find("DeckButton").GetComponent<Button>());
+            Assert.That(canvas.transform.Find("DeckOverviewPanel/DreamSection")
+                .GetComponentsInChildren<DeckCardUI>().Length, Is.EqualTo(dreamCount + 1));
+            deck.Close();
+            yield return null;
+
+            ClickUtilityButton(toolbar.Find("OptionsButton").GetComponent<Button>());
+            yield return null;
+            Assert.That(settings.IsOpen, Is.True);
+            map.SelectOption(0);
+            Assert.That(RunSession.Instance.Progress.Phase, Is.EqualTo(RunPhase.Map));
+
+            canvas.transform.Find("SettingsPanel/MainContent/Footer/QuitButton").GetComponent<Button>().onClick.Invoke();
+            canvas.transform.Find("SettingsPanel/QuitConfirmation/Dialog/ConfirmButton").GetComponent<Button>().onClick.Invoke();
+            yield return WaitForScene("TitleScene");
+            Assert.That(RunSaves.TryLoad(out RunSaveData saved, out _), Is.True);
+            Assert.That(saved.progress.phase, Is.EqualTo(RunPhase.Map));
+            Assert.That(saved.progress.node, Is.EqualTo(1));
+        }
+        finally { RunSaves.UseStore(null); }
+        yield return new ExitPlayMode();
+    }
+
+    [UnityTest] public IEnumerator BattleTopAreaTracksCurrentNodeAndClaimedGold()
+    {
+        yield return new EnterPlayMode();
+        yield return SceneManager.LoadSceneAsync("MapScene");
+        yield return WaitForMap();
+        int startingGold = RunGoldInventory.Gold;
+
+        Object.FindFirstObjectByType<MapController>().SelectOption(0);
+        yield return WaitForScene("BattleScene");
+        Transform hud = GameObject.Find("TopArea").transform.Find("RunInfo");
+        Assert.That(hud, Is.Not.Null);
+        var symbol = hud.Find("SoldierSymbol").GetComponent<Image>();
+        Assert.That(symbol.sprite.name, Is.EqualTo("soldier-toparea-symbol"));
+        Assert.That(symbol.raycastTarget, Is.False);
+        var coin = hud.Find("GoldCoin").GetComponent<Image>().sprite;
+        Assert.That(AssetDatabase.GetAssetPath(coin), Is.EqualTo("Assets/Images/UI/MapScene/gold-coin.png"));
+        var node = hud.Find("FloorNode").GetComponent<TMP_Text>();
+        var gold = hud.Find("GoldValue").GetComponent<TMP_Text>();
+        Assert.That(node.text, Is.EqualTo("1층 · 1 / 5"));
+        Assert.That(gold.text, Is.EqualTo(startingGold.ToString()));
+
+        Object.FindFirstObjectByType<BattleManager>().GetTarget().TakeDamage(100000);
+        var rewards = Object.FindFirstObjectByType<BattleRewardSystem>();
+        Assert.That(gold.text, Is.EqualTo(startingGold.ToString()));
+        using (var lockedSave = new System.IO.FileStream(RunSaves.Store.Path, System.IO.FileMode.Open,
+            System.IO.FileAccess.Read, System.IO.FileShare.None))
+        {
+            Assert.That(rewards.ClaimGold(), Is.False);
+            Assert.That(gold.text, Is.EqualTo(startingGold.ToString()));
+        }
+        Assert.That(rewards.ClaimGold(), Is.True);
+        int claimedGold = startingGold + rewards.GoldReward;
+        Assert.That(gold.text, Is.EqualTo(claimedGold.ToString()));
+
+        Assert.That(rewards.SkipRemaining(), Is.True);
+        yield return WaitForMap();
+        Object.FindFirstObjectByType<MapController>().SelectOption(0);
+        yield return WaitForScene("BattleScene");
+        hud = GameObject.Find("TopArea").transform.Find("RunInfo");
+        Assert.That(hud.Find("FloorNode").GetComponent<TMP_Text>().text, Is.EqualTo("1층 · 2 / 5"));
+        Assert.That(hud.Find("GoldValue").GetComponent<TMP_Text>().text, Is.EqualTo(claimedGold.ToString()));
+    }
+
+    private static void ClickUtilityButton(Button button)
+    {
+        Canvas.ForceUpdateCanvases();
+        var events = EventSystem.current;
+        var pointer = new PointerEventData(events)
+        {
+            button = PointerEventData.InputButton.Left,
+            position = RectTransformUtility.WorldToScreenPoint(null, button.transform.position)
+        };
+        var hits = new List<RaycastResult>();
+        events.RaycastAll(pointer, hits);
+        Assert.That(hits, Is.Not.Empty);
+        Assert.That(ExecuteEvents.GetEventHandler<IPointerClickHandler>(
+            hits[0].gameObject), Is.EqualTo(button.gameObject));
+        ExecuteEvents.ExecuteHierarchy(hits[0].gameObject, pointer,
+            ExecuteEvents.pointerClickHandler);
     }
 
     private static IEnumerator WaitForMap()
@@ -192,10 +348,13 @@ public class MapSceneTests
         yield return null; yield return null;
     }
 
+    private static Canvas FindMapCanvas() =>
+        Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None).Single(canvas => canvas.isRootCanvas);
+
     internal static void CaptureMap(string fileName)
     {
         if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
-        Canvas canvas = Object.FindFirstObjectByType<Canvas>();
+        Canvas canvas = FindMapCanvas();
         var cameraObject = new GameObject("Map capture camera", typeof(Camera));
         Camera camera = cameraObject.GetComponent<Camera>();
         camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = new Color(.055f, .075f, .12f);

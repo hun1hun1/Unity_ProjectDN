@@ -1,6 +1,6 @@
 # 타이틀 화면
 
-`Assets/Scenes/TitleScene.unity`가 Build Settings의 첫 씬입니다. 배경 이미지와 로고는 추가하지 않았으며 카메라의 단색 바탕 위에 기본 네 버튼이 있습니다. 유효한 진행 파일이 있으면 `이어서 하기`가 추가로 표시됩니다.
+`Assets/Scenes/TitleScene.unity`가 Build Settings의 첫 씬입니다. 전용 배경 이미지와 로고, 남청색 메뉴 버튼 이미지를 적용했으며 기본 네 버튼을 표시합니다. 유효한 진행 파일이 있으면 `이어서 하기`가 추가로 표시됩니다.
 
 | 버튼 | 동작 |
 |---|---|
@@ -14,12 +14,20 @@
 
 저장 기준과 비전투 노드 연결 계약은 [RunCheckpoints.md](RunCheckpoints.md)에 있습니다.
 
+## 외형과 선택 표시
+
+이미지는 `Assets/Images/UI/Title/`에 있습니다. 메인 메뉴 다섯 버튼과 종료 확인창의 취소 버튼은 일반 남청색 이미지를, 종료 확정 버튼은 붉은 이미지를 사용합니다. 버튼은 Sprite Swap으로 기본·마우스 올림·누름·선택·비활성 이미지를 전환하며 기존 On Click 연결과 자식 TextMeshPro 문구를 유지합니다.
+
+메인 메뉴 다섯 버튼의 Navigation은 None입니다. 타이틀 진입 시 자동 선택하지 않으며, 튜토리얼·종료 확인창·옵션 창을 닫으면 선택을 해제해 강조 표시가 남지 않도록 합니다. 메인 메뉴의 키보드 방향키 탐색은 제공하지 않습니다. 팝업 안의 선택과 ESC 닫기는 유지합니다.
+
+선택 마름모 이미지는 임포트했지만 표시 오브젝트와 상태 제어는 연결하지 않았습니다. 이어서 하기가 숨겨져도 다른 메뉴 위치를 당기는 자동 레이아웃은 없습니다. 캐릭터 선택과 로딩·페이드 연출도 아직 구현하지 않았습니다.
+
 ## Inspector에서 내용 변경
 
 - **버튼 위치·크기·문구:** `TitleScene`의 `Canvas/TitleMenu/MainMenu` 아래 각 버튼과 `Text`를 수정합니다.
 - **튜토리얼 문구:** `Canvas/TitleMenu`의 `TitleMenuUI` 컴포넌트에서 `Tutorial Pages` 배열의 각 `Title`, `Body`를 수정합니다.
 - **새 게임 데이터:** 같은 컴포넌트의 `Run Definition`은 현재 `MapScene`과 동일한 `TemporaryRun`을 참조합니다. 게임 규칙과 밸런스는 기존 데이터를 그대로 사용합니다.
-- **공용 옵션 UI:** `Assets/Prefabs/UI/SettingsPanel.prefab`을 수정합니다. 타이틀 씬 인스턴스에는 전체 화면 크기와 `타이틀로 돌아가기` 문구만 별도로 적용되어 있습니다. `Canvas/Settings`의 `Require Battle`은 꺼져 있고 전투의 기본값은 켜져 있습니다.
+- **공용 옵션 UI:** `Assets/Prefabs/UI/SettingsPanel.prefab`을 수정합니다. 타이틀 씬 인스턴스는 전체 화면 크기로 배치합니다. `Canvas/Settings`의 `Require Battle`과 `Return To Title`은 꺼져 있어 전투 없이 열고 프로그램 종료 확인을 제공합니다. 전투 씬에서는 두 항목을 켜고 타이틀 복귀를 처리합니다.
 
 `ProjectDN/Setup Title Scene`은 씬이 없을 때만 생성하며, 이미 만들어진 타이틀 씬의 수동 편집 내용을 덮어쓰지 않습니다.
 

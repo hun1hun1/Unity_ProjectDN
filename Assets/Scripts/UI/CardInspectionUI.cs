@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHandler
 {
     [SerializeField] private GameObject panel;
+    [SerializeField] private DeckOverviewUI mapDeckOverview;
     [SerializeField] private DeckCardUI cardView;
     [SerializeField] private RectTransform statusPanel;
     [SerializeField] private TMP_Text statusText;
@@ -52,9 +53,14 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
 
     public static bool TryOpen(CardData data, BattleManager battle)
     {
-        if (instance == null || !instance.isActiveAndEnabled || data == null || battle == null ||
-            BlocksGameplayInput || SettingsUI.BlocksBattleInput || battle.gameObject.scene != instance.gameObject.scene || !battle.CanInspectCards)
+        if (instance == null || !instance.isActiveAndEnabled || data == null ||
+            BlocksGameplayInput || SettingsUI.BlocksBattleInput)
             return false;
+        if (battle == null)
+        {
+            if (instance.mapDeckOverview == null || !instance.mapDeckOverview.IsOpen) return false;
+        }
+        else if (battle.gameObject.scene != instance.gameObject.scene || !battle.CanInspectCards) return false;
         return instance.Open(data, battle);
     }
 

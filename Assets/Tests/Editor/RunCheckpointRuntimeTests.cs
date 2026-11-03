@@ -29,6 +29,7 @@ public partial class RunCheckpointRuntimeTests
         Assert.That(Ref<Button>(title,"continueButton").gameObject.activeSelf,Is.False);
         title.StartGame();yield return WaitMap();Object.FindFirstObjectByType<MapController>().SelectOption(0);yield return WaitBattle();
         BattleManager battle=Object.FindFirstObjectByType<BattleManager>();int hp=battle.GetPlayer().GetCurrentHP();
+        int savedGold = RunGoldInventory.Gold;
         string[] hand=battle.GetHand(CardDeckType.TypeDream).GetCardsSnapshot().Select(c=>c.GetCardData().name).ToArray();
         int count=battle.GetDeckController().GetDeck(CardDeckType.TypeDream).Count;
         battle.GetPlayer().TakeDamage(13);battle.GetDeckController().AddCardToDeck(battle.GetDeckController().GetDeck(CardDeckType.TypeDream)[0],CardDeckType.TypeDream);RunGoldInventory.Add(44);
@@ -38,7 +39,8 @@ public partial class RunCheckpointRuntimeTests
         Assert.That(Ref<Button>(title,"continueButton").gameObject.activeSelf,Is.True);
         Object.Destroy(RunSession.Instance.gameObject);yield return null;RunDeckInventory.ResetForNewGame();RunRelicInventory.ResetForNewGame();
         Ref<Button>(title,"continueButton").onClick.Invoke();yield return WaitBattle();battle=Object.FindFirstObjectByType<BattleManager>();
-        Assert.That(battle.GetPlayer().GetCurrentHP(),Is.EqualTo(hp));Assert.That(RunGoldInventory.Gold,Is.Zero);
+        Assert.That(battle.GetPlayer().GetCurrentHP(),Is.EqualTo(hp));
+        Assert.That(RunGoldInventory.Gold, Is.EqualTo(savedGold));
         Assert.That(battle.GetDeckController().GetDeck(CardDeckType.TypeDream).Count,Is.EqualTo(count));
         Assert.That(battle.GetHand(CardDeckType.TypeDream).GetCardsSnapshot().Select(c=>c.GetCardData().name),Is.EqualTo(hand));
         Assert.That(RunSession.Instance.Progress.Phase,Is.EqualTo(RunPhase.Battle));

@@ -88,6 +88,6 @@ bool acquired = relic.Acquire();
 
 새 게임을 시작할 때 `RunRelicInventory.ResetForNewGame()`을 호출합니다. 유물 보유 상태와 보너스를 비우고 현재 Soldier의 전투 보너스와 잔탄도 초기화합니다. 비활성 Soldier도 다시 활성화할 때 새 게임 초기화를 적용합니다. Play Mode에 새로 진입하면 상태가 자동 초기화됩니다.
 
-여기서 게임 내내 유지는 **이번 플레이 진행 중**을 의미합니다. 프로젝트에는 유물 획득 화면 및 게임 저장/불러오기 구조가 없으므로 획득 API를 제공하며, 앱 종료 후 유지되는 파일 저장은 포함하지 않습니다.
+런 체크포인트에는 보유 유물과 획득 당시 확정한 탄약 보너스를 기록합니다. 유효한 체크포인트에서 이어서 하면 이를 복원합니다. 유물 획득 화면은 미구현이며 위 API로 획득을 처리할 수 있습니다. [노드 체크포인트와 이어서 하기](RunCheckpoints.md) 참고.
 
 `Examples/IncreaseMaxAmmo.asset`은 전투 최대량 +1 카드, `Examples/AmmoCapacityRelic.asset`은 게임 최대량 +1 유물 예시입니다. 기본 덱과 BattleScene에는 자동 적용하지 않습니다.

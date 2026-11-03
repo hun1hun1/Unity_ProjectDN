@@ -18,14 +18,16 @@ public class MapChoiceCardUI : MonoBehaviour
     [SerializeField] private TMP_Text artworkPlaceholder;
     [SerializeField] private TMP_Text title;
     [SerializeField] private TMP_Text description;
+    [SerializeField] private UnityEngine.UI.Image combatIcon;
 
-    public void SetContent(string name, string details, Sprite sprite, bool supported)
+    public void SetContent(string name, string details, Sprite sprite, bool supported, bool showCombatIcon = false)
     {
         title.text = name + (supported ? "" : " · 준비 중");
         description.text = details;
         artwork.sprite = sprite;
         artwork.enabled = sprite != null;
         artworkPlaceholder.gameObject.SetActive(sprite == null);
+        if (combatIcon != null) combatIcon.enabled = showCombatIcon;
     }
 
     public static string DefaultTitle(MapContentType type)

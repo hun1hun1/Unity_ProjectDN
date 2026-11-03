@@ -32,15 +32,17 @@ public class TooltipFontTests
 
     [TestCase("Assets/Prefabs/UI/Card.prefab", CardFontPath)]
     [TestCase("Assets/Prefabs/UI/DeckCard.prefab", CardFontPath)]
-    [TestCase("Assets/Prefabs/UI/StatusTooltip.prefab", FontPath)]
-    [TestCase("Assets/Prefabs/UI/CardStatusTooltip.prefab", FontPath)]
-    [TestCase("Assets/Prefabs/UI/DeckPileTooltip.prefab", FontPath)]
-    public void DescriptionsUseTheirConfiguredDynamicFontAndAllowAdditionalAtlases(string prefabPath, string fontPath)
+    [TestCase("Assets/Prefabs/UI/StatusTooltip.prefab", CardFontPath)]
+    [TestCase("Assets/Prefabs/UI/CardStatusTooltip.prefab", CardFontPath)]
+    [TestCase("Assets/Prefabs/UI/DeckPileTooltip.prefab", CardFontPath)]
+    public void DescriptionsUseTheirConfiguredBakedFontAndAtlas(string prefabPath, string fontPath)
     {
         TMP_FontAsset font = SourceFont(fontPath);
-        Assert.That(font.sourceFontFile, Is.Not.Null);
-        Assert.That(font.atlasPopulationMode, Is.EqualTo(AtlasPopulationMode.Dynamic));
-        Assert.That(font.isMultiAtlasTexturesEnabled, Is.True);
+        Assert.That(font.atlasPopulationMode, Is.EqualTo(AtlasPopulationMode.Static));
+        Assert.That(font.atlasTextures, Is.Not.Empty);
+        Assert.That(font.atlasTextureCount, Is.InRange(1, font.atlasTextures.Length));
+        Assert.That(font.atlasTextures.Take(font.atlasTextureCount).All(texture => texture != null), Is.True);
+        Assert.That(font.characterTable, Is.Not.Empty);
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
         Assert.That(prefab, Is.Not.Null, prefabPath);
         TMP_Text description = prefab.GetComponentsInChildren<TMP_Text>(true)
@@ -52,7 +54,8 @@ public class TooltipFontTests
     [TestCase(CardFontPath)]
     public void AllCardAndStatusTooltipTextRendersWithoutReplacementGlyphs(string fontPath)
     {
-        TMP_FontAsset font = IsolatedFont(fontPath: fontPath);
+        // Static fonts render their baked glyphs without changing the saved atlas.
+        TMP_FontAsset font = SourceFont(fontPath);
         TMP_Text label = Label(font);
         var strings = new List<string>();
         foreach (string guid in AssetDatabase.FindAssets("t:CardData", new[] { "Assets/CardData" }))
@@ -76,7 +79,7 @@ public class TooltipFontTests
     [Test]
     public void MissingCharactersStillRenderAfterTheFirstAtlasFills()
     {
-        TMP_FontAsset font = IsolatedFont();
+        TMP_FontAsset font = IsolatedDynamicFont();
         string stress = HangulStressText();
         Assert.That(font.TryAddCharacters(stress, out string missing), Is.True, missing);
         Assert.That(font.atlasTextureCount, Is.GreaterThan(1), "The test must actually exceed one atlas.");
@@ -93,7 +96,7 @@ public class TooltipFontTests
     [Test]
     public void SingleAtlasControlCannotFitTheSameStressText()
     {
-        TMP_FontAsset font = IsolatedFont(false);
+        TMP_FontAsset font = IsolatedDynamicFont(false);
         Assert.That(font.TryAddCharacters(HangulStressText(), out string missing), Is.False,
             "The control must reproduce the capacity problem without changing the saved font.");
         Assert.That(missing, Is.Not.Empty);
@@ -107,13 +110,17 @@ public class TooltipFontTests
         return font;
     }
 
-    private TMP_FontAsset IsolatedFont(bool? multiAtlas = null, string fontPath = FontPath)
+    private TMP_FontAsset IsolatedDynamicFont(bool multiAtlas = true)
     {
-        TMP_FontAsset source = SourceFont(fontPath);
-        // Generate independent textures/tables so verification cannot alter the user's saved font.
-        TMP_FontAsset font = TMP_FontAsset.CreateFontAsset(source.sourceFontFile, (int)source.faceInfo.pointSize,
-            source.atlasPadding, source.atlasRenderMode, source.atlasWidth, source.atlasHeight,
-            source.atlasPopulationMode, multiAtlas ?? source.isMultiAtlasTexturesEnabled);
+        TMP_FontAsset source = SourceFont();
+        // Baked font assets omit the runtime source reference; resolve the original Font in the Editor.
+        string sourceGuid = new SerializedObject(source).FindProperty("m_SourceFontFileGUID").stringValue;
+        Font sourceFile = AssetDatabase.LoadAssetAtPath<Font>(AssetDatabase.GUIDToAssetPath(sourceGuid));
+        Assert.That(sourceFile, Is.Not.Null, "Dynamic stress tests need the original Font asset.");
+        // Keep this capacity test independent of the saved static atlas and its dimensions.
+        TMP_FontAsset font = TMP_FontAsset.CreateFontAsset(sourceFile, (int)source.faceInfo.pointSize,
+            source.atlasPadding, source.atlasRenderMode, 1024, 1024,
+            AtlasPopulationMode.Dynamic, multiAtlas);
         Assert.That(font, Is.Not.Null);
         fonts.Add(font);
         return font;

@@ -80,6 +80,7 @@ public partial class TitleMenuTests
     {yield return new EnterPlayMode();yield return VerifyNewRun();yield return new ExitPlayMode();}
     private static IEnumerator VerifyNewRun()
     {
+        RunSaves.UseStore(new RunSaveStore(System.IO.Path.GetFullPath(".utmp/run-save/new-run-"+Guid.NewGuid().ToString("N")+".json")));
         yield return LoadTitle();TitleMenuUI menu=Object.FindFirstObjectByType<TitleMenuUI>();
         menu.StartGame();menu.StartGame();
         yield return Until(()=>SceneManager.GetActiveScene().name=="MapScene"&&RunSession.Instance!=null&&!RunSession.Instance.IsTransitioning);
@@ -88,7 +89,10 @@ public partial class TitleMenuTests
         yield return LoadTitle();menu=Object.FindFirstObjectByType<TitleMenuUI>();
         uint version=(uint)typeof(RunDeckInventory).GetProperty("GameVersion",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic).GetValue(null);
         Ref<Button>(menu,"startButton").onClick.Invoke();menu.StartGame();
-        Assert.That(session.Progress,Is.Not.SameAs(old));Assert.That(RunGoldInventory.Gold,Is.Zero);
+        Assert.That(session.Progress,Is.Not.SameAs(old));
+        Assert.That(RunGoldInventory.Gold, Is.EqualTo(100));
+        Assert.That(RunSaves.TryLoad(out RunSaveData initialSave, out _), Is.True);
+        Assert.That(initialSave.inventory.gold, Is.EqualTo(100));
         Assert.That((uint)typeof(RunDeckInventory).GetProperty("GameVersion",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic).GetValue(null),Is.EqualTo(version+1));
         yield return Until(()=>SceneManager.GetActiveScene().name=="MapScene"&&!session.IsTransitioning);
         Assert.That(session.Progress.Definition,Is.SameAs(Object.FindFirstObjectByType<MapController>().Definition));

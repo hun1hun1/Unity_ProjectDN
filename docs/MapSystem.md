@@ -1,6 +1,6 @@
 # 맵과 런 진행
 
-정리 기준일: 2026-10-19. 현재 구현과 향후 콘텐츠 노드의 설계를 구분합니다. 강화 세부 설계는 [카드 강화 구현 설계](CardUpgrades.md)를 참고합니다.
+정리 기준일: 2026-11-03. 현재 구현과 향후 콘텐츠 노드의 설계를 구분합니다. 강화 세부 설계는 [카드 강화 구현 설계](CardUpgrades.md)를 참고합니다.
 
 ## 구현 상태와 역할
 
@@ -8,7 +8,7 @@
 
 | 구성 | 역할 | 소스 |
 |---|---|---|
-| `RunDefinition` | 씬 이름, 시작 HP, 층 목록, 허용 콘텐츠 | [RunDefinition.cs](../Assets/Scripts/Map/RunDefinition.cs) |
+| `RunDefinition` | 씬 이름, 시작 HP·골드, 층 목록, 허용 콘텐츠 | [RunDefinition.cs](../Assets/Scripts/Map/RunDefinition.cs) |
 | `FloorMapDefinition` | 노드 수, 생성 모드, 확률·가중치, 전투 풀과 콘텐츠 데이터 | [FloorMapDefinition.cs](../Assets/Scripts/Map/FloorMapDefinition.cs) |
 | `MapGenerator` | 설정과 시드로 한 층의 노드·선택지 생성 | [MapGenerator.cs](../Assets/Scripts/Map/MapGenerator.cs) |
 | `MapNode`, `MapChoice` | 노드 규칙·진행 상태와 선택지의 종류·데이터 | [MapNode.cs](../Assets/Scripts/Map/MapNode.cs) |
@@ -22,14 +22,14 @@
 
 ## 현재 실행 구성
 
-- 시작 씬: `Assets/Scenes/MapScene.unity`.
+- 빌드 시작 씬은 `TitleScene`입니다. 새 게임을 시작하면 `MapScene`으로 이동하며, `MapScene`을 직접 실행하면 새 런을 구성합니다.
 - 런 설정: `Assets/MapData/TemporaryRun.asset`.
 - 층 설정: `Assets/MapData/TemporaryFloor.asset`.
 - 전투 설정: `Assets/MapData/NormalEncounter.asset`.
 - 일반 전투만 5개 생성합니다. 각 전투의 승리 보상을 완료하거나 남은 보상을 포기하면 다음 노드로 이동합니다.
 - 다섯 번째 전투의 보상 처리까지 끝나면 맵에서 `런 완료`를 표시하고 선택지를 숨깁니다. 앱이나 Unity Play Mode를 강제로 종료하지 않습니다.
-- 패배 또는 전투 중단 시 진행을 멈추고 맵에 런 종료 상태를 표시합니다. 타이틀 씬과 게임오버 연출은 포함하지 않습니다.
-- 임시 전투는 기존 BattleScene의 적 행동·HP 50·골드 20을 데이터로 옮겨 동일한 구성을 사용합니다. 플레이어 시작 최대 HP는 기존과 같은 80입니다.
+- 패배 또는 전투 중단 시 진행을 멈추고 맵에 런 종료 상태를 표시합니다.
+- 현재 임시 런은 최대 HP 80, 보유 골드 100으로 시작합니다. 1층 전투의 골드 보상은 노드 시드로 정한 20~25에 현재 노드 번호(1부터 시작)를 더합니다. 첫 노드 보상은 21~26골드입니다. [전투 보상](BattleRewards.md) 참고.
 
 ## 규칙 조정
 
@@ -145,6 +145,12 @@ flowchart TD
 
 `ProjectDN/Update Map Choice Cards`는 기존 맵의 버튼과 클릭 연결을 보존하면서 이 카드 배치를 적용하는 Editor 도구입니다. `Setup Map System`으로 맵을 새로 구성할 때도 같은 배치를 적용합니다.
 
+## 맵 화면과 전투 상단 표시
+
+- `MapScene`은 1층 배경, HP·골드 배지, 전투 선택 카드 프레임을 사용합니다. 진행 목록은 연결선과 완료·현재·대기 노드 마커를 스크롤 영역에 표시합니다. 관련 스프라이트는 `Assets/Images/UI/MapScene/`에 있습니다.
+- `Canvas/MapUtilityButtons`의 왼쪽 덱 버튼은 현재 런의 꿈·악몽 보유 덱을 열고, 오른쪽 옵션 버튼은 공용 설정 창을 엽니다. 덱·옵션 창이 열려 있는 동안과 닫은 프레임에는 노드를 선택할 수 없습니다. [전체 덱 보기](DeckOverview.md), [옵션 창](SettingsWindow.md) 참고.
+- `BattleScene`의 `TopArea/RunInfo`는 군인 심볼, 현재 층·노드, 보유 골드를 표시합니다. 층·노드는 맵과 같은 `1층 · 2 / 5` 형식을 사용합니다. 골드를 수령하면 상단 보유액이 갱신되고, 단독 전투에서는 층·노드에 `—`가 표시됩니다. 표시 연결은 [`BattleRunInfoUI`](../Assets/Scripts/UI/BattleRunInfoUI.cs)가 담당합니다.
+
 ## 상태와 전투 연결
 
 - `MapGenerator`: 화면과 씬에 의존하지 않는 생성 규칙.
@@ -157,7 +163,7 @@ flowchart TD
 
 HP와 최대 HP는 다음 전투에 복원합니다. 꿈·악몽의 런 덱과 골드·유물은 유지하며, 패·드로우/버림/소멸 더미·상태이상·지속 카드·지연 효과·탄약과 코스트는 기존 전투별 초기화 규칙을 유지합니다. 데이터베이스와 CardData 원본을 런 상태로 수정하지 않습니다.
 
-활성 런 없이 BattleScene을 직접 실행하면 기존 단독 전투 동작을 유지합니다. 파일 저장·이어하기 기능은 포함하지 않습니다.
+활성 런 없이 BattleScene을 직접 실행하면 단독 전투를 시작합니다. 타이틀에서 이어서 하기를 선택하면 최근 체크포인트의 맵 진행 또는 전투 입장·보상 단계로 복귀합니다. [노드 체크포인트와 이어서 하기](RunCheckpoints.md) 참고.
 
 ## 타이틀·종료 시퀀스용 진입점
 
@@ -177,4 +183,6 @@ HP와 최대 HP는 다음 전투에 복원합니다. 꿈·악몽의 런 덱과 �
 
 선택 카드 UI 변경 후에는 영향 범위의 맵 관련 테스트 **39/39 통과**, 실패·건너뛰기 0개를 확인했습니다. 컴파일 오류와 실행 예외가 없으며, 카드 1·2·3장 중앙 정렬, 이미지·문구 교체, 이미지 제거 시 이전 이미지 정리, 12·21개 노드의 마스크/스크롤 및 현재 노드 표시, 기존 전투 5회 왕복을 검증했습니다. 별도 검토에서 발견한 긴 층의 진행 표시 겹침과 같은 프레임에 노드 수를 연속 변경하는 경우도 회귀 테스트로 검증했습니다. 전체 프로젝트 테스트는 UI 변경 후 다시 실행하지 않았습니다.
 
-UI 변경 검증 결과: `.utmp/map-cards/verified-tests.xml`, 로그: `.utmp/map-cards/verified-tests.log`. 현재 임시 맵 미리보기: `.utmp/map-cards/map-preview.png`. 선택지 1·2·3장과 긴 층의 화면도 `.utmp/map-system/map-card-*.png`에 렌더링해 확인했습니다.
+UI 변경 검증 결과: `.utmp/map-cards/verified-tests.xml`, 로그: `.utmp/map-cards/verified-tests.log`. 선택지 1·2·3장과 긴 층의 화면도 `.utmp/map-system/map-card-*.png`에 렌더링해 확인했습니다.
+
+2026-11-03에는 관련 테스트로 시작 골드, 맵의 덱·옵션 버튼과 노드 입력 차단, 보상 카드의 맵 덱 반영, 전투 상단의 다음 노드 표시와 골드 수령·저장 실패 시 갱신을 확인했습니다.

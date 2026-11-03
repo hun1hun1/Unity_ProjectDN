@@ -15,8 +15,10 @@ public partial class RunCheckpointRuntimeTests
         Object.FindFirstObjectByType<MapController>().SelectOption(0);yield return WaitBattle();
         Object.FindFirstObjectByType<BattleManager>().GetTarget().TakeDamage(100000);
         var rewards=Object.FindFirstObjectByType<BattleRewardSystem>();System.Func<bool> stale=rewards.ClaimGold;
+        int goldBefore = RunGoldInventory.Gold;
         Assert.That(RunSession.Instance.ReturnToTitle(),Is.True);yield return LoadDone("TitleScene");
-        Assert.That(stale(),Is.False);Assert.That(RunGoldInventory.Gold,Is.Zero);
+        Assert.That(stale(),Is.False);
+        Assert.That(RunGoldInventory.Gold, Is.EqualTo(goldBefore));
     }
     [UnityTest] public IEnumerator FailedRewardSaveDoesNotKeepAnUncommittedGoldClaim()
     {yield return new EnterPlayMode();yield return VerifyClaimFailure();yield return new ExitPlayMode();}
@@ -26,11 +28,15 @@ public partial class RunCheckpointRuntimeTests
         Object.FindFirstObjectByType<MapController>().SelectOption(0);yield return WaitBattle();
         Object.FindFirstObjectByType<BattleManager>().GetTarget().TakeDamage(100000);
         BattleRewardSystem rewards=Object.FindFirstObjectByType<BattleRewardSystem>();
+        int goldBefore = RunGoldInventory.Gold;
         using(var locked=new FileStream(RunSaves.Store.Path,FileMode.Open,FileAccess.Read,FileShare.None))
         {
-            rewards.ClaimGold();Assert.That(RunGoldInventory.Gold,Is.Zero);Assert.That(rewards.GoldAvailable,Is.True);
+            rewards.ClaimGold();
+            Assert.That(RunGoldInventory.Gold, Is.EqualTo(goldBefore));
+            Assert.That(rewards.GoldAvailable,Is.True);
         }
-        Assert.That(rewards.ClaimGold(),Is.True);Assert.That(RunGoldInventory.Gold,Is.EqualTo(rewards.GoldReward));
+        Assert.That(rewards.ClaimGold(),Is.True);
+        Assert.That(RunGoldInventory.Gold, Is.EqualTo(goldBefore + rewards.GoldReward));
     }
     [UnityTest] public IEnumerator FailedNodeEntrySaveLeavesTheMapReadyToRetry()
     {yield return new EnterPlayMode();yield return VerifyEntryFailure();yield return new ExitPlayMode();}

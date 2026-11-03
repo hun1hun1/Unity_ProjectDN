@@ -32,10 +32,14 @@ Inspector의 **Deck Pile Hover UI → Tooltip Text**에 설명을 입력하고 �
 저장되는 파일은 `Assets/Scenes/BattleScene.unity`이며, 필드는
 `Assets/Scripts/UI/DeckPileHoverUI.cs`의 `tooltipText`입니다.
 
+## 더미 목록 배경
+
+네 카드 더미가 공유하는 `Canvas/DeckListPanel`에 `Assets/Images/UI/CardPiles/card-pile-panel.png`를 적용했습니다. 9슬라이스로 테두리를 유지하고 스크롤 영역과 닫기 버튼은 프레임 안쪽에 배치합니다. Unity 6000.0.77f1에서 네 더미 열기, 목록 배치, 닫기 클릭을 포함한 관련 테스트 8개가 통과했습니다.
+
 ## 외형과 구성
 
 `Assets/Prefabs/UI/DeckPileTooltip.prefab`에서 배경, Content의 글꼴·크기·색상을 조절합니다.
-기존 카드 상태 툴팁과 같은 외형을 사용하며, 창 가장자리에서 화면 안으로 위치를 보정합니다.
+어두운 기본 배경을 사용하며, 창 가장자리에서 화면 안으로 위치를 보정합니다.
 툴팁은 포인터 입력을 가로채지 않습니다.
 
 버튼 이미지의 Sprite는 각 버튼 아래 `HoverVisual`의 Image에 있습니다.

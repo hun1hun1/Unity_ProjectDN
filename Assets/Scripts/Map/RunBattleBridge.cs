@@ -36,7 +36,15 @@ public class RunBattleBridge : MonoBehaviour
         }
         else
         {
-            rewards.ConfigureGoldReward(encounter.goldReward);
+            int gold = encounter.goldReward;
+
+            if (floor == 0) // 1Ãþ
+            {
+                int baseGold = new System.Random(progress.NodeSeed).Next(20, 26);
+                gold = baseGold + (node + 1);
+            }
+
+            rewards.ConfigureGoldReward(gold);
             // Deck Awakes have populated the persistent inventory, before starting hands are drawn.
             session.SaveCheckpoint();
         }

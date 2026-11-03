@@ -15,6 +15,7 @@ MonoBehaviour:
   mapScene: MapScene
   battleScene: BattleScene
   startingMaxHP: 80
+  startingGold: 100
   floors:
   - {fileID: 11400000, guid: 168e6d8b912677c44821392775ff92ec, type: 2}
   enabledContent: 00000000

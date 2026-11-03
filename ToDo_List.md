@@ -1,154 +1,56 @@
 # ProjectDN ToDo List
 
-작성 기준일: 2026-11-02
+작성 기준일: 2026-11-02 / 구현 상태 갱신: 2026-11-03
 
 ## 타이틀 버튼 디자인 적용
 
-현재 상태: 버튼 디자인 PNG 8종은 제작하였으나 Unity 임포트·씬 연결·상태 전환·실행 확인은 아직 진행하지 않았다. 아래 체크박스는 실제 작업과 확인이 끝난 뒤 완료 처리한다.
+현재 상태: 타이틀 배경·로고와 버튼 이미지의 Unity 임포트, 씬 연결, Sprite Swap 설정을 반영하였다. 아래 완료 표시는 에셋과 씬에 반영된 항목이며, 자동 테스트와 수동 화면 확인을 구분한다.
 
 - 대상 씬: `Assets/Scenes/TitleScene.unity`
+- 임포트 위치: `Assets/Images/UI/Title/`
 - 원본 이미지: [GeneratedArt/UI/TitleMenuButtons-v1](GeneratedArt/UI/TitleMenuButtons-v1)
 - 전체 이미지 묶음: [title-menu-buttons-v1.zip](GeneratedArt/UI/title-menu-buttons-v1.zip)
 - 디자인 구성: [README.md](GeneratedArt/UI/TitleMenuButtons-v1/README.md)
 
-기존 버튼 오브젝트와 `On Click()` 연결은 유지하고 외형을 변경한다. 문구는 이미지에 넣지 않고 기존 TextMeshPro 텍스트를 사용한다.
+### 1. 반영한 항목
 
-### 1. 이미지 임포트
+- [x] 배경과 로고 이미지를 임포트하고 TitleScene에 연결하였다.
+- [x] 버튼 PNG 8종을 임포트하고 사용할 Sprite를 연결하였다.
+- [x] ContinueButton·StartButton·TutorialButton·OptionsButton·QuitButton에 일반 남청색 버튼 이미지를 적용하였다.
+- [x] 기본·마우스 올림·누름·선택·비활성 Sprite Swap을 설정하였다.
+- [x] 종료 확인창의 ConfirmButton에는 붉은 이미지를, CancelButton에는 일반 남청색 이미지를 적용하였다.
+- [x] 기존 On Click 연결과 자식 TextMeshPro 문구를 유지하였다.
+- [x] 메인 메뉴의 Navigation을 None으로 설정하고 자동 선택을 해제하였다.
+- [x] 튜토리얼·옵션·종료 확인창을 닫으면 메뉴 선택을 해제하도록 반영하였다.
 
-- [ ] Unity Project 창에서 `Assets/Images/UI/Title` 폴더를 만든다.
-- [ ] 원본 폴더의 PNG 8개를 해당 폴더에 복사한다. `GeneratedArt`에만 있는 파일은 Unity 에셋으로 사용할 수 없다.
-- [ ] 복사한 PNG를 선택하고 아래 임포트 설정을 적용한 뒤 `Apply`를 누른다.
-
-| 항목 | 설정 |
-|---|---|
-| Texture Type | Sprite (2D and UI) |
-| Sprite Mode | Multiple |
-| Mesh Type | Full Rect |
-| Alpha Is Transparency | 체크 |
-| Generate Mip Maps | 해제 |
-| Filter Mode | Bilinear |
-| Max Size | 4096 |
-| Compression | None |
-
-### 2. 스프라이트 영역과 기준점 설정
-
-원본에는 넓은 투명 여백이 있으므로 PNG 전체를 버튼에 넣으면 그림이 작게 표시된다. Sprite Editor에서 실제 그림을 포함하는 사각형 하나를 지정한다.
-
-- [ ] 각 PNG의 `Sprite Editor`를 열고 그림을 둘러싸는 Sprite Rect 하나를 만든다.
-- [ ] 아래 값을 시작점으로 입력하고 그림과 테두리가 잘리지 않는지 확인한다.
-- [ ] 버튼 7개는 같은 사각형과 `Center` 기준점을 사용한다.
-- [ ] `Apply`를 누른 뒤 Project 창에서 PNG를 펼쳐 내부의 Sprite가 생성되었는지 확인한다.
-
-| 대상 | X | Y | W | H | Pivot |
-|---|---:|---:|---:|---:|---|
-| 남청색·붉은 버튼 7개 공통 | 48 | 224 | 2080 | 312 | Center |
-| title-selection-diamond.png | 400 | 210 | 460 | 860 | Center |
-
-좌표는 현재 원본 이미지의 표시 영역을 분석한 시작값이며 Unity에서 적용하여 검증한 값은 아니다. Sprite Editor의 Y는 이미지 아래쪽을 기준으로 한다. 각 파일에 따로 자동 Trim을 적용하면 영역과 중심이 달라질 수 있으므로 상태 전환에 사용하는 버튼들은 공통 영역을 유지한다.
-
-원본 버튼은 대부분 2172×724이며, `title-button-pressed.png`와 `title-confirm-red-selected.png`는 2171×724이다. 공통 Sprite Rect는 두 크기 모두에 들어간다. 생성 이미지이므로 영역을 맞추더라도 상태별 실루엣이 픽셀 단위로 완전히 같지는 않다.
-
-### 3. 메인 메뉴 버튼에 기본 이미지 적용
-
-적용 위치: `Canvas/TitleMenu/MainMenu`
-
-- [ ] ContinueButton — 이어서 하기
-- [ ] StartButton — 게임 시작
-- [ ] TutorialButton — 튜토리얼
-- [ ] OptionsButton — 옵션
-- [ ] QuitButton — 게임 종료
-
-위 다섯 버튼에 다음 설정을 적용한다.
-
-| 컴포넌트 | 항목 | 설정 |
-|---|---|---|
-| Image | Source Image | title-button-normal.png 내부의 Sprite |
-| Image | Color | 흰색, Alpha 1 |
-| Image | Image Type | Simple |
-| Image | Preserve Aspect | 체크 |
-| Image | Raycast Target | 체크 |
-| Outline | 컴포넌트 활성화 | 해제 |
-
-- [ ] 기존 Image의 어두운 녹색을 흰색으로 변경한다. 기존 색을 남기면 새 이미지도 녹색으로 어둡게 표시된다.
-- [ ] 기존 Outline을 꺼서 새 이미지의 은빛 테두리와 겹치지 않도록 한다.
-- [ ] 기존 RectTransform 크기 380×68을 시작점으로 확인한다.
-
-Preserve Aspect를 켜면 그림 비율을 유지하므로 버튼 그림의 높이는 클릭 영역보다 작게 표시될 수 있다. 비율을 유지한 표시와 클릭 영역을 구분하여 확인한다. `Set Native Size`를 누르면 고해상도 원본 크기가 반영되므로 화면 표시 크기는 RectTransform에서 지정한다.
-
-### 4. 상태별 이미지 연결
-
-- [ ] 각 버튼의 `Button > Transition`을 `Color Tint`에서 `Sprite Swap`으로 변경한다.
-- [ ] `Target Graphic`에 같은 버튼 오브젝트의 Image를 지정한다.
-- [ ] 아래 상태별 Sprite를 연결한다.
-
-| 항목 | 연결할 이미지 내부의 Sprite |
-|---|---|
-| Image > Source Image | title-button-normal.png |
-| Highlighted Sprite | title-button-selected.png |
-| Pressed Sprite | title-button-pressed.png |
-| Selected Sprite | title-button-selected.png |
-| Disabled Sprite | title-button-disabled.png |
-
-기본 상태는 Image의 Source Image를 사용한다. Highlighted는 마우스 올림, Selected는 키보드 등으로 선택한 상태에 대응한다.
-
-- [ ] 기존 `On Click()`의 대상과 메서드는 변경하지 않는다.
-- [ ] 기존 자식 `Text` 오브젝트의 문구를 유지한다.
-- [ ] 글꼴은 `Assets/Fonts/Hahmlet-SemiBold SDF.asset`, 글자색은 밝은 은백색을 기준으로 설정한다.
-- [ ] Text의 Raycast Target은 꺼서 버튼 입력을 가로채지 않도록 한다.
-
-| 버튼 | 유지할 On Click 메서드 |
+| 메뉴 | 유지한 On Click 메서드 |
 |---|---|
 | ContinueButton | TitleMenuUI.ContinueGame |
 | StartButton | TitleMenuUI.StartGame |
 | TutorialButton | TitleMenuUI.OpenTutorial |
 | OptionsButton | TitleMenuUI.OpenOptions |
 | QuitButton | TitleMenuUI.RequestQuit |
+| 종료 확인 ConfirmButton / CancelButton | TitleMenuUI.ConfirmQuit / TitleMenuUI.CancelQuit |
 
-### 5. 종료 확인창의 붉은 버튼 적용
+현재 메인 메뉴는 마우스 조작을 기준으로 한다. Selected Sprite 연결은 남아 있으나 메인 메뉴의 키보드 방향키 탐색과 자동 선택은 사용하지 않는다. 팝업 안의 선택 및 ESC 동작과 구분한다. 이어서 하기 표시 여부에 따라 다른 버튼 위치를 당기는 자동 레이아웃은 없다.
 
-적용 위치: `Canvas/TitleQuitPanel/Dialog/ConfirmButton`
+### 2. 아직 반영하지 않은 항목
 
-메인 메뉴의 QuitButton은 남청색 버튼을 사용하고, 종료 확인창의 확정 버튼에만 붉은 디자인을 적용한다.
+- [ ] 메뉴 버튼 아래 SelectionMark Image를 만들고 선택 마름모를 연결한다.
+- [ ] 마름모의 마우스 올림·선택·해제 상태를 제어한다.
 
-- [ ] ConfirmButton의 Image 색상을 흰색으로 바꾸고 기존 Outline을 끈다.
-- [ ] Image Type은 Simple, Preserve Aspect는 체크한다.
-- [ ] Button의 Transition을 Sprite Swap으로 바꾸고 Target Graphic을 연결한다.
-- [ ] 아래 상태별 Sprite를 연결한다.
+`title-selection-diamond.png`는 임포트되어 있지만 씬 연결과 표시 제어는 없다. Sprite Swap만으로 자식 마름모가 자동 표시되지는 않는다.
 
-| 항목 | 연결할 이미지 내부의 Sprite |
-|---|---|
-| Image > Source Image | title-confirm-red-normal.png |
-| Highlighted Sprite | title-confirm-red-selected.png |
-| Pressed Sprite | title-confirm-red-pressed.png |
-| Selected Sprite | title-confirm-red-selected.png |
-| Disabled Sprite | title-button-disabled.png |
+### 3. 수동 화면·빌드 확인
 
-- [ ] 같은 Dialog의 CancelButton에는 일반 남청색 버튼과 일반 상태별 Sprite를 적용한다.
-- [ ] ConfirmButton의 `TitleMenuUI.ConfirmQuit`, CancelButton의 `TitleMenuUI.CancelQuit` 연결을 유지한다.
-- [ ] 확인창 버튼의 기존 크기 220×60에서 그림과 글자가 맞는지 확인한다. 글자 크기는 약 22를 시작점으로 조정한다.
+아래 항목은 자동 테스트 통과와 별도로 실제 화면에서 확인해야 하며, 이번 문서 갱신으로 완료 처리하지 않았다.
 
-### 6. 선택 마름모 연결
+- [ ] 이어서 하기 표시·숨김 양쪽에서 로고와 메뉴의 배치·가독성을 확인한다.
+- [ ] 이미지 전환 시 버튼 테두리·위치·크기가 시각적으로 튀지 않는지 확인한다.
+- [ ] 1920×1080과 다른 화면 크기에서 버튼·글자의 잘림과 겹침을 확인한다.
+- [ ] 실제 플레이어에서 해상도·전체 화면 전환과 프로그램 종료를 확인한다.
 
-- [ ] 각 메뉴 버튼 아래에 `SelectionMark`라는 UI Image를 추가한다.
-- [ ] `title-selection-diamond.png` 내부의 Sprite를 지정한다.
-- [ ] Preserve Aspect를 켜고 Raycast Target은 끈다.
-- [ ] 약 14×28 크기로 버튼 왼쪽에 배치하고 기본 상태에서는 숨긴다.
-- [ ] 마우스 올림과 키보드 선택 상태에 따라 마름모를 표시하고, 선택이 해제되면 숨기도록 별도 표시 처리를 연결한다.
-
-Sprite Swap은 Target Graphic의 이미지만 바꾸므로 자식 마름모를 자동으로 켜고 끄지 않는다. 현재 TitleMenuUI에는 마름모 상태 제어가 없다. 별도 스크립트 또는 애니메이션 연결이 필요한 항목이며, 마우스 올림과 키보드 선택이 겹칠 때도 표시가 올바르게 유지되는지 확인한다.
-
-### 7. 배치와 실행 확인
-
-- [ ] 로고 아래에 메뉴 버튼을 같은 중심선으로 세로 정렬한다. 버튼 간격은 약 14~18을 시작점으로 조정한다.
-- [ ] 최대 5개 메뉴가 들어가는 공간을 확보하고 로고·배경의 주요 그림과 겹치지 않는지 확인한다.
-- [ ] 이어서 하기가 표시될 때와 숨겨질 때 모두 배치를 확인한다. 자동으로 빈자리를 당겨 정렬하려면 별도 레이아웃 구성이 필요하며 현재 메뉴는 고정 위치 방식이다.
-- [ ] Play Mode에서 기본·마우스 올림·키보드 선택·누름 상태를 확인한다.
-- [ ] 상태 변경 시 버튼의 위치나 크기가 튀는지 확인한다.
-- [ ] 사용 불가 상태에서 이미지가 변경되고 클릭되지 않는지 확인한다. 확인 후 테스트용 Interactable 변경은 원래대로 돌린다.
-- [ ] 튜토리얼·옵션·종료 확인창의 열기와 닫기, 취소, ESC 동작이 유지되는지 확인한다.
-- [ ] 유효한 저장이 있을 때 이어서 하기의 표시·선택과 실행을 확인한다.
-- [ ] 1920×1080과 다른 화면 크기에서도 버튼·글자·마름모가 잘리거나 겹치지 않는지 확인한다.
-- [ ] TitleScene을 저장한다. 실제 프로그램 종료 동작은 독립 실행 플레이어에서 별도로 확인한다.
+자동 테스트 범위는 메뉴의 Sprite 전환·선택 해제, 팝업·ESC, 새 게임·이어하기와 옵션 입력 차단이다. 현재 테스트 실행 결과는 [수정·검증 기록](docs/superpowers/plans/2026-11-03-pull-tests-and-docs.md)에 기록한다.
 
 ## 아이디어
 

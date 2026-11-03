@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using NUnit.Framework;
 using TMPro;
 using UnityEditor;
@@ -24,10 +25,23 @@ public class MapChoiceLayoutTests
         RunDeckInventory.ResetForNewGame(); RunRelicInventory.ResetForNewGame();
     }
 
+    private static Transform ActiveNode(Transform nodes, string name) =>
+        nodes.Cast<Transform>().Single(node => node.name == name && node.gameObject.activeSelf);
+
+    private static string MarkerPath(Transform node) =>
+        AssetDatabase.GetAssetPath(node.Find("Marker").GetComponent<Image>().sprite);
+
     [UnityTest] public IEnumerator ChoicesUseCenteredHorizontalCardsWithArtworkTitleAndDescription()
     {
         yield return new EnterPlayMode();
-        yield return SceneManager.LoadSceneAsync("MapScene"); yield return null; yield return null;
+        AsyncOperation load = SceneManager.LoadSceneAsync("MapScene");
+        float deadline = Time.realtimeSinceStartup + 15;
+        while (!load.isDone)
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline));
+            yield return null;
+        }
+        yield return null;
         Transform row = GameObject.Find("Canvas/Content/Choices").transform;
         var horizontal = row.GetComponent<HorizontalLayoutGroup>();
         Assert.That(horizontal, Is.Not.Null, "Node choices must be laid out horizontally.");
@@ -42,6 +56,26 @@ public class MapChoiceLayoutTests
         Assert.That(card.Find("Description").GetComponent<TMP_Text>().text, Is.Not.Empty);
         Assert.That(card.Find("ArtworkFrame/Artwork").GetComponent<Image>().raycastTarget, Is.False);
         Assert.That(card.GetComponent<Button>().interactable, Is.True);
+        Image background = GameObject.Find("Canvas/Background").GetComponent<Image>();
+        Assert.That(background.sprite, Is.Not.Null);
+        Assert.That(GameObject.Find("Canvas/Content").GetComponent<Image>().color.a, Is.LessThan(1f));
+        Image frame = card.Find("DecorativeFrame").GetComponent<Image>();
+        Assert.That(frame.sprite, Is.Not.Null);
+        Assert.That(frame.raycastTarget, Is.False);
+        Assert.That(card.GetComponent<Button>().targetGraphic, Is.SameAs(frame));
+        Assert.That(card.Find("Nameplate").GetComponent<Image>().sprite, Is.Not.Null);
+        Assert.That(card.Find("CombatIcon").GetComponent<Image>().sprite, Is.Not.Null);
+        Assert.That(GameObject.Find("Canvas/Content/ResourceBadges/Health/Icon").GetComponent<Image>().sprite, Is.Not.Null);
+        Assert.That(GameObject.Find("Canvas/Content/ResourceBadges/Gold/Icon").GetComponent<Image>().sprite, Is.Not.Null);
+        Transform nodes = GameObject.Find("Canvas/Content/ProgressScrollView/Viewport/Nodes").transform;
+        Assert.That(MarkerPath(ActiveNode(nodes, "Node1")), Does.EndWith("/node-current.png"));
+        Assert.That(MarkerPath(ActiveNode(nodes, "Node2")), Does.EndWith("/node-pending.png"));
+        Assert.That(ActiveNode(nodes, "Node1").Find("Connector").gameObject.activeSelf, Is.False);
+        Assert.That(ActiveNode(nodes, "Node2").Find("Connector").gameObject.activeSelf, Is.True);
+        Assert.That(GameObject.Find("Canvas/Content/Resources").GetComponent<TMP_Text>().text, Is.EqualTo("HP 80 / 80"));
+        Assert.That(GameObject.Find("Canvas/Content/ResourceBadges/Gold/Value").GetComponent<TMP_Text>().text, Is.EqualTo("골드 100"));
+        MapSceneTests.CaptureMap("map-ui-first-node.png");
+
         Vector3 center = rect.TransformPoint(rect.rect.center);
         RectTransform canvas = (RectTransform)row.GetComponentInParent<Canvas>().transform;
         Vector3 screenCenter = canvas.TransformPoint(canvas.rect.center);
@@ -67,7 +101,14 @@ public class MapChoiceLayoutTests
     [UnityTest] public IEnumerator OneTwoAndThreeChoicesStayCenteredAndDoNotOverlap()
     {
         yield return new EnterPlayMode();
-        yield return SceneManager.LoadSceneAsync("MapScene"); yield return null; yield return null;
+        AsyncOperation load = SceneManager.LoadSceneAsync("MapScene");
+        float deadline = Time.realtimeSinceStartup + 15;
+        while (!load.isDone)
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline));
+            yield return null;
+        }
+        yield return null;
         RunSession session = RunSession.Instance;
         previewRun = Object.Instantiate(session.Progress.Definition);
         previewCatalog=RunSaveTestCatalog.Register(previewRun);
@@ -108,6 +149,8 @@ public class MapChoiceLayoutTests
                 if (i == 0) firstCenter = center;
                 lastCenter = center;
                 Assert.That(card.Find("Description").GetComponent<TMP_Text>().text, Is.Not.Empty);
+                Assert.That(card.Find("CombatIcon").GetComponent<Image>().enabled,
+                    Is.EqualTo(session.Progress.CurrentNode.Choices[i].Type == MapContentType.NormalBattle));
             }
             Assert.That(active, Is.EqualTo(count));
             Assert.That((firstCenter + lastCenter) / 2, Is.EqualTo((rowCorners[0].x + rowCorners[2].x) / 2).Within(1));
@@ -118,7 +161,14 @@ public class MapChoiceLayoutTests
     [UnityTest] public IEnumerator LongerFloorsKeepProgressInsideItsViewportAndRevealTheCurrentNode()
     {
         yield return new EnterPlayMode();
-        yield return SceneManager.LoadSceneAsync("MapScene"); yield return null; yield return null;
+        AsyncOperation load = SceneManager.LoadSceneAsync("MapScene");
+        float deadline = Time.realtimeSinceStartup + 15;
+        while (!load.isDone)
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline));
+            yield return null;
+        }
+        yield return null;
         RunSession session = RunSession.Instance;
         previewRun = Object.Instantiate(session.Progress.Definition);
         previewCatalog=RunSaveTestCatalog.Register(previewRun);
@@ -148,6 +198,10 @@ public class MapChoiceLayoutTests
             var current = (RectTransform)nodes.Find("Node" + count);
             Vector3 center = current.TransformPoint(current.rect.center);
             Assert.That(center.y, Is.InRange(clip[0].y, clip[2].y));
+            Assert.That(MarkerPath(ActiveNode(nodes, "Node1")), Does.EndWith("/node-completed.png"));
+            Assert.That(MarkerPath(current), Does.EndWith("/node-current.png"));
+            Assert.That(ActiveNode(nodes, "Node10").Find("Connector").gameObject.activeSelf, Is.True);
+            Assert.That(ActiveNode(nodes, "Node11").Find("Connector").gameObject.activeSelf, Is.False);
             MapSceneTests.CaptureMap("map-card-progress-" + count + ".png");
         }
     }

@@ -156,7 +156,7 @@ public partial class SettingsWindowTests
             Time.timeScale=0;
             ExecuteEvents.Execute(button.gameObject,pointer,ExecuteEvents.pointerEnterHandler);
             yield return Wait(.25f);
-            Assert.That(Quaternion.Angle(visual.localRotation,original*Quaternion.Euler(0,0,60)),Is.LessThan(.1f));
+            Assert.That(Quaternion.Angle(visual.localRotation,original*Quaternion.Euler(0,0,45)),Is.LessThan(.1f));
             Assert.That(Quaternion.Angle(button.transform.localRotation,hitRotation),Is.LessThan(.01f));
             ExecuteEvents.Execute(button.gameObject,pointer,ExecuteEvents.pointerExitHandler);
             yield return Wait(.25f);

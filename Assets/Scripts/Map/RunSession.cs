@@ -41,17 +41,23 @@ public class RunSession : MonoBehaviour
         var available = new List<MapContentType> { MapContentType.NormalBattle, MapContentType.EliteBattle, MapContentType.BossBattle };
         if (supportedContent != null) available.AddRange(supportedContent);
         var next = new RunProgress(definition, seed, available);
+        int startingGold = Mathf.Max(0, definition.startingGold);
         if (Application.isPlaying && (!Application.CanStreamedLevelBeLoaded(definition.mapScene) || !Application.CanStreamedLevelBeLoaded(definition.battleScene)))
             throw new InvalidOperationException("Both run scenes must be enabled in Build Settings.");
         RunSaveData initial=null;
         if(Application.isPlaying)
         {
-            initial=new RunSaveData {progress=next.Capture(RunAssetCatalog.Load()),inventory=new RunInventoryData()};
+            initial = new RunSaveData
+            {
+                progress = next.Capture(RunAssetCatalog.Load()),
+                inventory = new RunInventoryData { gold = startingGold }
+            };
             RunSaveCodec.Validate(initial,RunAssetCatalog.Load());
             if(!RunSaves.Store.TryWrite(initial,out string error))throw new InvalidOperationException("Could not save the new run: "+error);
         }
         RunDeckInventory.ResetForNewGame();
         RunRelicInventory.ResetForNewGame();
+        RunGoldInventory.Add(startingGold);
         Progress = next; finishedRaised = false;checkpoint=initial;SaveError=null;
         Publish();
         if (Application.isPlaying && SceneManager.GetActiveScene().name != definition.mapScene) LoadScene(definition.mapScene);

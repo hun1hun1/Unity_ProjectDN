@@ -9,6 +9,7 @@ public class MapController : MonoBehaviour
     [SerializeField] private TMP_Text heading;
     [SerializeField] private TMP_Text progressText;
     [SerializeField] private TMP_Text resourcesText;
+    [SerializeField] private TMP_Text goldText;
     [SerializeField] private TMP_Text statusText;
     [SerializeField] private TMP_Text nodeTemplate;
     [SerializeField] private Transform nodeContainer;
@@ -61,7 +62,8 @@ public class MapController : MonoBehaviour
     }
     public void SelectOption(int index)
     {
-        if (!CanChoose(index)) return;
+        if (DeckOverviewUI.BlocksBattleInput || SettingsUI.BlocksBattleInput ||
+            CardInspectionUI.BlocksGameplayInput || !CanChoose(index)) return;
         RunProgress expected = session.Progress;
         int floor = expected.FloorIndex, node = expected.NodeIndex;
         MapChoice choice = expected.CurrentNode.Choices[index];
@@ -80,12 +82,16 @@ public class MapController : MonoBehaviour
         if (state == null) return;
         heading.text = state.Phase == RunPhase.Completed ? "런 완료" : state.IsFinished ? "런 종료" : "진행 경로";
         progressText.text = $"{state.FloorIndex + 1}층 · {Math.Min(state.NodeIndex + 1, state.Nodes.Count)} / {state.Nodes.Count}";
-        resourcesText.text = $"HP {state.CurrentHP} / {state.MaxHP}     골드 {RunGoldInventory.Gold}";
+        string health = $"HP {state.CurrentHP} / {state.MaxHP}";
+        string gold = $"골드 {RunGoldInventory.Gold}";
+        resourcesText.text = goldText == null ? $"{health}     {gold}" : health;
+        if (goldText != null) goldText.text = gold;
         statusText.text = state.Phase == RunPhase.Completed ? $"총 {state.CompletedNodes}개 노드를 완료했습니다." :
             !string.IsNullOrEmpty(session.SaveError) ? "진행 저장에 실패했습니다. 다시 시도해 주세요." :
             state.Phase == RunPhase.Defeated ? "전투에서 패배하여 런이 종료되었습니다." :
             state.Phase == RunPhase.Cancelled ? "전투가 중단되어 런이 종료되었습니다." :
             session.IsTransitioning ? "이동 중입니다." : state.Phase == RunPhase.Content ? "선택한 장소를 이용 중입니다." : "진행할 행동을 선택하세요.";
+        var grid = nodeContainer.GetComponent<UnityEngine.UI.GridLayoutGroup>();
         if (nodeLabels.Count != state.Nodes.Count)
         {
             foreach (TMP_Text label in nodeLabels)
@@ -95,7 +101,6 @@ public class MapController : MonoBehaviour
                 Destroy(label.gameObject);
             }
             nodeLabels.Clear();
-            var grid = nodeContainer.GetComponent<UnityEngine.UI.GridLayoutGroup>();
             if (grid != null) grid.constraintCount = Math.Min(10, state.Nodes.Count);
             for (int i = 0; i < state.Nodes.Count; i++)
             {
@@ -103,20 +108,22 @@ public class MapController : MonoBehaviour
                 label.name = "Node" + (i + 1); label.gameObject.SetActive(true); nodeLabels.Add(label);
             }
         }
+        int columns = grid != null ? Math.Max(1, grid.constraintCount) : Math.Max(1, nodeLabels.Count);
         for (int i = 0; i < nodeLabels.Count; i++)
         {
             bool done = state.Nodes[i].Status == MapNodeStatus.Completed;
             bool current = !state.IsFinished && i == state.NodeIndex;
             nodeLabels[i].text = $"{i + 1}\n{(done ? "완료" : current ? "현재" : "대기")}";
             nodeLabels[i].color = done ? new Color(.4f, .8f, .65f) : current ? new Color(1f, .83f, .45f) : new Color(.55f, .6f, .7f);
+            if (nodeLabels[i].TryGetComponent(out MapRouteNodeUI node))
+                node.SetState(done, current, i % columns != 0);
         }
         var progressScroll = nodeContainer.GetComponentInParent<UnityEngine.UI.ScrollRect>();
-        if (progressScroll != null)
+        if (progressScroll != null && grid != null)
         {
             UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)nodeContainer);
-            var grid = nodeContainer.GetComponent<UnityEngine.UI.GridLayoutGroup>();
             int current = Math.Min(state.NodeIndex, state.Nodes.Count - 1);
-            float offset = current / grid.constraintCount * (grid.cellSize.y + grid.spacing.y);
+            float offset = current / columns * (grid.cellSize.y + grid.spacing.y);
             float maximum = Mathf.Max(0, progressScroll.content.rect.height - progressScroll.viewport.rect.height);
             progressScroll.verticalNormalizedPosition = maximum > 0 ? 1 - Mathf.Clamp(offset, 0, maximum) / maximum : 1;
         }
@@ -133,7 +140,8 @@ public class MapController : MonoBehaviour
             string description = presentation != null && !string.IsNullOrWhiteSpace(presentation.description)
                 ? presentation.description : MapChoiceCardUI.DefaultDescription(choice.Type);
             MapChoiceCardUI card = choiceButtons[i].GetComponent<MapChoiceCardUI>();
-            if (card != null) card.SetContent(title, description, presentation?.artwork, supported);
+            if (card != null)
+                card.SetContent(title, description, presentation?.artwork, supported, choice.Type == MapContentType.NormalBattle);
             else choiceButtons[i].GetComponentInChildren<TMP_Text>().text = title + (supported ? "" : " · 준비 중");
             choiceButtons[i].interactable = CanChoose(i);
         }

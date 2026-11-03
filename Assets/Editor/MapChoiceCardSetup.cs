@@ -29,7 +29,8 @@ public static class MapChoiceCardSetup
         Remove<UnityEngine.UI.VerticalLayoutGroup>(content);
         Place(content.Find("Heading"), new Vector2(1200, 72), new Vector2(0, 365));
         Place(content.Find("Progress"), new Vector2(1200, 40), new Vector2(0, 308));
-        Place(content.Find("Resources"), new Vector2(1200, 40), new Vector2(0, 265));
+        if (config.FindProperty("goldText").objectReferenceValue == null)
+            Place(content.Find("Resources"), new Vector2(1200, 40), new Vector2(0, 265));
         Place(content.Find("Status"), new Vector2(1200, 48), new Vector2(0, -268));
         ConfigureProgress(content, (Transform)config.FindProperty("nodeContainer").objectReferenceValue);
         Place(row, new Vector2(1250, 440), Vector2.zero);
@@ -77,10 +78,14 @@ public static class MapChoiceCardSetup
             Transform root = button.transform;
             Place(root, new Vector2(360, 440), Vector2.zero);
             Preferred(root, 360, 440);
-            var background = root.GetComponent<UnityEngine.UI.Image>();
-            background.color = new Color(.12f, .18f, .27f, 1);
-            var outline = Ensure<UnityEngine.UI.Outline>(root);
-            outline.effectColor = new Color(.31f, .43f, .59f, .85f); outline.effectDistance = new Vector2(2, -2);
+            if (root.Find("DecorativeFrame") == null)
+            {
+                var background = root.GetComponent<UnityEngine.UI.Image>();
+                background.color = new Color(.12f, .18f, .27f, 1);
+                var outline = Ensure<UnityEngine.UI.Outline>(root);
+                outline.effectColor = new Color(.31f, .43f, .59f, .85f);
+                outline.effectDistance = new Vector2(2, -2);
+            }
             var vertical = Ensure<UnityEngine.UI.VerticalLayoutGroup>(root);
             vertical.padding = new RectOffset(20, 20, 20, 20); vertical.spacing = 12; vertical.childAlignment = TextAnchor.MiddleCenter;
             vertical.childControlWidth = vertical.childControlHeight = true;
@@ -105,7 +110,8 @@ public static class MapChoiceCardSetup
             MapChoiceCardUI card = Ensure<MapChoiceCardUI>(root);
             Bind(card, "artwork", image); Bind(card, "artworkPlaceholder", placeholder);
             Bind(card, "title", name); Bind(card, "description", description);
-            card.SetContent(previewTitle, previewDescription, previewArtwork, true);
+            root.Find("Nameplate")?.SetAsFirstSibling();
+            card.SetContent(previewTitle, previewDescription, previewArtwork, true, true);
         }
     }
     private static void ConfigureProgress(Transform parent, Transform nodes)
