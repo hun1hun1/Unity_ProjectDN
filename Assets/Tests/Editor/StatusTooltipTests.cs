@@ -62,7 +62,7 @@ public class StatusTooltipTests
             $"Icon depth: {playerIcon.GetComponent<UnityEngine.UI.Image>().depth}, pointer: {pointer.position}");
         ExecuteEvents.Execute(playerIcon.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
         Assert.That(tooltip.gameObject.activeSelf, Is.True);
-        Assert.That(text.text, Does.Contain("녹슬음").And.Contain("25%").And.Contain("남은 턴: 2"));
+        Assert.That(text.text, Does.StartWith("<color=#F3D58A>녹슬음</color>\n").And.Contain("25%").And.Contain("남은 턴: 2"));
         player.StatusEffects.Apply(Definition("Rust"), 1);
         Assert.That(text.text, Does.Contain("남은 턴: 3"));
         player.StatusEffects.ReduceRemainingTurns();

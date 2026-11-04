@@ -3275,8 +3275,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_AspectMode: 1
   m_AspectRatio: 6.383648
 --- !u!1 &376304317
@@ -5210,8 +5210,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_AspectMode: 1
   m_AspectRatio: 2.380357
 --- !u!1 &698573600
@@ -7118,6 +7118,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deckController: {fileID: 1262383015}
   battle: {fileID: 1259109057}
+  dreamStartingDeckDatabase: {fileID: 0}
+  nightmareStartingDeckDatabase: {fileID: 0}
   panel: {fileID: 991031451}
   dreamList: {fileID: 1054377744}
   nightmareList: {fileID: 1553902161}
@@ -9071,8 +9073,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_AspectMode: 1
   m_AspectRatio: 2.380357
 --- !u!1 &1237620223
@@ -9134,14 +9136,14 @@ MonoBehaviour:
       m_Calls: []
   m_text: "1\uCE35 \xB7 1 / 5"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: fb132ea528b6fde4284139eb64aa095e, type: 2}
-  m_sharedMaterial: {fileID: 4057110254011738289, guid: fb132ea528b6fde4284139eb64aa095e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 29d820bbcebfd2f408a8d1178dedbb96, type: 2}
+  m_sharedMaterial: {fileID: -3576440731640035227, guid: 29d820bbcebfd2f408a8d1178dedbb96, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4292471794
   m_fontColor: {r: 0.95, g: 0.92, b: 0.85, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -9154,7 +9156,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -12427,14 +12429,14 @@ MonoBehaviour:
       m_Calls: []
   m_text: 100
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: fb132ea528b6fde4284139eb64aa095e, type: 2}
-  m_sharedMaterial: {fileID: 4057110254011738289, guid: fb132ea528b6fde4284139eb64aa095e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 29d820bbcebfd2f408a8d1178dedbb96, type: 2}
+  m_sharedMaterial: {fileID: -3576440731640035227, guid: 29d820bbcebfd2f408a8d1178dedbb96, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4286962175
   m_fontColor: {r: 1, g: 0.85, b: 0.52, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -12447,7 +12449,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -14000,8 +14002,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0

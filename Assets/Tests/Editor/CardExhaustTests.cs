@@ -188,7 +188,7 @@ public class CardExhaustTests
             yield return Wait(1.2f);
             TMP_Text tooltip = VisibleTooltip(ui);
             Assert.That(tooltip, Is.Not.Null);
-            Assert.That(tooltip.text, Does.Contain("<b>소멸</b>").And.Contain("이번 전투 동안 제외").And.Contain("녹슬음"));
+            Assert.That(tooltip.text, Does.Contain("<color=#F3D58A>소멸</color>").And.Contain("이번 전투 동안 제외").And.Contain("녹슬음"));
             ExecuteEvents.Execute(ui.gameObject, pointer, ExecuteEvents.pointerExitHandler);
             Assert.That(VisibleTooltip(ui), Is.Null);
             var rightClick = new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Right };
@@ -196,7 +196,7 @@ public class CardExhaustTests
             CardInspectionUI inspection = Object.FindFirstObjectByType<CardInspectionUI>();
             Assert.That(inspection.IsOpen, Is.True);
             TMP_Text explanation = (TMP_Text)Get(inspection, "statusText");
-            Assert.That(explanation.text, Does.Contain("<b>소멸</b>").And.Contain("이번 전투 동안 제외").And.Contain("녹슬음"));
+            Assert.That(explanation.text, Does.Contain("<color=#F3D58A>소멸</color>").And.Contain("이번 전투 동안 제외").And.Contain("녹슬음"));
             Assert.That(battle.GetPlayer().StatusEffects.ActiveEffects, Is.Empty, "A card trait is not a character status.");
             Assert.That(battle.GetTarget().StatusEffects.ActiveEffects, Is.Empty);
             inspection.Close();
@@ -232,7 +232,7 @@ public class CardExhaustTests
         Assert.That(CardInspectionUI.TryOpen(card, battle), Is.True);
         CardInspectionUI inspection = Object.FindFirstObjectByType<CardInspectionUI>();
         Assert.That(((RectTransform)Get(inspection, "statusPanel")).gameObject.activeSelf, Is.True);
-        Assert.That(((TMP_Text)Get(inspection, "statusText")).text, Does.Contain("<b>소멸</b>"));
+        Assert.That(((TMP_Text)Get(inspection, "statusText")).text, Does.Contain("<color=#F3D58A>소멸</color>"));
         inspection.Close();
         yield return new ExitPlayMode();
     }

@@ -192,7 +192,7 @@ public class CardInspectionTests
         GameObject window = Window();
         Assert.That(window, Is.Not.Null);
         TMP_Text statusText = window.transform.Find("StatusDescriptions/StatusText").GetComponent<TMP_Text>();
-        Assert.That(statusText.text.Split(new[] { "<b>" }, System.StringSplitOptions.None).Length - 1, Is.EqualTo(2),
+        Assert.That(statusText.text.Split(new[] { "<color=#F3D58A>" }, System.StringSplitOptions.None).Length - 1, Is.EqualTo(2),
             "Conditional statuses must always be described, with duplicates removed.");
         DeckCardUI display = window.GetComponentInChildren<DeckCardUI>();
         Canvas canvas = window.GetComponentInParent<Canvas>().rootCanvas;

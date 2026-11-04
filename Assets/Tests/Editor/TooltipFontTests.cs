@@ -67,7 +67,7 @@ public class TooltipFontTests
         foreach (string guid in AssetDatabase.FindAssets("t:StatusEffectData", new[] { "Assets/StatusData" }))
         {
             StatusEffectData status = AssetDatabase.LoadAssetAtPath<StatusEffectData>(AssetDatabase.GUIDToAssetPath(guid));
-            strings.Add($"<b>{status.DisplayName}</b>\n{status.Description}\n남은 턴: 2");
+            strings.Add($"<color=#F3D58A>{status.DisplayName}</color>\n{status.Description}\n남은 턴: 2");
         }
         strings.Add("<color=#81C784>현재 발동 가능</color>\n<color=#808080>현재 총알 부족</color>");
         Assert.That(strings.Count, Is.GreaterThan(10));

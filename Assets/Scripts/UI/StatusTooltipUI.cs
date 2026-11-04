@@ -27,7 +27,7 @@ public class StatusTooltipUI : MonoBehaviour
     {
         if (owner != icon || effect == null || contentText == null) return;
         string duration = effect.IsPermanent ? "전투 종료까지 지속" : $"남은 턴: {effect.RemainingTurns}";
-        contentText.text = $"<b>{effect.Definition.DisplayName}</b>\n{effect.Definition.Description}\n{duration}";
+        contentText.text = $"{CardStatusDescriptionBuilder.FormatTitle(effect.Definition.DisplayName)}\n{effect.Definition.Description}\n{duration}";
         UpdatePosition();
     }
 
@@ -48,7 +48,7 @@ public class StatusTooltipUI : MonoBehaviour
         if (owner != icon || card == null || contentText == null) return;
         string duration = card.IsPermanent ? "전투 종료까지 지속" : $"남은 턴: {card.RemainingTurns}";
         string location = card.IsAbsorbed ? (card.UsesDelayedLifetime ? "흡수됨 · 마지막 지연 효과 발동 시 버림 더미로 복귀" : card.IsPermanent ? "흡수됨" : "흡수됨 · 만료 시 뽑을 카드 더미로 복귀") : "사용 시 소멸";
-        contentText.text = $"<b>{card.Card.cardName}</b>\n{CardDescriptionBuilder.Build(card.Card, null, false)}\n{duration}\n{location}";
+        contentText.text = $"{CardStatusDescriptionBuilder.FormatTitle(card.Card.cardName)}\n{CardDescriptionBuilder.Build(card.Card, null, false)}\n{duration}\n{location}";
         UpdatePosition();
     }
 
@@ -67,7 +67,7 @@ public class StatusTooltipUI : MonoBehaviour
         if (owner != icon || entry == null || contentText == null) return;
         string title = entry.Card != null ? entry.Card.cardName : "지연 효과";
         string description = DelayedEffectDescriptionBuilder.Build(entry.Description, entry.EffectSnapshot, entry.SpentAmmo);
-        contentText.text = $"<b>{title}</b>\n{entry.RemainingTurns}턴 뒤 발동\n{description}\n실제 수치는 발동 당시 상태를 따릅니다.";
+        contentText.text = $"{CardStatusDescriptionBuilder.FormatTitle(title)}\n{entry.RemainingTurns}턴 뒤 발동\n{description}\n실제 수치는 발동 당시 상태를 따릅니다.";
         UpdatePosition();
     }
 

@@ -148,7 +148,7 @@ public class EnemyPrefabTests
         battle.GetTarget().TakeDamage(100000);
         Assert.That(battle.Result, Is.EqualTo(BattleResult.Victory));
         BattleRewardSystem rewards = Object.FindFirstObjectByType<BattleRewardSystem>();
-        Assert.That(rewards.GoldReward, Is.EqualTo(29));
+        Assert.That(rewards.GoldReward, Is.EqualTo(23), "Seed 21 uses the first-floor node reward instead of the encounter reward.");
         rewards.SkipRemaining();
         yield return WaitForScene("MapScene");
         Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Completed));
@@ -235,8 +235,9 @@ public class EnemyPrefabTests
             canvas.renderMode = RenderMode.ScreenSpaceCamera; canvas.worldCamera = camera; canvas.planeDistance = 1;
             Canvas.ForceUpdateCanvases(); camera.Render(); RenderTexture.active = texture;
             pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); pixels.Apply();
-            string path = System.IO.Path.Combine(Application.dataPath, "../.utmp/enemy-prefabs/battle.png");
-            System.IO.File.WriteAllBytes(path, pixels.EncodeToPNG());
+            string folder = System.IO.Path.Combine(Application.dataPath, "../.utmp/enemy-prefabs");
+            System.IO.Directory.CreateDirectory(folder);
+            System.IO.File.WriteAllBytes(System.IO.Path.Combine(folder, "battle.png"), pixels.EncodeToPNG());
         }
         finally
         {
