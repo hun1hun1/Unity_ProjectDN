@@ -16,6 +16,7 @@ public class TitleMenuUI : MonoBehaviour
     [SerializeField] private RunDefinition runDefinition;
     [SerializeField] private MapContentType[] supportedContent = Array.Empty<MapContentType>();
     [SerializeField] private CanvasGroup mainMenu;
+    [SerializeField] private CharacterSelectionUI characterSelection;
     [SerializeField] private Button startButton, tutorialButton, optionsButton, quitButton;
     [SerializeField] private Button continueButton;
     [SerializeField] private SettingsUI settingsUI;
@@ -33,13 +34,15 @@ public class TitleMenuUI : MonoBehaviour
     private bool starting, quitRequested;
     private bool TutorialOpen => tutorialPanel!=null && tutorialPanel.activeSelf;
     private bool QuitOpen => quitPanel!=null && quitPanel.activeSelf;
-    private bool CanActivate => isActiveAndEnabled && !starting && !TutorialOpen && !QuitOpen &&
+    private bool CharacterSelectionOpen => characterSelection != null && characterSelection.gameObject.activeSelf;
+    private bool CanActivate => isActiveAndEnabled && !starting && !TutorialOpen && !QuitOpen && !CharacterSelectionOpen &&
         (settingsUI==null || !settingsUI.IsOpen) && !SettingsUI.BlocksBattleInput && Time.frameCount>blockedUntilFrame;
 
     private void Awake()
     {
         tutorialPanel.SetActive(false);
         quitPanel.SetActive(false);
+        if (characterSelection != null) characterSelection.gameObject.SetActive(false);
         if(statusText!=null)statusText.text=string.Empty;
     }
     private void Start()
@@ -65,16 +68,32 @@ public class TitleMenuUI : MonoBehaviour
     }
     public void StartGame()
     {
-        if(!CanActivate)return;
-        starting=true;RefreshMenu();
+        if (!CanActivate || characterSelection == null) return;
+        characterSelection.Open();
+        RefreshMenu();
+        ClearSelection();
+    }
+
+    public void CloseCharacterSelection()
+    {
+        if (!CharacterSelectionOpen || starting) return;
+        characterSelection.gameObject.SetActive(false);
+        FinishModal();
+    }
+
+    public void ConfirmAdventure()
+    {
+        if (!isActiveAndEnabled || starting || !CharacterSelectionOpen || !characterSelection.SoldierSelected) return;
+        starting = true;
+        characterSelection.SetBusy(true);
         try
         {
             RunSession.GetOrCreate().StartNewRun(runDefinition,Environment.TickCount,supportedContent);
         }
         catch(Exception error) when(error is ArgumentException || error is InvalidOperationException)
         {
-            starting=false;RefreshMenu();
-            if(statusText!=null)statusText.text="게임을 시작하지 못했습니다. 실행 설정을 확인해 주세요.";
+            starting = false;
+            characterSelection.ShowError("게임을 시작하지 못했습니다. 실행 설정을 확인해 주세요.");
             Debug.LogException(error,this);
             ClearSelection();
         }
@@ -135,12 +154,16 @@ public class TitleMenuUI : MonoBehaviour
     {
         // SettingsUI handles its own frontmost popup and closing frame.
         if(settingsUI!=null && settingsUI.IsOpen)return;
-        if(QuitOpen)CancelQuit();else if(TutorialOpen)CloseTutorial();
+        if(QuitOpen)CancelQuit();else if(TutorialOpen)CloseTutorial();else if(CharacterSelectionOpen)CloseCharacterSelection();
     }
     private void FinishModal()
     {blockedUntilFrame=Time.frameCount;RefreshMenu();ClearSelection();}
     private void RefreshMenu()
-    {if(mainMenu!=null){mainMenu.interactable=CanActivate;mainMenu.blocksRaycasts=CanActivate;}}
+    {
+        if (mainMenu == null) return;
+        mainMenu.alpha = CharacterSelectionOpen ? 0f : 1f;
+        mainMenu.interactable = mainMenu.blocksRaycasts = CanActivate;
+    }
     private static void Select(Button button)
     {if(EventSystem.current!=null && button!=null)EventSystem.current.SetSelectedGameObject(button.gameObject);}
     private static void ClearSelection()

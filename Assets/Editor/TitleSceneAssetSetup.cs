@@ -69,6 +69,7 @@ public static class TitleSceneAssetSetup
             returnLabel.text="타이틀로 돌아가기";PrefabUtility.RecordPrefabInstancePropertyModifications(returnLabel);
             CreateTutorial(menu,canvas);
             CreateQuit(menu,canvas);
+            ConnectCharacterSelection(menu, canvas);
             EditorSceneManager.SaveScene(scene,Path);
             var entries=EditorBuildSettings.scenes.Where(s=>s.path!=Path).ToList();entries.Insert(0,new EditorBuildSettingsScene(Path,true));EditorBuildSettings.scenes=entries.ToArray();
             AssetDatabase.SaveAssets();Debug.Log("TitleScene created with Start, Tutorial, shared Options and confirmed Quit.");
@@ -78,6 +79,22 @@ public static class TitleSceneAssetSetup
             if(original.IsValid()&&original.isLoaded)SceneManager.SetActiveScene(original);
             EditorSceneManager.CloseScene(scene,true);if(openedMap)EditorSceneManager.CloseScene(map,true);
         }
+    }
+
+    internal static void ConnectCharacterSelection(TitleMenuUI menu, Transform canvas)
+    {
+        const string panelPath = "Assets/Prefabs/UI/CharacterSelectionPanel.prefab";
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(panelPath);
+        var panel = (GameObject)PrefabUtility.InstantiatePrefab(prefab, canvas);
+        var selection = panel.GetComponent<CharacterSelectionUI>();
+        Bind(menu, "characterSelection", selection);
+        var state = new SerializedObject(selection);
+        var back = (Button)state.FindProperty("backButton").objectReferenceValue;
+        var adventure = (Button)state.FindProperty("adventureButton").objectReferenceValue;
+        UnityEventTools.AddPersistentListener(back.onClick, menu.CloseCharacterSelection);
+        UnityEventTools.AddPersistentListener(adventure.onClick, menu.ConfirmAdventure);
+        PrefabUtility.RecordPrefabInstancePropertyModifications(back);
+        PrefabUtility.RecordPrefabInstancePropertyModifications(adventure);
     }
 
     private static void CreateTutorial(TitleMenuUI menu,Transform canvas)

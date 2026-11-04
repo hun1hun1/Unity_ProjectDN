@@ -167,6 +167,8 @@ HP와 최대 HP는 다음 전투에 복원합니다. 꿈·악몽의 런 덱과 �
 
 ## 타이틀·종료 시퀀스용 진입점
 
+타이틀에서 새 런을 시작하려면 [캐릭터 선택 창](TitleMenu.md#캐릭터-선택)에서 군인을 선택하고 `모험 시작`을 확정합니다. 현재 `TemporaryRun`으로 맵에 진입하며 시작 골드는 100입니다.
+
 - `RunSession.GetOrCreate().StartNewRun(definition, seed, supportedContent)`: 설정을 검증한 뒤 모든 런 인벤토리와 HP·진행을 새로 시작합니다. 맵 씬에서는 등록된 처리기 종류를 전달합니다. 처리기를 전달하지 않으면 전투만 지원하는 것으로 취급합니다.
 - `RunSession.RunFinished`: `Completed`, `Defeated`, `Cancelled` 중 결과를 런당 한 번 알립니다. 현재는 종료 상태를 맵에 표시합니다.
 - `RunSession.Progress`: 진행·HP·결과 조회.

@@ -21,13 +21,21 @@ public partial class RunCheckpointRuntimeTests
     }
     private static void Isolate()
     {RunSaves.UseStore(new RunSaveStore(Path.GetFullPath(".utmp/run-save/runtime-"+Guid.NewGuid().ToString("N")+".json")));}
+    private static void StartNewAdventure(TitleMenuUI title)
+    {
+        title.StartGame();
+        var selection = Ref<CharacterSelectionUI>(title, "characterSelection");
+        Ref<Toggle>(selection, "soldierToggle").OnSubmit(null);
+        title.ConfirmAdventure();
+    }
+
     [UnityTest] public IEnumerator ReturnFromBattleRestartsItsEntryStateAcrossSessionDestruction()
     {yield return new EnterPlayMode();yield return VerifyBattleReturn();yield return new ExitPlayMode();}
     private static IEnumerator VerifyBattleReturn()
     {
         Isolate();yield return Load("TitleScene");TitleMenuUI title=Object.FindFirstObjectByType<TitleMenuUI>();
         Assert.That(Ref<Button>(title,"continueButton").gameObject.activeSelf,Is.False);
-        title.StartGame();yield return WaitMap();Object.FindFirstObjectByType<MapController>().SelectOption(0);yield return WaitBattle();
+        StartNewAdventure(title);yield return WaitMap();Object.FindFirstObjectByType<MapController>().SelectOption(0);yield return WaitBattle();
         BattleManager battle=Object.FindFirstObjectByType<BattleManager>();int hp=battle.GetPlayer().GetCurrentHP();
         int savedGold = RunGoldInventory.Gold;
         string[] hand=battle.GetHand(CardDeckType.TypeDream).GetCardsSnapshot().Select(c=>c.GetCardData().name).ToArray();
@@ -49,7 +57,7 @@ public partial class RunCheckpointRuntimeTests
     {yield return new EnterPlayMode();yield return VerifyRewards();yield return new ExitPlayMode();}
     private static IEnumerator VerifyRewards()
     {
-        Isolate();yield return Load("TitleScene");Object.FindFirstObjectByType<TitleMenuUI>().StartGame();yield return WaitMap();
+        Isolate();yield return Load("TitleScene");StartNewAdventure(Object.FindFirstObjectByType<TitleMenuUI>());yield return WaitMap();
         Object.FindFirstObjectByType<MapController>().SelectOption(0);yield return WaitBattle();
         BattleManager battle=Object.FindFirstObjectByType<BattleManager>();battle.GetPlayer().TakeDamage(7);battle.GetTarget().TakeDamage(100000);
         BattleRewardSystem rewards=Object.FindFirstObjectByType<BattleRewardSystem>();Assert.That(rewards.ClaimGold(),Is.True);
@@ -76,7 +84,7 @@ public partial class RunCheckpointRuntimeTests
     {yield return new EnterPlayMode();yield return VerifyWriteFailure();yield return new ExitPlayMode();}
     private static IEnumerator VerifyWriteFailure()
     {
-        Isolate();yield return Load("TitleScene");Object.FindFirstObjectByType<TitleMenuUI>().StartGame();yield return WaitMap();
+        Isolate();yield return Load("TitleScene");StartNewAdventure(Object.FindFirstObjectByType<TitleMenuUI>());yield return WaitMap();
         Object.FindFirstObjectByType<MapController>().SelectOption(0);yield return WaitBattle();
         var settings=Object.FindFirstObjectByType<SettingsUI>();settings.Toggle();settings.RequestQuit();
         string path=RunSaves.Store.Path;string before=File.ReadAllText(path);

@@ -82,13 +82,61 @@ public partial class TitleMenuTests
     {
         RunSaves.UseStore(new RunSaveStore(System.IO.Path.GetFullPath(".utmp/run-save/new-run-"+Guid.NewGuid().ToString("N")+".json")));
         yield return LoadTitle();TitleMenuUI menu=Object.FindFirstObjectByType<TitleMenuUI>();
-        menu.StartGame();menu.StartGame();
+        Ref<Button>(menu,"startButton").onClick.Invoke();
+        Assert.That(RunSession.Instance, Is.Null, "Opening character selection must not create a run.");
+        Assert.That(RunSaves.HasContinue, Is.False);
+        var initialSelection = Ref<CharacterSelectionUI>(menu, "characterSelection");
+        var initialAdventure = Ref<Button>(initialSelection, "adventureButton");
+        Assert.That(initialSelection.SoldierSelected, Is.False);
+        Assert.That(initialSelection.transform.Find("CharacterPreview").gameObject.activeInHierarchy, Is.False);
+        Assert.That(initialSelection.transform.Find("CharacterInfo").gameObject.activeInHierarchy, Is.False);
+        Assert.That(initialAdventure.IsInteractable(), Is.False);
+        initialAdventure.onClick.Invoke();
+        Assert.That(RunSession.Instance, Is.Null, "An unselected character must not start a run.");
+        ConfirmSelection(menu);
         yield return Until(()=>SceneManager.GetActiveScene().name=="MapScene"&&RunSession.Instance!=null&&!RunSession.Instance.IsTransitioning);
         RunSession session=RunSession.Instance;RunProgress old=session.Progress;
         Assert.That(old,Is.Not.Null);RunGoldInventory.Add(111);
         yield return LoadTitle();menu=Object.FindFirstObjectByType<TitleMenuUI>();
         uint version=(uint)typeof(RunDeckInventory).GetProperty("GameVersion",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic).GetValue(null);
-        Ref<Button>(menu,"startButton").onClick.Invoke();menu.StartGame();
+        string before = System.IO.File.ReadAllText(RunSaves.Store.Path);
+        Ref<Button>(menu,"startButton").onClick.Invoke();
+        var selection = Ref<CharacterSelectionUI>(menu, "characterSelection");
+        Assert.That(selection.gameObject.activeSelf, Is.True);
+        Assert.That(Ref<CanvasGroup>(menu, "mainMenu").alpha, Is.Zero);
+        Assert.That(Ref<Toggle>(selection, "soldierToggle").isOn, Is.False);
+        Assert.That(Ref<Button>(selection, "adventureButton").IsInteractable(), Is.False);
+        Assert.That(selection.transform.Find("CharacterSlots/Locked2").GetComponent<Button>().IsInteractable(), Is.False);
+        Assert.That(selection.transform.Find("CharacterSlots/Locked3").GetComponent<Button>().IsInteractable(), Is.False);
+        menu.OpenOptions();
+        Assert.That(Ref<SettingsUI>(menu, "settingsUI").IsOpen, Is.False);
+        Ref<Toggle>(selection, "soldierToggle").OnSubmit(null);
+        Assert.That(Ref<Button>(selection, "adventureButton").IsInteractable(), Is.True);
+        var preview = selection.transform.Find("CharacterPreview").gameObject;
+        var info = selection.transform.Find("CharacterInfo");
+        Assert.That(preview.activeInHierarchy, Is.True);
+        Assert.That(info.gameObject.activeInHierarchy, Is.True);
+        var deckDetails = info.Find("DeckDetails").gameObject;
+        selection.ToggleDeckDetails();
+        Assert.That(deckDetails.activeInHierarchy, Is.True);
+
+        var soldier = Ref<Toggle>(selection, "soldierToggle");
+        soldier.OnSubmit(null);
+        Assert.That(preview.activeInHierarchy, Is.False);
+        Assert.That(info.gameObject.activeInHierarchy, Is.False);
+        soldier.OnSubmit(null);
+        Assert.That(preview.activeInHierarchy, Is.True);
+        Assert.That(info.gameObject.activeInHierarchy, Is.True);
+        Assert.That(deckDetails.activeInHierarchy, Is.False);
+        menu.HandleEscape();
+        Assert.That(selection.gameObject.activeSelf, Is.False);
+        Assert.That(session.Progress, Is.SameAs(old));
+        Assert.That(System.IO.File.ReadAllText(RunSaves.Store.Path), Is.EqualTo(before));
+        yield return null;
+        Ref<Button>(menu,"startButton").onClick.Invoke();
+        Assert.That(Ref<Toggle>(selection, "soldierToggle").isOn, Is.False);
+        ConfirmSelection(menu);
+        ConfirmSelection(menu);
         Assert.That(session.Progress,Is.Not.SameAs(old));
         Assert.That(RunGoldInventory.Gold, Is.EqualTo(100));
         Assert.That(RunSaves.TryLoad(out RunSaveData initialSave, out _), Is.True);
@@ -124,6 +172,7 @@ public partial class TitleMenuTests
             Assert.That(button.image.overrideSprite,Is.EqualTo(button.image.sprite),field+" pointer exit");
         }
         menu.StartGame();
+        ConfirmSelection(menu);
         yield return Until(()=>SceneManager.GetActiveScene().name=="MapScene"&&!RunSession.Instance.IsTransitioning);
         yield return LoadTitle();
         menu=Object.FindFirstObjectByType<TitleMenuUI>();
@@ -149,6 +198,14 @@ public partial class TitleMenuTests
         Assert.That(options.IsOpen,Is.True);
         options.Close();
         Assert.That(EventSystem.current.currentSelectedGameObject,Is.Null,"Title settings must not restore an old menu selection.");
+    }
+
+    private static void ConfirmSelection(TitleMenuUI menu)
+    {
+        var selection = Ref<CharacterSelectionUI>(menu, "characterSelection");
+        var soldier = Ref<Toggle>(selection, "soldierToggle");
+        if (!soldier.isOn) soldier.OnSubmit(null);
+        Ref<Button>(selection, "adventureButton").onClick.Invoke();
     }
 
     private static T Ref<T>(Object owner,string name) where T:Object=>(T)new SerializedObject(owner).FindProperty(name).objectReferenceValue;
