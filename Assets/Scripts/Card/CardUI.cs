@@ -101,6 +101,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
     }
 
     public bool IsUsed => isUsed;
+    internal TMP_Text DescriptionText => descriptionText;
 
     public void PresentWhileResolving(RectTransform usingPoint)
     {

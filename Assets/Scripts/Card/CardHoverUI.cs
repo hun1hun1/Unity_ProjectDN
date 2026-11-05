@@ -81,14 +81,16 @@ public class CardHoverUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         progress = available && hoverDuration > 0f
             ? Mathf.MoveTowards(progress, target, Time.unscaledDeltaTime / hoverDuration)
             : target;
-        float scale = Mathf.Lerp(1f, hoverScale, Mathf.SmoothStep(0f, 1f, progress));
+        Canvas canvas = GetComponentInParent<Canvas>()?.rootCanvas;
+        float targetScale = CardHoverSizing.GetTargetScale(hoverVisual, card.DescriptionText, canvas,
+            baseScale, hoverScale, 16f);
+        float scale = Mathf.Lerp(1f, targetScale, Mathf.SmoothStep(0f, 1f, progress));
         hoverVisual.localScale = baseScale * scale;
         hoverVisual.anchoredPosition = basePosition;
         if (hoverCanvas != null) hoverCanvas.overrideSorting = progress > 0f;
         if (progress <= 0f) return;
 
         // Presentation stays in the hand; sorting changes never reorder layout children.
-        Canvas canvas = GetComponentInParent<Canvas>()?.rootCanvas;
         if (canvas == null) return;
         if (hoverCanvas != null)
         {

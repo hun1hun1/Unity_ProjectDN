@@ -64,7 +64,7 @@ public class CardHoverTests
             AssertRaycastCard(pointer, card);
             ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
             yield return WaitForHoverState(card, wrapper, true);
-            Assert.That(wrapper.localScale.x, Is.EqualTo(ConfiguredHoverScale(card)).Within(0.001f));
+            Assert.That(wrapper.localScale.x, Is.GreaterThanOrEqualTo(ConfiguredHoverScale(card) - 0.001f));
             Assert.That(visual.localScale, Is.EqualTo(Vector3.one));
             Assert.That(root.rect.size, Is.EqualTo(size));
             Assert.That(root.position, Is.EqualTo(position));
@@ -78,7 +78,7 @@ public class CardHoverTests
             yield return WaitForPlayTime(0.04f);
             ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
             yield return WaitForHoverState(card, wrapper, true);
-            Assert.That(wrapper.localScale.x, Is.EqualTo(ConfiguredHoverScale(card)).Within(0.001f));
+            Assert.That(wrapper.localScale.x, Is.GreaterThanOrEqualTo(ConfiguredHoverScale(card) - 0.001f));
             ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerExitHandler);
             yield return WaitForHoverState(card, wrapper, false);
             Assert.That(wrapper.localScale, Is.EqualTo(Vector3.one));
@@ -129,7 +129,7 @@ public class CardHoverTests
         var pointer = new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left };
         ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
         yield return WaitForHoverState(card, wrapper, true);
-        Assert.That(wrapper.localScale.x, Is.EqualTo(ConfiguredHoverScale(card)).Within(0.001f));
+        Assert.That(wrapper.localScale.x, Is.GreaterThanOrEqualTo(ConfiguredHoverScale(card) - 0.001f));
         card.OnPointerDown(pointer);
         Assert.That(wrapper.localScale, Is.EqualTo(Vector3.one));
         Assert.That(wrapper.anchoredPosition, Is.EqualTo(Vector2.zero));
@@ -213,9 +213,17 @@ public class CardHoverTests
 
     private static IEnumerator WaitForHoverState(CardUI card, RectTransform wrapper, bool expanded)
     {
-        Vector3 expected = expanded ? Vector3.one * ConfiguredHoverScale(card) : Vector3.one;
+        float previousScale = -1f;
         Canvas hoverCanvas = wrapper.GetComponent<Canvas>();
-        yield return WaitUntil(() => wrapper.localScale.Equals(expected) && hoverCanvas.overrideSorting == expanded,
+        yield return WaitUntil(() =>
+        {
+            float currentScale = wrapper.localScale.x;
+            bool settled = Mathf.Approximately(currentScale, previousScale);
+            previousScale = currentScale;
+            bool reached = expanded ? currentScale >= ConfiguredHoverScale(card) - 0.001f
+                : wrapper.localScale == Vector3.one;
+            return settled && reached && hoverCanvas.overrideSorting == expanded;
+        },
             $"Hover must finish {(expanded ? "expanding" : "resetting")} both its scale and sorting state.");
     }
     private static IEnumerator WaitForScale(RectTransform visual, Vector3 expected)

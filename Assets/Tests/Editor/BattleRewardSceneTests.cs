@@ -153,7 +153,7 @@ public class BattleRewardSceneTests
             var pointer = new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current);
             UnityEngine.EventSystems.ExecuteEvents.Execute(root.gameObject, pointer, UnityEngine.EventSystems.ExecuteEvents.pointerEnterHandler);
             yield return new WaitForSecondsRealtime(.25f);
-            Assert.That(root.Find("HoverVisual").localScale.x, Is.EqualTo(1.3f).Within(.001f));
+            Assert.That(root.Find("HoverVisual").localScale.x, Is.GreaterThanOrEqualTo(1.3f - .001f));
             Canvas.ForceUpdateCanvases();
             var cardCorners = new Vector3[4]; var buttonCorners = new Vector3[4];
             ((RectTransform)root.Find("HoverVisual")).GetWorldCorners(cardCorners);

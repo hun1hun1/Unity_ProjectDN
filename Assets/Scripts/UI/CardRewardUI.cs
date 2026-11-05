@@ -20,6 +20,7 @@ public class CardRewardUI : MonoBehaviour
     [SerializeField] private Button confirmButton;
     [SerializeField] private GameObject[] selectionBorders;
     private int selectedCardIndex = -1;
+    internal RectTransform HoverLowerBoundary => confirmButton != null ? (RectTransform)confirmButton.transform : null;
 
     private void OnEnable() { if (rewards != null) rewards.Changed += Refresh; Refresh(); }
     private void OnDisable() { if (rewards != null) rewards.Changed -= Refresh; selectedCardIndex = -1; RefreshSelection(); }

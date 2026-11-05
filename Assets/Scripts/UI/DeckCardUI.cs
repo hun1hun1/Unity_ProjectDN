@@ -31,6 +31,7 @@ public class DeckCardUI : MonoBehaviour, IPointerClickHandler
     private CardData cardData;
     private BattleManager battleContext;
     private CardDescriptionBinding descriptionBinding;
+    internal TMP_Text DescriptionText => descriptionText;
 
     public void OnPointerClick(PointerEventData eventData)
     {

@@ -177,7 +177,7 @@ public class DeckOverviewTests
             var pointer = new PointerEventData(EventSystem.current);
             ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
             yield return Wait(.25f);
-            Assert.That(card.transform.Find("HoverVisual").localScale.x, Is.EqualTo(1.3f).Within(.001f));
+            Assert.That(card.transform.Find("HoverVisual").localScale.x, Is.GreaterThanOrEqualTo(1.3f - .001f));
             Assert.That(card.transform.localScale, Is.EqualTo(rootScale));
             ExecuteEvents.Execute(card.gameObject, pointer, ExecuteEvents.pointerExitHandler);
         }

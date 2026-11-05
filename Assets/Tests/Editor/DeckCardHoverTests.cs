@@ -40,7 +40,7 @@ public class DeckCardHoverTests
             AssertHit(pointer, root.gameObject);
             ExecuteEvents.Execute(root.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
             yield return Wait(0.25f);
-            Assert.That(visual.localScale.x, Is.EqualTo(1.3f).Within(0.001f));
+            Assert.That(visual.localScale.x, Is.GreaterThanOrEqualTo(1.3f - 0.001f));
             Assert.That(root.localScale, Is.EqualTo(Vector3.one));
             Assert.That(root.rect.size, Is.EqualTo(size));
             for (int i = 0; i < cards.Length; i++)
@@ -88,7 +88,7 @@ public class DeckCardHoverTests
         Time.timeScale = 0f;
         ExecuteEvents.Execute(root.gameObject, Pointer(root), ExecuteEvents.pointerEnterHandler);
         yield return Wait(0.25f);
-        Assert.That(visual.localScale.x, Is.EqualTo(1.6f).Within(0.001f));
+        Assert.That(visual.localScale.x, Is.GreaterThanOrEqualTo(1.6f - 0.001f));
         Canvas canvas = root.GetComponentInParent<Canvas>().rootCanvas;
         canvas.renderMode = RenderMode.WorldSpace;
         canvas.transform.localScale = Vector3.one;
@@ -117,7 +117,7 @@ public class DeckCardHoverTests
         root.sizeDelta = new Vector2(100f, 130f);
         card.ResizeForList(0.5f);
         yield return null;
-        Assert.That(visual.localScale.x, Is.EqualTo(1.6f).Within(0.001f));
+        Assert.That(visual.localScale.x, Is.GreaterThanOrEqualTo(1.6f - 0.001f));
         Assert.That(visual.rect.size, Is.EqualTo(new Vector2(100f, 130f)), "The visual must follow the resized grid cell.");
         card.gameObject.SetActive(false);
         Assert.That(visual.localScale, Is.EqualTo(Vector3.one));
