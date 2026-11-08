@@ -22,7 +22,7 @@
 
 ## 데이터베이스와 확률
 
-`CardRewardSystem`의 `Pools`에는 꿈과 악몽별 7개 데이터베이스가 연결되어 있습니다.
+`CardRewardSystem`과 상점이 공유하는 `Assets/CardDatabase/Soldier/BattleRewardPools.asset`에 꿈과 악몽별 7개 데이터베이스가 연결되어 있습니다. 아래 가중치는 전투 보상에 적용됩니다. [상점의 슬롯별 확률](MapSystem.md#상점-카드-진열)은 같은 후보 데이터베이스에서 분류를 별도로 균등 추첨하므로 전투 보상 가중치와 구분합니다.
 
 | 분류 | 가중치 |
 |---|---:|
@@ -45,9 +45,11 @@
 - `CardRewardUI`가 상태에 맞는 화면과 버튼을 표시합니다. 보상 카드 설명은 원본 수치로 표시합니다.
 - `RunGoldInventory.Gold`는 씬 전환과 체크포인트 복원 시 유지됩니다. 새 런은 기존 골드를 초기화하고 `RunDefinition.startingGold`를 지급합니다. 현재 `TemporaryRun`의 시작 골드는 100입니다.
 - 런의 보상 완료는 `RunBattleBridge`를 거쳐 현재 노드를 완료하고 MapScene으로 돌아갑니다. 보상 수령이나 완료를 저장하지 못하면 마지막 체크포인트 상태로 되돌아가 다시 시도할 수 있습니다. [노드 체크포인트와 이어서 하기](RunCheckpoints.md) 참고.
-- `BattleRewardAssetSetup.CreateAssets()`는 현재 BattleScene에 보상 UI와 14개 DB 참조를 구성한 에디터 도구입니다. 메뉴: ProjectDN → Setup Battle Rewards. 재실행 시 보상 UI와 기본값을 다시 구성합니다.
+- `BattleRewardAssetSetup.CreateAssets()`는 현재 BattleScene에 보상 UI와 14개 DB 참조를 구성한 에디터 도구입니다. 메뉴: ProjectDN → Setup Battle Rewards. 재실행 시 보상 UI와 기본 골드 값을 다시 구성하고, 공유 풀 설정은 유지합니다.
 
 ## 검증
+
+2026-11-08 Unity 6000.0.85f2에서 공유 풀 연결 뒤 전투 보상·상점 관련 테스트 43/43이 통과했습니다. 전투 보상 카드의 선택·확정, 상점의 빈 악몽 슬롯과 분류별 추첨을 포함합니다. 결과는 로컬 `.utmp/shop-stock-verified.xml`에 있습니다.
 
 2026-11-05 Unity 6000.0.85f2에서 보상 카드의 호버·선택 초기화·중복 확정 방지와 720p의 본문 가독성·확인 버튼 노출을 검사했습니다. 이를 포함한 최종 관련 검사 18/18이 통과했습니다. 결과는 로컬 `.utmp/readable-card-hover/regression-final.xml`, 보상 화면은 `RewardCard-1280x720.png`에 있습니다. 최종 코드의 전체 재검사는 사용자 요청으로 중단했습니다.
 

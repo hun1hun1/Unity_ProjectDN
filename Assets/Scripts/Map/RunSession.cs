@@ -107,12 +107,29 @@ public class RunSession : MonoBehaviour
         return true;
     }
 
-    public bool CompleteContent(RunProgress expected, int floor, int node)
+    public bool CompleteContent(RunProgress expected, int floor, int node) =>
+        CompleteContent(expected, floor, node, 0);
+
+    internal bool CompleteRest(RunNodeVisit visit, int recoveryPercent, int flatRecovery)
+    {
+        if (!CanCommit || visit == null || !ReferenceEquals(visit.Progress, Progress) ||
+            Progress.Phase != RunPhase.Content || Progress.CurrentNode.SelectedChoice.Type != MapContentType.Rest ||
+            visit.Handler == null || !visit.Handler.isActiveAndEnabled || visit.Handler.ContentType != MapContentType.Rest)
+            return false;
+
+        int missingHP = Progress.MaxHP - Progress.CurrentHP;
+        int proportionalRecovery = (int)Math.Ceiling(missingHP * (decimal)Mathf.Clamp(recoveryPercent, 0, 100) / 100);
+        int recovery = (int)Math.Min(missingHP, (long)proportionalRecovery + Mathf.Max(0, flatRecovery));
+        return CompleteContent(visit.Progress, visit.Floor, visit.Node, recovery);
+    }
+
+    private bool CompleteContent(RunProgress expected, int floor, int node, int recovery)
     {
         if (Progress == null || !ReferenceEquals(expected, Progress) || Progress.Phase != RunPhase.Content || IsTransitioning ||
             floor!=Progress.FloorIndex || node!=Progress.NodeIndex) return false;
         RunProgressData before=Application.isPlaying?Progress.Capture(RunAssetCatalog.Load()):null;RunSaveData previous=checkpoint;
         if(!Progress.CompleteNode(floor,node))return false;
+        if (recovery > 0) Progress.CaptureHealth(Progress.CurrentHP + recovery, Progress.MaxHP);
         if(!(Progress.IsFinished?ClearCheckpoint():SaveCheckpoint()))
         {
             if(before!=null)Progress.RestoreCheckpointInPlace(before,RunAssetCatalog.Load());

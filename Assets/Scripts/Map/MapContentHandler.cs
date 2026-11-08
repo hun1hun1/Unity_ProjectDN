@@ -1,11 +1,10 @@
 using System;
 using UnityEngine;
 
-// Add a concrete handler to MapScene when a nonbattle content system is available.
 public abstract class MapContentHandler : MonoBehaviour
 {
     public abstract MapContentType ContentType { get; }
-    public abstract void Begin(MapChoice choice, RunProgress progress, Action completed);
+    public abstract void Begin(MapChoice choice, RunProgress progress, Func<bool> complete);
     // Begin constructs the UI, then RestoreState reapplies fixed offers and committed receipts.
     public virtual string CaptureState() => "";
     public virtual void RestoreState(string state) { }

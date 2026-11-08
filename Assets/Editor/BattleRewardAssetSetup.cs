@@ -20,26 +20,10 @@ public static class BattleRewardAssetSetup
         DeckController deck = Object.FindFirstObjectByType<DeckController>();
         BattleRewardSystem flow = sampler.GetComponent<BattleRewardSystem>();
         if (flow == null) flow = sampler.gameObject.AddComponent<BattleRewardSystem>();
-        var config = new SerializedObject(sampler);
-        SerializedProperty pools = config.FindProperty("pools"); pools.arraySize = 14;
-        int[] weights = {35,35,13,12,2,2,1};
-        CardType[] types = {CardType.Attack,CardType.Skill,CardType.Attack,CardType.Skill,CardType.Attack,CardType.Skill,CardType.Continuous};
-        CardRarity[] rarities = {CardRarity.Common,CardRarity.Common,CardRarity.Uncommon,CardRarity.Uncommon,CardRarity.Rare,CardRarity.Rare,CardRarity.Rare};
-        for (int d = 0; d < 2; d++) for (int i = 0; i < 7; i++)
-        {
-            string deckName = d == 0 ? "Dream" : "Nightmare";
-            string name = i == 6 ? $"Soldier{deckName}ContinuousReward" : $"Soldier{deckName}{rarities[i]}{types[i]}Reward";
-            string path = $"Assets/CardDatabase/Soldier/{deckName}/{types[i]}/{name}.asset";
-            var entry = pools.GetArrayElementAtIndex(d * 7 + i);
-            entry.FindPropertyRelative("deckType").intValue = d;
-            entry.FindPropertyRelative("type").intValue = (int)types[i];
-            entry.FindPropertyRelative("rarity").intValue = (int)rarities[i];
-            entry.FindPropertyRelative("weight").intValue = weights[i];
-            CardDatabase database = AssetDatabase.LoadAssetAtPath<CardDatabase>(path);
-            if (database == null) throw new System.InvalidOperationException(path);
-            entry.FindPropertyRelative("database").objectReferenceValue = database;
-        }
-        config.ApplyModifiedPropertiesWithoutUndo();
+        const string catalogPath = "Assets/CardDatabase/Soldier/BattleRewardPools.asset";
+        var catalog = AssetDatabase.LoadAssetAtPath<CardRewardPoolCatalog>(catalogPath);
+        if (catalog == null) throw new System.InvalidOperationException(catalogPath);
+        Bind(sampler, "poolCatalog", catalog);
         Bind(flow, "battle", battle); Bind(flow, "deckController", deck); Bind(flow, "cardRewards", sampler);
         var flowConfig = new SerializedObject(flow); flowConfig.FindProperty("goldReward").intValue = 20; flowConfig.ApplyModifiedPropertiesWithoutUndo();
         CardRewardUI ui = Object.FindFirstObjectByType<CardRewardUI>(FindObjectsInactive.Include);

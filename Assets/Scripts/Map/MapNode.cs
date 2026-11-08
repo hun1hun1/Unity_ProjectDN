@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum MapContentType { NormalBattle, EliteBattle, BossBattle, Shop, Relic, Event, Upgrade }
+public enum MapContentType { NormalBattle, EliteBattle, BossBattle, Shop, Relic, Event, Upgrade, Rest }
 public enum MapNodeRule { Start, Regular, Midpoint, GuaranteedRelic, Boss }
 public enum MapNodeStatus { Pending, Resolving, Completed }
 public enum RunPhase { Map, Battle, Rewards, Content, Completed, Defeated, Cancelled }

@@ -1,0 +1,936 @@
+fileFormatVersion: 2
+guid: 5db500682c0706b4a95dfbe9483e34ec
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -478914368817794383
+    second: shop-leave-button_0
+  - first:
+      213: 764829427331370381
+    second: shop-leave-button_1
+  - first:
+      213: -5449480008004890804
+    second: shop-leave-button_2
+  - first:
+      213: -1762856976276790143
+    second: shop-leave-button_3
+  - first:
+      213: 5069930919919214748
+    second: shop-leave-button_4
+  - first:
+      213: -8396778270141695457
+    second: shop-leave-button_5
+  - first:
+      213: 3424527227000944650
+    second: shop-leave-button_6
+  - first:
+      213: 3365776589677779263
+    second: shop-leave-button_7
+  - first:
+      213: 7546281799956502824
+    second: shop-leave-button_8
+  - first:
+      213: -5327655975800124725
+    second: shop-leave-button_9
+  - first:
+      213: -1318836278584425
+    second: shop-leave-button_10
+  - first:
+      213: 8274895541763565576
+    second: shop-leave-button_11
+  - first:
+      213: -7586115154928743949
+    second: shop-leave-button_12
+  - first:
+      213: -4919870157209948797
+    second: shop-leave-button_13
+  - first:
+      213: 5165565309818166204
+    second: shop-leave-button_14
+  - first:
+      213: -6819861558623652682
+    second: shop-leave-button_15
+  - first:
+      213: 8440155190265318841
+    second: shop-leave-button_16
+  - first:
+      213: -2001742630910683077
+    second: shop-leave-button_17
+  - first:
+      213: 2432277269127683262
+    second: shop-leave-button_18
+  - first:
+      213: -6792900494719455616
+    second: shop-leave-button_19
+  - first:
+      213: -2685572450613039333
+    second: shop-leave-button_20
+  - first:
+      213: 8209314781871043522
+    second: shop-leave-button_21
+  - first:
+      213: -8994968226748225403
+    second: shop-leave-button_22
+  - first:
+      213: 7129822443862008787
+    second: shop-leave-button_23
+  - first:
+      213: -7747863852892183449
+    second: shop-leave-button_24
+  - first:
+      213: -7736285473451656440
+    second: shop-leave-button_25
+  - first:
+      213: -2210121004181232126
+    second: shop-leave-button_26
+  - first:
+      213: 2357444526451800197
+    second: shop-leave-button_27
+  - first:
+      213: -1281019580622665622
+    second: shop-leave-button_28
+  - first:
+      213: 6693700275892847383
+    second: shop-leave-button_29
+  - first:
+      213: -7291846715074408230
+    second: shop-leave-button_30
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: shop-leave-button_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 25
+        width: 1774
+        height: 812
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b2f8c04bed8a59f0800000000000000
+      internalID: -478914368817794383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_1
+      rect:
+        serializedVersion: 2
+        x: 887
+        y: 636
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8d0ad9df483d9a00800000000000000
+      internalID: 764829427331370381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_2
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 630
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4f86482ece8f54b0800000000000000
+      internalID: -5449480008004890804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_3
+      rect:
+        serializedVersion: 2
+        x: 887
+        y: 621
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 184e33b8be21987e0800000000000000
+      internalID: -1762856976276790143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_4
+      rect:
+        serializedVersion: 2
+        x: 893
+        y: 620
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c90ed8d5f430c5640800000000000000
+      internalID: 5069930919919214748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_5
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 240
+        width: 13
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1a3c7eb6a6a87b80800000000000000
+      internalID: -8396778270141695457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_6
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 241
+        width: 9
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a087b097e5d568f20800000000000000
+      internalID: 3424527227000944650
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_7
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 239
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f39d115c9f3a5be20800000000000000
+      internalID: 3365776589677779263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_8
+      rect:
+        serializedVersion: 2
+        x: 1465
+        y: 251
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 829176da057c9b860800000000000000
+      internalID: 7546281799956502824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_9
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 221
+        width: 23
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bca42fcfd1d5016b0800000000000000
+      internalID: -5327655975800124725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_10
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 243
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79b191086805bfff0800000000000000
+      internalID: -1318836278584425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_11
+      rect:
+        serializedVersion: 2
+        x: 718
+        y: 242
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 808e74827a556d270800000000000000
+      internalID: 8274895541763565576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_12
+      rect:
+        serializedVersion: 2
+        x: 1663
+        y: 227
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f9c345a574b8b690800000000000000
+      internalID: -7586115154928743949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_13
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 223
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38da47a982c19bbb0800000000000000
+      internalID: -4919870157209948797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_14
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 227
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbbdacbe746cfa740800000000000000
+      internalID: 5165565309818166204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_15
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 233
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b435ecab0cfa51a0800000000000000
+      internalID: -6819861558623652682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_16
+      rect:
+        serializedVersion: 2
+        x: 1572
+        y: 226
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bd0fec7d64712570800000000000000
+      internalID: 8440155190265318841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_17
+      rect:
+        serializedVersion: 2
+        x: 1645
+        y: 228
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3810d0dea16834e0800000000000000
+      internalID: -2001742630910683077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_18
+      rect:
+        serializedVersion: 2
+        x: 1677
+        y: 225
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebcdc9d1a4f21c120800000000000000
+      internalID: 2432277269127683262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_19
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 207
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08eeba98df4cab1a0800000000000000
+      internalID: -6792900494719455616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_20
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 217
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1f62aeb51eeabad0800000000000000
+      internalID: -2685572450613039333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_21
+      rect:
+        serializedVersion: 2
+        x: 796
+        y: 209
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c379ce9c485de170800000000000000
+      internalID: 8209314781871043522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_22
+      rect:
+        serializedVersion: 2
+        x: 556
+        y: 200
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5882fbe1e047b2380800000000000000
+      internalID: -8994968226748225403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_23
+      rect:
+        serializedVersion: 2
+        x: 685
+        y: 210
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d3a00ebcb732f260800000000000000
+      internalID: 7129822443862008787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_24
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 189
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 764a54030ee0a7490800000000000000
+      internalID: -7747863852892183449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_25
+      rect:
+        serializedVersion: 2
+        x: 310
+        y: 196
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80b36e9b95133a490800000000000000
+      internalID: -7736285473451656440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_26
+      rect:
+        serializedVersion: 2
+        x: 566
+        y: 188
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 206e52b08a21451e0800000000000000
+      internalID: -2210121004181232126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_27
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 195
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58839d87e4357b020800000000000000
+      internalID: 2357444526451800197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_28
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 188
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a688aa28a77e83ee0800000000000000
+      internalID: -1281019580622665622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_29
+      rect:
+        serializedVersion: 2
+        x: 435
+        y: 184
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7130789afecc4ec50800000000000000
+      internalID: 6693700275892847383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shop-leave-button_30
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 178
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad01467eb082eca90800000000000000
+      internalID: -7291846715074408230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      shop-leave-button_0: -478914368817794383
+      shop-leave-button_1: 764829427331370381
+      shop-leave-button_10: -1318836278584425
+      shop-leave-button_11: 8274895541763565576
+      shop-leave-button_12: -7586115154928743949
+      shop-leave-button_13: -4919870157209948797
+      shop-leave-button_14: 5165565309818166204
+      shop-leave-button_15: -6819861558623652682
+      shop-leave-button_16: 8440155190265318841
+      shop-leave-button_17: -2001742630910683077
+      shop-leave-button_18: 2432277269127683262
+      shop-leave-button_19: -6792900494719455616
+      shop-leave-button_2: -5449480008004890804
+      shop-leave-button_20: -2685572450613039333
+      shop-leave-button_21: 8209314781871043522
+      shop-leave-button_22: -8994968226748225403
+      shop-leave-button_23: 7129822443862008787
+      shop-leave-button_24: -7747863852892183449
+      shop-leave-button_25: -7736285473451656440
+      shop-leave-button_26: -2210121004181232126
+      shop-leave-button_27: 2357444526451800197
+      shop-leave-button_28: -1281019580622665622
+      shop-leave-button_29: 6693700275892847383
+      shop-leave-button_3: -1762856976276790143
+      shop-leave-button_30: -7291846715074408230
+      shop-leave-button_4: 5069930919919214748
+      shop-leave-button_5: -8396778270141695457
+      shop-leave-button_6: 3424527227000944650
+      shop-leave-button_7: 3365776589677779263
+      shop-leave-button_8: 7546281799956502824
+      shop-leave-button_9: -5327655975800124725
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

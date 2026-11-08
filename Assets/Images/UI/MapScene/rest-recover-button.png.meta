@@ -1,0 +1,1534 @@
+fileFormatVersion: 2
+guid: 28fc04a32d8dc6b4785f1770915c775e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4607696379851148630
+    second: rest-recover-button_0
+  - first:
+      213: 1510495552035782442
+    second: rest-recover-button_1
+  - first:
+      213: 8793307435929488311
+    second: rest-recover-button_2
+  - first:
+      213: -4296566700580796375
+    second: rest-recover-button_3
+  - first:
+      213: 6247289698993860388
+    second: rest-recover-button_4
+  - first:
+      213: -1120752059411857166
+    second: rest-recover-button_5
+  - first:
+      213: -5375449285918371709
+    second: rest-recover-button_6
+  - first:
+      213: 8775112654411040593
+    second: rest-recover-button_7
+  - first:
+      213: -1884763810061956739
+    second: rest-recover-button_8
+  - first:
+      213: 7390397563619978505
+    second: rest-recover-button_9
+  - first:
+      213: -1743280017657831401
+    second: rest-recover-button_10
+  - first:
+      213: -8821210277528098629
+    second: rest-recover-button_11
+  - first:
+      213: 5367635389239029201
+    second: rest-recover-button_12
+  - first:
+      213: 8904673890393574419
+    second: rest-recover-button_13
+  - first:
+      213: -5825767744054833323
+    second: rest-recover-button_14
+  - first:
+      213: -1968361350432331851
+    second: rest-recover-button_15
+  - first:
+      213: 2363264077296477881
+    second: rest-recover-button_16
+  - first:
+      213: -7285733232303588287
+    second: rest-recover-button_17
+  - first:
+      213: -4556612209294687379
+    second: rest-recover-button_18
+  - first:
+      213: -2611257970441833902
+    second: rest-recover-button_19
+  - first:
+      213: -4408150215923947867
+    second: rest-recover-button_20
+  - first:
+      213: -7878260770656845499
+    second: rest-recover-button_21
+  - first:
+      213: -2839397628754980005
+    second: rest-recover-button_22
+  - first:
+      213: 3347582856071872197
+    second: rest-recover-button_23
+  - first:
+      213: -1176181196552289165
+    second: rest-recover-button_24
+  - first:
+      213: 2402453664166930414
+    second: rest-recover-button_25
+  - first:
+      213: 8662914063789206733
+    second: rest-recover-button_26
+  - first:
+      213: -8825557609863975495
+    second: rest-recover-button_27
+  - first:
+      213: 3261758264752201762
+    second: rest-recover-button_28
+  - first:
+      213: 8028499484026405369
+    second: rest-recover-button_29
+  - first:
+      213: 3578593807547620495
+    second: rest-recover-button_30
+  - first:
+      213: 2231619242137979178
+    second: rest-recover-button_31
+  - first:
+      213: 6087966379696927959
+    second: rest-recover-button_32
+  - first:
+      213: -36267460893593345
+    second: rest-recover-button_33
+  - first:
+      213: -3319626949412835420
+    second: rest-recover-button_34
+  - first:
+      213: 7085694466968487311
+    second: rest-recover-button_35
+  - first:
+      213: 8791299202136216781
+    second: rest-recover-button_36
+  - first:
+      213: 3654801969433273177
+    second: rest-recover-button_37
+  - first:
+      213: 8369659428214885184
+    second: rest-recover-button_38
+  - first:
+      213: 7496438936889143326
+    second: rest-recover-button_39
+  - first:
+      213: -8702156496297667232
+    second: rest-recover-button_40
+  - first:
+      213: 5389895150635519380
+    second: rest-recover-button_41
+  - first:
+      213: -9213962942721709824
+    second: rest-recover-button_42
+  - first:
+      213: 7161596657953841170
+    second: rest-recover-button_43
+  - first:
+      213: -5394563391640138843
+    second: rest-recover-button_44
+  - first:
+      213: 8955100234693281211
+    second: rest-recover-button_45
+  - first:
+      213: 1335209950270206820
+    second: rest-recover-button_46
+  - first:
+      213: -3896413533329745061
+    second: rest-recover-button_47
+  - first:
+      213: 2193112378388381937
+    second: rest-recover-button_48
+  - first:
+      213: -2431536733014667829
+    second: rest-recover-button_49
+  - first:
+      213: 4419482720692767829
+    second: rest-recover-button_50
+  - first:
+      213: -4991609826036899731
+    second: rest-recover-button_51
+  - first:
+      213: 4424481505858771738
+    second: rest-recover-button_52
+  - first:
+      213: 6650360555285290671
+    second: rest-recover-button_53
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: rest-recover-button_0
+      rect:
+        serializedVersion: 2
+        x: 564
+        y: 1016
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa27e1e1e8c2e00c0800000000000000
+      internalID: -4607696379851148630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_1
+      rect:
+        serializedVersion: 2
+        x: 582
+        y: 989
+        width: 27
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2f76ed93bb56f410800000000000000
+      internalID: 1510495552035782442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_2
+      rect:
+        serializedVersion: 2
+        x: 998
+        y: 946
+        width: 93
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bbc067268a180a70800000000000000
+      internalID: 8793307435929488311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_3
+      rect:
+        serializedVersion: 2
+        x: 1336
+        y: 912
+        width: 85
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9280c1a99578f54c0800000000000000
+      internalID: -4296566700580796375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1536
+        height: 988
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42f6c75b1e4d2b650800000000000000
+      internalID: 6247289698993860388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_5
+      rect:
+        serializedVersion: 2
+        x: 502
+        y: 967
+        width: 15
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f00871a0f94270f0800000000000000
+      internalID: -1120752059411857166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_6
+      rect:
+        serializedVersion: 2
+        x: 518
+        y: 961
+        width: 25
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38055b4da519665b0800000000000000
+      internalID: -5375449285918371709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_7
+      rect:
+        serializedVersion: 2
+        x: 552
+        y: 957
+        width: 21
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1578436777677c970800000000000000
+      internalID: 8775112654411040593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_8
+      rect:
+        serializedVersion: 2
+        x: 1151
+        y: 965
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d79ceb7fc49f7d5e0800000000000000
+      internalID: -1884763810061956739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_9
+      rect:
+        serializedVersion: 2
+        x: 504
+        y: 937
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90d2b789d67ff8660800000000000000
+      internalID: 7390397563619978505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_10
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 942
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 710e77b6f00aec7e0800000000000000
+      internalID: -1743280017657831401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_11
+      rect:
+        serializedVersion: 2
+        x: 921
+        y: 947
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb8a9e64df3c49580800000000000000
+      internalID: -8821210277528098629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_12
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 935
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1dd686392fbad7a40800000000000000
+      internalID: 5367635389239029201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_13
+      rect:
+        serializedVersion: 2
+        x: 1256
+        y: 929
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31cca9d69b1c39b70800000000000000
+      internalID: 8904673890393574419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_14
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 61
+        width: 37
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55fceaf5a17b62fa0800000000000000
+      internalID: -5825767744054833323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_15
+      rect:
+        serializedVersion: 2
+        x: 910
+        y: 93
+        width: 21
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b76fd5d7c9fea4e0800000000000000
+      internalID: -1968361350432331851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_16
+      rect:
+        serializedVersion: 2
+        x: 356
+        y: 56
+        width: 31
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b6a2bd38200cc020800000000000000
+      internalID: 2363264077296477881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_17
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 71
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14c39480a30e3ea90800000000000000
+      internalID: -7285733232303588287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_18
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 67
+        width: 19
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6348cd6659a3c0c0800000000000000
+      internalID: -4556612209294687379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_19
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 42
+        width: 16
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25238eef5b2f2cbd0800000000000000
+      internalID: -2611257970441833902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_20
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 61
+        width: 11
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a6aa47ebba13d2c0800000000000000
+      internalID: -4408150215923947867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_21
+      rect:
+        serializedVersion: 2
+        x: 548
+        y: 69
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5418a15e19bcaa290800000000000000
+      internalID: -7878260770656845499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_22
+      rect:
+        serializedVersion: 2
+        x: 1126
+        y: 48
+        width: 22
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5319f186ee6898d0800000000000000
+      internalID: -2839397628754980005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_23
+      rect:
+        serializedVersion: 2
+        x: 1296
+        y: 71
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cef9501fd0057e20800000000000000
+      internalID: 3347582856071872197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_24
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 49
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 374c104fe6d5dafe0800000000000000
+      internalID: -1176181196552289165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_25
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 50
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee7610af0ea375120800000000000000
+      internalID: 2402453664166930414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_26
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 47
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcc24e3617ad83870800000000000000
+      internalID: 8662914063789206733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_27
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 47
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bdef471d12558580800000000000000
+      internalID: -8825557609863975495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_28
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 56
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 220efb93cd7144d20800000000000000
+      internalID: 3261758264752201762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_29
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 55
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f10dc07eb5fa6f60800000000000000
+      internalID: 8028499484026405369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_30
+      rect:
+        serializedVersion: 2
+        x: 856
+        y: 47
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8cd9469b18b9a130800000000000000
+      internalID: 3578593807547620495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_31
+      rect:
+        serializedVersion: 2
+        x: 862
+        y: 35
+        width: 31
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a298f8980ed48fe10800000000000000
+      internalID: 2231619242137979178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_32
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 55
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d43b5aba2dcc7450800000000000000
+      internalID: 6087966379696927959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_33
+      rect:
+        serializedVersion: 2
+        x: 1054
+        y: 47
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff0388cbfe62f7ff0800000000000000
+      internalID: -36267460893593345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_34
+      rect:
+        serializedVersion: 2
+        x: 1082
+        y: 49
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4af2f6da0e05ee1d0800000000000000
+      internalID: -3319626949412835420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_35
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 47
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f858b9a7391755260800000000000000
+      internalID: 7085694466968487311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_36
+      rect:
+        serializedVersion: 2
+        x: 606
+        y: 35
+        width: 25
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc41189cb08f00a70800000000000000
+      internalID: 8791299202136216781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_37
+      rect:
+        serializedVersion: 2
+        x: 992
+        y: 39
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 953e778f60778b230800000000000000
+      internalID: 3654801969433273177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_38
+      rect:
+        serializedVersion: 2
+        x: 1114
+        y: 37
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04b4fb5d7e0072470800000000000000
+      internalID: 8369659428214885184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_39
+      rect:
+        serializedVersion: 2
+        x: 1159
+        y: 39
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e103fa9ce73b80860800000000000000
+      internalID: 7496438936889143326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_40
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 33
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 065d15ac5cabb3780800000000000000
+      internalID: -8702156496297667232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_41
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 15
+        width: 31
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49d0b362511ccca40800000000000000
+      internalID: 5389895150635519380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_42
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 31
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 009a571758d612080800000000000000
+      internalID: -9213962942721709824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_43
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 31
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 210a6f5773a136360800000000000000
+      internalID: 7161596657953841170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_44
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 34
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ab86fa4d29a225b0800000000000000
+      internalID: -5394563391640138843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_45
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 29
+        width: 21
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb509e0a738e64c70800000000000000
+      internalID: 8955100234693281211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_46
+      rect:
+        serializedVersion: 2
+        x: 626
+        y: 17
+        width: 17
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4633c62206e978210800000000000000
+      internalID: 1335209950270206820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_47
+      rect:
+        serializedVersion: 2
+        x: 633
+        y: 27
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5b1bd719882de9c0800000000000000
+      internalID: -3896413533329745061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_48
+      rect:
+        serializedVersion: 2
+        x: 639
+        y: 31
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f00a5aa6108f6e10800000000000000
+      internalID: 2193112378388381937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_49
+      rect:
+        serializedVersion: 2
+        x: 1182
+        y: 0
+        width: 72
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcdc8526932714ed0800000000000000
+      internalID: -2431536733014667829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_50
+      rect:
+        serializedVersion: 2
+        x: 1376
+        y: 25
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55c8ed97e18255d30800000000000000
+      internalID: 4419482720692767829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_51
+      rect:
+        serializedVersion: 2
+        x: 630
+        y: 19
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d60a8b55f4d3abab0800000000000000
+      internalID: -4991609826036899731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_52
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 13
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1b5ff7dc7ae66d30800000000000000
+      internalID: 4424481505858771738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rest-recover-button_53
+      rect:
+        serializedVersion: 2
+        x: 1150
+        y: 0
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fae9c0e90b3da4c50800000000000000
+      internalID: 6650360555285290671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      rest-recover-button_0: -4607696379851148630
+      rest-recover-button_1: 1510495552035782442
+      rest-recover-button_10: -1743280017657831401
+      rest-recover-button_11: -8821210277528098629
+      rest-recover-button_12: 5367635389239029201
+      rest-recover-button_13: 8904673890393574419
+      rest-recover-button_14: -5825767744054833323
+      rest-recover-button_15: -1968361350432331851
+      rest-recover-button_16: 2363264077296477881
+      rest-recover-button_17: -7285733232303588287
+      rest-recover-button_18: -4556612209294687379
+      rest-recover-button_19: -2611257970441833902
+      rest-recover-button_2: 8793307435929488311
+      rest-recover-button_20: -4408150215923947867
+      rest-recover-button_21: -7878260770656845499
+      rest-recover-button_22: -2839397628754980005
+      rest-recover-button_23: 3347582856071872197
+      rest-recover-button_24: -1176181196552289165
+      rest-recover-button_25: 2402453664166930414
+      rest-recover-button_26: 8662914063789206733
+      rest-recover-button_27: -8825557609863975495
+      rest-recover-button_28: 3261758264752201762
+      rest-recover-button_29: 8028499484026405369
+      rest-recover-button_3: -4296566700580796375
+      rest-recover-button_30: 3578593807547620495
+      rest-recover-button_31: 2231619242137979178
+      rest-recover-button_32: 6087966379696927959
+      rest-recover-button_33: -36267460893593345
+      rest-recover-button_34: -3319626949412835420
+      rest-recover-button_35: 7085694466968487311
+      rest-recover-button_36: 8791299202136216781
+      rest-recover-button_37: 3654801969433273177
+      rest-recover-button_38: 8369659428214885184
+      rest-recover-button_39: 7496438936889143326
+      rest-recover-button_4: 6247289698993860388
+      rest-recover-button_40: -8702156496297667232
+      rest-recover-button_41: 5389895150635519380
+      rest-recover-button_42: -9213962942721709824
+      rest-recover-button_43: 7161596657953841170
+      rest-recover-button_44: -5394563391640138843
+      rest-recover-button_45: 8955100234693281211
+      rest-recover-button_46: 1335209950270206820
+      rest-recover-button_47: -3896413533329745061
+      rest-recover-button_48: 2193112378388381937
+      rest-recover-button_49: -2431536733014667829
+      rest-recover-button_5: -1120752059411857166
+      rest-recover-button_50: 4419482720692767829
+      rest-recover-button_51: -4991609826036899731
+      rest-recover-button_52: 4424481505858771738
+      rest-recover-button_53: 6650360555285290671
+      rest-recover-button_6: -5375449285918371709
+      rest-recover-button_7: 8775112654411040593
+      rest-recover-button_8: -1884763810061956739
+      rest-recover-button_9: 7390397563619978505
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

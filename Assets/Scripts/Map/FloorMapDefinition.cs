@@ -16,6 +16,10 @@ public class FloorMapDefinition : ScriptableObject
 {
     public FloorMapMode mode;
     [Min(1)] public int nodeCount = 12;
+    [Min(0), Tooltip("Fixed shop choice in Normal Battles Only mode. 1 is the first node; 0 disables it.")]
+    public int fixedShopNodeNumber;
+    [Min(0), Tooltip("Fixed rest choice in Normal Battles Only mode. 1 is the first node; 0 disables it.")]
+    public int fixedRestNodeNumber;
     [Range(0, 1)] public float midpointMinRatio = .4f;
     [Range(0, 1)] public float midpointMaxRatio = .6f;
     [Range(0, 1)] public float nonBattleChance = .35f;

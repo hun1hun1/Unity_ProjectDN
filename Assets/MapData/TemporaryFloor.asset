@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mode: 1
   nodeCount: 5
+  fixedShopNodeNumber: 3
+  fixedRestNodeNumber: 4
   midpointMinRatio: 0.4
   midpointMaxRatio: 0.6
   nonBattleChance: 0.35

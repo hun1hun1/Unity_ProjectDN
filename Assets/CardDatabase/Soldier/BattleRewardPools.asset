@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74627caebc3f42d18ed0c079aac535c3, type: 3}
+  m_Name: BattleRewardPools
+  m_EditorClassIdentifier:
+  pools:
+  - deckType: 0
+    type: 0
+    rarity: 0
+    weight: 30
+    database: {fileID: 11400000, guid: 3656bbf6dbae0bb4994c166f196cf946, type: 2}
+  - deckType: 0
+    type: 1
+    rarity: 0
+    weight: 30
+    database: {fileID: 11400000, guid: 19c546e074ca4c54e9da8893d0622172, type: 2}
+  - deckType: 0
+    type: 0
+    rarity: 1
+    weight: 15
+    database: {fileID: 11400000, guid: ba7525f3e25910845af3050be681f200, type: 2}
+  - deckType: 0
+    type: 1
+    rarity: 1
+    weight: 15
+    database: {fileID: 11400000, guid: 77d3560104dd20749a310a79fbd4eae7, type: 2}
+  - deckType: 0
+    type: 0
+    rarity: 2
+    weight: 3
+    database: {fileID: 11400000, guid: 6e203d5826ec21249859b1fddcdb0bab, type: 2}
+  - deckType: 0
+    type: 1
+    rarity: 2
+    weight: 3
+    database: {fileID: 11400000, guid: 7f7992f16492d644489a9698872e1495, type: 2}
+  - deckType: 0
+    type: 2
+    rarity: 2
+    weight: 4
+    database: {fileID: 11400000, guid: ba1e9ebedadef8a479e79c8efd60abd3, type: 2}
+  - deckType: 1
+    type: 0
+    rarity: 0
+    weight: 30
+    database: {fileID: 11400000, guid: a098186d43a01de47aea10b03c10b2ef, type: 2}
+  - deckType: 1
+    type: 1
+    rarity: 0
+    weight: 30
+    database: {fileID: 11400000, guid: d87d34005192f3249a7ea631f4715e58, type: 2}
+  - deckType: 1
+    type: 0
+    rarity: 1
+    weight: 15
+    database: {fileID: 11400000, guid: d7294e94bbed77f4c92a6e906959fc2f, type: 2}
+  - deckType: 1
+    type: 1
+    rarity: 1
+    weight: 15
+    database: {fileID: 11400000, guid: 8d248916e3639b941bcdf42027f3c70c, type: 2}
+  - deckType: 1
+    type: 0
+    rarity: 2
+    weight: 3
+    database: {fileID: 11400000, guid: 71f3a54f4d40bcb47ba27dc6fcb1704d, type: 2}
+  - deckType: 1
+    type: 1
+    rarity: 2
+    weight: 3
+    database: {fileID: 11400000, guid: ea0ef879d6c8bcc499521a0baeab98aa, type: 2}
+  - deckType: 1
+    type: 2
+    rarity: 2
+    weight: 4
+    database: {fileID: 11400000, guid: dbb4cacf3ff0b7e4a9124b8e24af638d, type: 2}

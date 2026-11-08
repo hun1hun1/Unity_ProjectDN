@@ -126,14 +126,24 @@ public class BattleRewardSceneTests
         CardData first = Object.Instantiate(deck.GetDeck(CardDeckType.TypeNightmare)[0]);
         CardData second = Object.Instantiate(first);
         CardDatabase database = ScriptableObject.CreateInstance<CardDatabase>();
+        var catalog = ScriptableObject.CreateInstance<CardRewardPoolCatalog>();
         try
         {
             typeof(CardDatabase).GetField("cards", BindingFlags.Instance | BindingFlags.NonPublic)
                 .SetValue(database, new System.Collections.Generic.List<CardData> { first, second });
-            typeof(CardRewardSystem).GetField("pools", BindingFlags.Instance | BindingFlags.NonPublic)
-                .SetValue(Object.FindFirstObjectByType<CardRewardSystem>(), new[] {
-                    new CardRewardPool { deckType = CardDeckType.TypeNightmare, type = first.type,
-                        rarity = first.rarity, weight = 1, database = database } });
+            var catalogFields = new SerializedObject(catalog);
+            var pools = catalogFields.FindProperty("pools");
+            pools.arraySize = 1;
+            var pool = pools.GetArrayElementAtIndex(0);
+            pool.FindPropertyRelative("deckType").intValue = (int)CardDeckType.TypeNightmare;
+            pool.FindPropertyRelative("type").intValue = (int)first.type;
+            pool.FindPropertyRelative("rarity").intValue = (int)first.rarity;
+            pool.FindPropertyRelative("weight").intValue = 1;
+            pool.FindPropertyRelative("database").objectReferenceValue = database;
+            catalogFields.ApplyModifiedPropertiesWithoutUndo();
+            var samplerFields = new SerializedObject(Object.FindFirstObjectByType<CardRewardSystem>());
+            samplerFields.FindProperty("poolCatalog").objectReferenceValue = catalog;
+            samplerFields.ApplyModifiedPropertiesWithoutUndo();
             battle.GetTarget().TakeDamage(100000); yield return null; yield return null;
             Click(ui.transform.Find("SummaryPanel/CardButton"));
             Click(ui.transform.Find("DeckSelectPanel/NightmareButton"));
@@ -168,7 +178,7 @@ public class BattleRewardSceneTests
             AssertSelected(ui, -1);
             Assert.That(confirm.interactable, Is.False);
         }
-        finally { Object.Destroy(first); Object.Destroy(second); Object.Destroy(database); }
+        finally { Object.Destroy(first); Object.Destroy(second); Object.Destroy(database); Object.Destroy(catalog); }
         yield return new ExitPlayMode();
     }
 

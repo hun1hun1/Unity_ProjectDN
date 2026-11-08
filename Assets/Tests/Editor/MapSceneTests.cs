@@ -14,6 +14,13 @@ using Object = UnityEngine.Object;
 
 public class MapSceneTests
 {
+    [System.Serializable]
+    private sealed class SavedShopStock
+    {
+        public string[] dream;
+        public string[] nightmare;
+    }
+
     [UnityTearDown] public IEnumerator Cleanup()
     {
         if (RunSession.Instance != null)
@@ -25,17 +32,230 @@ public class MapSceneTests
         RunDeckInventory.ResetForNewGame(); RunRelicInventory.ResetForNewGame();
     }
 
-    [Test] public void SerializedTemporaryRunContainsFiveNormalBattlesAndIsEnabledAfterTitle()
+    [Test] public void SerializedTemporaryRunOffersShopAndRestAlongsideBattles()
     {
         RunDefinition definition = AssetDatabase.LoadAssetAtPath<RunDefinition>(MapAssetSetup.RunPath);
         Assert.That(definition, Is.Not.Null);
         var state = new RunProgress(definition, 12);
         Assert.That(state.Nodes.Count, Is.EqualTo(5));
-        Assert.That(state.Nodes.All(n => n.Choices.Count == 1 && n.Choices[0].Type == MapContentType.NormalBattle), Is.True);
+        Assert.That(state.Nodes.Select(n => n.Choices.Count), Is.EqualTo(new[] { 1, 1, 2, 2, 1 }));
+        Assert.That(state.Nodes.All(n => n.Choices[0].Type == MapContentType.NormalBattle), Is.True);
+        Assert.That(state.Nodes[2].Choices[1].Type, Is.EqualTo(MapContentType.Shop));
+        Assert.That(state.Nodes[3].Choices[1].Type, Is.EqualTo(MapContentType.Rest));
+        var battlesOnly = new RunProgress(definition, 12, new[] { MapContentType.NormalBattle });
+        Assert.That(battlesOnly.Nodes.All(n => n.Choices.Count == 1), Is.True);
         Assert.That(EditorBuildSettings.scenes[0].path, Is.EqualTo("Assets/Scenes/TitleScene.unity"));
         Assert.That(EditorBuildSettings.scenes.Any(s => s.enabled && s.path == MapAssetSetup.MapScenePath), Is.True);
         Assert.That(EditorBuildSettings.scenes[0].enabled, Is.True);
         Assert.That(EditorBuildSettings.scenes.Any(s => s.enabled && s.path == "Assets/Scenes/BattleScene.unity"), Is.True);
+    }
+
+    [UnityTest] public IEnumerator ShopPanelResumesAndLeavesOnlyAfterSuccessfulSave()
+    {
+        yield return new EnterPlayMode();
+        string savePath = System.IO.Path.GetFullPath(".utmp/run-save/shop-" + System.Guid.NewGuid().ToString("N") + ".json");
+        RunSaves.UseStore(new RunSaveStore(savePath));
+        try
+        {
+            yield return SceneManager.LoadSceneAsync("TitleScene");
+            yield return WaitForScene("TitleScene");
+            var title = Object.FindFirstObjectByType<TitleMenuUI>();
+            title.StartGame();
+            var selection = Object.FindFirstObjectByType<CharacterSelectionUI>();
+            selection.GetComponentInChildren<Toggle>().isOn = true;
+            title.ConfirmAdventure();
+            yield return WaitForMap();
+            for (int i = 0; i < 2; i++)
+            {
+                Object.FindFirstObjectByType<MapController>().SelectOption(0);
+                yield return WaitForScene("BattleScene");
+                Object.FindFirstObjectByType<BattleManager>().GetTarget().TakeDamage(100000);
+                Assert.That(Object.FindFirstObjectByType<BattleRewardSystem>().SkipRemaining(), Is.True);
+                yield return WaitForMap();
+            }
+
+            var session = RunSession.Instance;
+            ClickUtilityButton(GameObject.Find("Choice2").GetComponent<Button>());
+            Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Content));
+            var panel = GameObject.Find("ShopPanel").transform;
+            Assert.That(panel.Find("Merchant").GetComponent<Image>().sprite, Is.Not.Null);
+            Assert.That(panel.Find("Display").GetComponent<Image>().sprite, Is.Not.Null);
+            Assert.That(Object.FindFirstObjectByType<MapController>().CanChoose(0), Is.False);
+            var toolbar = FindMapCanvas().transform.Find("MapUtilityButtons");
+            var wallet = (RectTransform)toolbar.Find("Wallet");
+            var deckButton = toolbar.Find("DeckButton").GetComponent<Button>();
+            var optionsButton = toolbar.Find("OptionsButton").GetComponent<Button>();
+            Assert.That(wallet, Is.Not.Null);
+            Assert.That(wallet.gameObject.activeInHierarchy, Is.True);
+            Assert.That(wallet.GetComponentInChildren<TMP_Text>().text, Is.EqualTo($"보유 골드 {RunGoldInventory.Gold}"));
+            var walletCorners = new Vector3[4];
+            var deckCorners = new Vector3[4];
+            wallet.GetWorldCorners(walletCorners);
+            ((RectTransform)deckButton.transform).GetWorldCorners(deckCorners);
+            Assert.That(walletCorners[2].x, Is.LessThan(deckCorners[0].x));
+            Assert.That(wallet.InverseTransformPoint(deckButton.transform.position).y,
+                Is.EqualTo(wallet.rect.center.y).Within(1f));
+            var display = panel.Find("Display");
+            Assert.That(display.Find("DreamSlots").GetComponentsInChildren<DeckCardUI>(), Has.Length.EqualTo(3));
+            Assert.That(display.Find("NightmareSlots").GetComponentsInChildren<DeckCardUI>(), Is.Empty);
+            Assert.That(display.Find("NightmareStockStatus").GetComponent<TMP_Text>().text, Is.EqualTo("입고 예정"));
+            Assert.That(display.Find("NightmareStockStatus").gameObject.activeInHierarchy, Is.True);
+            var shop = Object.FindFirstObjectByType<ShopHandler>();
+            string stock = shop.CaptureState();
+            Assert.That(session.SavedContentState, Is.EqualTo(stock).And.Not.Empty);
+            CaptureMap("map-shop-stock.png");
+            yield return null;
+
+            var shopLeave = panel.Find("LeaveButton").GetComponent<Button>();
+            var stockCard = display.Find("DreamSlots").GetComponentInChildren<DeckCardUI>();
+            var inspection = Object.FindFirstObjectByType<CardInspectionUI>();
+            ClickPointer(stockCard.gameObject, PointerEventData.InputButton.Right);
+            Assert.That(inspection.IsOpen, Is.False);
+            ClickPointer(stockCard.gameObject, PointerEventData.InputButton.Left);
+            Assert.That(inspection.IsOpen, Is.True);
+            var inspected = (DeckCardUI)new SerializedObject(inspection).FindProperty("cardView").objectReferenceValue;
+            Assert.That(inspected.GetComponentsInChildren<TMP_Text>().Single(text => text.name == "Description").text,
+                Is.EqualTo(stockCard.GetComponentsInChildren<TMP_Text>().Single(text => text.name == "Description").text));
+            Assert.That(shopLeave.interactable, Is.False);
+            CaptureMap("map-shop-inspection.png");
+            inspection.Close();
+            yield return null;
+            yield return null;
+            Assert.That(inspection.IsOpen, Is.False);
+            Assert.That(panel.gameObject.activeInHierarchy, Is.True);
+            Assert.That(shopLeave.interactable, Is.True);
+            Assert.That(shop.CaptureState(), Is.EqualTo(stock));
+
+            var deck = Object.FindFirstObjectByType<DeckOverviewUI>();
+            ClickUtilityButton(deckButton);
+            Assert.That(deck.IsOpen, Is.True);
+            shopLeave.onClick.Invoke();
+            Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Content));
+            var deckPanel = FindMapCanvas().transform.Find("DeckOverviewPanel");
+            yield return null;
+            ClickUtilityButton(deckPanel.Find("CloseButton").GetComponent<Button>());
+            Assert.That(deck.IsOpen, Is.False);
+            Assert.That(panel.gameObject.activeInHierarchy, Is.True);
+            yield return null;
+
+            var settings = Object.FindFirstObjectByType<SettingsUI>();
+            ClickUtilityButton(optionsButton);
+            Assert.That(settings.IsOpen, Is.True);
+            shopLeave.onClick.Invoke();
+            Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Content));
+            var settingsData = new SerializedObject(settings);
+            yield return null;
+            ClickUtilityButton((Button)settingsData.FindProperty("closeButton").objectReferenceValue);
+            Assert.That(settings.IsOpen, Is.False);
+            Assert.That(panel.gameObject.activeInHierarchy, Is.True);
+            yield return null;
+
+            Assert.That(session.ReturnToTitle(), Is.True);
+            yield return WaitForScene("TitleScene");
+            Assert.That(RunSaves.TryLoad(out RunSaveData shopCheckpoint, out _), Is.True);
+            var savedStock = JsonUtility.FromJson<SavedShopStock>(stock);
+            System.Array.Reverse(savedStock.dream, 0, 2);
+            shopCheckpoint.contentState = JsonUtility.ToJson(savedStock);
+            Assert.That(shopCheckpoint.contentState, Is.Not.EqualTo(stock));
+            Assert.That(RunSaves.Store.TryWrite(shopCheckpoint, out _), Is.True);
+            Object.FindFirstObjectByType<TitleMenuUI>().ContinueGame();
+            yield return WaitForMap();
+
+            panel = GameObject.Find("ShopPanel").transform;
+            Assert.That(Object.FindFirstObjectByType<ShopHandler>().CaptureState(), Is.EqualTo(shopCheckpoint.contentState));
+            var restoredCards = panel.Find("Display/DreamSlots").GetComponentsInChildren<DeckCardUI>();
+            var catalog = RunAssetCatalog.Load();
+            Assert.That(restoredCards.Select(card => ((TMP_Text)new SerializedObject(card).FindProperty("nameText")
+                .objectReferenceValue).text), Is.EqualTo(savedStock.dream.Select(id => catalog.Resolve<CardData>(id).cardName)));
+            var leave = panel.Find("LeaveButton").GetComponent<Button>();
+            wallet = (RectTransform)FindMapCanvas().transform.Find("MapUtilityButtons/Wallet");
+            Assert.That(wallet.gameObject.activeInHierarchy, Is.True);
+            Assert.That(session.Progress.NodeIndex, Is.EqualTo(2));
+            using (var locked = new System.IO.FileStream(savePath, System.IO.FileMode.Open,
+                System.IO.FileAccess.Read, System.IO.FileShare.None))
+            {
+                ClickUtilityButton(leave);
+                Assert.That(panel.gameObject.activeInHierarchy, Is.True);
+                Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Content));
+            }
+            ClickUtilityButton(leave);
+            Assert.That(panel.gameObject.activeInHierarchy, Is.False);
+            Assert.That(wallet.gameObject.activeInHierarchy, Is.False);
+            Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Map));
+            Assert.That(session.Progress.NodeIndex, Is.EqualTo(3));
+            Assert.That(RunSaves.TryLoad(out RunSaveData saved, out _), Is.True);
+            Assert.That(saved.progress.node, Is.EqualTo(3));
+        }
+        finally { RunSaves.UseStore(null); }
+        yield return new ExitPlayMode();
+    }
+
+    [UnityTest] public IEnumerator RestRecoveryHealsMissingHealthAndAdvancesOnlyAfterSaving()
+    {
+        yield return new EnterPlayMode();
+        string savePath = System.IO.Path.GetFullPath(".utmp/run-save/rest-" + System.Guid.NewGuid().ToString("N") + ".json");
+        RunSaves.UseStore(new RunSaveStore(savePath));
+        try
+        {
+            yield return SceneManager.LoadSceneAsync("TitleScene");
+            yield return WaitForScene("TitleScene");
+            var title = Object.FindFirstObjectByType<TitleMenuUI>();
+            title.StartGame();
+            Object.FindFirstObjectByType<CharacterSelectionUI>().GetComponentInChildren<Toggle>().isOn = true;
+            title.ConfirmAdventure();
+            yield return WaitForMap();
+            for (int i = 0; i < 3; i++)
+            {
+                Object.FindFirstObjectByType<MapController>().SelectOption(0);
+                yield return WaitForScene("BattleScene");
+                var battle = Object.FindFirstObjectByType<BattleManager>();
+                battle.GetPlayer().TakeDamage(7);
+                battle.GetTarget().TakeDamage(100000);
+                Assert.That(Object.FindFirstObjectByType<BattleRewardSystem>().SkipRemaining(), Is.True);
+                yield return WaitForMap();
+            }
+
+            var session = RunSession.Instance;
+            Assert.That(session.Progress.CurrentHP, Is.EqualTo(59));
+            Assert.That(Object.FindFirstObjectByType<MapController>().CanChoose(1), Is.True, "The fourth node offers rest.");
+            ClickUtilityButton(GameObject.Find("Choice2").GetComponent<Button>());
+            Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Content));
+            Assert.That(session.ReturnToTitle(), Is.True);
+            yield return WaitForScene("TitleScene");
+            Object.FindFirstObjectByType<TitleMenuUI>().ContinueGame();
+            yield return WaitForMap();
+
+            var panel = GameObject.Find("RestPanel");
+            Assert.That(panel, Is.Not.Null);
+            var recover = panel.GetComponentsInChildren<Button>().Single(button => button.name == "RecoverButton");
+            Assert.That(panel.GetComponentsInChildren<TMP_Text>().Single(text => text.name == "Health").text,
+                Is.EqualTo("HP 59 / 80"));
+            CaptureMap("map-rest-recovery.png");
+            using (var locked = new System.IO.FileStream(savePath, System.IO.FileMode.Open,
+                System.IO.FileAccess.Read, System.IO.FileShare.None))
+            {
+                ClickUtilityButton(recover);
+                Assert.That(panel.activeInHierarchy, Is.True);
+                Assert.That(session.Progress.CurrentHP, Is.EqualTo(59));
+                Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Content));
+            }
+
+            ClickUtilityButton(recover);
+            recover.onClick.Invoke();
+            Assert.That(panel.activeInHierarchy, Is.False);
+            Assert.That(session.Progress.CurrentHP, Is.EqualTo(76));
+            Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Map));
+            Assert.That(session.Progress.NodeIndex, Is.EqualTo(4));
+            Assert.That(RunSaves.TryLoad(out RunSaveData saved, out _), Is.True);
+            Assert.That(saved.progress.hp, Is.EqualTo(76));
+            Assert.That(saved.progress.node, Is.EqualTo(4));
+
+            Object.FindFirstObjectByType<MapController>().SelectOption(0);
+            yield return WaitForScene("BattleScene");
+            Assert.That(Object.FindFirstObjectByType<BattleManager>().GetPlayer().GetCurrentHP(), Is.EqualTo(76));
+        }
+        finally { RunSaves.UseStore(null); }
+        yield return new ExitPlayMode();
     }
 
     [Test] public void SavedMapSceneKeepsItsRunUIAndInputReferences()
@@ -77,7 +297,7 @@ public class MapSceneTests
         for (int i = 0; i < 5; i++)
         {
             MapController map = Object.FindFirstObjectByType<MapController>();
-            Assert.That(map.CanChoose(0), Is.True); Assert.That(map.CanChoose(1), Is.False);
+            Assert.That(map.CanChoose(0), Is.True); Assert.That(map.CanChoose(1), Is.EqualTo(i == 2 || i == 3));
             var button = GameObject.Find("Choice1").GetComponent<Button>();
             Assert.That(button.interactable, Is.True);
             button.onClick.Invoke(); button.onClick.Invoke();
@@ -313,20 +533,24 @@ public class MapSceneTests
         Assert.That(hud.Find("GoldValue").GetComponent<TMP_Text>().text, Is.EqualTo(claimedGold.ToString()));
     }
 
-    private static void ClickUtilityButton(Button button)
+    private static void ClickUtilityButton(Button button) =>
+        ClickPointer(button.gameObject, PointerEventData.InputButton.Left);
+
+    private static void ClickPointer(GameObject target, PointerEventData.InputButton button)
     {
         Canvas.ForceUpdateCanvases();
         var events = EventSystem.current;
+        var rect = (RectTransform)target.transform;
         var pointer = new PointerEventData(events)
         {
-            button = PointerEventData.InputButton.Left,
-            position = RectTransformUtility.WorldToScreenPoint(null, button.transform.position)
+            button = button,
+            position = RectTransformUtility.WorldToScreenPoint(null, rect.TransformPoint(rect.rect.center))
         };
         var hits = new List<RaycastResult>();
         events.RaycastAll(pointer, hits);
         Assert.That(hits, Is.Not.Empty);
         Assert.That(ExecuteEvents.GetEventHandler<IPointerClickHandler>(
-            hits[0].gameObject), Is.EqualTo(button.gameObject));
+            hits[0].gameObject), Is.EqualTo(target));
         ExecuteEvents.ExecuteHierarchy(hits[0].gameObject, pointer,
             ExecuteEvents.pointerClickHandler);
     }

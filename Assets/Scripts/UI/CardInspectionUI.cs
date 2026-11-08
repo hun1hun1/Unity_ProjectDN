@@ -8,6 +8,7 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
 {
     [SerializeField] private GameObject panel;
     [SerializeField] private DeckOverviewUI mapDeckOverview;
+    [SerializeField] private GameObject mapShopPanel;
     [SerializeField] private DeckCardUI cardView;
     [SerializeField] private RectTransform statusPanel;
     [SerializeField] private TMP_Text statusText;
@@ -58,7 +59,9 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
             return false;
         if (battle == null)
         {
-            if (instance.mapDeckOverview == null || !instance.mapDeckOverview.IsOpen) return false;
+            bool deckOpen = instance.mapDeckOverview != null && instance.mapDeckOverview.IsOpen;
+            bool shopOpen = instance.mapShopPanel != null && instance.mapShopPanel.activeInHierarchy;
+            if (!deckOpen && !shopOpen) return false;
         }
         else if (battle.gameObject.scene != instance.gameObject.scene || !battle.CanInspectCards) return false;
         return instance.Open(data, battle);

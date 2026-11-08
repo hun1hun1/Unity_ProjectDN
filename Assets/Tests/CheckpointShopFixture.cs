@@ -10,8 +10,8 @@ public sealed class CheckpointShopFixture : MapContentHandler
     public string Offer {get;private set;}
     private RunProgress progress;
     private RunNodeVisit visit;
-    private Action completed;
-    public override void Begin(MapChoice choice,RunProgress current,Action onComplete)
+    private Func<bool> completed;
+    public override void Begin(MapChoice choice,RunProgress current,Func<bool> onComplete)
     {progress=current;visit=CaptureVisit(current);completed=onComplete;Stock=1;Offer="fixed-offer-"+current.NodeSeed;}
     public override string CaptureState()=>JsonUtility.ToJson(new State {stock=Stock,offer=Offer});
     public override void RestoreState(string json)

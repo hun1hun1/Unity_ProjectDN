@@ -28,6 +28,7 @@ public class DeckCardUI : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Sprite rareImage;
 
     [SerializeField] private bool allowInspection = true;
+    [SerializeField] private bool inspectOnLeftClick;
     private CardData cardData;
     private BattleManager battleContext;
     private CardDescriptionBinding descriptionBinding;
@@ -35,7 +36,8 @@ public class DeckCardUI : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (allowInspection && eventData.button == PointerEventData.InputButton.Right)
+        var button = inspectOnLeftClick ? PointerEventData.InputButton.Left : PointerEventData.InputButton.Right;
+        if (allowInspection && eventData.button == button)
             CardInspectionUI.TryOpen(cardData, battleContext);
     }
 

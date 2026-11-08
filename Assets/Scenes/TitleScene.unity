@@ -6298,7 +6298,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runDefinition: {fileID: 11400000, guid: 70df6c5e874760043acc805e683b7d7c, type: 2}
-  supportedContent: 
+  supportedContent: 0300000007000000
   mainMenu: {fileID: 507570351}
   characterSelection: {fileID: 1043968200}
   startButton: {fileID: 603395523}

@@ -122,7 +122,7 @@ public class EnemyPrefabTests
         RunSession session = RunSession.GetOrCreate();
         RunDefinition source = AssetDatabase.LoadAssetAtPath<RunDefinition>(MapAssetSetup.RunPath);
         RunDefinition definition = Track(Object.Instantiate(source));
-        FloorMapDefinition floor = Track(Object.Instantiate(source.floors[0]));
+        FloorMapDefinition floor = Track(ScriptableObject.CreateInstance<FloorMapDefinition>());
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
         Assert.That(prefab, Is.Not.Null, "Existing enemy must be authored as a prefab.");
         BattleEncounterDefinition encounter = Encounter(prefab.GetComponent<Enemy>());

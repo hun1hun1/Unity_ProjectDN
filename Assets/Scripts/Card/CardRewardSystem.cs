@@ -10,26 +10,34 @@ public sealed class CardRewardPool
     public CardRarity rarity;
     [Min(0)] public int weight;
     public CardDatabase database;
+
+    internal void AddCandidates(CardDeckType deck, List<CardData> result)
+    {
+        if (deckType != deck || database == null) return;
+        foreach (CardData card in database.GetAllCards())
+            if (card != null && card.deckType == deck && card.type == type && card.rarity == rarity && !result.Contains(card))
+                result.Add(card);
+    }
 }
 
 public class CardRewardSystem : MonoBehaviour
 {
-    [SerializeField] private CardRewardPool[] pools = Array.Empty<CardRewardPool>();
+    [SerializeField] private CardRewardPoolCatalog poolCatalog;
+    [SerializeField, HideInInspector] private CardRewardPool[] pools = Array.Empty<CardRewardPool>();
+
+    private IReadOnlyList<CardRewardPool> Pools => poolCatalog != null ? poolCatalog.Pools : pools;
 
     private List<CardData> Candidates(CardRewardPool pool, CardDeckType deck)
     {
         var result = new List<CardData>();
-        if (pool == null || pool.deckType != deck || pool.weight <= 0 || pool.database == null) return result;
-        foreach (CardData card in pool.database.GetAllCards())
-            if (card != null && card.deckType == deck && card.type == pool.type && card.rarity == pool.rarity && !result.Contains(card))
-                result.Add(card);
+        if (pool != null && pool.weight > 0) pool.AddCandidates(deck, result);
         return result;
     }
 
     public int GetCandidateCount(CardDeckType deck)
     {
         var unique = new HashSet<CardData>();
-        foreach (CardRewardPool pool in pools) foreach (CardData card in Candidates(pool, deck)) unique.Add(card);
+        foreach (CardRewardPool pool in Pools) foreach (CardData card in Candidates(pool, deck)) unique.Add(card);
         return unique.Count;
     }
 
@@ -45,19 +53,20 @@ public class CardRewardSystem : MonoBehaviour
     {
         var result = new List<CardData>();
         if (rewardCount <= 0 || GetCandidateCount(deckType) < rewardCount) return result;
-        var candidates = new List<CardData>[pools.Length];
-        for (int i = 0; i < pools.Length; i++) candidates[i] = Candidates(pools[i], deckType);
+        IReadOnlyList<CardRewardPool> rewardPools = Pools;
+        var candidates = new List<CardData>[rewardPools.Count];
+        for (int i = 0; i < candidates.Length; i++) candidates[i] = Candidates(rewardPools[i], deckType);
         while (result.Count < rewardCount)
         {
             double total = 0;
-            for (int i = 0; i < pools.Length; i++) if (candidates[i].Count > 0) total += pools[i].weight;
+            for (int i = 0; i < candidates.Length; i++) if (candidates[i].Count > 0) total += rewardPools[i].weight;
             double roll = (random != null ? random.NextDouble() : UnityEngine.Random.value) * total;
             int selected = -1;
-            for (int i = 0; i < pools.Length; i++)
+            for (int i = 0; i < candidates.Length; i++)
             {
                 if (candidates[i].Count == 0) continue;
                 selected = i;
-                roll -= pools[i].weight;
+                roll -= rewardPools[i].weight;
                 if (roll < 0) break;
             }
             List<CardData> category = candidates[selected];

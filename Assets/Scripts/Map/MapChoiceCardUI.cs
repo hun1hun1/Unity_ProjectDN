@@ -41,6 +41,7 @@ public class MapChoiceCardUI : MonoBehaviour
             case MapContentType.Relic: return "유물";
             case MapContentType.Event: return "이벤트";
             case MapContentType.Upgrade: return "강화";
+            case MapContentType.Rest: return "휴식";
             default: return type.ToString();
         }
     }
@@ -56,6 +57,7 @@ public class MapChoiceCardUI : MonoBehaviour
             case MapContentType.Relic: return "런에 도움을 주는\n유물을 획득합니다.";
             case MapContentType.Event: return "특별한 사건을 만나\n선택을 내립니다.";
             case MapContentType.Upgrade: return "보유한 카드를\n강화할 수 있습니다.";
+            case MapContentType.Rest: return "휴식으로 체력을\n회복할 수 있습니다.";
             default: return "";
         }
     }

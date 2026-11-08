@@ -72,6 +72,50 @@ public class RewardSamplingTests
         }
         Assert.That(databases.All(d => d.GetAllCards().Count == 3), Is.True);
     }
+    [TestCase(0.0, CardRarity.Common, CardType.Attack, CardRarity.Uncommon, CardType.Attack)]
+    [TestCase(0.1999, CardRarity.Common, CardType.Attack, CardRarity.Uncommon, CardType.Attack)]
+    [TestCase(0.2001, CardRarity.Common, CardType.Attack, CardRarity.Uncommon, CardType.Skill)]
+    [TestCase(0.2499, CardRarity.Common, CardType.Attack, CardRarity.Uncommon, CardType.Skill)]
+    [TestCase(0.2501, CardRarity.Common, CardType.Skill, CardRarity.Uncommon, CardType.Skill)]
+    [TestCase(0.3999, CardRarity.Common, CardType.Skill, CardRarity.Uncommon, CardType.Skill)]
+    [TestCase(0.4001, CardRarity.Common, CardType.Skill, CardRarity.Rare, CardType.Attack)]
+    [TestCase(0.4999, CardRarity.Common, CardType.Skill, CardRarity.Rare, CardType.Attack)]
+    [TestCase(0.5001, CardRarity.Uncommon, CardType.Attack, CardRarity.Rare, CardType.Attack)]
+    [TestCase(0.5999, CardRarity.Uncommon, CardType.Attack, CardRarity.Rare, CardType.Attack)]
+    [TestCase(0.6001, CardRarity.Uncommon, CardType.Attack, CardRarity.Rare, CardType.Skill)]
+    [TestCase(0.7499, CardRarity.Uncommon, CardType.Attack, CardRarity.Rare, CardType.Skill)]
+    [TestCase(0.7501, CardRarity.Uncommon, CardType.Skill, CardRarity.Rare, CardType.Skill)]
+    [TestCase(0.7999, CardRarity.Uncommon, CardType.Skill, CardRarity.Rare, CardType.Skill)]
+    [TestCase(0.8001, CardRarity.Uncommon, CardType.Skill, CardRarity.Rare, CardType.Continuous)]
+    public void ShopSlotsUseTheirOwnCategoryBoundariesForBothDecks(double roll,
+        CardRarity standardRarity, CardType standardType, CardRarity premiumRarity, CardType premiumType)
+    {
+        foreach (var deck in new[] { CardDeckType.TypeDream, CardDeckType.TypeNightmare })
+        {
+            CardData[] cards = ShopStock(deck, roll);
+            Assert.That(cards.Length, Is.EqualTo(deck == CardDeckType.TypeDream ? 3 : 2));
+            Assert.That(cards.Distinct().Count(), Is.EqualTo(cards.Length));
+            Assert.That(cards.All(card => card != null && card.deckType == deck), Is.True);
+            Assert.That(cards.Take(cards.Length - 1).All(card => card.rarity == standardRarity && card.type == standardType), Is.True);
+            Assert.That(cards.Last().rarity, Is.EqualTo(premiumRarity));
+            Assert.That(cards.Last().type, Is.EqualTo(premiumType));
+        }
+    }
+
+    [Test] public void EmptyNightmareRewardPoolsKeepBothShopSlotsEmpty()
+    {
+        foreach (CardDatabase database in databases.Skip(7)) Set(database, "cards", new List<CardData>());
+        Assert.That(ShopStock(CardDeckType.TypeNightmare, 0.5), Is.EqualTo(new CardData[2]));
+        Assert.That(ShopStock(CardDeckType.TypeDream, 0.5).All(card => card != null), Is.True);
+    }
+
+    private CardData[] ShopStock(CardDeckType deck, double roll)
+    {
+        var pools = (CardRewardPool[])typeof(CardRewardSystem).GetField("pools", BindingFlags.Instance | BindingFlags.NonPublic)
+            .GetValue(rewards);
+        return ShopStockSampler.Generate(deck, pools, new FixedRandom(roll));
+    }
+
     private BattleRewardSystem Flow(BattleResult result)
     {
         RunDeckInventory.ResetForNewGame();

@@ -10,6 +10,8 @@ public static class MapGenerator
         var random = new System.Random(seed);
         var nodes = new List<MapNode>(definition.nodeCount);
         bool planned = definition.mode == FloorMapMode.PlannedFloor;
+        bool hasFixedShop = !planned && definition.fixedShopNodeNumber > 0 && Contains(enabled, MapContentType.Shop);
+        bool hasFixedRest = !planned && definition.fixedRestNodeNumber > 0 && Contains(enabled, MapContentType.Rest);
         int midpoint = -1;
         if (planned)
         {
@@ -30,6 +32,10 @@ public static class MapGenerator
             {
                 rule = i == 0 ? MapNodeRule.Start : planned && i == midpoint ? MapNodeRule.Midpoint : MapNodeRule.Regular;
                 choices.Add(Battle(MapContentType.NormalBattle, definition.normalBattles, random));
+                if (hasFixedShop && i + 1 == definition.fixedShopNodeNumber)
+                    choices.Add(new MapChoice(MapContentType.Shop));
+                if (hasFixedRest && i + 1 == definition.fixedRestNodeNumber)
+                    choices.Add(new MapChoice(MapContentType.Rest));
                 if (rule == MapNodeRule.Midpoint)
                     choices.Add(Battle(MapContentType.EliteBattle, definition.eliteBattles, random));
                 else if (planned && rule == MapNodeRule.Regular)
@@ -54,7 +60,14 @@ public static class MapGenerator
         if (!Enum.IsDefined(typeof(FloorMapMode), definition.mode) || definition.nodeCount < 1)
             throw new InvalidOperationException("A floor needs a valid mode and at least one node.");
         Require(enabled, MapContentType.NormalBattle); ValidatePool(definition.normalBattles);
-        if (definition.mode == FloorMapMode.NormalBattlesOnly) return;
+        if (definition.mode == FloorMapMode.NormalBattlesOnly)
+        {
+            if (definition.fixedShopNodeNumber < 0 || definition.fixedShopNodeNumber > definition.nodeCount)
+                throw new InvalidOperationException("The fixed shop must be disabled (0) or use an existing node number.");
+            if (definition.fixedRestNodeNumber < 0 || definition.fixedRestNodeNumber > definition.nodeCount)
+                throw new InvalidOperationException("The fixed rest choice must be disabled (0) or use an existing node number.");
+            return;
+        }
         if (definition.nodeCount < 4) throw new InvalidOperationException("Planned floors need at least four nodes.");
         if (!Probability(definition.nonBattleChance) || !Probability(definition.eliteChance) ||
             !Probability(definition.midpointMinRatio) || !Probability(definition.midpointMaxRatio) || definition.midpointMinRatio > definition.midpointMaxRatio)
@@ -63,7 +76,7 @@ public static class MapGenerator
         ValidatePool(definition.eliteBattles); ValidatePool(definition.bossBattles);
         if (definition.nonBattleContents == null) return;
         foreach (WeightedMapContent entry in definition.nonBattleContents)
-            if (entry == null || entry.weight < 0 || entry.type < MapContentType.Shop || entry.type > MapContentType.Upgrade)
+            if (entry == null || entry.weight < 0 || entry.type < MapContentType.Shop || entry.type > MapContentType.Rest)
                 throw new InvalidOperationException("Nonbattle weights need a nonbattle type and nonnegative weight.");
     }
 
