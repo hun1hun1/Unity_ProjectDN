@@ -102,6 +102,53 @@ public class StartingDeckTests
         Assert.That(nightmareSource.GetAllCards(), Has.Count.EqualTo(1));
     }
 
+    [TestCase(CardDeckType.TypeDream)]
+    [TestCase(CardDeckType.TypeNightmare)]
+    public void RunDeckReplacementChangesOnlyTheSelectedDuplicate(CardDeckType deckType)
+    {
+        CardDeckType otherType = deckType == CardDeckType.TypeDream
+            ? CardDeckType.TypeNightmare : CardDeckType.TypeDream;
+        CardData original = CreateCard(deckType);
+        CardData replacement = CreateCard(deckType);
+        CardData otherCard = CreateCard(otherType);
+        CardDatabase selectedSource = CreateDatabase(original, original);
+        CardDatabase otherSource = CreateDatabase(otherCard);
+        CardDatabase dream = deckType == CardDeckType.TypeDream ? selectedSource : otherSource;
+        CardDatabase nightmare = deckType == CardDeckType.TypeNightmare ? selectedSource : otherSource;
+        var selections = RunDeckInventory.GetCardSelections(dream, nightmare, deckType);
+        Assert.That(selections[1].Card, Is.SameAs(original));
+        Assert.That(RunDeckInventory.TryReplaceCard(selections[1], otherCard), Is.False);
+        Assert.That(RunDeckInventory.TryReplaceCard(selections[1], replacement), Is.True);
+        Assert.That(RunDeckInventory.TryReplaceCard(selections[1], replacement), Is.False);
+
+        DeckController deck = CreateController(dream, nightmare);
+        Assert.That(deck.GetDeck(deckType), Is.EqualTo(new[] { original, replacement }));
+        Assert.That(deck.GetDrawPile(deckType), Is.EquivalentTo(new[] { original, replacement }));
+        Assert.That(deck.GetDeck(otherType), Is.EqualTo(new[] { otherCard }));
+        Assert.That(selectedSource.GetAllCards(), Is.EqualTo(new[] { original, original }));
+    }
+
+    [Test]
+    public void RunDeckReplacementRejectsSelectionsFromBeforeAnEditOrNewRun()
+    {
+        CardData original = CreateCard(CardDeckType.TypeDream);
+        CardData replacement = CreateCard(CardDeckType.TypeDream);
+        CardDatabase dream = CreateDatabase(original, original);
+        CardDatabase nightmare = CreateDatabase();
+        DeckController deck = CreateController(dream, nightmare);
+        var selection = RunDeckInventory.GetCardSelections(dream, nightmare, CardDeckType.TypeDream)[1];
+
+        Assert.That(deck.RemoveCardFromDeck(original, CardDeckType.TypeDream), Is.True);
+        deck.AddCardToDeck(original, CardDeckType.TypeDream);
+        Assert.That(RunDeckInventory.TryReplaceCard(selection, replacement), Is.False);
+
+        selection = RunDeckInventory.GetCardSelections(dream, nightmare, CardDeckType.TypeDream)[1];
+        RunDeckInventory.ResetForNewGame();
+        var newRun = RunDeckInventory.GetCardSelections(dream, nightmare, CardDeckType.TypeDream);
+        Assert.That(RunDeckInventory.TryReplaceCard(selection, replacement), Is.False);
+        Assert.That(RunDeckInventory.TryReplaceCard(newRun[1], replacement), Is.True);
+    }
+
     [Test]
     public void AddedCardUpdatesExistingDeckViewAndEntersDiscardPileForDrawing()
     {

@@ -67,6 +67,30 @@ public class EnemyActionExpansionTests
         Assert.That(battle.GetPlayer().GetCurrentHP(), Is.EqualTo(65));
     }
 
+    [Test] public void IntentPanelSummarizesDebuffsAndKeepsCompositeDamagePrediction()
+    {
+        BattleManager battle = Battle();
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/CharacterSizes/EnemyIntentUI.prefab");
+        GameObject instance = Track(Object.Instantiate(prefab));
+        EnemyActionUI ui = instance.GetComponent<EnemyActionUI>();
+        TMP_Text text = (TMP_Text)Get(ui, "actionText");
+        EnemyAction debuff = Debuff(StatusEffectType.WeaknessExposure);
+
+        ui.SetAction(debuff, battle);
+        Assert.That(text.text, Is.EqualTo("디버프"));
+        Assert.That(text.font.HasCharacter('디', tryAddCharacter: true), Is.True);
+        Assert.That(text.font.HasCharacter('프', tryAddCharacter: true), Is.True);
+
+        EnemyAction composite = Composite(Block(8), Composite(debuff, Attack(10)));
+        ui.SetAction(composite, battle);
+        Assert.That(text.text, Is.EqualTo("방어 8\n디버프\n공격 15"));
+        Assert.That(composite.GetActionDescription(battle), Does.Contain("약점 노출 2턴"));
+
+        ui.SetAction(Composite(Attack(100), debuff), battle);
+        Assert.That(text.text, Is.EqualTo("공격 100"));
+        Assert.That(battle.GetPlayer().StatusEffects.ActiveEffects, Is.Empty);
+    }
+
     [Test] public void AttackBeforeDebuffDoesNotApplyFutureModifiersToTheEarlierAttack()
     {
         BattleManager battle = Battle();
@@ -219,12 +243,12 @@ public class EnemyActionExpansionTests
         EnemyActionUI ui = Object.FindFirstObjectByType<EnemyActionUI>();
         TMP_Text text = (TMP_Text)Get(ui, "actionText");
         Image image = (Image)Get(ui, "actionIcon");
-        Assert.That(text.text, Is.EqualTo(action.GetActionDescription(battle)));
+        Assert.That(text.text, Is.EqualTo("디버프\n공격 15"));
         Assert.That(image.sprite, Is.SameAs(action.GetActionIcon()));
         EnemyAction next = battle.GetTarget().NextAction;
         battle.GetTarget().StatusEffects.Apply(Status(StatusEffectType.Rust), 2);
         Assert.That(battle.GetTarget().NextAction, Is.SameAs(next));
-        Assert.That(text.text, Is.EqualTo(action.GetActionDescription(battle)));
+        Assert.That(text.text, Is.EqualTo("디버프\n공격 11"));
         // The example applies Weakness Exposure before attacking, so calculate using a snapshot result: 10*.75*1.5 = 11.
         Assert.That(text.text, Does.Contain("공격 11"));
         int hp = battle.GetPlayer().GetCurrentHP();
@@ -280,8 +304,28 @@ public class EnemyActionExpansionTests
             Canvas.ForceUpdateCanvases(); text.ForceMeshUpdate();
             Capture(battle, name);
             Assert.That(text.isTextOverflowing, Is.False, name + " intent must fit without clipping or overlapping other HUD elements.");
-            Assert.That(text.textInfo.lineCount, Is.GreaterThanOrEqualTo(name == "Debuff" ? 1 : 2));
+            Assert.That(text.textInfo.lineCount, Is.EqualTo(name == "Debuff" ? 1 : name == "AllActions" ? 3 : 2), name);
+            Image background = (Image)Get(ui, "background");
+            Assert.That(background, Is.Not.Null);
+            Assert.That(background.enabled, Is.True);
+            Assert.That(background.raycastTarget, Is.False);
+            Assert.That(background.rectTransform.rect.height, Is.GreaterThanOrEqualTo(text.preferredHeight + 16));
+            RectTransform root = (RectTransform)ui.transform;
+            RectTransform iconRect = ((Image)Get(ui, "actionIcon")).rectTransform;
+            Bounds backgroundBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(root, background.rectTransform);
+            Bounds iconBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(root, iconRect);
+            Bounds textBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(root, text.rectTransform);
+            Assert.That(iconBounds.min.x, Is.GreaterThanOrEqualTo(backgroundBounds.min.x + 15));
+            Assert.That(iconBounds.max.x, Is.LessThanOrEqualTo(textBounds.min.x));
+            Assert.That(textBounds.max.x, Is.LessThanOrEqualTo(backgroundBounds.max.x - 15));
+            float visibleTextWidth = Mathf.Min(text.preferredWidth, textBounds.size.x);
+            float contentCenter = (iconBounds.min.x + textBounds.min.x + visibleTextWidth) / 2;
+            Assert.That(contentCenter, Is.EqualTo(backgroundBounds.center.x).Within(1f), name);
+            Assert.That(iconBounds.center.x, Is.LessThan(backgroundBounds.center.x), name);
+            Assert.That(textBounds.center.x, Is.GreaterThan(backgroundBounds.center.x), name);
         }
+        ui.ClearAction();
+        Assert.That(((Image)Get(ui, "background")).enabled, Is.False);
     }
 
     private static void Capture(BattleManager battle, string name)

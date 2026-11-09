@@ -28,7 +28,7 @@ public class EnemyApplyStatusAction : EnemyAction
     {
         string text = GetActionDescription();
         context.Apply(status, target, turns);
-        return text;
+        return context.SummarizeStatuses ? "디버프" : text;
     }
     public override void Execute(BattleManager battle)
     {

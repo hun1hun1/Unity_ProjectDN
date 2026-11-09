@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
@@ -9,6 +10,19 @@ internal sealed class RunDeckState
     internal readonly List<CardData> Nightmare;
     internal readonly ReadOnlyCollection<CardData> DreamView;
     internal readonly ReadOnlyCollection<CardData> NightmareView;
+    internal uint Revision { get; private set; }
+
+    internal List<CardData> GetCards(CardDeckType deckType)
+    {
+        switch (deckType)
+        {
+            case CardDeckType.TypeDream: return Dream;
+            case CardDeckType.TypeNightmare: return Nightmare;
+            default: return null;
+        }
+    }
+
+    internal void MarkChanged() => Revision++;
 
     internal RunDeckState(CardDatabase dream, CardDatabase nightmare)
     {
@@ -40,6 +54,61 @@ public static class RunDeckInventory
             decks.Add(key, state);
         }
         return state;
+    }
+
+    public readonly struct CardSelection
+    {
+        public CardData Card { get; }
+        internal readonly RunDeckState State;
+        internal readonly CardDeckType DeckType;
+        internal readonly int Index;
+        internal readonly uint DeckRevision;
+        internal readonly uint RunVersion;
+
+        internal CardSelection(RunDeckState state, CardDeckType deckType, int index, CardData card)
+        {
+            Card = card;
+            State = state;
+            DeckType = deckType;
+            Index = index;
+            DeckRevision = state.Revision;
+            RunVersion = GameVersion;
+        }
+    }
+
+    // Keep the selection with its UI item when sorting or filtering the displayed cards.
+    public static IReadOnlyList<CardSelection> GetCardSelections(
+        CardDatabase dream, CardDatabase nightmare, CardDeckType deckType)
+    {
+        if ((dream == null && nightmare == null) ||
+            (deckType != CardDeckType.TypeDream && deckType != CardDeckType.TypeNightmare))
+            return Array.Empty<CardSelection>();
+
+        RunDeckState state = GetOrCreate(dream, nightmare);
+        List<CardData> cards = state.GetCards(deckType);
+        var selections = new CardSelection[cards.Count];
+        for (int i = 0; i < cards.Count; i++)
+            selections[i] = new CardSelection(state, deckType, i, cards[i]);
+        return selections;
+    }
+
+    // Replaces one entry in the run inventory. The caller owns node validation and saving.
+    public static bool TryReplaceCard(CardSelection selection, CardData replacement)
+    {
+        RunDeckState state = selection.State;
+        if (state == null || selection.RunVersion != GameVersion || selection.DeckRevision != state.Revision ||
+            selection.Card == null || replacement == null || replacement == selection.Card ||
+            selection.Card.deckType != selection.DeckType || replacement.deckType != selection.DeckType)
+            return false;
+
+        List<CardData> cards = state.GetCards(selection.DeckType);
+        if (cards == null || selection.Index < 0 || selection.Index >= cards.Count ||
+            cards[selection.Index] != selection.Card)
+            return false;
+
+        cards[selection.Index] = replacement;
+        state.MarkChanged();
+        return true;
     }
 
     internal static RunDeckData[] Capture(RunAssetCatalog catalog)

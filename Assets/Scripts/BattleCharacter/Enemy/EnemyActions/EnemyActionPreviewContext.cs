@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public sealed class EnemyActionPreviewContext
 {
     public BattleManager Battle { get; }
+    internal bool SummarizeStatuses { get; }
     private readonly HashSet<StatusEffectType> playerStatuses;
     private readonly HashSet<StatusEffectType> enemyStatuses;
     private readonly bool hasPlayer;
@@ -14,9 +15,10 @@ public sealed class EnemyActionPreviewContext
     private int playerBlock;
     public bool CanContinue => (!hasPlayer || playerHP > 0) && (!hasEnemy || enemyHP > 0);
 
-    public EnemyActionPreviewContext(BattleManager battle)
+    public EnemyActionPreviewContext(BattleManager battle, bool summarizeStatuses = false)
     {
         Battle = battle;
+        SummarizeStatuses = summarizeStatuses;
         Player player = battle != null ? battle.GetPlayer() : null;
         Enemy enemy = battle != null ? battle.GetTarget() : null;
         hasPlayer = player != null; hasEnemy = enemy != null;

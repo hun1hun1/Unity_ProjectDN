@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c813815edeae7934380dab4472c7c28c, type: 3}
+  m_Name: Target_Tracking
+  m_EditorClassIdentifier: 
+  cardName: "\uD45C\uC801 \uCD94\uC801"
+  cost:
+    dreamCost: 0
+    nightmareCost: 1
+  costMode: 0
+  artwork: {fileID: 21300000, guid: d31bfa841359fb946901500e9ce04cbd, type: 3}
+  description: "\uCD1D\uC54C\uC774 1\uC54C \uC774\uC0C1\uC778 \uACBD\uC6B0\uC5D0\uB9CC
+    \uC0AC\uC6A9\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4. \uCD1D\uC54C\uC744 1\uC54C
+    \uC0AC\uC6A9\uD558\uC5EC \uC801\uC5D0\uAC8C \uC57D\uC810 \uB178\uCD9C\uC744 2\uD134
+    \uBD80\uC5EC\uD569\uB2C8\uB2E4. \uC790\uC2E0\uC740 {damage:1}\uC758 \uD53C\uD574\uB97C
+    \uBC1B\uC2B5\uB2C8\uB2E4."
+  deckType: 1
+  type: 1
+  rarity: 0
+  effects:
+  - {fileID: 11400000, guid: 6a2b1df76125ad14a957e993f2cd24b1, type: 2}
+  - {fileID: 11400000, guid: ceb71c30f58afbd41b15873759a29d77, type: 2}
+  presentation: {fileID: 0}
+  exhaustOnUse: 0
+  turnStartEffects: []
+  continuousDurationType: 0
+  continuousTurns: 1
+  continuousIcon: {fileID: 0}
+  requiredAmmo: 1
+  consumeRequiredAmmo: 1

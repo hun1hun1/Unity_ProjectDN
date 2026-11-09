@@ -2848,8 +2848,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uAC8C\uC784 \uC885\uB8CC"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 29d820bbcebfd2f408a8d1178dedbb96, type: 2}
-  m_sharedMaterial: {fileID: -3576440731640035227, guid: 29d820bbcebfd2f408a8d1178dedbb96, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e1b905f22dad88e449966472c7f22232, type: 2}
+  m_sharedMaterial: {fileID: -308092376511558241, guid: e1b905f22dad88e449966472c7f22232, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

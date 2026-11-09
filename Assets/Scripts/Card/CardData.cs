@@ -42,6 +42,9 @@ public class CardData : ScriptableObject
     public CardRarity rarity;
     public CardEffect[] effects;
 
+    [Header("Upgrade")]
+    public CardData upgradedCard;
+
     [Header("Use Presentation")]
     public CardPresentation presentation;
 

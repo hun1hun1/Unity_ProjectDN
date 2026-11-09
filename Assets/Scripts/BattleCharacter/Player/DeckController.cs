@@ -90,12 +90,7 @@ public class DeckController : MonoBehaviour
     private List<CardData> GetMutableDeck(CardDeckType deckType)
     {
         EnsureInitialized();
-        switch (deckType)
-        {
-            case CardDeckType.TypeDream: return runDeck.Dream;
-            case CardDeckType.TypeNightmare: return runDeck.Nightmare;
-            default: return null;
-        }
+        return runDeck.GetCards(deckType);
     }
 
     public CardData DrawCard(CardDeckType deckType)
@@ -213,6 +208,7 @@ public class DeckController : MonoBehaviour
 
         if (cardData.deckType != deckType) return;
         deck.Add(cardData);
+        runDeck.MarkChanged();
         DiscardCard(cardData, deckType);
     }
 
@@ -227,6 +223,7 @@ public class DeckController : MonoBehaviour
             return false;
 
         if (!deck.Remove(cardData)) return false;
+        runDeck.MarkChanged();
         List<CardData> drawPile = deckType == CardDeckType.TypeDream ? dreamDrawPile : nightmareDrawPile;
         List<CardData> discardPile = deckType == CardDeckType.TypeDream ? dreamDiscardPile : nightmareDiscardPile;
         if (!drawPile.Remove(cardData)) discardPile.Remove(cardData);

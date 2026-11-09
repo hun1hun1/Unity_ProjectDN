@@ -10,6 +10,9 @@ public class EnemyActionUI : MonoBehaviour
     [SerializeField]
     private TMP_Text actionText;
 
+    [SerializeField]
+    private Image background;
+
     public void ValidateBindings()
     {
         if (actionIcon == null || actionText == null)
@@ -34,12 +37,51 @@ public class EnemyActionUI : MonoBehaviour
             actionIcon.sprite = action.GetActionIcon();
             actionIcon.enabled = actionIcon.sprite != null;
         }
-        if (actionText != null) actionText.text = action.GetActionDescription(battleManager);
+        if (actionText != null) actionText.text = action.Preview(new EnemyActionPreviewContext(battleManager, summarizeStatuses: true));
+        if (background != null)
+        {
+            background.enabled = true;
+            if (actionText != null) UpdateBackgroundSize();
+        }
+    }
+
+    private void OnRectTransformDimensionsChange()
+    {
+        if (background != null && background.enabled && actionText != null)
+            UpdateBackgroundSize();
+    }
+
+    private void UpdateBackgroundSize()
+    {
+        RectTransform textRect = actionText.rectTransform;
+        float textWidth = Mathf.Max(1, textRect.rect.width);
+        if (actionIcon != null)
+        {
+            RectTransform iconRect = actionIcon.rectTransform;
+            float panelWidth = background.rectTransform.rect.width;
+            float iconWidth = iconRect.rect.width;
+            float availableWidth = Mathf.Max(1, panelWidth - iconWidth - 40);
+            float preferredWidth = actionText.GetPreferredValues(actionText.text, Mathf.Infinity, Mathf.Infinity).x;
+            textWidth = Mathf.Min(availableWidth, Mathf.Max(1, preferredWidth + 1));
+            float left = (panelWidth - iconWidth - 8 - textWidth) / 2;
+
+            iconRect.anchoredPosition = new Vector2(left, iconRect.anchoredPosition.y);
+            textRect.anchorMin = new Vector2(0, textRect.anchorMin.y);
+            textRect.anchorMax = new Vector2(0, textRect.anchorMax.y);
+            textRect.pivot = new Vector2(0, textRect.pivot.y);
+            textRect.anchoredPosition = new Vector2(left + iconWidth + 8, textRect.anchoredPosition.y);
+            textRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, textWidth);
+        }
+        float preferredHeight = actionText.GetPreferredValues(actionText.text, textWidth, Mathf.Infinity).y;
+        float textHeight = Mathf.Max(56, preferredHeight);
+        textRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, textHeight);
+        background.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, textHeight + 16);
     }
 
     public void ClearAction()
     {
         if (actionIcon != null) { actionIcon.sprite = null; actionIcon.enabled = false; }
         if (actionText != null) actionText.text = "";
+        if (background != null) background.enabled = false;
     }
 }
