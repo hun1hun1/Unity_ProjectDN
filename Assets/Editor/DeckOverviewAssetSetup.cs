@@ -41,12 +41,11 @@ public static class DeckOverviewAssetSetup
                     new Vector2(0,1), Vector2.one, new Vector2(0,-72), Vector2.zero);
                 RectTransform close = Rect(panel, "CloseButton", Vector2.one, Vector2.one);
                 close.pivot = Vector2.one;
-                close.anchoredPosition = new Vector2(-28,-16);
-                close.sizeDelta = new Vector2(112,48);
-                Background(close, new Color(.2f,.21f,.18f), true);
+                close.anchoredPosition = new Vector2(-28, -20);
+                close.sizeDelta = new Vector2(56, 56);
+                Background(close, Color.white, true).sprite =
+                    AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Images/UI/shared-close-button.png");
                 close.gameObject.AddComponent<UnityEngine.UI.Button>();
-                Label(close, "Text", "닫기", new Color(.95f,.93f,.85f), 24,
-                    Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
                 CreateSection(panel, "DreamSection", true);
                 CreateSection(panel, "NightmareSection", false);
             }

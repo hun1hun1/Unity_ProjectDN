@@ -79,7 +79,13 @@ public static class SettingsAssetSetup
             Background(root,new Color(.025f,.035f,.03f,.99f),true);
             RectTransform main=Rect(root,"MainContent",Vector2.zero,Vector2.one);main.gameObject.AddComponent<CanvasGroup>();
             Label(main,"Title","설정",36,TextAlignmentOptions.Center,new Vector2(0,1),Vector2.one,new Vector2(0,-84),Vector2.zero);
-            Button(main,"CloseButton","닫기",Vector2.one,new Vector2(-28,-16),new Vector2(112,48),Vector2.one);
+            RectTransform close = Rect(main, "CloseButton", Vector2.one, Vector2.one);
+            close.pivot = Vector2.one;
+            close.anchoredPosition = new Vector2(-28, -20);
+            close.sizeDelta = new Vector2(56, 56);
+            UnityEngine.UI.Image closeImage = Background(close, Color.white, true);
+            closeImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Images/UI/shared-close-button.png");
+            close.gameObject.AddComponent<UnityEngine.UI.Button>().targetGraphic = closeImage;
             RectTransform audio=Section(main,"AudioSection",true,"사운드");
             VolumeRow(audio,"MasterRow","전체 음량",.77f);
             VolumeRow(audio,"MusicRow","배경음",.49f);
