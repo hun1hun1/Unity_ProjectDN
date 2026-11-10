@@ -13,9 +13,12 @@ public sealed class ShopHandler : MapContentHandler
     [SerializeField] private CardRewardPoolCatalog rewardPools;
     [SerializeField] private DeckCardUI[] dreamSlots;
     [SerializeField] private DeckCardUI[] nightmareSlots;
+    [SerializeField] private TMP_Text[] dreamPrices;
+    [SerializeField] private TMP_Text[] nightmarePrices;
     [SerializeField] private TMP_Text dreamStockStatus;
     [SerializeField] private TMP_Text nightmareStockStatus;
     private Func<bool> complete;
+    private int priceSeed;
     private CardData[] dreamStock;
     private CardData[] nightmareStock;
 
@@ -40,7 +43,10 @@ public sealed class ShopHandler : MapContentHandler
         this.complete = complete;
         goldText.text = $"보유 골드 {RunGoldInventory.Gold}";
         statusText.text = string.Empty;
-        var random = new System.Random(progress.NodeSeed);
+        int nodeSeed = progress.NodeSeed;
+        var random = new System.Random(nodeSeed);
+        // Keep prices reproducible without consuming the stock sampler's random values.
+        priceSeed = nodeSeed ^ 0x4F1BBCDC;
         dreamStock = ShopStockSampler.Generate(CardDeckType.TypeDream, rewardPools.Pools, random);
         nightmareStock = ShopStockSampler.Generate(CardDeckType.TypeNightmare, rewardPools.Pools, random);
         panel.SetActive(true);
@@ -84,19 +90,23 @@ public sealed class ShopHandler : MapContentHandler
 
     private void RefreshStock()
     {
-        RefreshShelf(dreamSlots, dreamStock, dreamStockStatus);
-        RefreshShelf(nightmareSlots, nightmareStock, nightmareStockStatus);
+        var priceRandom = new System.Random(priceSeed);
+        RefreshShelf(dreamSlots, dreamStock, dreamPrices, dreamStockStatus, priceRandom);
+        RefreshShelf(nightmareSlots, nightmareStock, nightmarePrices, nightmareStockStatus, priceRandom);
     }
 
-    private static void RefreshShelf(DeckCardUI[] slots, CardData[] stock, TMP_Text stockStatus)
+    private static void RefreshShelf(DeckCardUI[] slots, CardData[] stock, TMP_Text[] prices,
+        TMP_Text stockStatus, System.Random priceRandom)
     {
         bool hasStock = false;
         for (int i = 0; i < slots.Length; i++)
         {
             CardData card = stock[i];
             slots[i].gameObject.SetActive(card != null);
+            prices[i].gameObject.SetActive(card != null);
             if (card == null) continue;
             slots[i].SetCard(card, applyStatusModifiers: false);
+            prices[i].text = ShopStockSampler.RollPrice(card.rarity, priceRandom).ToString();
             hasStock = true;
         }
         stockStatus.gameObject.SetActive(!hasStock);

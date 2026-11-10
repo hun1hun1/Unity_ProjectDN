@@ -6,6 +6,7 @@ public class DeckCardHoverUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
 {
     [SerializeField] private RectTransform hoverVisual;
     [SerializeField] private Canvas hoverCanvas;
+    [SerializeField] private RectTransform hoverLowerBoundary;
     [SerializeField, Min(1f)] private float hoverScale = 1.3f;
     [SerializeField, Min(0f)] private float hoverDuration = 0.12f;
     [SerializeField] private int sortingOrderOffset = 10;
@@ -61,7 +62,8 @@ public class DeckCardHoverUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
             ? Mathf.MoveTowards(progress, target, Time.unscaledDeltaTime / hoverDuration)
             : target;
         Canvas canvas = GetComponentInParent<Canvas>()?.rootCanvas;
-        RectTransform lowerBoundary = rewardUI != null ? rewardUI.HoverLowerBoundary : null;
+        RectTransform lowerBoundary = hoverLowerBoundary;
+        if (lowerBoundary == null && rewardUI != null) lowerBoundary = rewardUI.HoverLowerBoundary;
         float targetScale = CardHoverSizing.GetTargetScale(hoverVisual, card.DescriptionText, canvas,
             baseScale, hoverScale, 16f, lowerBoundary);
         hoverVisual.localScale = baseScale * Mathf.Lerp(1f, targetScale, Mathf.SmoothStep(0f, 1f, progress));

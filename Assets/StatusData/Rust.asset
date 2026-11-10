@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   statusType: 1
   displayName: "\uB179\uC2AC\uC74C"
-  icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  description: "\uacf5\uaca9\uc73c\ub85c \uc8fc\ub294 \ud53c\ud574\uac00 25% \uac10\uc18c\ud569\ub2c8\ub2e4."
+  icon: {fileID: 21300000, guid: 982aea2ba4fd00044bcda179f2c31242, type: 3}
+  description: "\uACF5\uACA9\uC73C\uB85C \uC8FC\uB294 \uD53C\uD574\uAC00 25% \uAC10\uC18C\uD569\uB2C8\uB2E4."

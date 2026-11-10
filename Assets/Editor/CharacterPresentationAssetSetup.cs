@@ -169,11 +169,16 @@ public static class CharacterPresentationAssetSetup
             UnityEngine.UI.Image panel = root.GetComponent<UnityEngine.UI.Image>(); if (panel != null) panel.color = Color.clear;
             foreach (TMP_Text text in root.GetComponentsInChildren<TMP_Text>(true)) { text.fontSize = 18; text.enableAutoSizing = false; }
             RectTransform hp = Find(root, "HPBar"); Stretch(hp, new Vector2(.14f, .65f), new Vector2(.96f, 1));
-            RectTransform block = Find(root, "Block"); Stretch(block, new Vector2(.01f, .65f), new Vector2(.14f, 1));
-            RectTransform status = Find(root, "StatusContainer"); Stretch(status, new Vector2(.14f, .05f), new Vector2(.96f, .50f));
+            RectTransform block = Find(root, "Block");
+            // Keep the template's badge size and transparent-margin offset, aligned to the profile's bar.
+            block.anchorMin = block.anchorMax = new Vector2(hp.anchorMin.x, (hp.anchorMin.y + hp.anchorMax.y) * .5f);
+            RectTransform status = Find(root, "StatusContainer");
+            Stretch(status, new Vector2(hp.anchorMin.x, .05f), new Vector2(hp.anchorMax.x, hp.anchorMin.y));
+            status.offsetMax = new Vector2(0, -6);
             HorizontalLayoutGroup row = status.GetComponent<HorizontalLayoutGroup>(); if (row != null) Object.DestroyImmediate(row);
             GridLayoutGroup grid = status.GetComponent<GridLayoutGroup>(); if (grid == null) grid = status.gameObject.AddComponent<GridLayoutGroup>();
-            grid.cellSize = new Vector2(28, 28); grid.spacing = new Vector2(4, 4);
+            grid.cellSize = new Vector2(32, 32); grid.spacing = new Vector2(4, 4);
+            grid.padding = new RectOffset(4, 4, 0, 0);
             grid.childAlignment = TextAnchor.UpperLeft; grid.constraint = GridLayoutGroup.Constraint.Flexible;
             BindHudFields(root);
             return PrefabUtility.SaveAsPrefabAsset(root, path).GetComponent<CharacterInfoUI>();

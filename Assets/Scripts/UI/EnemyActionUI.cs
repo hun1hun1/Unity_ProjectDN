@@ -4,6 +4,9 @@ using UnityEngine.UI;
 
 public class EnemyActionUI : MonoBehaviour
 {
+    private const float MinimumPanelHeight = 88f;
+    private const float VerticalPadding = 12f;
+
     [SerializeField]
     private Image actionIcon;
 
@@ -75,7 +78,8 @@ public class EnemyActionUI : MonoBehaviour
         float preferredHeight = actionText.GetPreferredValues(actionText.text, textWidth, Mathf.Infinity).y;
         float textHeight = Mathf.Max(56, preferredHeight);
         textRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, textHeight);
-        background.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, textHeight + 16);
+        float panelHeight = Mathf.Max(MinimumPanelHeight, textHeight + VerticalPadding * 2f);
+        background.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, panelHeight);
     }
 
     public void ClearAction()

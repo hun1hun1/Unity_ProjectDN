@@ -292,10 +292,13 @@ public class EnemyActionExpansionTests
     [UnityTest] public IEnumerator ExpandedIntentFitsItsTextAreaInTheRealBattleScene()
     {
         yield return new EnterPlayMode();
-        yield return SceneManager.LoadSceneAsync("BattleScene");
-        yield return new WaitForSeconds(.5f);
-        EnemyActionUI ui = Object.FindFirstObjectByType<EnemyActionUI>();
+        AsyncOperation loading = SceneManager.LoadSceneAsync("BattleScene");
+        while (!loading.isDone) yield return null;
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
+        Assert.That(battle, Is.Not.Null);
+        var presentation = battle.GetTarget().GetComponent<BattleCharacterPresentation>();
+        EnemyActionUI ui = presentation.ActionUI;
+        Assert.That(ui, Is.Not.Null);
         TMP_Text text = (TMP_Text)Get(ui, "actionText");
         foreach (string name in new[] { "Debuff", "DebuffAttack", "BlockAttack", "AllActions" })
         {
@@ -309,7 +312,13 @@ public class EnemyActionExpansionTests
             Assert.That(background, Is.Not.Null);
             Assert.That(background.enabled, Is.True);
             Assert.That(background.raycastTarget, Is.False);
-            Assert.That(background.rectTransform.rect.height, Is.GreaterThanOrEqualTo(text.preferredHeight + 16));
+            Assert.That(background.type, Is.EqualTo(Image.Type.Sliced));
+            Assert.That(background.pixelsPerUnitMultiplier, Is.EqualTo(2f));
+            Assert.That(background.rectTransform.rect.width, Is.EqualTo(240f).Within(.01f));
+            float height = background.rectTransform.rect.height;
+            Assert.That(height, Is.GreaterThanOrEqualTo(Mathf.Max(88f, text.preferredHeight + 24f) - .01f), name);
+            if (name == "Debuff") Assert.That(height, Is.EqualTo(88f).Within(.01f));
+            if (name == "AllActions") Assert.That(height, Is.GreaterThan(88f));
             RectTransform root = (RectTransform)ui.transform;
             RectTransform iconRect = ((Image)Get(ui, "actionIcon")).rectTransform;
             Bounds backgroundBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(root, background.rectTransform);

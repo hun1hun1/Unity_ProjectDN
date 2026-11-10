@@ -33,7 +33,10 @@ public static class DeckOverviewAssetSetup
             if (panel == null)
             {
                 panel = Rect(canvas, "DeckOverviewPanel", Vector2.zero, new Vector2(1, .9f));
-                Background(panel, new Color(.025f, .03f, .04f, .99f), true);
+                var panelImage = Background(panel, Color.white, true);
+                panelImage.sprite = pileList.GetComponent<UnityEngine.UI.Image>().sprite;
+                panelImage.type = UnityEngine.UI.Image.Type.Sliced;
+                panelImage.pixelsPerUnitMultiplier = 1.5f;
                 Label(panel, "Title", "전체 덱", new Color(.93f,.9f,.8f), 34,
                     new Vector2(0,1), Vector2.one, new Vector2(0,-72), Vector2.zero);
                 RectTransform close = Rect(panel, "CloseButton", Vector2.one, Vector2.one);

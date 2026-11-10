@@ -59,7 +59,6 @@ public abstract class BattleCharacter : MonoBehaviour
 
     public virtual void TakeDamage(int damage, BattleCharacter attacker)
     {
-        bool wasAlive = currentHP > 0;
         damage = DamageCalculator.Calculate(damage, attacker, this);
         // 방어도가 먼저 피해를 흡수
         int remainingDamage = damage - block;
@@ -72,6 +71,14 @@ public abstract class BattleCharacter : MonoBehaviour
         if (block < 0)
             block = 0;
 
+        ApplyDamageToHealth(damage, remainingDamage);
+    }
+
+    internal void TakeFixedDamage(int damage) => ApplyDamageToHealth(damage, damage);
+
+    private void ApplyDamageToHealth(int damage, int remainingDamage)
+    {
+        bool wasAlive = currentHP > 0;
         currentHP -= remainingDamage;
 
         if (currentHP < 0)

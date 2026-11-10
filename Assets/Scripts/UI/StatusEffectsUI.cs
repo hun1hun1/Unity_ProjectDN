@@ -1,11 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StatusEffectsUI : MonoBehaviour
 {
     [SerializeField] private StatusIconUI iconPrefab;
     [SerializeField] private StatusTooltipUI tooltipPrefab;
+    private static readonly Vector2 BackgroundPadding = new Vector2(4f, 4f);
+
     private StatusTooltipUI tooltip;
+    private Image background;
+    private bool backgroundLayoutDirty;
     private StatusEffectSystem source;
     private ContinuousCardSystem continuous;
     private DelayedEffectSystem delayed;
@@ -136,6 +141,7 @@ public class StatusEffectsUI : MonoBehaviour
 
     private void Refresh()
     {
+        backgroundLayoutDirty = true;
         var expired = new List<StatusEffectType>();
         foreach (var entry in icons)
             if (source == null || !source.HasStatus(entry.Key)) expired.Add(entry.Key);
@@ -150,6 +156,8 @@ public class StatusEffectsUI : MonoBehaviour
         if (source == null || iconPrefab == null) return;
         foreach (ActiveStatusEffect status in source.ActiveEffects)
         {
+            if (status.Type == StatusEffectType.Burn) continue;
+
             if (!icons.TryGetValue(status.Type, out StatusIconUI icon) || icon == null)
             {
                 icon = Instantiate(iconPrefab, transform, false);
@@ -158,5 +166,66 @@ public class StatusEffectsUI : MonoBehaviour
             }
             icon.SetStatus(status);
         }
+    }
+
+    private void OnRectTransformDimensionsChange()
+    {
+        backgroundLayoutDirty = true;
+    }
+
+    private void LateUpdate()
+    {
+        if (!backgroundLayoutDirty) return;
+        backgroundLayoutDirty = false;
+        if (transform is not RectTransform row) return;
+        if (icons.Count == 0 && continuousIcons.Count == 0 && delayedIcons.Count == 0)
+        {
+            if (background != null) background.gameObject.SetActive(false);
+            return;
+        }
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(row);
+        Bounds? iconBounds = null;
+        foreach (Transform child in row)
+        {
+            if (!child.gameObject.activeSelf || !child.TryGetComponent<StatusIconUI>(out _)) continue;
+
+            Bounds bounds = RectTransformUtility.CalculateRelativeRectTransformBounds(row, child);
+            if (iconBounds.HasValue) bounds.Encapsulate(iconBounds.Value);
+            iconBounds = bounds;
+        }
+
+        if (!iconBounds.HasValue)
+        {
+            if (background != null) background.gameObject.SetActive(false);
+            return;
+        }
+
+        if (background == null) background = CreateBackground(row);
+        RectTransform rect = background.rectTransform;
+        rect.anchoredPosition = iconBounds.Value.center;
+        rect.sizeDelta = (Vector2)iconBounds.Value.size + 2f * BackgroundPadding;
+        background.gameObject.SetActive(true);
+    }
+
+    private Image CreateBackground(RectTransform row)
+    {
+        var panel = new GameObject("StatusBackground", typeof(RectTransform), typeof(Image), typeof(LayoutElement));
+        panel.layer = gameObject.layer;
+        panel.GetComponent<LayoutElement>().ignoreLayout = true;
+        panel.transform.SetParent(row, false);
+        panel.transform.SetAsFirstSibling();
+
+        Image image = panel.GetComponent<Image>();
+        image.rectTransform.anchorMin = image.rectTransform.anchorMax = row.pivot;
+        image.raycastTarget = false;
+        if (tooltipPrefab != null && tooltipPrefab.TryGetComponent<Image>(out Image tooltipFrame))
+            image.sprite = tooltipFrame.sprite;
+        image.type = Image.Type.Sliced;
+        image.pixelsPerUnitMultiplier = 8f;
+        image.color = image.sprite != null
+            ? new Color(1f, 1f, 1f, .94f)
+            : new Color(.06f, .08f, .14f, .94f);
+        return image;
     }
 }

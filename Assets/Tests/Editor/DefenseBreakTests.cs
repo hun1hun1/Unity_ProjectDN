@@ -167,8 +167,8 @@ public class DefenseBreakTests
 
     [TestCase("Assets/CardData/Basic/Dream/Skill/1.Card_Defense/Defense.asset")]
     [TestCase("Assets/CardData/Basic/Nightmare/Skill/1.Card_Cat_and_Mouse/Cat_and_Mouse.asset")]
-    [TestCase("Assets/CardData/Soldier/Starting/Dream/Skill/01.Card_Defense/Defense.asset")]
-    [TestCase("Assets/CardData/Soldier/Starting/Nightmare/Skill/01.Card_Cat_and_Mouse/Cat_and_Mouse.asset")]
+    [TestCase("Assets/CardData/Soldier/Basic/Starting/Dream/Skill/01.Card_Defense/Defense.asset")]
+    [TestCase("Assets/CardData/Soldier/Basic/Starting/Nightmare/Skill/01.Card_Cat_and_Mouse/Cat_and_Mouse.asset")]
     public void ExistingDefenseCardsDisplayActualGainAndRetainTheirOtherEffects(string path)
     {
         BattleManager battle = Battle(out Player player, out Enemy enemy, out DeckController deck);
@@ -211,7 +211,7 @@ public class DefenseBreakTests
         yield return Until(() => battle.CanInspectCards, "The initial hand did not finish drawing.");
         Player player = battle.GetPlayer();
         CardHandController hand = (CardHandController)GetField(battle, "dreamCardHand");
-        CardData card = AssetDatabase.LoadAssetAtPath<CardData>("Assets/CardData/Soldier/Starting/Dream/Skill/01.Card_Defense/Defense.asset");
+        CardData card = AssetDatabase.LoadAssetAtPath<CardData>("Assets/CardData/Soldier/Basic/Starting/Dream/Skill/01.Card_Defense/Defense.asset");
         CardUI ui = ((List<CardUI>)GetField(hand, "cards"))[0];
         ui.SetCard(card, battle);
         TMP_Text label = (TMP_Text)GetField(ui, "descriptionText");

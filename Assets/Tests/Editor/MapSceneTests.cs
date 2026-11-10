@@ -104,10 +104,26 @@ public class MapSceneTests
             string stock = shop.CaptureState();
             Assert.That(session.SavedContentState, Is.EqualTo(stock).And.Not.Empty);
             CaptureMap("map-shop-stock.png");
+            var catalog = RunAssetCatalog.Load();
+            var savedStock = JsonUtility.FromJson<SavedShopStock>(stock);
+            int[] originalPrices = ReadShopPrices(display, savedStock, catalog);
             yield return null;
 
             var shopLeave = panel.Find("LeaveButton").GetComponent<Button>();
             var stockCard = display.Find("DreamSlots").GetComponentInChildren<DeckCardUI>();
+            var priceTag = GetShopPriceLabel(stockCard.transform.parent).rectTransform;
+            var cardVisual = (RectTransform)stockCard.transform.Find("HoverVisual");
+            Vector3 pricePosition = priceTag.position;
+            var hover = stockCard.GetComponent<DeckCardHoverUI>();
+            hover.OnPointerEnter(new PointerEventData(EventSystem.current));
+            yield return new WaitForSecondsRealtime(0.2f);
+            Assert.That(cardVisual.localScale.x, Is.GreaterThan(1f));
+            Assert.That(priceTag.position, Is.EqualTo(pricePosition));
+            Assert.That(cardVisual.TransformPoint(new Vector3(0, cardVisual.rect.yMin)).y,
+                Is.GreaterThan(priceTag.TransformPoint(new Vector3(0, priceTag.rect.yMax)).y));
+            hover.OnPointerExit(new PointerEventData(EventSystem.current));
+            yield return new WaitForSecondsRealtime(0.2f);
+
             var inspection = Object.FindFirstObjectByType<CardInspectionUI>();
             ClickPointer(stockCard.gameObject, PointerEventData.InputButton.Right);
             Assert.That(inspection.IsOpen, Is.False);
@@ -153,7 +169,6 @@ public class MapSceneTests
             Assert.That(session.ReturnToTitle(), Is.True);
             yield return WaitForScene("TitleScene");
             Assert.That(RunSaves.TryLoad(out RunSaveData shopCheckpoint, out _), Is.True);
-            var savedStock = JsonUtility.FromJson<SavedShopStock>(stock);
             System.Array.Reverse(savedStock.dream, 0, 2);
             shopCheckpoint.contentState = JsonUtility.ToJson(savedStock);
             Assert.That(shopCheckpoint.contentState, Is.Not.EqualTo(stock));
@@ -164,9 +179,14 @@ public class MapSceneTests
             panel = GameObject.Find("ShopPanel").transform;
             Assert.That(Object.FindFirstObjectByType<ShopHandler>().CaptureState(), Is.EqualTo(shopCheckpoint.contentState));
             var restoredCards = panel.Find("Display/DreamSlots").GetComponentsInChildren<DeckCardUI>();
-            var catalog = RunAssetCatalog.Load();
             Assert.That(restoredCards.Select(card => ((TMP_Text)new SerializedObject(card).FindProperty("nameText")
                 .objectReferenceValue).text), Is.EqualTo(savedStock.dream.Select(id => catalog.Resolve<CardData>(id).cardName)));
+            Assert.That(ReadShopPrices(panel.Find("Display"), savedStock, catalog)[2], Is.EqualTo(originalPrices[2]));
+            shop = Object.FindFirstObjectByType<ShopHandler>();
+            shop.RestoreState(stock);
+            Assert.That(ReadShopPrices(panel.Find("Display"), JsonUtility.FromJson<SavedShopStock>(stock), catalog),
+                Is.EqualTo(originalPrices));
+            shop.RestoreState(shopCheckpoint.contentState);
             var leave = panel.Find("LeaveButton").GetComponent<Button>();
             wallet = (RectTransform)FindMapCanvas().transform.Find("MapUtilityButtons/Wallet");
             Assert.That(wallet.gameObject.activeInHierarchy, Is.True);
@@ -188,6 +208,45 @@ public class MapSceneTests
         }
         finally { RunSaves.UseStore(null); }
         yield return new ExitPlayMode();
+    }
+
+    private static TMP_Text GetShopPriceLabel(Transform slot) =>
+        slot.GetComponentsInChildren<TMP_Text>().SingleOrDefault(text => text.transform.parent == slot);
+
+    private static int[] ReadShopPrices(Transform display, SavedShopStock stock, RunAssetCatalog catalog)
+    {
+        Canvas.ForceUpdateCanvases();
+        var dreamSlots = display.Find("DreamSlots");
+        var nightmareSlots = display.Find("NightmareSlots");
+        Assert.That(nightmareSlots.GetComponentsInChildren<TMP_Text>(), Is.Empty);
+        var prices = new int[stock.dream.Length];
+        var divider = (RectTransform)display.Find("ServiceDivider");
+        float dividerTop = divider.TransformPoint(new Vector3(0, divider.rect.yMax)).y;
+        for (int i = 0; i < prices.Length; i++)
+        {
+            Transform slot = dreamSlots.GetChild(i);
+            TMP_Text label = GetShopPriceLabel(slot);
+            Assert.That(label, Is.Not.Null);
+            RectTransform priceTag = label.rectTransform;
+            var coin = priceTag.GetComponentInChildren<Image>();
+            Assert.That(coin.sprite, Is.Not.Null);
+            Assert.That(label.raycastTarget || coin.raycastTarget, Is.False);
+            Assert.That(label.font.name, Is.EqualTo("NotoSansKR-SemiBold SDF"));
+            Assert.That(int.TryParse(label.text, out prices[i]), Is.True, label.text);
+            CardData card = catalog.Resolve<CardData>(stock.dream[i]);
+            var (min, max) = card.rarity switch
+            {
+                CardRarity.Common => (30, 40),
+                CardRarity.Uncommon => (60, 70),
+                _ => (90, 110)
+            };
+            Assert.That(prices[i], Is.InRange(min, max), card.cardName);
+            var cardRect = (RectTransform)slot.GetComponentInChildren<DeckCardUI>().transform;
+            Assert.That(priceTag.TransformPoint(new Vector3(0, priceTag.rect.yMin)).y, Is.GreaterThan(dividerTop));
+            Assert.That(priceTag.TransformPoint(new Vector3(0, priceTag.rect.yMax)).y,
+                Is.LessThan(cardRect.TransformPoint(new Vector3(0, cardRect.rect.yMin)).y));
+        }
+        return prices;
     }
 
     [UnityTest] public IEnumerator RestRecoveryHealsMissingHealthAndAdvancesOnlyAfterSaving()

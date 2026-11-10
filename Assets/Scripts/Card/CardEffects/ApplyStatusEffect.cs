@@ -4,6 +4,7 @@ using UnityEngine;
 public class ApplyStatusEffect : CardEffect
 {
     [SerializeField] private StatusEffectData status;
+    [Tooltip("Duration for timed statuses, or stacks to add for Burn.")]
     [Min(1)] [SerializeField] private int turns = 1;
 
     public override void CollectReferencedStatuses(CardStatusCollector collector)
@@ -19,6 +20,9 @@ public class ApplyStatusEffect : CardEffect
     public override System.Action ActivateContinuous(BattleManager battleManager, ActiveContinuousCard source)
     {
         if (battleManager == null || source == null) return null;
+        if (status != null && status.Type == StatusEffectType.Burn)
+            return base.ActivateContinuous(battleManager, source);
+
         BattleCharacter character = target == CardTarget.Player ? battleManager.GetPlayer() :
             target == CardTarget.Enemy ? battleManager.GetTarget() : null;
         return character != null ? character.StatusEffects.ApplyContinuous(status, source) : null;
@@ -38,6 +42,6 @@ public class ApplyStatusEffect : CardEffect
     }
     public override string GetEffectSummary(System.Collections.Generic.HashSet<CardEffect> visiting)
     {
-        return status != null ? $"{(target == CardTarget.Player ? "자신" : "적")}에게 {status.DisplayName} {turns}턴 부여" : "상태이상 부여";
+        return status != null ? $"{(target == CardTarget.Player ? "자신" : "적")}에게 {status.DisplayName} {status.FormatAmount(turns)} 부여" : "상태이상 부여";
     }
 }

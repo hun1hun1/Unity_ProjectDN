@@ -109,7 +109,7 @@ public class DeckCardHoverTests
                 Assert.That(point.y, Is.InRange(-270.05f, 270.05f));
             }
         }
-        card.SetCard(AssetDatabase.LoadAssetAtPath<CardData>("Assets/CardData/Basic/Dream/Attack/1.Card_Attack/Attack.asset"));
+        card.SetCard(AssetDatabase.LoadAssetAtPath<CardData>("Assets/CardData/Soldier/Basic/Starting/Dream/Attack/01.Card_Attack/Attack.asset"));
         Assert.That(visual.localScale, Is.EqualTo(Vector3.one));
         Assert.That(visual.anchoredPosition, Is.EqualTo(Vector2.zero));
         ExecuteEvents.Execute(root.gameObject, Pointer(root), ExecuteEvents.pointerEnterHandler);

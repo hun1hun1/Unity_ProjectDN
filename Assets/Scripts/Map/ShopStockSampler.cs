@@ -20,6 +20,17 @@ public static class ShopStockSampler
         (CardType.Continuous, CardRarity.Rare)
     };
 
+    public static int RollPrice(CardRarity rarity, Random random)
+    {
+        return rarity switch
+        {
+            CardRarity.Common => random.Next(30, 41),
+            CardRarity.Uncommon => random.Next(60, 71),
+            CardRarity.Rare => random.Next(90, 111),
+            _ => throw new ArgumentOutOfRangeException(nameof(rarity), rarity, null)
+        };
+    }
+
     public static CardData[] Generate(CardDeckType deck, IReadOnlyList<CardRewardPool> pools, Random random)
     {
         var stock = new CardData[deck == CardDeckType.TypeDream ? 3 : 2];

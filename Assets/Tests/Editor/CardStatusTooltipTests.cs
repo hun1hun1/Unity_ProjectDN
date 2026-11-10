@@ -33,7 +33,7 @@ public class CardStatusTooltipTests
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
         CardUI card = Cards()[0];
         CardData corrosion = AssetDatabase.LoadAssetAtPath<CardData>(
-            "Assets/CardData/Soldier/Starting/Nightmare/Attack/02.Card_Corrosion/Corrosion.asset");
+            "Assets/CardData/Soldier/Basic/Starting/Nightmare/Attack/02.Card_Corrosion/Corrosion.asset");
         Assert.That(corrosion, Is.Not.Null, "The current Corrosion card asset must load before testing its tooltip.");
         card.SetCard(corrosion, battle);
         var hoverState = new SerializedObject(card.GetComponent<CardHoverUI>());

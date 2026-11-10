@@ -393,6 +393,113 @@ public class StatusEffectTests
         Assert.That(manager.UseCard(card), Is.True);
     }
 
+    [UnityTest]
+    public IEnumerator BurnDamagesBothSidesOnceAtPlayerTurnEndAndExpires()
+    {
+        yield return new EnterPlayMode();
+        yield return VerifyBurnDamageAndDecay();
+        yield return new ExitPlayMode();
+    }
+
+    private IEnumerator VerifyBurnDamageAndDecay()
+    {
+        yield return LoadBattleForBurn();
+        BattleManager manager = Object.FindFirstObjectByType<BattleManager>();
+        Assert.That(manager, Is.Not.Null);
+        yield return WaitForCards(manager);
+        var burn = AssetDatabase.LoadAssetAtPath<StatusEffectData>("Assets/StatusData/Burn.asset");
+        Assert.That(burn, Is.Not.Null);
+        Assert.That(burn.Type, Is.EqualTo(StatusEffectType.Burn));
+        Assert.That(burn.Icon, Is.Null);
+        Player player = manager.GetPlayer();
+        Enemy enemy = manager.GetTarget();
+        EnemyBehavior behavior = CreateAsset<EnemyBehavior>();
+        SetField(behavior, "actions", new EnemyAction[] { CreateAsset<EnemyBlockAction>() });
+        SetField(enemy, "behavior", behavior);
+        SetField(enemy, "currentActionIndex", 0);
+        enemy.BindBattle(manager);
+
+        CreateEffect(burn, CardTarget.Enemy, 4).Execute(manager);
+        CreateEffect(burn, CardTarget.Enemy, 6).Execute(manager);
+        player.StatusEffects.Apply(burn, 2);
+        Assert.That(enemy.StatusEffects.ActiveEffects[0].StackCount, Is.EqualTo(10));
+        Assert.That(enemy.StatusEffects.GetRemainingTurns(burn.Type), Is.Zero);
+        Assert.That(enemy.GetComponentInChildren<StatusIconUI>(), Is.Null);
+        enemy.StatusEffects.Apply(CreateStatus(StatusEffectType.WeaknessExposure), 1);
+        enemy.AddBlock(20);
+        int enemyHP = enemy.GetCurrentHP();
+        int playerHP = player.GetCurrentHP();
+        int enemyBlockAtTurnStart = -1;
+        manager.OpeningChanged += () =>
+        {
+            if ((BattleState)GetField(manager, "currentState") == BattleState.EnemyTurn && enemyBlockAtTurnStart < 0)
+                enemyBlockAtTurnStart = enemy.GetBlock();
+        };
+
+        var endTurn = GameObject.Find("TurnEndButton").GetComponent<UnityEngine.UI.Button>();
+        endTurn.onClick.Invoke();
+        endTurn.onClick.Invoke();
+        yield return WaitForPlayerTurn(manager);
+        Assert.That(enemy.GetCurrentHP(), Is.EqualTo(enemyHP - 10));
+        Assert.That(player.GetCurrentHP(), Is.EqualTo(playerHP - 2));
+        Assert.That(enemyBlockAtTurnStart, Is.EqualTo(20));
+        Assert.That(enemy.StatusEffects.ActiveEffects[0].StackCount, Is.EqualTo(9));
+        Assert.That(player.StatusEffects.ActiveEffects[0].StackCount, Is.EqualTo(1));
+
+        endTurn.onClick.Invoke();
+        yield return WaitForPlayerTurn(manager);
+        Assert.That(enemy.GetCurrentHP(), Is.EqualTo(enemyHP - 19));
+        Assert.That(enemy.StatusEffects.ActiveEffects[0].StackCount, Is.EqualTo(8));
+        Assert.That(player.GetCurrentHP(), Is.EqualTo(playerHP - 3));
+        Assert.That(player.StatusEffects.HasStatus(burn.Type), Is.False);
+    }
+
+    [UnityTest]
+    public IEnumerator LethalBurnEndsBattleBeforeTheEnemyTurn()
+    {
+        yield return new EnterPlayMode();
+        yield return VerifyLethalBurn();
+        yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator VerifyLethalBurn()
+    {
+        yield return LoadBattleForBurn();
+        BattleManager manager = Object.FindFirstObjectByType<BattleManager>();
+        Assert.That(manager, Is.Not.Null);
+        yield return WaitForCards(manager);
+        var burn = AssetDatabase.LoadAssetAtPath<StatusEffectData>("Assets/StatusData/Burn.asset");
+        Assert.That(burn, Is.Not.Null);
+        Enemy enemy = manager.GetTarget();
+        enemy.RestoreHealth(10, enemy.GetMaxHP());
+        enemy.StatusEffects.Apply(burn, 10);
+        bool enemyTurnStarted = false;
+        manager.OpeningChanged += () => enemyTurnStarted |= (BattleState)GetField(manager, "currentState") == BattleState.EnemyTurn;
+        GameObject.Find("TurnEndButton").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
+
+        float deadline = Time.realtimeSinceStartup + 15f;
+        while (manager.CanContinueEffects)
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline), "Lethal burn did not finish the battle.");
+            yield return null;
+        }
+        Assert.That(enemy.GetCurrentHP(), Is.Zero);
+        Assert.That(manager.Result, Is.EqualTo(BattleResult.Victory));
+        Assert.That(enemyTurnStarted, Is.False);
+    }
+
+    private static IEnumerator LoadBattleForBurn()
+    {
+        AsyncOperation loading = SceneManager.LoadSceneAsync("BattleScene");
+        Assert.That(loading, Is.Not.Null);
+        float deadline = Time.realtimeSinceStartup + 15f;
+        while (!loading.isDone)
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline), "BattleScene did not finish loading.");
+            yield return null;
+        }
+    }
+
     private static IEnumerator WaitForCards(BattleManager manager)
     {
         float deadline = Time.realtimeSinceStartup + 15f;

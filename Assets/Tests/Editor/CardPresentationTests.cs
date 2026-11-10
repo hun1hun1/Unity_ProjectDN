@@ -181,7 +181,7 @@ public class CardPresentationTests
     }
     [Test] public void SoldierAttackHasValidReusableFireAndMeleeExamples()
     {
-        CardData card = AssetDatabase.LoadAssetAtPath<CardData>("Assets/CardData/Soldier/Starting/Dream/Attack/01.Card_Attack/Attack.asset");
+        CardData card = AssetDatabase.LoadAssetAtPath<CardData>("Assets/CardData/Soldier/Basic/Starting/Dream/Attack/01.Card_Attack/Attack.asset");
         FieldInfo field = typeof(CardData).GetField("presentation"); Assert.That(field, Is.Not.Null);
         Object fire = (Object)field.GetValue(card);
         Assert.That(fire, Is.SameAs(AssetDatabase.LoadAssetAtPath<Object>("Assets/CardPresentations/SoldierFire.asset")));

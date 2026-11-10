@@ -102,6 +102,17 @@ public class RewardSamplingTests
         }
     }
 
+    [TestCase(CardRarity.Common, 30, 40)]
+    [TestCase(CardRarity.Uncommon, 60, 70)]
+    [TestCase(CardRarity.Rare, 90, 110)]
+    public void ShopPricesUseTheFullInclusiveRange(CardRarity rarity, int min, int max)
+    {
+        var random = new System.Random(180);
+        int[] prices = Enumerable.Range(0, 512)
+            .Select(_ => ShopStockSampler.RollPrice(rarity, random)).Distinct().ToArray();
+        Assert.That(prices, Is.EquivalentTo(Enumerable.Range(min, max - min + 1)));
+    }
+
     [Test] public void EmptyNightmareRewardPoolsKeepBothShopSlotsEmpty()
     {
         foreach (CardDatabase database in databases.Skip(7)) Set(database, "cards", new List<CardData>());

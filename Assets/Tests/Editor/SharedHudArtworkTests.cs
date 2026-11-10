@@ -15,18 +15,21 @@ public class SharedHudArtworkTests
     [UnityTearDown] public IEnumerator ExitPlay()
     { if (Application.isPlaying) yield return new ExitPlayMode(); }
 
+    [TestCase("Default")]
     [TestCase("Small")]
     [TestCase("Normal")]
     [TestCase("Large")]
     public void PartialHealthUsesSeparateArtworkLayersAndKeepsFrameAndCounterReadable(string size)
     {
-        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/CharacterSizes/" + size + "CharacterInfoUI.prefab");
+        string path = size == "Default" ? "Assets/Prefabs/UI/CharacterInfoUI.prefab" :
+            "Assets/Prefabs/UI/CharacterSizes/" + size + "CharacterInfoUI.prefab";
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
         GameObject root = Object.Instantiate(prefab);
         try
         {
             RectTransform rect = (RectTransform)root.transform;
             rect.anchorMin = rect.anchorMax = Vector2.one * .5f;
-            rect.sizeDelta = new Vector2(size == "Small" ? 288 : size == "Normal" ? 320 : 360, 84);
+            rect.sizeDelta = new Vector2(size == "Small" ? 288 : size == "Large" ? 360 : 320, 84);
             var hud = root.GetComponent<CharacterInfoUI>(); hud.ValidateBindings();
             RectTransform hp = (RectTransform)root.transform.Find("HPBar");
             Image fill = hp.Find("Fill").GetComponent<Image>();
@@ -62,6 +65,7 @@ public class SharedHudArtworkTests
             Assert.That(number.text, Is.EqualTo("123"));
             Assert.That(number.enableAutoSizing, Is.True);
             Assert.That(number.isTextOverflowing, Is.False);
+            AssertHudSpacing(hud);
         }
         finally { Object.DestroyImmediate(root); }
     }
@@ -75,10 +79,26 @@ public class SharedHudArtworkTests
         Player player = battle.GetPlayer();
         player.RestoreHealth(53, 80); player.AddBlock(12);
         Enemy enemy = battle.GetTarget(); enemy.RestoreHealth(25, 80); enemy.AddBlock(7);
+        Transform playerRow = player.GetComponent<BattleCharacterPresentation>().InfoUI.transform.Find("StatusContainer");
+        Assert.That(playerRow.GetComponentInChildren<Image>(), Is.Null);
+        var weakness = AssetDatabase.LoadAssetAtPath<StatusEffectData>("Assets/StatusData/WeaknessExposure.asset");
+        var rust = AssetDatabase.LoadAssetAtPath<StatusEffectData>("Assets/StatusData/Rust.asset");
+        player.StatusEffects.Apply(weakness, 2);
+        enemy.StatusEffects.Apply(rust, 2);
         yield return null; Canvas.ForceUpdateCanvases();
+        Image playerPanel = AssertStatusPanel(player);
+        AssertStatusPanel(enemy);
         CheckLiveHud(player, .6625f); CheckLiveHud(enemy, .3125f);
+        float singleIconWidth = playerPanel.rectTransform.rect.width;
+        player.StatusEffects.Apply(rust, 12);
+        yield return null;
+        Assert.That(AssertStatusPanel(player), Is.SameAs(playerPanel));
+        Assert.That(playerPanel.rectTransform.rect.width, Is.GreaterThan(singleIconWidth));
         Capture(battle, "soldier-slime-1920x1080", 1920, 1080);
         Capture(battle, "soldier-slime-2560x1080", 2560, 1080);
+        player.StatusEffects.Clear();
+        yield return null;
+        Assert.That(playerPanel.gameObject.activeSelf, Is.False);
         var template = AssetDatabase.LoadAssetAtPath<BattleEncounterDefinition>("Assets/MapData/NormalEncounter.asset");
         foreach (string name in new[] { "Scarecrow", "Lizard" })
         {
@@ -103,7 +123,74 @@ public class SharedHudArtworkTests
         AssertArtwork(hud.transform.Find("Block").GetComponent<Image>(), "Defense.png");
         Assert.That(hud.transform.Find("HPBar/Fill").GetComponent<Image>().fillAmount, Is.EqualTo(amount).Within(.00001f));
         Assert.That(hud.transform.Find("Block").gameObject.activeSelf, Is.True);
+        AssertHudSpacing(hud);
     }
+
+    private static void AssertHudSpacing(CharacterInfoUI hud)
+    {
+        Transform root = hud.transform;
+        var hp = (RectTransform)root.Find("HPBar");
+        var block = root.Find("Block").GetComponent<Image>();
+        var status = (RectTransform)root.Find("StatusContainer");
+        Rect box = block.rectTransform.rect;
+        Rect sprite = block.sprite.rect;
+        float scale = Mathf.Min(box.width / sprite.width, box.height / sprite.height);
+        // Defense.png's drawn shield spans x=80..335 within the 416x294 sprite.
+        float shieldRight = box.center.x + (336f - sprite.width / 2f) * scale;
+        Vector2 shieldEdge = InHud(root, block.rectTransform, new Vector2(shieldRight, box.center.y));
+        Vector2 barLeft = InHud(root, hp, new Vector2(hp.rect.xMin, hp.rect.center.y));
+        Vector2 rowTop = InHud(root, status, new Vector2(status.rect.xMin, status.rect.yMax));
+        float barBottom = InHud(root, hp, new Vector2(0, hp.rect.yMin)).y;
+        Assert.That(sprite.height * scale, Is.GreaterThanOrEqualTo(40f));
+        Assert.That(barLeft.x - shieldEdge.x, Is.InRange(1f, 5f));
+        Assert.That(shieldEdge.y, Is.EqualTo(barLeft.y).Within(.01f));
+        Assert.That(rowTop.x, Is.EqualTo(barLeft.x).Within(.01f));
+        Assert.That(barBottom - rowTop.y, Is.EqualTo(6f).Within(.01f));
+    }
+
+    private static Image AssertStatusPanel(BattleCharacter actor)
+    {
+        Transform root = actor.GetComponent<BattleCharacterPresentation>().InfoUI.transform;
+        var hp = (RectTransform)root.Find("HPBar");
+        Transform row = root.Find("StatusContainer");
+        Image panel = row.Find("StatusBackground")?.GetComponent<Image>();
+        Assert.That(panel, Is.Not.Null, "The status icons should share one background.");
+        Assert.That(panel.gameObject.activeSelf, Is.True);
+        Assert.That(AssetDatabase.GetAssetPath(panel.sprite), Is.EqualTo("Assets/Images/UI/Tooltips/card-status-tooltip-frame.png"));
+        Assert.That(panel.raycastTarget, Is.False);
+
+        Vector2 barBottomLeft = InHud(root, hp, hp.rect.min);
+        var panelRect = panel.rectTransform;
+        Vector2 panelMin = InHud(root, panelRect, panelRect.rect.min);
+        Vector2 panelMax = InHud(root, panelRect, panelRect.rect.max);
+        Assert.That(panelMin.x, Is.EqualTo(barBottomLeft.x).Within(.01f));
+        Assert.That(barBottomLeft.y - panelMax.y, Is.EqualTo(2f).Within(.01f));
+
+        StatusIconUI[] icons = row.GetComponentsInChildren<StatusIconUI>();
+        Assert.That(icons, Is.Not.Empty);
+        foreach (StatusIconUI icon in icons)
+        {
+            var rect = (RectTransform)icon.transform;
+            Assert.That(rect.rect.size, Is.EqualTo(new Vector2(32f, 32f)));
+            Vector2 iconMin = InHud(root, rect, rect.rect.min);
+            Vector2 iconMax = InHud(root, rect, rect.rect.max);
+            Assert.That(iconMin.x - panelMin.x, Is.GreaterThanOrEqualTo(3.99f));
+            Assert.That(iconMin.y - panelMin.y, Is.GreaterThanOrEqualTo(3.99f));
+            Assert.That(panelMax.x - iconMax.x, Is.GreaterThanOrEqualTo(3.99f));
+            Assert.That(panelMax.y - iconMax.y, Is.GreaterThanOrEqualTo(3.99f));
+            Assert.That(panel.transform.GetSiblingIndex(), Is.LessThan(icon.transform.GetSiblingIndex()));
+            TMP_Text number = icon.GetComponentInChildren<TMP_Text>();
+            number.ForceMeshUpdate();
+            Assert.That(number.color.grayscale, Is.GreaterThan(.85f));
+            Assert.That(number.fontSharedMaterial.GetFloat("_OutlineWidth"), Is.GreaterThan(0f));
+            Assert.That(number.isTextOverflowing, Is.False);
+        }
+        return panel;
+    }
+
+    private static Vector2 InHud(Transform root, RectTransform child, Vector2 point) =>
+        root.InverseTransformPoint(child.TransformPoint(point));
+
     private static void AssertArtwork(Image image, string file)
     {
         Assert.That(image.sprite, Is.Not.Null);

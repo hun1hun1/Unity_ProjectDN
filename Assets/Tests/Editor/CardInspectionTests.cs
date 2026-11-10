@@ -62,7 +62,7 @@ public class CardInspectionTests
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
         CardUI card = Cards()[0];
         CardData data = Object.Instantiate(AssetDatabase.LoadAssetAtPath<CardData>(
-            "Assets/CardData/Soldier/Starting/Nightmare/Attack/02.Card_Corrosion/Corrosion.asset"));
+            "Assets/CardData/Soldier/Basic/Starting/Nightmare/Attack/02.Card_Corrosion/Corrosion.asset"));
         created.Add(data);
         data.requiredAmmo = 0;
         data.cost.dreamCost = data.cost.nightmareCost = 0;

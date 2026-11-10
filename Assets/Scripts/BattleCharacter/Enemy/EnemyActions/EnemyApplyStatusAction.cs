@@ -6,7 +6,7 @@ using UnityEngine;
 public class EnemyApplyStatusAction : EnemyAction
 {
     [SerializeField] private StatusEffectData status;
-    [Tooltip("Both sides tick at player-turn start. Two turns remain active during the next player turn.")]
+    [Tooltip("Duration for timed statuses, or stacks to add for Burn.")]
     [Min(1)] [SerializeField] private int turns = 2;
     [SerializeField] private EnemyTargetType target = EnemyTargetType.Player;
 
@@ -21,7 +21,7 @@ public class EnemyApplyStatusAction : EnemyAction
     public override string GetActionDescription()
     {
         Validate();
-        return $"{(target == EnemyTargetType.Player ? "플레이어" : "적 자신")}에게 {status.DisplayName} {turns}턴 부여";
+        return $"{(target == EnemyTargetType.Player ? "플레이어" : "적 자신")}에게 {status.DisplayName} {status.FormatAmount(turns)} 부여";
     }
     public override string GetActionDescription(BattleManager battle) => Preview(new EnemyActionPreviewContext(battle));
     internal override string Preview(EnemyActionPreviewContext context)

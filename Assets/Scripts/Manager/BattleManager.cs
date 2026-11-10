@@ -635,6 +635,11 @@ public class BattleManager : MonoBehaviour
         // =========================================
 
         if (!CanContinueEffects) yield break;
+        player.StatusEffects.ProcessPlayerTurnEnd(player);
+        if (!CanContinueEffects) yield break;
+        if (target != null) target.StatusEffects.ProcessPlayerTurnEnd(target);
+        if (!CanContinueEffects) yield break;
+
         yield return StartEnemyTurn();
         if (!CanContinueEffects) yield break;
 
