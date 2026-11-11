@@ -26,6 +26,8 @@ MonoBehaviour:
   effects:
   - {fileID: 11400000, guid: 7d2d254c3902700458ced387d33a5161, type: 2}
   - {fileID: 11400000, guid: 515c3de430cae3945b61109f11044ccf, type: 2}
+  upgradedCard: {fileID: 11400000, guid: 156cfb659c337204e83882a0e4d5d46f, type: 2}
+  presentation: {fileID: 0}
   exhaustOnUse: 0
   turnStartEffects: []
   continuousDurationType: 0

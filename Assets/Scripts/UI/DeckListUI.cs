@@ -20,10 +20,11 @@ public class DeckListUI : MonoBehaviour
     private GameObject panel;
 
     private readonly List<DeckCardUI> displayedCards = new List<DeckCardUI>();
-    private CardHandController sourceHand;
     private GridLayoutGroup grid;
     private Vector2 originalSpacing;
     private Vector2 appliedCardSize = new Vector2(-1f, -1f);
+
+    internal DeckCardUI CardPrefab => cardPrefab;
 
     private void LateUpdate()
     {
@@ -33,10 +34,7 @@ public class DeckListUI : MonoBehaviour
     public void ShowCards(IReadOnlyList<CardData> cards, CardHandController hand = null)
     {
         if (CardInspectionUI.BlocksGameplayInput) return;
-        Clear();
-
-        sourceHand = hand;
-        panel.SetActive(true);
+        StartDisplay();
 
         // 원본 DrawPile은 건드리지 않고 복사
         List<CardData> shuffledCards = new List<CardData>(cards);
@@ -56,13 +54,68 @@ public class DeckListUI : MonoBehaviour
         }
 
         foreach (CardData cardData in shuffledCards)
-        {
-            DeckCardUI cardUI = Instantiate(cardPrefab, content);
+            AddCard(cardData, hand != null ? hand.BattleContext : null);
 
-            cardUI.SetCard(cardData, sourceHand != null ? sourceHand.BattleContext : null);
-            displayedCards.Add(cardUI);
+        FinishDisplay();
+    }
+
+    internal int ShowUpgradeChoices(IReadOnlyList<RunDeckInventory.CardSelection> cards,
+        System.Action<RunDeckInventory.CardSelection> select)
+    {
+        StartDisplay();
+        var eligible = new List<RunDeckInventory.CardSelection>();
+        foreach (var card in cards)
+            if (RunDeckInventory.GetUpgradeResult(card.Card) != null) eligible.Add(card);
+
+        eligible.Sort((left, right) =>
+        {
+            int byName = System.StringComparer.Ordinal.Compare(left.Card.cardName, right.Card.cardName);
+            return byName != 0 ? byName : left.Index.CompareTo(right.Index);
+        });
+        var scroll = content.GetComponentInParent<ScrollRect>();
+        foreach (var card in eligible)
+        {
+            DeckCardUI view = AddCard(card.Card, null);
+            view.MakeSelectable(() => select(card), () => ScrollToCard(scroll, (RectTransform)view.transform));
         }
 
+        FinishDisplay();
+        return eligible.Count;
+    }
+
+    private static void ScrollToCard(ScrollRect scroll, RectTransform card)
+    {
+        if (scroll == null || scroll.viewport == null) return;
+
+        RectTransform viewport = scroll.viewport;
+        float scrollableHeight = scroll.content.rect.height - viewport.rect.height;
+        if (scrollableHeight <= 0f) return;
+
+        float top = viewport.InverseTransformPoint(card.TransformPoint(card.rect.max)).y;
+        float bottom = viewport.InverseTransformPoint(card.TransformPoint(card.rect.min)).y;
+        if (top <= viewport.rect.yMax && bottom >= viewport.rect.yMin) return;
+
+        float offset = top > viewport.rect.yMax ? top - viewport.rect.yMax : bottom - viewport.rect.yMin;
+        scroll.StopMovement();
+        scroll.verticalNormalizedPosition = Mathf.Clamp01(scroll.verticalNormalizedPosition + offset / scrollableHeight);
+    }
+
+    private void StartDisplay()
+    {
+        Clear();
+        panel.SetActive(true);
+    }
+
+    private DeckCardUI AddCard(CardData data, BattleManager battle)
+    {
+        var card = Instantiate(cardPrefab, content);
+        card.SetCard(data, battle);
+        displayedCards.Add(card);
+        return card;
+    }
+
+    private void FinishDisplay()
+    {
         Canvas.ForceUpdateCanvases();
         RefreshCardSizes(true);
     }
@@ -111,7 +164,6 @@ public class DeckListUI : MonoBehaviour
     {
         panel.SetActive(false);
         Clear();
-        sourceHand = null;
     }
 
     private void Clear()

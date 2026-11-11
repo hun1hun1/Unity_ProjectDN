@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class DeckCardUI : MonoBehaviour, IPointerClickHandler
+public class DeckCardUI : MonoBehaviour, IPointerClickHandler, ISelectHandler
 {
     [SerializeField] private Image artwork;
     [SerializeField] private TMP_Text costText;
@@ -30,6 +30,7 @@ public class DeckCardUI : MonoBehaviour, IPointerClickHandler
     [SerializeField] private bool allowInspection = true;
     [SerializeField] private bool inspectOnLeftClick;
     private CardData cardData;
+    private System.Action onSelectionFocused;
     private BattleManager battleContext;
     private CardDescriptionBinding descriptionBinding;
     internal TMP_Text DescriptionText => descriptionText;
@@ -42,6 +43,19 @@ public class DeckCardUI : MonoBehaviour, IPointerClickHandler
         if (InspectionOverride != null) InspectionOverride();
         else CardInspectionUI.TryOpen(cardData, battleContext);
     }
+
+    internal void MakeSelectable(System.Action select, System.Action onFocused)
+    {
+        allowInspection = false;
+        onSelectionFocused = onFocused;
+        var button = gameObject.AddComponent<Button>();
+        button.targetGraphic = frontImage;
+        button.onClick.AddListener(() => select());
+    }
+
+    void ISelectHandler.OnSelect(BaseEventData eventData) => onSelectionFocused?.Invoke();
+
+    internal void DisableInspection() => allowInspection = false;
 
     private void OnEnable() { descriptionBinding?.Enable(); }
     private void OnDisable() { descriptionBinding?.Disable(); }

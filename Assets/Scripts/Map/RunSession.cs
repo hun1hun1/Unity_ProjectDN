@@ -115,10 +115,7 @@ public class RunSession : MonoBehaviour
 
     internal bool CompleteRest(RunNodeVisit visit, int recoveryPercent, int flatRecovery)
     {
-        if (!CanCommit || visit == null || !ReferenceEquals(visit.Progress, Progress) ||
-            Progress.Phase != RunPhase.Content || Progress.CurrentNode.SelectedChoice.Type != MapContentType.Rest ||
-            visit.Handler == null || !visit.Handler.isActiveAndEnabled || visit.Handler.ContentType != MapContentType.Rest)
-            return false;
+        if (!IsRestVisit(visit)) return false;
 
         int missingHP = Progress.MaxHP - Progress.CurrentHP;
         int proportionalRecovery = (int)Math.Ceiling(missingHP * (decimal)Mathf.Clamp(recoveryPercent, 0, 100) / 100);
@@ -126,20 +123,50 @@ public class RunSession : MonoBehaviour
         return CompleteContent(visit.Progress, visit.Floor, visit.Node, recovery);
     }
 
+    internal bool CompleteRestUpgrade(RunNodeVisit visit, RunDeckInventory.CardSelection selection, CardData replacement)
+    {
+        if (!IsRestVisit(visit) || replacement == null || RunDeckInventory.GetUpgradeResult(selection.Card) != replacement)
+            return false;
+
+        bool completed = RunDeckInventory.TryReplaceCard(selection, replacement,
+            () => SaveContentCompletion(visit.Progress, visit.Floor, visit.Node, 0));
+        Publish();
+        return completed;
+    }
+
+    private bool IsRestVisit(RunNodeVisit visit) =>
+        CanCommit && visit != null && ReferenceEquals(visit.Progress, Progress) &&
+        visit.Floor == Progress.FloorIndex && visit.Node == Progress.NodeIndex &&
+        Progress.Phase == RunPhase.Content && Progress.CurrentNode.SelectedChoice.Type == MapContentType.Rest &&
+        visit.Handler != null && visit.Handler.isActiveAndEnabled && visit.Handler.ContentType == MapContentType.Rest;
+
     private bool CompleteContent(RunProgress expected, int floor, int node, int recovery)
     {
-        if (Progress == null || !ReferenceEquals(expected, Progress) || Progress.Phase != RunPhase.Content || IsTransitioning ||
-            floor!=Progress.FloorIndex || node!=Progress.NodeIndex) return false;
-        RunProgressData before=Application.isPlaying?Progress.Capture(RunAssetCatalog.Load()):null;RunSaveData previous=checkpoint;
-        if(!Progress.CompleteNode(floor,node))return false;
-        if (recovery > 0) Progress.CaptureHealth(Progress.CurrentHP + recovery, Progress.MaxHP);
-        if(!(Progress.IsFinished?ClearCheckpoint():SaveCheckpoint()))
-        {
-            if(before!=null)Progress.RestoreCheckpointInPlace(before,RunAssetCatalog.Load());
-            checkpoint=previous;Publish();return false;
-        }
+        if (!IsCurrentContent(expected, floor, node)) return false;
+
+        bool completed = SaveContentCompletion(expected, floor, node, recovery);
         Publish();
-        return true;
+        return completed;
+    }
+
+    private bool IsCurrentContent(RunProgress expected, int floor, int node) =>
+        CanCommit && ReferenceEquals(expected, Progress) && Progress.Phase == RunPhase.Content &&
+        floor == Progress.FloorIndex && node == Progress.NodeIndex;
+
+    private bool SaveContentCompletion(RunProgress expected, int floor, int node, int recovery)
+    {
+        if (!IsCurrentContent(expected, floor, node)) return false;
+
+        RunAssetCatalog catalog = Application.isPlaying ? RunAssetCatalog.Load() : null;
+        RunProgressData before = catalog != null ? Progress.Capture(catalog) : null;
+        RunSaveData previous = checkpoint;
+        if (!Progress.CompleteNode(floor, node)) return false;
+        if (recovery > 0) Progress.CaptureHealth(Progress.CurrentHP + recovery, Progress.MaxHP);
+        if (Progress.IsFinished ? ClearCheckpoint() : SaveCheckpoint()) return true;
+
+        if (before != null) Progress.RestoreCheckpointInPlace(before, catalog);
+        checkpoint = previous;
+        return false;
     }
 
     public bool SaveCheckpoint(RunRewardData rewards = null, string contentState = "") =>
@@ -267,10 +294,11 @@ public class RunSession : MonoBehaviour
             // Present a fully covered frame before the scene activation can replace the canvas.
             yield return null;
 
+            double loadStartedAt = Time.realtimeSinceStartupAsDouble;
             AsyncOperation load = SceneManager.LoadSceneAsync(scene);
             while (!load.isDone)
             {
-                fogTransition.SetCoverage(1f);
+                fogTransition.UpdateLoading(Time.realtimeSinceStartupAsDouble - loadStartedAt);
                 yield return null;
             }
 

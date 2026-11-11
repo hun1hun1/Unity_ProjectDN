@@ -4,7 +4,7 @@
 
 ## 구현 상태와 역할
 
-맵 생성, 노드 선택, 전투 씬 왕복과 보상 완료 후 진행을 구현했습니다. 상점 입장·진열·카드 상세보기·구매·퇴장과 휴식 체력 회복을 이용할 수 있습니다. 상점 카드 제거·매개체 판매, 휴식 카드 강화, 매개체 보상 노드와 이벤트는 준비 중입니다. 최대 탄약 증가 매개체는 예시 에셋의 보유·적용 기능까지 구현되어 있습니다.
+맵 생성, 노드 선택, 전투 씬 왕복과 보상 완료 후 진행을 구현했습니다. 상점 입장·진열·카드 상세보기·구매·퇴장과 휴식의 체력 회복 또는 카드 강화를 이용할 수 있습니다. 상점 카드 제거·매개체 판매, 매개체 보상 노드와 이벤트는 준비 중입니다. 최대 탄약 증가 매개체는 예시 에셋의 보유·적용 기능까지 구현되어 있습니다.
 
 | 구성 | 역할 | 소스 |
 |---|---|---|
@@ -17,7 +17,7 @@
 | `MapController` | 맵 UI 갱신, 선택 잠금, 콘텐츠 처리기 호출 | [MapController.cs](../Assets/Scripts/Map/MapController.cs) |
 | `MapContentHandler` | 비전투 콘텐츠의 진입, 상태 저장·복원, 방문 검증 공통 계약 | [MapContentHandler.cs](../Assets/Scripts/Map/MapContentHandler.cs) |
 | `ShopHandler`, `ShopStockSampler` | 상점 패널과 골드 표시, 슬롯 추첨과 복원, 퇴장 | [ShopHandler.cs](../Assets/Scripts/Map/ShopHandler.cs), [ShopStockSampler.cs](../Assets/Scripts/Map/ShopStockSampler.cs) |
-| `RestHandler` | 휴식 패널, HP 표시와 회복 입력 | [RestHandler.cs](../Assets/Scripts/Map/RestHandler.cs) |
+| `RestHandler` | 휴식 패널, HP 표시, 회복·강화 입력 | [RestHandler.cs](../Assets/Scripts/Map/RestHandler.cs) |
 | `RunBattleBridge` | 전투 시작 시 런 정보 적용, 결과·보상 완료 전달 | [RunBattleBridge.cs](../Assets/Scripts/Map/RunBattleBridge.cs) |
 
 설정 ScriptableObject는 공유 정의이고, `RunProgress`의 노드 상태와 각 인벤토리가 현재 런의 실행 상태입니다. 상품 구매 여부나 이벤트 선택 결과를 공유 설정 에셋에 기록하지 않습니다.
@@ -28,7 +28,7 @@
 - 런 설정: `Assets/MapData/TemporaryRun.asset`.
 - 층 설정: `Assets/MapData/TemporaryFloor.asset`.
 - 전투 설정: `Assets/MapData/NormalEncounter.asset`.
-- 일반 전투를 5개 지점에 배치합니다. 3번째 지점에서는 일반 전투 또는 상점, 4번째 지점에서는 일반 전투 또는 휴식을 선택할 수 있습니다. 전투 보상 처리, 상점 퇴장 또는 휴식 회복을 완료하면 다음 노드로 이동합니다.
+- 일반 전투를 5개 지점에 배치합니다. 3번째 지점에서는 일반 전투 또는 상점, 4번째 지점에서는 일반 전투 또는 휴식을 선택할 수 있습니다. 전투 보상 처리, 상점 퇴장 또는 휴식 이용을 완료하면 다음 노드로 이동합니다.
 - 다섯 번째 지점의 처리가 끝나면 맵에서 `런 완료`를 표시하고 선택지를 숨깁니다. 앱이나 Unity Play Mode를 강제로 종료하지 않습니다.
 - 패배 또는 전투 중단 시 진행을 멈추고 맵에 런 종료 상태를 표시합니다.
 - 현재 임시 런은 최대 HP 80, 보유 골드 100으로 시작합니다. 1층 전투의 골드 보상은 노드 시드로 정한 20~25에 현재 노드 번호(1부터 시작)를 더합니다. 첫 노드 보상은 21~26골드입니다. [전투 보상](BattleRewards.md) 참고.
@@ -68,12 +68,12 @@ flowchart TD
 
 - 선택 전 노드는 `Pending`이며, 선택하면 `Resolving`이 되어 다른 선택을 막습니다.
 - 전투는 `Battle → Rewards`를 거칩니다. 카드 선택 후 확인 버튼을 누르는 것은 카드 지급 단계이고, 보상 목록에서 완료하거나 남은 보상을 포기해야 노드가 완료됩니다.
-- 비전투는 `Content` 상태에서 처리합니다. 상점은 `상점 나가기`, 휴식은 `체력 회복`이 저장되면 현재 노드를 완료합니다.
+- 비전투는 `Content` 상태에서 처리합니다. 상점은 `상점 나가기`, 휴식은 `체력 회복` 또는 `강화하기`가 저장되면 현재 노드를 완료합니다.
 - 완료된 노드는 `Completed`가 됩니다. 마지막 노드라면 다음 층을 생성하거나 런을 종료합니다.
 
 ## 휴식
 
-휴식 패널은 현재 HP와 최대 HP, 카드 강화와 체력 회복 버튼을 표시합니다. 카드 강화는 `준비 중`으로 표시하며 비활성화되어 있습니다.
+휴식 패널은 현재 HP와 최대 HP, 카드 강화와 체력 회복 버튼을 표시합니다. `카드 강화`를 선택하면 강화할 수 있는 카드만 꿈·악몽별로 표시합니다. 선택한 카드의 강화 전후를 확인한 뒤 `강화하기`를 누르면 비용 없이 한 장을 교체하고 휴식을 마칩니다. 취소하면 비교 화면에서 목록으로, 목록에서 휴식 패널로 돌아갑니다. [강화 흐름](CardUpgrades.md#강화-ui와-노드-연결)을 참고합니다.
 
 체력 회복을 누르기 직전의 `최대 HP - 현재 HP`를 기준으로 30%를 계산합니다. 이 값을 정수로 올림하고 10을 더해 최대 HP까지 회복합니다. 예를 들어 59/80에서는 17을 회복해 76/80이 됩니다. 이미 최대 HP면 체력 변화 없이 휴식을 마칩니다. 비율과 고정 회복량은 `RestHandler`의 Inspector에서 조정할 수 있습니다.
 
@@ -113,7 +113,6 @@ flowchart TD
 | 노드 | 추가할 구성 예시 | 처리와 완료 시점 |
 |---|---|---|
 | 상점 카드 제거 | 기존 `ShopHandler`와 상점 패널 확장 | 제거할 카드 선택 → 비용 확인·차감과 결과 적용 → 나가기 때 노드 완료 |
-| 휴식 카드 강화 | `UpgradeDefinition`, 강화 선택 화면 | 휴식의 카드 강화 버튼 → 런 덱 카드 선택 → 강화 전후 비교 → 확인 후 한 장 교체 |
 | 매개체 | `RelicRewardDefinition`, `RelicHandler`, 매개체 선택 패널 | 매개체 후보 표시 → 선택·확인 → 획득 처리 후 노드 완료 |
 | 이벤트 | `EventDefinition`, `EventHandler`, 이벤트 패널 | 설명·선택지 표시 → 조건·비용 검증 → 결과 적용 → 이벤트 종료 때 노드 완료 |
 
@@ -131,7 +130,7 @@ flowchart TD
 
 | 데이터 | 현재 구현 | 추가할 기능 |
 |---|---|---|
-| 덱 | `RunDeckInventory`가 시작 DB 쌍별 런 덱을 유지합니다. 상점은 `TryAddCard()`로 추가하며, 강화에는 `GetCardSelections()`와 `TryReplaceCard()`가 마련되어 있습니다. | 맵의 카드 제거와 휴식 강화 UI·저장 연결 |
+| 덱 | `RunDeckInventory`가 시작 DB 쌍별 런 덱을 유지합니다. 상점은 `TryAddCard()`로 추가하며, 휴식은 `GetCardSelections()`와 `TryReplaceCard()`로 선택한 항목을 강화합니다. | 맵의 카드 제거 |
 | 골드 | `RunGoldInventory.Gold`, 양수만 받는 `Add()`, 잔액 검증과 차감을 함께 하는 `TrySpend()` | 콘텐츠별 가격 및 보상 규칙 |
 | HP | `RunProgress.CurrentHP`, `MaxHP`, `CaptureHealth()`, 휴식 회복 | 휴식 외 HP 변경 규칙과 HP 0이 되는 이벤트의 종료 정책 |
 | 매개체 | `RunRelicInventory`가 `AmmoCapacityRelic`의 보유 여부와 최대 탄약 보너스 유지 | 다양한 매개체 정의와 획득·전투 시작·턴 시작 등 적용 시점의 공통 처리 |
@@ -149,7 +148,7 @@ flowchart TD
 5. `NormalBattlesOnly`에서 고정 상점과 휴식의 위치는 각각 `fixedShopNodeNumber`와 `fixedRestNodeNumber`로 지정합니다. `PlannedFloor` 전환에는 일반·엘리트·보스 전투 풀, 허용 종류, 활성 매개체 처리기가 함께 필요합니다. 상점만 추가해서 기존 계획형 규칙이 곧바로 동작하는 것은 아닙니다.
 6. 새 런에서 확인합니다. 생성 허용 종류는 런 생성 시 확정되므로 진행 중 에셋이나 처리기를 수정해도 기존 노드가 자동 재생성되지는 않습니다. 타이틀에서 런을 시작할 때도 지원 콘텐츠 종류를 전달해야 합니다.
 
-카드 제거 비용, 매개체 중복 허용, 강화 횟수와 취소·건너뛰기 정책은 아직 확정하지 않았습니다.
+카드 제거 비용과 매개체 중복 허용 정책은 아직 확정하지 않았습니다.
 
 ### 콘텐츠 추가 후 확인할 항목 — 예정
 
@@ -184,7 +183,9 @@ flowchart TD
 
 상점·휴식은 맵 안에서 패널을 엽니다. 패널 진입 연출 중에는 해당 패널의 입력을 잠그고, 이어서 하기로 이 노드를 복원할 때는 패널을 즉시 표시합니다.
 
-공용 안개는 타이틀의 `모험 시작` 확정 → 맵, 맵의 전투 선택 → 전투에 사용합니다. 같은 텍스처 두 레이어가 서로 다른 속도로 흐르며 약 0.32초에 화면을 덮습니다. 화면을 가린 채 씬을 로드하고, 다음 씬에서 약 0.38초에 걸쳐 안개를 걷고 입력을 엽니다. 적용 이미지는 [SceneTransitionFog.png](../Assets/Resources/SceneTransitionFog.png), 원본은 [2048×1024 투명 PNG](../GeneratedArt/UI/SceneTransition-v1/scene-transition-fog.png)입니다. 장시간 로딩의 초승달과 안내 문구는 추가 예정입니다.
+공용 안개는 타이틀의 `모험 시작` 확정 → 맵, 맵의 전투 선택 → 전투에 사용합니다. 같은 텍스처 두 레이어가 서로 다른 속도로 흐르며 약 0.32초에 화면을 덮습니다. 화면을 가린 채 씬을 로드하고, 다음 씬에서 약 0.38초에 걸쳐 안개를 걷고 입력을 엽니다. 적용 이미지는 [SceneTransitionFog.png](../Assets/Resources/SceneTransitionFog.png), 원본은 [2048×1024 투명 PNG](../GeneratedArt/UI/SceneTransition-v1/scene-transition-fog.png)입니다.
+
+씬 로딩 안내는 안개가 화면을 덮은 뒤 `LoadSceneAsync`를 호출하는 시점부터 시간을 잽니다. 로딩이 0.8초 이상 이어지면 화면 하단 중앙에서 금빛 초승달의 밝기가 변하고 `불러오는 중…`을 표시합니다. 씬이 준비되면 안내도 안개와 함께 사라집니다. 0.8초는 초기 기준입니다. [안내 프리팹](../Assets/Resources/SceneLoadingIndicator.prefab) · [초승달 이미지](../Assets/Resources/SceneLoadingCrescent.png)
 
 ## 맵 화면과 전투 상단 표시
 
@@ -228,10 +229,12 @@ Unity 6000.0.85f2에서 변경 범위별 EditMode 검사를 실행했습니다. 
 | 휴식 진입, 회복 입력 잠금, 휴식 복원과 상점 회귀 | 10/10 통과 | `.utmp/rest-entrance-20261111/final.xml` |
 | 공용 안개의 모험 시작·전투 전환, 맵·저장·타이틀 | 26/26 통과 | `.utmp/scene-fog-20261111/final.xml`, `title.xml` |
 | 전투·상점·휴식 카드 호버, 진입 전 원위치, 기존 맵 동작 | 11/11 통과 | `.utmp/map-choice-hover-20261111/settled.xml` |
+| 0.8초 로딩 안내의 표시·퇴장, 모험 시작과 전투의 공용 전환 | 4/4 통과 | `.utmp/loading-hint-verified.xml` |
+| 휴식의 회복·강화 버튼 호버와 기본 동작 | 2/2 통과 | `.utmp/rest-hover-final.xml` |
 | 잔액 부족·동일·초과, 저장 실패, 중복 구매 차단, 품절·가격 복원 | 46/46 통과 | `.utmp/shop-purchase-20261111/final.xml` |
 | 상점 `매개체` 글꼴, 맵 선택지 문구·배치·생성 | 27/27 통과 | `.utmp/medium-label-20261111/final.xml` |
 
-1280×720 화면에서 휴식의 모닥불 빛과 상점의 품절 표지·`매개체` 문구를 확인했습니다. 캡처는 `.utmp/map-system/map-rest-entrance-glow.png`와 `map-shop-sold-out.png`입니다. 맵 선택 카드의 상점 설명 `둘`과 휴식 제목 `휴`의 글꼴 문제는 작업 목록에 남겨 두었습니다. 호버 검증 초기에는 전투 왕복이 간헐적으로 멈췄고, 원인은 확인되지 않았습니다. 최종 맵 검사 11건은 모두 통과했습니다. 11월 11일 검증은 변경 범위별 실행이며 전체 EditMode 결과와 독립 실행 빌드 검증은 아직 확보하지 않았습니다.
+1280×720 화면에서 휴식의 모닥불 빛과 상점의 품절 표지·`매개체` 문구를 확인했습니다. 캡처는 `.utmp/map-system/map-rest-entrance-glow.png`와 `map-shop-sold-out.png`입니다. 맵 선택 카드의 상점 설명 `둘`과 휴식 제목 `휴`는 글꼴 수정 후 1280×720 화면에서 정상 표시되는 것을 확인했습니다. 호버 검증 초기에는 전투 왕복이 간헐적으로 멈췄고, 원인은 확인되지 않았습니다. 최종 맵 검사 11건은 모두 통과했습니다. 11월 11일 검증은 변경 범위별 실행이며 전체 EditMode 결과와 독립 실행 빌드 검증은 아직 확보하지 않았습니다.
 
 ### 2026-11-08 상점·휴식 검증
 

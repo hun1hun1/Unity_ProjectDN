@@ -76,6 +76,61 @@ public partial class TitleMenuTests
     }
 
     [UnityTest]
+    public IEnumerator CharacterSelectionFadesOverTheMenuAndBlocksInputUntilVisible()
+    {
+        yield return new EnterPlayMode();
+        yield return VerifyCharacterSelectionFade();
+        yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator VerifyCharacterSelectionFade()
+    {
+        yield return LoadTitle();
+        var menu = Object.FindFirstObjectByType<TitleMenuUI>();
+        var mainMenu = Ref<CanvasGroup>(menu, "mainMenu");
+        menu.StartGame();
+        var selection = Object.FindFirstObjectByType<CharacterSelectionUI>();
+        Assert.That(selection, Is.Not.Null, "Starting the game must activate the character selection panel.");
+        var soldier = Ref<Toggle>(selection, "soldierToggle");
+        var panel = selection.GetComponent<CanvasGroup>();
+        Assert.That(panel, Is.Not.Null);
+        Assert.That(panel.alpha, Is.Zero);
+        Assert.That(panel.interactable, Is.False);
+        Assert.That(mainMenu.alpha, Is.EqualTo(1f));
+        Assert.That(mainMenu.interactable || mainMenu.blocksRaycasts, Is.False);
+        soldier.OnSubmit(null);
+        Assert.That(soldier.isOn, Is.False);
+        soldier.isOn = true;
+        menu.ConfirmAdventure();
+        Assert.That(RunSession.Instance, Is.Null);
+
+        menu.HandleEscape();
+        Assert.That(selection.gameObject.activeSelf, Is.False);
+        Assert.That(mainMenu.alpha, Is.EqualTo(1f));
+        menu.StartGame();
+        Assert.That(selection.gameObject.activeSelf, Is.False, "Closing must block input in the same frame.");
+
+        yield return null;
+        menu.StartGame();
+        Assert.That(panel.alpha, Is.Zero);
+        Assert.That(soldier.isOn, Is.False);
+        float previousTimeScale = Time.timeScale;
+        Time.timeScale = 0f;
+        try
+        {
+            yield return Until(() => panel.alpha == 1f);
+        }
+        finally { Time.timeScale = previousTimeScale; }
+        yield return null;
+
+        Assert.That(mainMenu.alpha, Is.Zero);
+        Assert.That(panel.interactable, Is.True);
+        soldier.OnSubmit(null);
+        Assert.That(soldier.isOn, Is.True);
+        Assert.That(Ref<Button>(selection, "adventureButton").IsInteractable(), Is.True);
+    }
+
+    [UnityTest]
     public IEnumerator StartCreatesOneFreshRunAndResetsOldResourcesBeforeLoadingMap()
     {yield return new EnterPlayMode();yield return VerifyNewRun();yield return new ExitPlayMode();}
     private static IEnumerator VerifyNewRun()
@@ -93,6 +148,7 @@ public partial class TitleMenuTests
         Assert.That(initialAdventure.IsInteractable(), Is.False);
         initialAdventure.onClick.Invoke();
         Assert.That(RunSession.Instance, Is.Null, "An unselected character must not start a run.");
+        yield return WaitForCharacterSelection(initialSelection);
         ConfirmSelection(menu);
         yield return Until(()=>SceneManager.GetActiveScene().name=="MapScene"&&RunSession.Instance!=null&&!RunSession.Instance.IsTransitioning);
         RunSession session=RunSession.Instance;RunProgress old=session.Progress;
@@ -103,6 +159,7 @@ public partial class TitleMenuTests
         Ref<Button>(menu,"startButton").onClick.Invoke();
         var selection = Ref<CharacterSelectionUI>(menu, "characterSelection");
         Assert.That(selection.gameObject.activeSelf, Is.True);
+        yield return WaitForCharacterSelection(selection);
         Assert.That(Ref<CanvasGroup>(menu, "mainMenu").alpha, Is.Zero);
         Assert.That(Ref<Toggle>(selection, "soldierToggle").isOn, Is.False);
         Assert.That(Ref<Button>(selection, "adventureButton").IsInteractable(), Is.False);
@@ -135,6 +192,7 @@ public partial class TitleMenuTests
         yield return null;
         Ref<Button>(menu,"startButton").onClick.Invoke();
         Assert.That(Ref<Toggle>(selection, "soldierToggle").isOn, Is.False);
+        yield return WaitForCharacterSelection(selection);
         ConfirmSelection(menu);
         ConfirmSelection(menu);
         Assert.That(session.Progress,Is.Not.SameAs(old));
@@ -172,6 +230,7 @@ public partial class TitleMenuTests
             Assert.That(button.image.overrideSprite,Is.EqualTo(button.image.sprite),field+" pointer exit");
         }
         menu.StartGame();
+        yield return WaitForCharacterSelection(Ref<CharacterSelectionUI>(menu, "characterSelection"));
         ConfirmSelection(menu);
         yield return Until(()=>SceneManager.GetActiveScene().name=="MapScene"&&!RunSession.Instance.IsTransitioning);
         yield return LoadTitle();
@@ -198,6 +257,14 @@ public partial class TitleMenuTests
         Assert.That(options.IsOpen,Is.True);
         options.Close();
         Assert.That(EventSystem.current.currentSelectedGameObject,Is.Null,"Title settings must not restore an old menu selection.");
+    }
+
+    internal static IEnumerator WaitForCharacterSelection(CharacterSelectionUI selection)
+    {
+        var group = selection.GetComponent<CanvasGroup>();
+        Assert.That(group, Is.Not.Null);
+        yield return Until(() => group.interactable);
+        yield return null;
     }
 
     private static void ConfirmSelection(TitleMenuUI menu)

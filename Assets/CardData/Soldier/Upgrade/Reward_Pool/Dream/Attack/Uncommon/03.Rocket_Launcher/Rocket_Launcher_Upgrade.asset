@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c813815edeae7934380dab4472c7c28c, type: 3}
+  m_Name: Rocket_Launcher_Upgrade
+  m_EditorClassIdentifier: 
+  cardName: "\uB85C\uCF13 \uB7F0\uCC98+"
+  cost:
+    dreamCost: 1
+    nightmareCost: 0
+  costMode: 0
+  artwork: {fileID: 0}
+  description: "\uC18C\uBA78. \uCD1D\uC54C\uC774 1\uC54C \uC774\uC0C1\uC778 \uACBD\uC6B0\uC5D0\uB9CC
+    \uC0AC\uC6A9\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4. \uC801\uC5D0\uAC8C {damage:0}\uC758
+    \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4. \uC774 \uCE74\uB4DC\uC758 \uC0AC\uC6A9\uC73C\uB85C\uB294
+    \uC545\uBABD \uCF54\uC2A4\uD2B8\uB97C \uC5BB\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4."
+  deckType: 0
+  type: 0
+  rarity: 1
+  effects:
+  - {fileID: 11400000, guid: 09ef680b628032d4da6a7e0000058b9f, type: 2}
+  upgradedCard: {fileID: 0}
+  presentation: {fileID: 0}
+  exhaustOnUse: 1
+  turnStartEffects: []
+  continuousDurationType: 0
+  continuousTurns: 1
+  continuousIcon: {fileID: 0}
+  requiredAmmo: 1
+  consumeRequiredAmmo: 0

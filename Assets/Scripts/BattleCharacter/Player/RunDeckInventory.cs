@@ -92,8 +92,21 @@ public static class RunDeckInventory
         return selections;
     }
 
-    // Replaces one entry in the run inventory. The caller owns node validation and saving.
-    public static bool TryReplaceCard(CardSelection selection, CardData replacement)
+    internal static CardData GetUpgradeResult(CardData card)
+    {
+        if (card == null || card.upgradedCard == null) return null;
+
+        var visited = new HashSet<CardData> { card };
+        for (CardData next = card.upgradedCard; next != null; next = next.upgradedCard)
+            if (next.deckType != card.deckType || !visited.Add(next)) return null;
+        return card.upgradedCard;
+    }
+
+    public static bool TryReplaceCard(CardSelection selection, CardData replacement) =>
+        TryReplaceCard(selection, replacement, null);
+
+    // A failed save restores the exact entry and leaves its selection valid for a retry.
+    internal static bool TryReplaceCard(CardSelection selection, CardData replacement, Func<bool> commit)
     {
         RunDeckState state = selection.State;
         if (state == null || selection.RunVersion != GameVersion || selection.DeckRevision != state.Revision ||
@@ -107,8 +120,17 @@ public static class RunDeckInventory
             return false;
 
         cards[selection.Index] = replacement;
-        state.MarkChanged();
-        return true;
+        bool committed = false;
+        try
+        {
+            committed = commit == null || commit();
+            if (committed) state.MarkChanged();
+            return committed;
+        }
+        finally
+        {
+            if (!committed) cards[selection.Index] = selection.Card;
+        }
     }
 
     internal static bool TryAddCard(CardDatabase dream, CardDatabase nightmare, CardData card)

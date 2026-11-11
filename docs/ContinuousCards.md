@@ -30,6 +30,8 @@
 
 카드의 코스트와 필수 탄약은 사용 시에만 지불합니다. 다만 `turnStartEffects` 안의 `SpendAmmoBonusEffect`는 매번 자신의 탄약 조건을 검사하고 소비합니다.
 
+군인의 응급 처치·응급 처치+와 보급로 개척은 `effects`의 `AddCostEffect`로 사용 즉시 악몽 코스트를 1 얻습니다. 이후 턴에는 `turnStartEffects`의 회복 또는 장전만 실행합니다. 보급로 개척+는 턴 시작 장전을 유지하며 악몽 코스트 획득 효과는 없습니다.
+
 매 턴 방어도 5를 얻는 3턴 카드는 `continuousDurationType = FixedTurns`, `continuousTurns = 3`으로 설정하고 방어도 5의 `BlockEffect`를 `turnStartEffects`에 넣습니다. 이 방어도 효과를 기존 `effects`에도 넣으면 사용 시에도 별도로 한 번 실행됩니다.
 
 ## 설명 토큰과 상태 툴팁

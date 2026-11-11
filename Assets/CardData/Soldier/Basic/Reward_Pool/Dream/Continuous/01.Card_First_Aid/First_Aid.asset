@@ -23,11 +23,13 @@ MonoBehaviour:
   deckType: 0
   type: 2
   rarity: 2
-  effects: []
+  effects:
+  - {fileID: 11400000, guid: f95a1feeddfc659478d5c22999d078c7, type: 2}
+  upgradedCard: {fileID: 11400000, guid: ef62aef3ed701a74fbbaf38031726b37, type: 2}
+  presentation: {fileID: 0}
   exhaustOnUse: 1
   turnStartEffects:
   - {fileID: 11400000, guid: 6ba249475bb560a4a83623a836860d93, type: 2}
-  - {fileID: 11400000, guid: f95a1feeddfc659478d5c22999d078c7, type: 2}
   continuousDurationType: 1
   continuousTurns: 3
   continuousIcon: {fileID: 0}

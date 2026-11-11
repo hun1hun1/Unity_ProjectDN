@@ -3515,7 +3515,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC900\uBE44 \uC911"
+  m_text: "\uCE74\uB4DC \uD55C \uC7A5 \uAC15\uD654"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 6a55046997157e748a826ece785e183c, type: 2}
   m_sharedMaterial: {fileID: -464720298227176402, guid: 6a55046997157e748a826ece785e183c, type: 2}
@@ -5297,7 +5297,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 701106773}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: c53b83255e1642faaba6147710aa6bcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -5309,13 +5309,13 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 1, g: 0.94509804, b: 0.84313726, a: 1}
-    m_PressedColor: {r: 0.83137256, g: 0.7254902, b: 0.5803922, a: 1}
-    m_SelectedColor: {r: 1, g: 0.94509804, b: 0.84313726, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
+    m_NormalColor: {r: 0.89285714, g: 0.89285714, b: 0.89285714, a: 0.89285714}
+    m_HighlightedColor: {r: 1, g: 0.96, b: 0.83, a: 0.89285714}
+    m_PressedColor: {r: 0.74229693, g: 0.64775911, b: 0.51820732, a: 0.89285714}
+    m_SelectedColor: {r: 0.89285714, g: 0.84383754, b: 0.75280112, a: 0.89285714}
+    m_DisabledColor: {r: 0.70028012, g: 0.70028012, b: 0.70028012, a: 0.44817929}
+    m_ColorMultiplier: 1.12
+    m_FadeDuration: 0.15
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
     m_PressedSprite: {fileID: 0}
@@ -5332,6 +5332,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+  labels:
+  - {fileID: 1955491580}
+  - {fileID: 1603183309}
 --- !u!114 &701106776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9689,6 +9692,7 @@ MonoBehaviour:
   nightmareTitle: {fileID: 795215500}
   toggleButton: {fileID: 2030220867}
   closeButton: {fileID: 2051855107}
+  panelTitle: {fileID: 1764842318}
 --- !u!224 &1428397100
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12131,7 +12135,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1786490338}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: c53b83255e1642faaba6147710aa6bcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -12143,13 +12147,13 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 1, g: 0.94509804, b: 0.84313726, a: 1}
-    m_PressedColor: {r: 0.83137256, g: 0.7254902, b: 0.5803922, a: 1}
-    m_SelectedColor: {r: 1, g: 0.94509804, b: 0.84313726, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
+    m_NormalColor: {r: 0.89285714, g: 0.89285714, b: 0.89285714, a: 0.89285714}
+    m_HighlightedColor: {r: 1, g: 0.96, b: 0.83, a: 0.89285714}
+    m_PressedColor: {r: 0.74229693, g: 0.64775911, b: 0.51820732, a: 0.89285714}
+    m_SelectedColor: {r: 0.89285714, g: 0.84383754, b: 0.75280112, a: 0.89285714}
+    m_DisabledColor: {r: 0.70028012, g: 0.70028012, b: 0.70028012, a: 0.44817929}
+    m_ColorMultiplier: 1.12
+    m_FadeDuration: 0.15
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
     m_PressedSprite: {fileID: 0}
@@ -12161,11 +12165,14 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 1786490342}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+  labels:
+  - {fileID: 328893800}
+  - {fileID: 350535872}
 --- !u!114 &1786490341
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14529,6 +14536,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panel: {fileID: 253239874}
   recoverButton: {fileID: 701106775}
+  upgradeButton: {fileID: 1786490340}
+  deckOverview: {fileID: 1428397099}
   healthText: {fileID: 1398775004}
   recoveryDescription: {fileID: 1603183309}
   recoveryPercent: 30

@@ -11,7 +11,7 @@ public partial class RunCheckpointRuntimeTests
     {yield return new EnterPlayMode();yield return VerifyStaleReward();yield return new ExitPlayMode();}
     private static IEnumerator VerifyStaleReward()
     {
-        Isolate();yield return Load("TitleScene");StartNewAdventure(Object.FindFirstObjectByType<TitleMenuUI>());yield return WaitMap();
+        Isolate();yield return Load("TitleScene");yield return StartNewAdventure(Object.FindFirstObjectByType<TitleMenuUI>());yield return WaitMap();
         Object.FindFirstObjectByType<MapController>().SelectOption(0);yield return WaitBattle();
         Object.FindFirstObjectByType<BattleManager>().GetTarget().TakeDamage(100000);
         var rewards=Object.FindFirstObjectByType<BattleRewardSystem>();System.Func<bool> stale=rewards.ClaimGold;
@@ -24,7 +24,7 @@ public partial class RunCheckpointRuntimeTests
     {yield return new EnterPlayMode();yield return VerifyClaimFailure();yield return new ExitPlayMode();}
     private static IEnumerator VerifyClaimFailure()
     {
-        Isolate();yield return Load("TitleScene");StartNewAdventure(Object.FindFirstObjectByType<TitleMenuUI>());yield return WaitMap();
+        Isolate();yield return Load("TitleScene");yield return StartNewAdventure(Object.FindFirstObjectByType<TitleMenuUI>());yield return WaitMap();
         Object.FindFirstObjectByType<MapController>().SelectOption(0);yield return WaitBattle();
         Object.FindFirstObjectByType<BattleManager>().GetTarget().TakeDamage(100000);
         BattleRewardSystem rewards=Object.FindFirstObjectByType<BattleRewardSystem>();
@@ -42,7 +42,7 @@ public partial class RunCheckpointRuntimeTests
     {yield return new EnterPlayMode();yield return VerifyEntryFailure();yield return new ExitPlayMode();}
     private static IEnumerator VerifyEntryFailure()
     {
-        Isolate();yield return Load("TitleScene");StartNewAdventure(Object.FindFirstObjectByType<TitleMenuUI>());yield return WaitMap();
+        Isolate();yield return Load("TitleScene");yield return StartNewAdventure(Object.FindFirstObjectByType<TitleMenuUI>());yield return WaitMap();
         RunSession session=RunSession.Instance;RunProgress original=session.Progress;
         using(var locked=new FileStream(RunSaves.Store.Path,FileMode.Open,FileAccess.Read,FileShare.None))
         {
@@ -57,7 +57,7 @@ public partial class RunCheckpointRuntimeTests
     {yield return new EnterPlayMode();yield return VerifyCompletionFailure();yield return new ExitPlayMode();}
     private static IEnumerator VerifyCompletionFailure()
     {
-        Isolate();yield return Load("TitleScene");StartNewAdventure(Object.FindFirstObjectByType<TitleMenuUI>());yield return WaitMap();
+        Isolate();yield return Load("TitleScene");yield return StartNewAdventure(Object.FindFirstObjectByType<TitleMenuUI>());yield return WaitMap();
         Object.FindFirstObjectByType<MapController>().SelectOption(0);yield return WaitBattle();
         Object.FindFirstObjectByType<BattleManager>().GetTarget().TakeDamage(100000);
         RunSession session=RunSession.Instance;BattleRewardSystem rewards=Object.FindFirstObjectByType<BattleRewardSystem>();

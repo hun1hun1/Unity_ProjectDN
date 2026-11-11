@@ -61,7 +61,9 @@ public class MapSceneTests
             yield return WaitForScene("TitleScene");
             var title = Object.FindFirstObjectByType<TitleMenuUI>();
             title.StartGame();
-            Object.FindFirstObjectByType<CharacterSelectionUI>().GetComponentInChildren<Toggle>().isOn = true;
+            var selection = Object.FindFirstObjectByType<CharacterSelectionUI>();
+            yield return TitleMenuTests.WaitForCharacterSelection(selection);
+            selection.GetComponentInChildren<Toggle>().isOn = true;
             title.ConfirmAdventure();
 
             var fog = GameObject.Find("SceneFogTransition");
@@ -125,6 +127,65 @@ public class MapSceneTests
         Assert.That(fog.activeSelf, Is.False);
     }
 
+    [UnityTest] public IEnumerator LoadingHintAppearsOnlyAfterTheDelayAndFadesWithTheFog()
+    {
+        yield return new EnterPlayMode();
+        yield return VerifyLoadingHint();
+        yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator VerifyLoadingHint()
+    {
+        var owner = new GameObject("Loading hint test");
+        try
+        {
+            const System.Reflection.BindingFlags flags =
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            System.Type type = typeof(RunSession).Assembly.GetType("SceneFogTransition", throwOnError: true);
+            object transition = System.Activator.CreateInstance(type, flags, null, new object[] { owner.transform }, null);
+            void Call(string method, params object[] args) => type.GetMethod(method, flags).Invoke(transition, args);
+
+            Call("Show");
+            Transform overlay = owner.transform.Find("SceneFogTransition");
+            Transform hint = overlay.Find("SceneLoadingIndicator");
+            Assert.That(hint, Is.Not.Null);
+            Assert.That(hint.gameObject.activeSelf, Is.False);
+            Call("SetCoverage", 1f);
+            Call("UpdateLoading", .799d);
+            Assert.That(hint.gameObject.activeSelf, Is.False);
+
+            Call("UpdateLoading", .8d);
+            Assert.That(hint.gameObject.activeInHierarchy, Is.True);
+            var group = hint.GetComponent<CanvasGroup>();
+            Assert.That(group.alpha, Is.EqualTo(1f));
+            Assert.That(group.blocksRaycasts, Is.False);
+            var moon = hint.GetComponentInChildren<Image>();
+            Assert.That(AssetDatabase.GetAssetPath(moon.sprite), Is.EqualTo("Assets/Resources/SceneLoadingCrescent.png"));
+            var label = hint.GetComponentInChildren<TMP_Text>();
+            const string text = "불러오는 중…";
+            Assert.That(label.text, Is.EqualTo(text));
+            label.ForceMeshUpdate();
+            Assert.That(label.textInfo.characterInfo.Take(label.textInfo.characterCount).Select(info => info.character),
+                Is.EqualTo(text.ToCharArray()));
+
+            float firstOpacity = moon.color.a;
+            CaptureMap("scene-loading-indicator.png", overlay.GetComponent<Canvas>());
+            yield return new WaitForSecondsRealtime(.3f);
+            Call("SetCoverage", .4f);
+            Assert.That(group.alpha, Is.EqualTo(.4f));
+            Assert.That(moon.color.a, Is.LessThan(firstOpacity));
+            Call("SetCoverage", 0f);
+            Assert.That(group.alpha, Is.Zero);
+
+            Call("Hide");
+            Assert.That(overlay.gameObject.activeSelf, Is.False);
+            Call("Show");
+            Call("UpdateLoading", .1d);
+            Assert.That(hint.gameObject.activeSelf, Is.False);
+        }
+        finally { Object.Destroy(owner); }
+    }
+
     [UnityTest] public IEnumerator ShopPanelResumesAndLeavesOnlyAfterSuccessfulSave()
     {
         yield return new EnterPlayMode();
@@ -137,6 +198,7 @@ public class MapSceneTests
             var title = Object.FindFirstObjectByType<TitleMenuUI>();
             title.StartGame();
             var selection = Object.FindFirstObjectByType<CharacterSelectionUI>();
+            yield return TitleMenuTests.WaitForCharacterSelection(selection);
             selection.GetComponentInChildren<Toggle>().isOn = true;
             title.ConfirmAdventure();
             yield return WaitForMap();
@@ -455,7 +517,9 @@ public class MapSceneTests
             yield return WaitForScene("TitleScene");
             var title = Object.FindFirstObjectByType<TitleMenuUI>();
             title.StartGame();
-            Object.FindFirstObjectByType<CharacterSelectionUI>().GetComponentInChildren<Toggle>().isOn = true;
+            var selection = Object.FindFirstObjectByType<CharacterSelectionUI>();
+            yield return TitleMenuTests.WaitForCharacterSelection(selection);
+            selection.GetComponentInChildren<Toggle>().isOn = true;
             title.ConfirmAdventure();
             yield return WaitForMap();
             for (int i = 0; i < 3; i++)
@@ -531,6 +595,8 @@ public class MapSceneTests
             var recover = panel.GetComponentsInChildren<Button>().Single(button => button.name == "RecoverButton");
             Assert.That(panel.GetComponentsInChildren<TMP_Text>().Single(text => text.name == "Health").text,
                 Is.EqualTo("HP 59 / 80"));
+            foreach (Button action in panel.GetComponentsInChildren<Button>())
+                yield return CheckRestActionHover(action);
             CaptureMap("map-rest-recovery.png");
             using (var locked = new System.IO.FileStream(savePath, System.IO.FileMode.Open,
                 System.IO.FileAccess.Read, System.IO.FileShare.None))
@@ -554,6 +620,200 @@ public class MapSceneTests
             Object.FindFirstObjectByType<MapController>().SelectOption(0);
             yield return WaitForScene("BattleScene");
             Assert.That(Object.FindFirstObjectByType<BattleManager>().GetPlayer().GetCurrentHP(), Is.EqualTo(76));
+        }
+        finally { RunSaves.UseStore(null); }
+        yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator CheckRestActionHover(Button button)
+    {
+        Assert.That(button.colors.fadeDuration, Is.EqualTo(.15f).Within(.001f), button.name);
+        EventSystem.current.SetSelectedGameObject(button.gameObject);
+        yield return new WaitForSecondsRealtime(.18f);
+
+        var rect = (RectTransform)button.transform;
+        Vector2 position = rect.anchoredPosition;
+        Vector2 size = rect.rect.size;
+        var labels = button.GetComponentsInChildren<TMP_Text>();
+        Assert.That(labels.Length, Is.EqualTo(2), button.name);
+        Color TextColor(TMP_Text label) => label.color * label.canvasRenderer.GetColor();
+        Color imageBefore = button.targetGraphic.canvasRenderer.GetColor();
+        Color[] textBefore = labels.Select(TextColor).ToArray();
+
+        var pointer = new PointerEventData(EventSystem.current);
+        ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
+        yield return new WaitForSecondsRealtime(.18f);
+        Assert.That(button.targetGraphic.canvasRenderer.GetColor().grayscale, Is.GreaterThan(imageBefore.grayscale));
+        for (int i = 0; i < labels.Length; i++)
+            Assert.That(TextColor(labels[i]).grayscale, Is.GreaterThan(textBefore[i].grayscale), labels[i].name);
+        Assert.That(rect.anchoredPosition, Is.EqualTo(position));
+        Assert.That(rect.rect.size, Is.EqualTo(size));
+
+        ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerExitHandler);
+        yield return new WaitForSecondsRealtime(.18f);
+        Assert.That(button.targetGraphic.canvasRenderer.GetColor(), Is.EqualTo(imageBefore));
+        Assert.That(labels.Select(TextColor), Is.EqualTo(textBefore));
+    }
+
+    [UnityTest]
+    public IEnumerator RestUpgradeFiltersBothDecksAndCommitsOneCardWithTheNode()
+    {
+        yield return new EnterPlayMode();
+        string savePath = System.IO.Path.GetFullPath(".utmp/run-save/upgrade-" + System.Guid.NewGuid().ToString("N") + ".json");
+        RunSaves.UseStore(new RunSaveStore(savePath));
+        try
+        {
+            yield return SceneManager.LoadSceneAsync("MapScene");
+            yield return WaitForMap();
+            var session = RunSession.Instance;
+            var progress = session.Progress;
+            for (int i = 0; i < 3; i++)
+            {
+                Assert.That(progress.TrySelectOption(0), Is.True);
+                Assert.That(progress.RecordBattleResult(BattleResult.Victory), Is.True);
+                Assert.That(progress.CompleteNode(progress.FloorIndex, progress.NodeIndex), Is.True);
+            }
+            var overview = Object.FindFirstObjectByType<DeckOverviewUI>();
+            var view = new SerializedObject(overview);
+            var dream = (CardDatabase)view.FindProperty("dreamStartingDeckDatabase").objectReferenceValue;
+            var nightmare = (CardDatabase)view.FindProperty("nightmareStartingDeckDatabase").objectReferenceValue;
+            CardData[] Cards(CardDeckType type) => RunDeckInventory.GetCardSelections(dream, nightmare, type)
+                .Select(item => item.Card).ToArray();
+            var dreamType = CardDeckType.TypeDream;
+            var nightmareType = CardDeckType.TypeNightmare;
+            var originalDream = Cards(dreamType);
+            var originalNightmare = Cards(nightmareType);
+            void ReplaceDeck(CardDeckType type, CardData[] cards)
+            {
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    var selection = RunDeckInventory.GetCardSelections(dream, nightmare, type)[i];
+                    if (selection.Card != cards[i])
+                        Assert.That(RunDeckInventory.TryReplaceCard(selection, cards[i]), Is.True);
+                }
+            }
+
+            Object.FindFirstObjectByType<MapController>().SelectOption(1);
+            Assert.That(progress.Phase, Is.EqualTo(RunPhase.Content));
+            var rest = GameObject.Find("RestPanel");
+            var upgrade = rest.GetComponentsInChildren<Button>().Single(button => button.name == "UpgradeButton");
+            Assert.That(upgrade.interactable, Is.True);
+            float deadline = Time.realtimeSinceStartup + 3f;
+            while (!rest.GetComponent<CanvasGroup>().interactable && Time.realtimeSinceStartup < deadline)
+                yield return null;
+            Assert.That(rest.GetComponent<CanvasGroup>().interactable, Is.True);
+
+            var listPanel = ((GameObject)view.FindProperty("panel").objectReferenceValue).transform;
+            DeckCardUI[] ListCards(string section) => listPanel.Find(section).GetComponentsInChildren<DeckCardUI>();
+            Button FindButton(string name) => GameObject.Find(name).GetComponent<Button>();
+            Sprite ButtonArt(string button, string asset)
+            {
+                var image = FindButton(button).targetGraphic as Image;
+                Assert.That(image, Is.Not.Null, button);
+                Assert.That(AssetDatabase.GetAssetPath(image.sprite), Is.EqualTo("Assets/Resources/" + asset + ".png"), button);
+                Assert.That(image.type, Is.EqualTo(Image.Type.Sliced), button);
+                Assert.That(image.sprite.border.x, Is.GreaterThan(0f), button);
+                return image.sprite;
+            }
+            var target = originalDream.First(card => card.upgradedCard != null);
+            var replacement = target.upgradedCard;
+
+            ReplaceDeck(dreamType, originalDream.Select(card => card.upgradedCard ?? card).ToArray());
+            ClickUtilityButton(upgrade);
+            yield return null;
+            Assert.That(ListCards("DreamSection"), Is.Empty);
+            Assert.That(ListCards("NightmareSection").Length, Is.GreaterThan(0));
+            Sprite cancelArt = ButtonArt("UpgradeListCancel", "CardUpgradeCancel");
+            ClickUtilityButton(FindButton("UpgradeListCancel"));
+            yield return null;
+            ReplaceDeck(nightmareType, originalNightmare.Select(card => card.upgradedCard ?? card).ToArray());
+            ClickUtilityButton(upgrade);
+            yield return null;
+            Assert.That(ListCards("DreamSection"), Is.Empty);
+            Assert.That(ListCards("NightmareSection"), Is.Empty);
+            ClickUtilityButton(FindButton("UpgradeListCancel"));
+            Assert.That(rest.activeInHierarchy && !overview.IsOpen, Is.True);
+            yield return null;
+
+            ReplaceDeck(dreamType, originalDream);
+            ReplaceDeck(nightmareType, originalNightmare);
+            Assert.That(originalDream.Count(card => card == target), Is.GreaterThan(1));
+            ClickUtilityButton(upgrade);
+            yield return null;
+            CaptureMap("map-upgrade-list.png");
+            yield return null;
+            var cardField = typeof(DeckCardUI).GetField("cardData", System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic);
+            CardData DisplayedCard(DeckCardUI card) => (CardData)cardField.GetValue(card);
+            var nightmareItem = ListCards("NightmareSection").First();
+            ClickUtilityButton(nightmareItem.GetComponent<Button>());
+            yield return null;
+            var nightmareOriginal = DisplayedCard(nightmareItem);
+            Assert.That(GameObject.Find("UpgradeComparison").GetComponentsInChildren<DeckCardUI>().Select(DisplayedCard),
+                Is.EqualTo(new[] { nightmareOriginal, nightmareOriginal.upgradedCard }));
+            ClickUtilityButton(FindButton("UpgradeComparisonCancel"));
+            yield return null;
+
+            var dreamCards = ListCards("DreamSection");
+            var dreamScroll = listPanel.Find("DreamSection").GetComponentInChildren<ScrollRect>();
+            dreamScroll.verticalNormalizedPosition = 0f;
+            Canvas.ForceUpdateCanvases();
+            EventSystem.current.SetSelectedGameObject(dreamCards[0].gameObject);
+            var firstRect = (RectTransform)dreamCards[0].transform;
+            float firstTop = dreamScroll.viewport.InverseTransformPoint(firstRect.TransformPoint(firstRect.rect.max)).y;
+            Assert.That(firstTop, Is.LessThanOrEqualTo(dreamScroll.viewport.rect.yMax + .01f));
+
+            dreamScroll.verticalNormalizedPosition = 1f;
+            yield return null;
+            var item = dreamCards.Last(card => DisplayedCard(card) == target);
+            ClickUtilityButton(item.GetComponent<Button>());
+            var comparison = GameObject.Find("UpgradeComparison");
+            Assert.That(comparison.GetComponentsInChildren<DeckCardUI>().Select(DisplayedCard),
+                Is.EqualTo(new[] { target, replacement }));
+            Assert.That(Cards(dreamType), Is.EqualTo(originalDream));
+            Assert.That(ButtonArt("UpgradeComparisonCancel", "CardUpgradeCancel"), Is.SameAs(cancelArt));
+            Assert.That(ButtonArt("UpgradeConfirm", "CardUpgradeConfirm"), Is.Not.SameAs(cancelArt));
+            yield return null;
+            CaptureMap("map-upgrade-comparison.png");
+            yield return null;
+            ClickUtilityButton(FindButton("UpgradeComparisonCancel"));
+            Assert.That(comparison.activeSelf, Is.False);
+            Assert.That(overview.IsOpen, Is.True);
+            yield return null;
+            ClickUtilityButton(item.GetComponent<Button>());
+            yield return null;
+            var confirm = FindButton("UpgradeConfirm");
+            int health = progress.CurrentHP;
+            int gold = RunGoldInventory.Gold;
+            using (var locked = new System.IO.FileStream(savePath, System.IO.FileMode.Open,
+                System.IO.FileAccess.Read, System.IO.FileShare.None))
+            {
+                ClickUtilityButton(confirm);
+                Assert.That(comparison.activeInHierarchy, Is.True);
+                Assert.That(progress.Phase, Is.EqualTo(RunPhase.Content));
+                Assert.That(Cards(dreamType), Is.EqualTo(originalDream));
+            }
+            ClickUtilityButton(confirm);
+            confirm.onClick.Invoke();
+            Assert.That(rest.activeInHierarchy || overview.IsOpen, Is.False);
+            Assert.That(progress.Phase, Is.EqualTo(RunPhase.Map));
+            Assert.That(progress.NodeIndex, Is.EqualTo(4));
+            Assert.That(progress.CurrentHP, Is.EqualTo(health));
+            Assert.That(RunGoldInventory.Gold, Is.EqualTo(gold));
+            var expectedDream = (CardData[])originalDream.Clone();
+            expectedDream[System.Array.LastIndexOf(originalDream, target)] = replacement;
+            Assert.That(Cards(dreamType), Is.EqualTo(expectedDream));
+            Assert.That(Cards(nightmareType), Is.EqualTo(originalNightmare));
+
+            Assert.That(session.ReturnToTitle(), Is.True);
+            yield return WaitForScene("TitleScene");
+            Object.FindFirstObjectByType<TitleMenuUI>().ContinueGame();
+            yield return WaitForMap();
+            Assert.That(session.Progress.NodeIndex, Is.EqualTo(4));
+            Assert.That(Cards(dreamType).Count(card => card == replacement), Is.EqualTo(1));
+            Object.FindFirstObjectByType<MapController>().SelectOption(0);
+            yield return WaitForScene("BattleScene");
+            Assert.That(Object.FindFirstObjectByType<DeckController>().GetDeck(dreamType), Does.Contain(replacement));
         }
         finally { RunSaves.UseStore(null); }
         yield return new ExitPlayMode();
@@ -924,10 +1184,10 @@ public class MapSceneTests
     private static Canvas FindMapCanvas() =>
         Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None).Single(canvas => canvas.isRootCanvas);
 
-    internal static void CaptureMap(string fileName)
+    internal static void CaptureMap(string fileName, Canvas canvas = null)
     {
         if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
-        Canvas canvas = FindMapCanvas();
+        canvas ??= FindMapCanvas();
         var cameraObject = new GameObject("Map capture camera", typeof(Camera));
         Camera camera = cameraObject.GetComponent<Camera>();
         camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = new Color(.055f, .075f, .12f);

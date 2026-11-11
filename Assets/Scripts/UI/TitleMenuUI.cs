@@ -83,7 +83,8 @@ public class TitleMenuUI : MonoBehaviour
 
     public void ConfirmAdventure()
     {
-        if (!isActiveAndEnabled || starting || !CharacterSelectionOpen || !characterSelection.SoldierSelected) return;
+        if (!isActiveAndEnabled || starting || !CharacterSelectionOpen ||
+            characterSelection.IsOpening || !characterSelection.SoldierSelected) return;
         starting = true;
         characterSelection.SetBusy(true);
         try
@@ -161,7 +162,7 @@ public class TitleMenuUI : MonoBehaviour
     private void RefreshMenu()
     {
         if (mainMenu == null) return;
-        mainMenu.alpha = CharacterSelectionOpen ? 0f : 1f;
+        mainMenu.alpha = CharacterSelectionOpen && !characterSelection.IsOpening ? 0f : 1f;
         mainMenu.interactable = mainMenu.blocksRaycasts = CanActivate;
     }
     private static void Select(Button button)
