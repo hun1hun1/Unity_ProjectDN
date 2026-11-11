@@ -46,7 +46,7 @@ public class RunBattleBridge : MonoBehaviour
 
             rewards.ConfigureGoldReward(gold);
             // Deck Awakes have populated the persistent inventory, before starting hands are drawn.
-            session.SaveCheckpoint();
+            session.SaveBattleEntryCheckpoint(progress);
         }
     }
     private void OnDisable()

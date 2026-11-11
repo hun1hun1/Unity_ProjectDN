@@ -5828,7 +5828,7 @@ MonoBehaviour:
     m_SelectedColor: {r: 1, g: 0.95, b: 0.82, a: 1}
     m_DisabledColor: {r: 0.42, g: 0.45, b: 0.5, a: 0.76}
     m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
+    m_FadeDuration: 0.15
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
     m_PressedSprite: {fileID: 0}
@@ -7093,7 +7093,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC720\uBB3C"
+  m_text: "\uB9E4\uAC1C\uCCB4"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 6a55046997157e748a826ece785e183c, type: 2}
   m_sharedMaterial: {fileID: -464720298227176402, guid: 6a55046997157e748a826ece785e183c, type: 2}
@@ -10508,7 +10508,7 @@ MonoBehaviour:
     m_SelectedColor: {r: 1, g: 0.95, b: 0.82, a: 1}
     m_DisabledColor: {r: 0.42, g: 0.45, b: 0.5, a: 0.76}
     m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
+    m_FadeDuration: 0.15
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
     m_PressedSprite: {fileID: 0}
@@ -12268,7 +12268,7 @@ MonoBehaviour:
     m_SelectedColor: {r: 1, g: 0.95, b: 0.82, a: 1}
     m_DisabledColor: {r: 0.42, g: 0.45, b: 0.5, a: 0.76}
     m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
+    m_FadeDuration: 0.15
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
     m_PressedSprite: {fileID: 0}
@@ -14442,8 +14442,8 @@ MonoBehaviour:
       \uC218 \uC788\uC2B5\uB2C8\uB2E4."
   - type: 4
     artwork: {fileID: 0}
-    title: "\uC720\uBB3C"
-    description: "\uB7F0\uC5D0 \uB3C4\uC6C0\uC744 \uC8FC\uB294\n\uC720\uBB3C\uC744
+    title: "\uB9E4\uAC1C\uCCB4"
+    description: "\uB7F0\uC5D0 \uB3C4\uC6C0\uC744 \uC8FC\uB294\n\uB9E4\uAC1C\uCCB4\uB97C
       \uD68D\uB4DD\uD569\uB2C8\uB2E4."
   - type: 5
     artwork: {fileID: 0}
@@ -14490,11 +14490,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panel: {fileID: 767338580}
+  display: {fileID: 202584524}
   wallet: {fileID: 820892312}
   goldText: {fileID: 92398600}
   statusText: {fileID: 1864616486}
   leaveButton: {fileID: 1351351817}
   rewardPools: {fileID: 11400000, guid: a3aef2928f384268bfc065e31771290c, type: 2}
+  dreamStartingDeckDatabase: {fileID: 11400000, guid: db84336cd60a727499a39cfb6dd7049b, type: 2}
+  nightmareStartingDeckDatabase: {fileID: 11400000, guid: 70e180a85297a15479847b8a957a8745, type: 2}
+  soldOutSprite: {fileID: 21300000, guid: 62cf862c4840478eb8ca6fc0335554b7, type: 3}
   dreamSlots:
   - {fileID: 1590792570}
   - {fileID: 217416438}

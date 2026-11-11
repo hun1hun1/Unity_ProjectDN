@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -69,13 +70,33 @@ public class MapController : MonoBehaviour
         MapChoice choice = expected.CurrentNode.Choices[index];
         MapContentHandler handler = choice.IsBattle ? null : FindHandler(choice.Type);
         if (!session.SelectOption(index)) return;
+        if (choice.IsBattle && index < choiceButtons.Length)
+            StartCoroutine(HighlightBattleChoice(index));
         if (handler != null)
         {
             handler.Begin(choice, expected, () => session.CompleteContent(expected, floor, node));
-            if(ReferenceEquals(expected,session.Progress) && expected.Phase==RunPhase.Content)
-                session.SaveCheckpoint(contentState:handler.CaptureState());
+            if (ReferenceEquals(expected, session.Progress) && expected.Phase == RunPhase.Content)
+            {
+                session.SaveCheckpoint(contentState: handler.CaptureState());
+                if (index < choiceButtons.Length)
+                    handler.PlayEntrance(choiceButtons, index);
+            }
         }
     }
+    private IEnumerator HighlightBattleChoice(int index)
+    {
+        var selection = new MapChoiceHighlight(choiceButtons, index, new Color(0.67f, 0.79f, 1f));
+        try
+        {
+            for (float elapsed = 0f; elapsed < MapChoiceHighlight.Duration; elapsed += Time.unscaledDeltaTime)
+            {
+                selection.SetStrength(1f - elapsed / MapChoiceHighlight.Duration);
+                yield return null;
+            }
+        }
+        finally { selection.Restore(); }
+    }
+
     private void Refresh()
     {
         RunProgress state = session.Progress;
@@ -143,7 +164,9 @@ public class MapController : MonoBehaviour
             if (card != null)
                 card.SetContent(title, description, presentation?.artwork, supported, choice.Type == MapContentType.NormalBattle);
             else choiceButtons[i].GetComponentInChildren<TMP_Text>().text = title + (supported ? "" : " · 준비 중");
-            choiceButtons[i].interactable = CanChoose(i);
+            bool canChoose = CanChoose(i);
+            choiceButtons[i].interactable = canChoose;
+            if (!canChoose && card != null) card.ResetHover();
         }
     }
     private MapChoicePresentation FindPresentation(MapContentType type)

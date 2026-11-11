@@ -33,12 +33,14 @@ public class DeckCardUI : MonoBehaviour, IPointerClickHandler
     private BattleManager battleContext;
     private CardDescriptionBinding descriptionBinding;
     internal TMP_Text DescriptionText => descriptionText;
+    internal System.Action InspectionOverride { get; set; }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         var button = inspectOnLeftClick ? PointerEventData.InputButton.Left : PointerEventData.InputButton.Right;
-        if (allowInspection && eventData.button == button)
-            CardInspectionUI.TryOpen(cardData, battleContext);
+        if (!allowInspection || eventData.button != button) return;
+        if (InspectionOverride != null) InspectionOverride();
+        else CardInspectionUI.TryOpen(cardData, battleContext);
     }
 
     private void OnEnable() { descriptionBinding?.Enable(); }

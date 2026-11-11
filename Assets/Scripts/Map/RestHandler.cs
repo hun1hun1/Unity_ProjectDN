@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public sealed class RestHandler : MapContentHandler
 {
+    private static readonly Color CampfireOrange = new Color(1f, 0.63f, 0.31f);
+
     [SerializeField] private GameObject panel;
     [SerializeField] private Button recoverButton;
     [SerializeField] private TMP_Text healthText;
@@ -33,9 +35,12 @@ public sealed class RestHandler : MapContentHandler
         if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(recoverButton.gameObject);
     }
 
+    internal override void PlayEntrance(UnityEngine.UI.Button[] choices, int selectedIndex) =>
+        StartEntrance(panel, choices, selectedIndex, CampfireOrange, campfireGlow: true);
+
     private void Recover()
     {
-        if (visit == null || DeckOverviewUI.BlocksBattleInput || SettingsUI.BlocksBattleInput ||
+        if (visit == null || IsEntering || DeckOverviewUI.BlocksBattleInput || SettingsUI.BlocksBattleInput ||
             CardInspectionUI.BlocksGameplayInput) return;
 
         RunSession session = RunSession.Instance;

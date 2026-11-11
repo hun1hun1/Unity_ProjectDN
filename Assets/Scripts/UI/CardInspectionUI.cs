@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -30,9 +31,14 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
     private float measuredWidth = -1f;
     private float measuredPadding = -1f;
     private float preferredStatusHeight;
+    private RectTransform purchaseBar;
+    private TMP_Text purchaseLabel;
+    private TMP_Text purchaseMessage;
+    private Func<string> confirmPurchase;
 
     public bool IsOpen => panel != null && panel.activeInHierarchy;
-    public static bool BlocksGameplayInput => MulliganSelectionUI.BlocksGameplayInput || Time.frameCount <= blockedUntilFrame ||
+    public static bool BlocksGameplayInput => RunSession.Instance?.BlocksSceneInput == true ||
+        MulliganSelectionUI.BlocksGameplayInput || Time.frameCount <= blockedUntilFrame ||
         (instance != null && (instance.IsOpen || instance.inputCaptured));
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -67,6 +73,14 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
         return instance.Open(data, battle);
     }
 
+    internal static bool TryOpenShopOffer(CardData card, int price, TMP_FontAsset font, UnityEngine.UI.RawImage buttonArtwork,
+        Func<string> confirm)
+    {
+        if (confirm == null || !TryOpen(card, null)) return false;
+        instance.ShowPurchase(price, font, buttonArtwork, confirm);
+        return true;
+    }
+
     private bool Open(CardData data, BattleManager battle)
     {
         if (panel == null || cardView == null || statusPanel == null || statusText == null) return false;
@@ -94,6 +108,79 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
         return true;
     }
 
+    private void ShowPurchase(int price, TMP_FontAsset font, UnityEngine.UI.RawImage buttonArtwork, Func<string> confirm)
+    {
+        if (purchaseBar == null)
+        {
+            var bar = new GameObject("ShopPurchase", typeof(RectTransform));
+            bar.layer = panel.layer;
+            purchaseBar = (RectTransform)bar.transform;
+            purchaseBar.SetParent(panel.transform, false);
+            purchaseBar.anchorMin = purchaseBar.anchorMax = new Vector2(0.5f, 0f);
+            purchaseBar.pivot = new Vector2(0.5f, 0f);
+            purchaseBar.sizeDelta = new Vector2(440f, 110f);
+            purchaseBar.anchoredPosition = new Vector2(0f, screenMargin);
+
+            var button = new GameObject("PurchaseButton", typeof(RectTransform), typeof(UnityEngine.UI.RawImage),
+                typeof(UnityEngine.UI.Button));
+            button.layer = panel.layer;
+            var rect = (RectTransform)button.transform;
+            rect.SetParent(purchaseBar, false);
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = new Vector2(240f, 54f);
+            rect.anchoredPosition = new Vector2(0f, 20f);
+            var image = button.GetComponent<UnityEngine.UI.RawImage>();
+            image.raycastTarget = true;
+            if (buttonArtwork != null && buttonArtwork.texture != null)
+            {
+                image.texture = buttonArtwork.texture;
+                image.uvRect = buttonArtwork.uvRect;
+            }
+            else image.color = new Color(0.26f, 0.19f, 0.12f);
+            var buy = button.GetComponent<UnityEngine.UI.Button>();
+            buy.targetGraphic = image;
+            buy.onClick.AddListener(Purchase);
+
+            purchaseLabel = CreatePurchaseText("Label", rect, font, 25f, new Color(1f, 0.94f, 0.77f));
+            purchaseLabel.rectTransform.anchorMin = Vector2.zero;
+            purchaseLabel.rectTransform.anchorMax = Vector2.one;
+            purchaseLabel.rectTransform.sizeDelta = Vector2.zero;
+
+            purchaseMessage = CreatePurchaseText("PurchaseMessage", purchaseBar, font, 20f, new Color(1f, 0.74f, 0.58f));
+            purchaseMessage.rectTransform.sizeDelta = new Vector2(440f, 32f);
+            purchaseMessage.rectTransform.anchoredPosition = new Vector2(0f, -29f);
+        }
+        confirmPurchase = confirm;
+        purchaseLabel.text = $"구매 · {price}골드";
+        purchaseMessage.text = string.Empty;
+        purchaseBar.gameObject.SetActive(true);
+        RefreshLayout();
+        Canvas.ForceUpdateCanvases();
+    }
+
+    private static TMP_Text CreatePurchaseText(string name, RectTransform parent, TMP_FontAsset font, float size, Color color)
+    {
+        var label = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI)).GetComponent<TextMeshProUGUI>();
+        label.gameObject.layer = parent.gameObject.layer;
+        label.rectTransform.SetParent(parent, false);
+        label.rectTransform.anchorMin = label.rectTransform.anchorMax = label.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        label.rectTransform.anchoredPosition = Vector2.zero;
+        label.font = font;
+        label.fontSize = size;
+        label.color = color;
+        label.alignment = TextAlignmentOptions.Center;
+        label.raycastTarget = false;
+        return label;
+    }
+
+    private void Purchase()
+    {
+        if (!IsOpen || confirmPurchase == null) return;
+        string error = confirmPurchase();
+        if (error == null) Close();
+        else purchaseMessage.text = error;
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         if (!IsOpen) return;
@@ -108,6 +195,8 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
     public void Close()
     {
         if ((!IsOpen && !inputCaptured) || restorePending) return;
+        confirmPurchase = null;
+        if (purchaseBar != null) purchaseBar.gameObject.SetActive(false);
         if (panel != null) panel.SetActive(false);
         blockedUntilFrame = Time.frameCount;
         restorePending = inputCaptured;
@@ -148,7 +237,9 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
     {
         Rect bounds = ((RectTransform)panel.transform).rect;
         float availableWidth = Mathf.Max(1f, bounds.width - screenMargin * 2f);
-        float availableHeight = Mathf.Max(1f, bounds.height - screenMargin * 2f);
+        float purchaseSpace = confirmPurchase != null ? 124f : 0f;
+        Vector2 contentOffset = Vector2.up * (purchaseSpace * 0.5f);
+        float availableHeight = Mathf.Max(1f, bounds.height - screenMargin * 2f - purchaseSpace);
         float aspect = baseCardSize.y > 0f ? baseCardSize.x / baseCardSize.y : 200f / 260f;
         bool hasStatuses = statusPanel.gameObject.activeSelf;
         float width = Mathf.Min(statusWidth, availableWidth * 0.35f);
@@ -158,7 +249,7 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
         if (hasStatuses) height = below ? Mathf.Min(height, availableHeight * 0.42f)
             : Mathf.Min(height, Mathf.Max(1f, sideCardWidth) / aspect);
         RectTransform card = (RectTransform)cardView.transform;
-        card.anchoredPosition = Vector2.zero;
+        card.anchoredPosition = contentOffset;
         card.localScale = Vector3.one;
         card.sizeDelta = new Vector2(height * aspect, height);
         if (!Mathf.Approximately(height, appliedHeight))
@@ -181,7 +272,8 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
         float maxHeight = below ? availableHeight * 0.5f - height * 0.5f - cardGap : availableHeight;
         float statusHeight = Mathf.Min(preferredStatusHeight, Mathf.Max(1f, maxHeight));
         statusPanel.sizeDelta = new Vector2(width, statusHeight);
-        statusPanel.anchoredPosition = below ? new Vector2(0f, -height * 0.5f - cardGap - statusHeight * 0.5f)
-            : new Vector2(card.rect.width * 0.5f + cardGap + width * 0.5f, 0f);
+        statusPanel.anchoredPosition = contentOffset + (below
+            ? new Vector2(0f, -height * 0.5f - cardGap - statusHeight * 0.5f)
+            : new Vector2(card.rect.width * 0.5f + cardGap + width * 0.5f, 0f));
     }
 }

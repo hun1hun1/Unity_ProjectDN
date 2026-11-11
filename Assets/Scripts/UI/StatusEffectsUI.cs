@@ -156,8 +156,6 @@ public class StatusEffectsUI : MonoBehaviour
         if (source == null || iconPrefab == null) return;
         foreach (ActiveStatusEffect status in source.ActiveEffects)
         {
-            if (status.Type == StatusEffectType.Burn) continue;
-
             if (!icons.TryGetValue(status.Type, out StatusIconUI icon) || icon == null)
             {
                 icon = Instantiate(iconPrefab, transform, false);

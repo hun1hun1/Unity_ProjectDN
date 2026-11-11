@@ -5,6 +5,7 @@ using NUnit.Framework;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
@@ -371,7 +372,7 @@ public class StatusEffectTests
         yield return new ExitPlayMode();
     }
 
-    private static void AssertIcon(BattleCharacter character, StatusEffectType type, int turns)
+    private static StatusIconUI AssertIcon(BattleCharacter character, StatusEffectType type, int amount, Sprite expectedSprite = null)
     {
         StatusEffectsUI ui = character.GetComponentInChildren<StatusEffectsUI>();
         Assert.That(ui, Is.Not.Null);
@@ -380,10 +381,13 @@ public class StatusEffectTests
         foreach (StatusIconUI item in ui.GetComponentsInChildren<StatusIconUI>()) if (item.StatusType == type) icon = item;
         Assert.That(icon, Is.Not.Null);
         TMP_Text label = icon.GetComponentInChildren<TMP_Text>();
-        Assert.That(label.text, Is.EqualTo(turns.ToString()));
+        Assert.That(label.text, Is.EqualTo(amount.ToString()));
         Assert.That(label.rectTransform.anchorMin, Is.EqualTo(new Vector2(1, 0)));
         Assert.That(label.rectTransform.pivot, Is.EqualTo(new Vector2(1, 0)));
-        Assert.That(icon.GetComponent<UnityEngine.UI.Image>().sprite, Is.Not.Null);
+        Sprite sprite = icon.GetComponent<UnityEngine.UI.Image>().sprite;
+        Assert.That(sprite, Is.Not.Null);
+        if (expectedSprite != null) Assert.That(sprite, Is.SameAs(expectedSprite));
+        return icon;
     }
 
     private static void UseCard(BattleManager manager, CardHandController hand, CardData data)
@@ -410,7 +414,9 @@ public class StatusEffectTests
         var burn = AssetDatabase.LoadAssetAtPath<StatusEffectData>("Assets/StatusData/Burn.asset");
         Assert.That(burn, Is.Not.Null);
         Assert.That(burn.Type, Is.EqualTo(StatusEffectType.Burn));
-        Assert.That(burn.Icon, Is.Null);
+        var burnSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Images/UI/StatusIcon/burn.png");
+        Assert.That(burnSprite, Is.Not.Null);
+        Assert.That(burn.Icon, Is.SameAs(burnSprite));
         Player player = manager.GetPlayer();
         Enemy enemy = manager.GetTarget();
         EnemyBehavior behavior = CreateAsset<EnemyBehavior>();
@@ -424,7 +430,14 @@ public class StatusEffectTests
         player.StatusEffects.Apply(burn, 2);
         Assert.That(enemy.StatusEffects.ActiveEffects[0].StackCount, Is.EqualTo(10));
         Assert.That(enemy.StatusEffects.GetRemainingTurns(burn.Type), Is.Zero);
-        Assert.That(enemy.GetComponentInChildren<StatusIconUI>(), Is.Null);
+        StatusIconUI enemyBurnIcon = AssertIcon(enemy, burn.Type, 10, burnSprite);
+        AssertIcon(player, burn.Type, 2, burnSprite);
+        enemyBurnIcon.OnPointerEnter(new PointerEventData(EventSystem.current));
+        var tooltip = (StatusTooltipUI)GetField(enemyBurnIcon, "tooltip");
+        Assert.That(tooltip.gameObject.activeInHierarchy, Is.True);
+        var tooltipText = (TMP_Text)GetField(tooltip, "contentText");
+        Assert.That(tooltipText.text, Does.EndWith("중첩: 10"));
+        enemyBurnIcon.CloseTooltip();
         enemy.StatusEffects.Apply(CreateStatus(StatusEffectType.WeaknessExposure), 1);
         enemy.AddBlock(20);
         int enemyHP = enemy.GetCurrentHP();
@@ -445,6 +458,8 @@ public class StatusEffectTests
         Assert.That(enemyBlockAtTurnStart, Is.EqualTo(20));
         Assert.That(enemy.StatusEffects.ActiveEffects[0].StackCount, Is.EqualTo(9));
         Assert.That(player.StatusEffects.ActiveEffects[0].StackCount, Is.EqualTo(1));
+        AssertIcon(enemy, burn.Type, 9, burnSprite);
+        AssertIcon(player, burn.Type, 1, burnSprite);
 
         endTurn.onClick.Invoke();
         yield return WaitForPlayerTurn(manager);
@@ -452,6 +467,8 @@ public class StatusEffectTests
         Assert.That(enemy.StatusEffects.ActiveEffects[0].StackCount, Is.EqualTo(8));
         Assert.That(player.GetCurrentHP(), Is.EqualTo(playerHP - 3));
         Assert.That(player.StatusEffects.HasStatus(burn.Type), Is.False);
+        Assert.That(player.GetComponentInChildren<StatusIconUI>(), Is.Null);
+        AssertIcon(enemy, burn.Type, 8, burnSprite);
     }
 
     [UnityTest]

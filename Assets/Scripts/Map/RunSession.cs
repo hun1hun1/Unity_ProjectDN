@@ -13,6 +13,8 @@ public class RunSession : MonoBehaviour
     public event Action Changed;
     public event Action<RunPhase> RunFinished;
     private bool finishedRaised;
+    private SceneFogTransition fogTransition;
+    internal bool BlocksSceneInput => fogTransition?.IsVisible == true;
     private RunSaveData checkpoint;
     public string SaveError { get; private set; }
     public RunRewardData SavedRewards => checkpoint?.rewards;
@@ -60,7 +62,8 @@ public class RunSession : MonoBehaviour
         RunGoldInventory.Add(startingGold);
         Progress = next; finishedRaised = false;checkpoint=initial;SaveError=null;
         Publish();
-        if (Application.isPlaying && SceneManager.GetActiveScene().name != definition.mapScene) LoadScene(definition.mapScene);
+        if (Application.isPlaying && SceneManager.GetActiveScene().name != definition.mapScene)
+            LoadScene(definition.mapScene, useFog: true);
     }
 
     public bool SelectOption(int index)
@@ -72,7 +75,7 @@ public class RunSession : MonoBehaviour
         if (!Progress.TrySelectOption(index)) return false;
         RunSaveData previous=checkpoint;
         if(!SaveCheckpoint()){Progress.UndoNodeEntry();checkpoint=previous;Publish();return false;}
-        if (choice.IsBattle) LoadScene(Progress.Definition.battleScene);
+        if (choice.IsBattle) LoadScene(Progress.Definition.battleScene, useFog: true);
         else Publish();
         return true;
     }
@@ -139,9 +142,17 @@ public class RunSession : MonoBehaviour
         return true;
     }
 
-    public bool SaveCheckpoint(RunRewardData rewards=null,string contentState="")
+    public bool SaveCheckpoint(RunRewardData rewards = null, string contentState = "") =>
+        !IsTransitioning && SaveCheckpointCore(rewards, contentState);
+
+    // The destination has initialized the encounter and starting inventory under the fog.
+    internal bool SaveBattleEntryCheckpoint(RunProgress expected) =>
+        ReferenceEquals(Progress, expected) && expected?.Phase == RunPhase.Battle &&
+        SaveCheckpointCore(null, "");
+
+    private bool SaveCheckpointCore(RunRewardData rewards, string contentState)
     {
-        if(Progress==null || Progress.IsFinished || IsTransitioning)return false;
+        if (Progress == null || Progress.IsFinished) return false;
         if(!Application.isPlaying)return true;
         try
         {
@@ -231,17 +242,46 @@ public class RunSession : MonoBehaviour
         finishedRaised = true;
         RunFinished?.Invoke(Progress.Phase);
     }
-    private void LoadScene(string scene)
+    private void LoadScene(string scene, bool useFog = false)
     {
         if (!Application.isPlaying || IsTransitioning) return;
         if (!Application.CanStreamedLevelBeLoaded(scene)) throw new InvalidOperationException($"Run scene is not in Build Settings: {scene}");
         IsTransitioning = true;
         Publish();
-        StartCoroutine(Transition(scene));
+        StartCoroutine(Transition(scene, useFog));
     }
-    private IEnumerator Transition(string scene)
+
+    private IEnumerator Transition(string scene, bool useFog)
     {
-        try { yield return SceneManager.LoadSceneAsync(scene); }
-        finally { IsTransitioning = false; Publish(); }
+        try
+        {
+            if (!useFog)
+            {
+                yield return SceneManager.LoadSceneAsync(scene);
+                yield break;
+            }
+
+            fogTransition ??= new SceneFogTransition(transform);
+            fogTransition.Show();
+            yield return fogTransition.Fade(0f, 1f, 0.32f);
+            // Present a fully covered frame before the scene activation can replace the canvas.
+            yield return null;
+
+            AsyncOperation load = SceneManager.LoadSceneAsync(scene);
+            while (!load.isDone)
+            {
+                fogTransition.SetCoverage(1f);
+                yield return null;
+            }
+
+            yield return null;
+            yield return fogTransition.Fade(1f, 0f, 0.38f);
+        }
+        finally
+        {
+            if (useFog) fogTransition?.Hide();
+            IsTransitioning = false;
+            Publish();
+        }
     }
 }

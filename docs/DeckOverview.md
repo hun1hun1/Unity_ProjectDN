@@ -1,6 +1,8 @@
 # 꿈·악몽 전체 덱 보기
 
-`BattleScene`의 `Canvas/TopArea/Decks/DeckButton`을 누르면 TopArea 아래에 전체 덱 패널이 표시됩니다. 왼쪽은 꿈 덱, 오른쪽은 악몽 덱입니다. 같은 버튼을 다시 누르거나 패널의 닫기 버튼을 누르면 닫힙니다.
+`BattleScene`의 `Canvas/TopArea/Decks/DeckButton`을 누르면 TopArea 아래에 전체 덱 패널이 표시됩니다. 왼쪽은 꿈 덱, 오른쪽은 악몽 덱입니다. 같은 버튼을 다시 누르거나 패널 오른쪽 위의 공용 X 버튼을 누르면 닫힙니다. 맵의 전체 덱과 전투 카드 더미에도 같은 [공용 X 스프라이트](../Assets/Images/UI/shared-close-button.png)를 사용합니다.
+
+맵과 전투의 전체 덱 패널은 [카드 더미 패널 스프라이트](../Assets/Images/UI/CardPiles/card-pile-panel.png)를 9슬라이스 배경으로 재사용합니다.
 
 ## 표시 기준
 

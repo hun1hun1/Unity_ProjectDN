@@ -26,8 +26,9 @@ public class StatusTooltipUI : MonoBehaviour
     public void Refresh(StatusIconUI icon, ActiveStatusEffect effect)
     {
         if (owner != icon || effect == null || contentText == null) return;
-        string duration = effect.IsPermanent ? "전투 종료까지 지속" : $"남은 턴: {effect.RemainingTurns}";
-        contentText.text = $"{CardStatusDescriptionBuilder.FormatTitle(effect.Definition.DisplayName)}\n{effect.Definition.Description}\n{duration}";
+        string statusAmount = effect.IsPermanent ? "전투 종료까지 지속" : $"남은 턴: {effect.RemainingTurns}";
+        if (effect.Type == StatusEffectType.Burn) statusAmount = $"중첩: {effect.StackCount}";
+        contentText.text = $"{CardStatusDescriptionBuilder.FormatTitle(effect.Definition.DisplayName)}\n{effect.Definition.Description}\n{statusAmount}";
         UpdatePosition();
     }
 

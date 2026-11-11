@@ -21,7 +21,7 @@ Soldier 프리팹의 DeckController는 아래 두 데이터베이스를 참조�
 - `AddCardToDeck(card, deckType)`은 카드의 꿈/악몽 종류가 일치할 때 현재 덱과 현재 전투의 버림 더미에 한 장을 추가합니다. 추가한 카드는 버림 더미 재셔플 또는 다음 전투부터 뽑을 수 있습니다.
 - `RemoveCardFromDeck(card, deckType)`은 현재 덱에서 한 장을 제거하며, 뽑기/버림 더미에 해당 카드가 있으면 한 장만 함께 제거합니다. 손패 카드의 UI를 제거하는 기능은 포함하지 않습니다.
 - `ResetForBattle()`은 시작 데이터베이스 대신 현재 진행 중 덱으로 뽑기 더미를 재구성하고 버림 더미를 비웁니다. BattleManager가 시작 손패를 뽑기 전에 호출합니다.
-- 새 게임을 시작할 때 씬을 불러오기 전에 `RunDeckInventory.ResetForNewGame()`을 호출합니다. 기존 유물도 초기화하려면 `RunRelicInventory.ResetForNewGame()`을 함께 호출합니다. Play Mode에 새로 진입하면 두 상태가 자동 초기화됩니다.
+- 새 게임을 시작할 때 씬을 불러오기 전에 `RunDeckInventory.ResetForNewGame()`을 호출합니다. 기존 매개체도 초기화하려면 `RunRelicInventory.ResetForNewGame()`을 함께 호출합니다. Play Mode에 새로 진입하면 두 상태가 자동 초기화됩니다.
 
 진행 중 덱은 이번 플레이 실행 동안 유지됩니다. 앱 종료 후 저장·불러오기는 포함하지 않습니다.
 
@@ -31,7 +31,7 @@ Soldier 프리팹의 DeckController는 아래 두 데이터베이스를 참조�
 
 - `PlayerSpecialAbility`의 AmmoUI가 씬 Soldier의 AmmoSystem, 자식 AmmoText, AmmoBarBackground/Fill을 참조합니다.
 - 현재 씬의 Fill은 Image의 Filled / Vertical / Bottom 설정이며 `현재 총알 / 최종 최대 총알` 비율로 표시합니다. 최대량이 0이면 빈 상태입니다. 군인 프리팹 연결을 다시 실행해도 기존 HUD 배치와 Fill 방향을 유지합니다.
-- 텍스트와 Fill은 장전, 소모, 카드·유물의 최대량 증가, 전투/새 게임 초기화 때 함께 갱신됩니다. HUD를 다시 활성화할 때도 현재 상태를 표시합니다.
+- 텍스트와 Fill은 장전, 소모, 카드·매개체의 최대량 증가, 전투/새 게임 초기화 때 함께 갱신됩니다. HUD를 다시 활성화할 때도 현재 상태를 표시합니다.
 - 이미지는 Unity 기본 UI 스프라이트를 사용합니다. 이후 Fill의 Image > Source Image에서 이미지를 교체할 수 있습니다.
 - 런타임에 HUD가 참조하는 캐릭터를 바꿀 때는 `AmmoUI.Bind(newAmmoSystem)`을 호출합니다. 이전 총알 시스템의 이벤트 구독은 해제됩니다.
 
@@ -67,27 +67,27 @@ O알 이상이면 한 번 O알을 소모하고 Bonus Effects 전체를 순서대
 
 ## 최대 총알 증가
 
-최종 최대량은 **Inspector 기본 최대량 + 이번 게임의 유물 보너스 + 이번 전투의 카드 보너스**입니다. 최대량 증가만으로 총알을 장전하지 않습니다. 잔탄이 그대로여도 UI의 최대량이 즉시 갱신됩니다.
+최종 최대량은 **Inspector 기본 최대량 + 이번 게임의 매개체 보너스 + 이번 전투의 카드 보너스**입니다. 최대량 증가만으로 총알을 장전하지 않습니다. 잔탄이 그대로여도 UI의 최대량이 즉시 갱신됩니다.
 
 ### 이번 전투 동안 증가하는 카드
 
 Create > Card > Effect > Increase Max Ammo에서 `IncreaseMaxAmmoEffect`를 생성하고 Amount를 설정합니다. 기존 `CardData.effects`에 연결하면 현재 플레이어의 최대량을 해당 수만큼 늘립니다. 여러 번 사용하면 누적되며 턴 전환 시 유지됩니다. 기존 장전 효과와 함께 사용하면 Effects 배열 순서가 적용됩니다.
 
-`AmmoSystem.ResetForBattle()`은 전투 한정 보너스를 제거하고 잔탄을 Starting Ammo로 초기화하며 유물 보너스는 유지합니다. BattleManager의 Start에서 호출하므로 같은 Soldier를 다음 전투에서 재사용해도 카드 증가분이 넘어가지 않습니다. 기본 Player처럼 AmmoSystem이 없는 캐릭터에는 증가 효과가 적용되지 않습니다.
+`AmmoSystem.ResetForBattle()`은 전투 한정 보너스를 제거하고 잔탄을 Starting Ammo로 초기화하며 매개체 보너스는 유지합니다. BattleManager의 Start에서 호출하므로 같은 Soldier를 다음 전투에서 재사용해도 카드 증가분이 넘어가지 않습니다. 기본 Player처럼 AmmoSystem이 없는 캐릭터에는 증가 효과가 적용되지 않습니다.
 
-### 이번 게임 동안 증가하는 유물
+### 이번 게임 동안 증가하는 매개체
 
-Create > Relic > Ammo Capacity에서 `AmmoCapacityRelic`을 생성합니다. Relic Name, Description, Max Ammo Bonus를 Inspector에서 설정합니다. 유물 획득 처리에서는 아래 둘 중 하나를 호출합니다.
+Create > Relic > Ammo Capacity에서 `AmmoCapacityRelic`을 생성합니다. Relic Name, Description, Max Ammo Bonus를 Inspector에서 설정합니다. 매개체 획득 처리에서는 아래 둘 중 하나를 호출합니다.
 
 ```csharp
 bool acquired = relic.Acquire();
 // 또는 RunRelicInventory.Acquire(relic);
 ```
 
-다른 유물의 보너스는 누적되며 동일한 유물 에셋은 한 번만 획득됩니다. 중복/잘못된 획득은 false를 반환합니다. 보너스는 획득 시 기록되며 공유 ScriptableObject에 진행 상태를 쓰지 않습니다. 이미 있는 Soldier와 이후 생성되는 Soldier에 모두 반영되고 씬 변경에도 유지됩니다.
+다른 매개체의 보너스는 누적되며 동일한 매개체 에셋은 한 번만 획득됩니다. 중복/잘못된 획득은 false를 반환합니다. 보너스는 획득 시 기록되며 공유 ScriptableObject에 진행 상태를 쓰지 않습니다. 이미 있는 Soldier와 이후 생성되는 Soldier에 모두 반영되고 씬 변경에도 유지됩니다.
 
-새 게임을 시작할 때 `RunRelicInventory.ResetForNewGame()`을 호출합니다. 유물 보유 상태와 보너스를 비우고 현재 Soldier의 전투 보너스와 잔탄도 초기화합니다. 비활성 Soldier도 다시 활성화할 때 새 게임 초기화를 적용합니다. Play Mode에 새로 진입하면 상태가 자동 초기화됩니다.
+새 게임을 시작할 때 `RunRelicInventory.ResetForNewGame()`을 호출합니다. 매개체 보유 상태와 보너스를 비우고 현재 Soldier의 전투 보너스와 잔탄도 초기화합니다. 비활성 Soldier도 다시 활성화할 때 새 게임 초기화를 적용합니다. Play Mode에 새로 진입하면 상태가 자동 초기화됩니다.
 
-런 체크포인트에는 보유 유물과 획득 당시 확정한 탄약 보너스를 기록합니다. 유효한 체크포인트에서 이어서 하면 이를 복원합니다. 유물 획득 화면은 미구현이며 위 API로 획득을 처리할 수 있습니다. [노드 체크포인트와 이어서 하기](RunCheckpoints.md) 참고.
+런 체크포인트에는 보유 매개체와 획득 당시 확정한 탄약 보너스를 기록합니다. 유효한 체크포인트에서 이어서 하면 이를 복원합니다. 매개체 획득 화면은 미구현이며 위 API로 획득을 처리할 수 있습니다. [노드 체크포인트와 이어서 하기](RunCheckpoints.md) 참고.
 
-`Examples/IncreaseMaxAmmo.asset`은 전투 최대량 +1 카드, `Examples/AmmoCapacityRelic.asset`은 게임 최대량 +1 유물 예시입니다. 기본 덱과 BattleScene에는 자동 적용하지 않습니다.
+`Examples/IncreaseMaxAmmo.asset`은 전투 최대량 +1 카드, `Examples/AmmoCapacityRelic.asset`은 게임 최대량 +1 매개체 예시입니다. 기본 덱과 BattleScene에는 자동 적용하지 않습니다.

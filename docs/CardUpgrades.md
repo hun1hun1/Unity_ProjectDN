@@ -1,8 +1,8 @@
 # 카드 강화 구현 설계
 
-2026-10-19에 초안을 작성했고 2026-11-08에 구현 상태를 갱신했습니다.
+2026-10-19에 초안을 작성했고 2026-11-11에 구현 상태를 갱신했습니다.
 
-휴식 패널에는 `카드 강화` 버튼이 `준비 중`으로 표시되어 있습니다. `RunDeckInventory`의 덱 항목 교체 API를 추가했습니다. `CardData.upgradedCard`, 강화 대상 선택·비교 화면과 휴식 저장 연결은 구현 예정입니다. 아래 코드는 그 구조의 예시입니다.
+휴식 패널의 `카드 강화` 버튼은 비활성 상태이며 `준비 중`을 표시합니다. `CardData.upgradedCard` 필드와 `RunDeckInventory`의 덱 항목 교체 API는 구현되어 있습니다. 강화 카드 에셋 연결, 강화 대상 선택·비교 화면과 휴식 저장 연결은 구현 예정입니다. 두 휴식 버튼의 호버 구상은 [휴식 버튼 호버](../ToDo_List.md#휴식-버튼-호버)에 기록했습니다.
 
 관련 문서: [맵과 런 진행·콘텐츠 노드 확장](MapSystem.md), [카드 설명](CardDescriptions.md), [전투 보상](BattleRewards.md).
 
@@ -16,7 +16,7 @@
 | `RunDeckInventory` | 시작 덱 DB 쌍별 런 덱을 보관하고 새 런에서 초기화 | 같은 파일 |
 | `DeckController` | 런 덱에 접근하고 전투용 드로우·버림·소멸 더미 관리 | [DeckController.cs](../Assets/Scripts/BattleCharacter/Player/DeckController.cs) |
 | `DeckCardUI` | 전달받은 카드 정의 표시 | [DeckCardUI.cs](../Assets/Scripts/UI/DeckCardUI.cs) |
-| `DeckListUI` | 덱 목록 표시. 현재는 전달받은 목록의 복사본을 섞어서 표시 | [DeckListUI.cs](../Assets/Scripts/UI/DeckListUI.cs) |
+| `DeckListUI` | 전달받은 목록의 복사본을 이름순으로 정렬하거나 섞어서 표시 | [DeckListUI.cs](../Assets/Scripts/UI/DeckListUI.cs) |
 
 런 덱은 시작 데이터베이스의 목록을 복사하지만, 각 원소의 `CardData`와 그 안의 `CardEffect`는 공유 에셋 참조입니다. 같은 카드 에셋을 여러 덱 항목이 참조할 수 있습니다. 현재 구조에는 보유 카드 한 장마다 고유 ID나 강화 레벨을 가진 별도의 카드 인스턴스가 없습니다.
 
@@ -32,10 +32,10 @@
 
 원본 카드 에셋이나 시작 덱 데이터베이스를 수정하지 않으며, 다음 새 런은 기존 시작 덱으로 시작합니다.
 
-### 추가할 카드 필드 예시
+### 강화 결과 필드
 
 ```csharp
-// CardData에 추가할 예정인 필드. 현재 구현에는 없습니다.
+// CardData의 강화 결과 참조.
 public CardData upgradedCard;
 ```
 
@@ -72,7 +72,7 @@ public CardData upgradedCard;
 - 선택 당시의 원본 `CardData`
 - 선택 후 덱이 변경되었는지 판별할 정보
 
-`CardData` 참조만으로는 같은 카드를 여러 장 가진 경우 어느 한 장을 선택했는지 구분할 수 없습니다. 화면에서 두 번째로 보인 카드가 실제 런 덱의 두 번째 항목이라고 가정해서도 안 됩니다. 특히 현재 `DeckListUI.ShowCards()`는 표시 목록을 섞으므로, 시각 요소를 재사용하더라도 원본 항목의 인덱스 매핑을 추가해야 합니다.
+`CardData` 참조만으로는 같은 카드를 여러 장 가진 경우 어느 한 장을 선택했는지 구분할 수 없습니다. 화면에서 두 번째로 보인 카드가 실제 런 덱의 두 번째 항목이라고 가정해서도 안 됩니다. `DeckListUI.ShowCards()`는 설정에 따라 표시 목록을 정렬하거나 섞으므로, 시각 요소를 재사용할 때도 원본 항목의 인덱스를 함께 보관해야 합니다.
 
 확인 전후로 덱이 바뀔 수 있다면 인덱스와 예상 카드 참조만 비교해서는 부족합니다. 동일 카드가 여러 장일 때 삭제·삽입으로 위치가 바뀌어도 같은 참조가 남을 수 있기 때문입니다. 덱 변경 버전을 함께 검증하거나 선택 중 덱 변경을 막는 정책이 필요합니다. 기존 `RunDeckInventory.GameVersion`은 새 게임 구분용이므로 일반적인 덱 변경 버전처럼 사용하지 않습니다.
 

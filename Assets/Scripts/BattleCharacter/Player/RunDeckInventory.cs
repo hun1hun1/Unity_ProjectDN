@@ -111,6 +111,17 @@ public static class RunDeckInventory
         return true;
     }
 
+    internal static bool TryAddCard(CardDatabase dream, CardDatabase nightmare, CardData card)
+    {
+        if (dream == null || nightmare == null || card == null ||
+            (card.deckType != CardDeckType.TypeDream && card.deckType != CardDeckType.TypeNightmare))
+            return false;
+        RunDeckState state = GetOrCreate(dream, nightmare);
+        state.GetCards(card.deckType).Add(card);
+        state.MarkChanged();
+        return true;
+    }
+
     internal static RunDeckData[] Capture(RunAssetCatalog catalog)
     {
         var result = new List<RunDeckData>();
