@@ -17,7 +17,7 @@ MonoBehaviour:
     dreamCost: 1
     nightmareCost: 0
   costMode: 0
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 0cd843b4f6664064a9c41f90962448cd, type: 3}
   description: "\uC18C\uBA78. \uC774\uBC88 \uC804\uD22C \uB3D9\uC548 \uCD5C\uB300
     \uCD1D\uC54C \uC218\uAC00 2\uC99D\uAC00\uD569\uB2C8\uB2E4. \uCD1D\uC54C\uC744
     2\uC54C \uC7A5\uC804\uD569\uB2C8\uB2E4."

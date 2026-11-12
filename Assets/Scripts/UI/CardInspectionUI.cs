@@ -74,10 +74,13 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
     }
 
     internal static bool TryOpenShopOffer(CardData card, int price, TMP_FontAsset font, UnityEngine.UI.RawImage buttonArtwork,
-        Func<string> confirm)
+        Func<string> confirm) => TryOpenShopAction(card, $"구매 · {price}골드", font, buttonArtwork, confirm);
+
+    internal static bool TryOpenShopAction(CardData card, string label, TMP_FontAsset font,
+        UnityEngine.UI.RawImage buttonArtwork, Func<string> confirm)
     {
         if (confirm == null || !TryOpen(card, null)) return false;
-        instance.ShowPurchase(price, font, buttonArtwork, confirm);
+        instance.ShowPurchase(label, font, buttonArtwork, confirm);
         return true;
     }
 
@@ -108,7 +111,7 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
         return true;
     }
 
-    private void ShowPurchase(int price, TMP_FontAsset font, UnityEngine.UI.RawImage buttonArtwork, Func<string> confirm)
+    private void ShowPurchase(string label, TMP_FontAsset font, UnityEngine.UI.RawImage buttonArtwork, Func<string> confirm)
     {
         if (purchaseBar == null)
         {
@@ -151,7 +154,7 @@ public class CardInspectionUI : MonoBehaviour, IPointerClickHandler, IScrollHand
             purchaseMessage.rectTransform.anchoredPosition = new Vector2(0f, -29f);
         }
         confirmPurchase = confirm;
-        purchaseLabel.text = $"구매 · {price}골드";
+        purchaseLabel.text = label;
         purchaseMessage.text = string.Empty;
         purchaseBar.gameObject.SetActive(true);
         RefreshLayout();

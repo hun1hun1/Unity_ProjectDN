@@ -64,7 +64,7 @@ public class SettingsUI : MonoBehaviour
 
     public void Toggle()
     {
-        if(!isActiveAndEnabled || (deckOverview != null && deckOverview.IsChoosingUpgrade))return;
+        if(!isActiveAndEnabled || (deckOverview != null && deckOverview.IsChoosingCard))return;
         if(IsOpen){HandleEscape();return;}
         if(CardInspectionUI.BlocksGameplayInput || Time.frameCount<=blockedUntilFrame || panel==null ||
             (RunSession.Instance!=null && RunSession.Instance.IsTransitioning) ||

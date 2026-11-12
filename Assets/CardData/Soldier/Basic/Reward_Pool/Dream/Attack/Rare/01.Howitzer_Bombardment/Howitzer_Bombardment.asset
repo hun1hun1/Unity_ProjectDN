@@ -17,7 +17,7 @@ MonoBehaviour:
     dreamCost: 2
     nightmareCost: 0
   costMode: 0
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 3937c56a969c2cd429079fba85496851, type: 3}
   description: "2\uD134 \uD6C4 \uC801\uC5D0\uAC8C {damage:0.0}\uC758 \uD53C\uD574\uB97C
     \uC90D\uB2C8\uB2E4."
   deckType: 0

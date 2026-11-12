@@ -115,6 +115,81 @@ public class SharedHudArtworkTests
             finally { Object.Destroy(encounter); }
         }
     }
+    [UnityTest, Category("RequiresGraphics")]
+    public IEnumerator BlockGainFeedbackUsesTheActualAmountForBothSidesAndDelayedCards()
+    {
+        yield return new EnterPlayMode();
+        yield return SceneManager.LoadSceneAsync("BattleScene");
+        var battle = Object.FindFirstObjectByType<BattleManager>();
+        float deadline = Time.realtimeSinceStartup + 15f;
+        while (!battle.CanInspectCards && Time.realtimeSinceStartup < deadline) yield return null;
+        Assert.That(battle.CanInspectCards, Is.True);
+
+        Player player = battle.GetPlayer();
+        Enemy enemy = battle.GetTarget();
+        var playerView = player.GetComponent<BattleCharacterPresentation>();
+        var enemyView = enemy.GetComponent<BattleCharacterPresentation>();
+        Transform Badge(BattleCharacterPresentation view) => view.InfoUI.transform.Find("Block");
+        Image Shield(BattleCharacterPresentation view) => view.Visual.Find("BlockGainShield")?.GetComponent<Image>();
+        TMP_Text Gain(BattleCharacterPresentation view) => Badge(view).Find("BlockGainAmount")?.GetComponent<TMP_Text>();
+        void AssertGain(BattleCharacterPresentation view, string label)
+        {
+            Image shield = Shield(view);
+            Assert.That(shield, Is.Not.Null);
+            Assert.That(shield.gameObject.activeInHierarchy, Is.True);
+            Assert.That(shield.sprite, Is.SameAs(Badge(view).GetComponent<Image>().sprite));
+            Assert.That(shield.raycastTarget || Gain(view).raycastTarget, Is.False);
+            Assert.That(Gain(view).text, Is.EqualTo(label));
+        }
+
+        player.ResetBlock();
+        Assert.That(Shield(playerView), Is.Null);
+        var broken = AssetDatabase.LoadAssetAtPath<StatusEffectData>("Assets/StatusData/DefenseBreak.asset");
+        player.StatusEffects.Apply(broken, 2);
+        player.AddBlock(1);
+        Assert.That(player.GetBlock(), Is.Zero);
+        Assert.That(Shield(playerView), Is.Null);
+
+        const string supplyPath = "Assets/CardData/Soldier/Basic/Reward_Pool/Dream/Skill/Uncommon/01.Air_Supply/Air_Supply.asset";
+        var supply = AssetDatabase.LoadAssetAtPath<CardData>(supplyPath);
+        var delayed = System.Array.Find(supply.effects, effect => effect is DelayEffect) as DelayEffect;
+        var block = System.Array.Find(supply.effects, effect => effect is BlockEffect) as BlockEffect;
+        Vector3 baseScale = Badge(playerView).localScale;
+        block.Execute(battle);
+        int gain = player.GetBlock();
+        Assert.That(gain, Is.Positive);
+        AssertGain(playerView, $"+{gain}");
+        Image original = Shield(playerView);
+        block.Execute(battle);
+        AssertGain(playerView, $"+{gain * 2}");
+        Assert.That(Shield(playerView), Is.SameAs(original));
+        Assert.That(Badge(playerView).Find("BlockText").GetComponent<TMP_Text>().text, Is.EqualTo((gain * 2).ToString()));
+
+        var enemyBlock = AssetDatabase.LoadAssetAtPath<EnemyBlockAction>("Assets/Enemy/Test/Block_Test.asset");
+        enemyBlock.Execute(battle);
+        AssertGain(enemyView, $"+{enemyBlock.GetBlock()}");
+
+        yield return new WaitForSecondsRealtime(.1f);
+        Capture(battle, "block-gain-1280x720", 1280, 720);
+        deadline = Time.realtimeSinceStartup + 2f;
+        while (original.gameObject.activeSelf && Time.realtimeSinceStartup < deadline) yield return null;
+        Assert.That(original.gameObject.activeSelf || Shield(enemyView).gameObject.activeSelf, Is.False);
+        Assert.That(Gain(playerView).gameObject.activeSelf, Is.False);
+        Assert.That(Badge(playerView).localScale, Is.EqualTo(baseScale));
+
+        player.ResetBlock();
+        player.StatusEffects.Clear();
+        delayed.Execute(battle);
+        Assert.That(original.gameObject.activeSelf, Is.False);
+        battle.DelayedEffects.AdvanceTurn();
+        battle.RunEffectRoutine(battle.DelayedEffects.ProcessDueEffectsRoutine(battle));
+        deadline = Time.realtimeSinceStartup + 5f;
+        while (player.GetBlock() == 0 && Time.realtimeSinceStartup < deadline) yield return null;
+        Assert.That(player.GetBlock(), Is.Positive);
+        AssertGain(playerView, $"+{player.GetBlock()}");
+        Assert.That(Shield(playerView), Is.SameAs(original));
+    }
+
     private static void CheckLiveHud(BattleCharacter actor, float amount)
     {
         CharacterInfoUI hud = actor.GetComponent<BattleCharacterPresentation>().InfoUI;

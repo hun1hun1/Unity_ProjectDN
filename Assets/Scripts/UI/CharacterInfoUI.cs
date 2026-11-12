@@ -15,6 +15,8 @@ public class CharacterInfoUI : MonoBehaviour
     [SerializeField]
     private TMP_Text blockText;
 
+    internal TMP_Text BlockNumber => blockText;
+
     [Header("Status")]
     [SerializeField] private StatusEffectsUI statusUI;
 

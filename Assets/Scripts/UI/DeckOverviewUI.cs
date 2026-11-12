@@ -26,8 +26,10 @@ public class DeckOverviewUI : MonoBehaviour
     private RunDeckInventory.CardSelection selectedUpgrade;
     private CardData upgradeResult;
     private string normalTitle;
+    private Action<RunDeckInventory.CardSelection> selectRemoval;
 
-    internal bool IsChoosingUpgrade => commitUpgrade != null;
+    private bool IsChoosingUpgrade => commitUpgrade != null;
+    internal bool IsChoosingCard => IsChoosingUpgrade || selectRemoval != null;
 
     private static DeckOverviewUI instance;
     private static int blockedUntilFrame = -1;
@@ -41,7 +43,11 @@ public class DeckOverviewUI : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics() { instance = null; blockedUntilFrame = -1; }
 
-    private void Awake() { if (panel != null) panel.SetActive(false); }
+    private void Awake()
+    {
+        if (panelTitle != null) normalTitle = panelTitle.text;
+        if (panel != null) panel.SetActive(false);
+    }
 
     private void OnEnable()
     {
@@ -51,7 +57,7 @@ public class DeckOverviewUI : MonoBehaviour
 
     public void Toggle()
     {
-        if (!isActiveAndEnabled || IsChoosingUpgrade || CardInspectionUI.BlocksGameplayInput || SettingsUI.BlocksBattleInput) return;
+        if (!isActiveAndEnabled || IsChoosingCard || CardInspectionUI.BlocksGameplayInput || SettingsUI.BlocksBattleInput) return;
         if (IsOpen) { Close(); return; }
         if (Time.frameCount <= blockedUntilFrame || panel == null || dreamList == null || nightmareList == null) return;
         IReadOnlyList<CardData> dream;
@@ -91,7 +97,6 @@ public class DeckOverviewUI : MonoBehaviour
 
         if (upgradeView == null)
         {
-            normalTitle = panelTitle.text;
             upgradeView = new CardUpgradeComparisonUI((RectTransform)panel.transform, panelTitle.font,
                 dreamList.CardPrefab, Close, ReturnToUpgradeList, ConfirmUpgrade);
         }
@@ -101,18 +106,44 @@ public class DeckOverviewUI : MonoBehaviour
         panelTitle.text = "카드 강화";
         closeButton.gameObject.SetActive(false);
         ShowPanel();
-        int dreamCount = dreamList.ShowUpgradeChoices(
-            RunDeckInventory.GetCardSelections(dreamStartingDeckDatabase, nightmareStartingDeckDatabase, CardDeckType.TypeDream),
-            SelectUpgrade);
-        int nightmareCount = nightmareList.ShowUpgradeChoices(
-            RunDeckInventory.GetCardSelections(dreamStartingDeckDatabase, nightmareStartingDeckDatabase, CardDeckType.TypeNightmare),
-            SelectUpgrade);
-        dreamTitle.text = $"꿈 덱 · {dreamCount}장";
-        nightmareTitle.text = $"악몽 덱 · {nightmareCount}장";
-        ResetScroll();
+        ShowCardChoices(SelectUpgrade, upgradesOnly: true);
         upgradeView.ShowList();
         SelectButton(upgradeView.ListCancel);
         return true;
+    }
+
+    internal bool ShowRemovalChoices(Action<RunDeckInventory.CardSelection> select)
+    {
+        if (!isActiveAndEnabled || !IsMapOverview || IsOpen || panelTitle == null) return false;
+        selectRemoval = select;
+        panelTitle.text = "제거할 카드 선택";
+        ShowPanel();
+        RefreshRemovalChoices();
+        if (closeButton != null) SelectButton(closeButton);
+        return true;
+    }
+
+    internal void RefreshRemovalChoices()
+    {
+        if (selectRemoval != null) ShowCardChoices(selectRemoval);
+    }
+
+    internal void CloseRemovalChoices()
+    {
+        if (selectRemoval != null) ForceClose();
+    }
+
+    private void ShowCardChoices(Action<RunDeckInventory.CardSelection> select, bool upgradesOnly = false)
+    {
+        int dreamCount = dreamList.ShowCardChoices(
+            RunDeckInventory.GetCardSelections(dreamStartingDeckDatabase, nightmareStartingDeckDatabase, CardDeckType.TypeDream),
+            select, upgradesOnly);
+        int nightmareCount = nightmareList.ShowCardChoices(
+            RunDeckInventory.GetCardSelections(dreamStartingDeckDatabase, nightmareStartingDeckDatabase, CardDeckType.TypeNightmare),
+            select, upgradesOnly);
+        dreamTitle.text = $"꿈 덱 · {dreamCount}장";
+        nightmareTitle.text = $"악몽 덱 · {nightmareCount}장";
+        ResetScroll();
     }
 
     private void SelectUpgrade(RunDeckInventory.CardSelection selection)
@@ -194,6 +225,11 @@ public class DeckOverviewUI : MonoBehaviour
             if (closeButton != null) closeButton.gameObject.SetActive(true);
             if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
             closed?.Invoke();
+        }
+        else if (selectRemoval != null)
+        {
+            selectRemoval = null;
+            if (panelTitle != null) panelTitle.text = normalTitle;
         }
         else if (wasOpen && IsMapOverview && toggleButton != null && toggleButton.isActiveAndEnabled)
             SelectButton(toggleButton);

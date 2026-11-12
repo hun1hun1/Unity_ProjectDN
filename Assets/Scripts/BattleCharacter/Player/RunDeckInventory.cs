@@ -108,29 +108,49 @@ public static class RunDeckInventory
     // A failed save restores the exact entry and leaves its selection valid for a retry.
     internal static bool TryReplaceCard(CardSelection selection, CardData replacement, Func<bool> commit)
     {
-        RunDeckState state = selection.State;
-        if (state == null || selection.RunVersion != GameVersion || selection.DeckRevision != state.Revision ||
-            selection.Card == null || replacement == null || replacement == selection.Card ||
-            selection.Card.deckType != selection.DeckType || replacement.deckType != selection.DeckType)
+        if (replacement == null || replacement == selection.Card || replacement.deckType != selection.DeckType)
             return false;
 
-        List<CardData> cards = state.GetCards(selection.DeckType);
-        if (cards == null || selection.Index < 0 || selection.Index >= cards.Count ||
-            cards[selection.Index] != selection.Card)
-            return false;
+        List<CardData> cards = SelectedCards(selection);
+        if (cards == null) return false;
 
         cards[selection.Index] = replacement;
         bool committed = false;
         try
         {
             committed = commit == null || commit();
-            if (committed) state.MarkChanged();
+            if (committed) selection.State.MarkChanged();
             return committed;
         }
         finally
         {
             if (!committed) cards[selection.Index] = selection.Card;
         }
+    }
+
+    internal static bool CanRemoveCard(CardDatabase dream, CardDatabase nightmare, CardSelection selection) =>
+        selection.State != null && ReferenceEquals(Find(dream, nightmare), selection.State) &&
+        SelectedCards(selection) != null;
+
+    internal static bool TryRemoveCard(CardSelection selection)
+    {
+        List<CardData> cards = SelectedCards(selection);
+        if (cards == null) return false;
+        cards.RemoveAt(selection.Index);
+        selection.State.MarkChanged();
+        return true;
+    }
+
+    private static List<CardData> SelectedCards(CardSelection selection)
+    {
+        RunDeckState state = selection.State;
+        if (state == null || selection.RunVersion != GameVersion || selection.DeckRevision != state.Revision ||
+            selection.Card == null || selection.Card.deckType != selection.DeckType)
+            return null;
+
+        List<CardData> cards = state.GetCards(selection.DeckType);
+        return cards != null && selection.Index >= 0 && selection.Index < cards.Count &&
+            cards[selection.Index] == selection.Card ? cards : null;
     }
 
     internal static bool TryAddCard(CardDatabase dream, CardDatabase nightmare, CardData card)

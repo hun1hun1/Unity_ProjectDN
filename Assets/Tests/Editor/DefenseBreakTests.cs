@@ -165,8 +165,8 @@ public class DefenseBreakTests
         Assert.That(player.GetBlock(), Is.EqualTo(12));
     }
 
-    [TestCase("Assets/CardData/Basic/Dream/Skill/1.Card_Defense/Defense.asset")]
-    [TestCase("Assets/CardData/Basic/Nightmare/Skill/1.Card_Cat_and_Mouse/Cat_and_Mouse.asset")]
+    [TestCase("Assets/CardData/Soldier/Basic/Starting/Dream/Skill/01.Card_Defense/Defense.asset")]
+    [TestCase("Assets/CardData/Soldier/Basic/Starting/Nightmare/Skill/01.Card_Cat_and_Mouse/Cat_and_Mouse.asset")]
     [TestCase("Assets/CardData/Soldier/Basic/Starting/Dream/Skill/01.Card_Defense/Defense.asset")]
     [TestCase("Assets/CardData/Soldier/Basic/Starting/Nightmare/Skill/01.Card_Cat_and_Mouse/Cat_and_Mouse.asset")]
     public void ExistingDefenseCardsDisplayActualGainAndRetainTheirOtherEffects(string path)

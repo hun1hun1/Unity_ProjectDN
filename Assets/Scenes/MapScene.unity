@@ -14505,6 +14505,9 @@ MonoBehaviour:
   rewardPools: {fileID: 11400000, guid: a3aef2928f384268bfc065e31771290c, type: 2}
   dreamStartingDeckDatabase: {fileID: 11400000, guid: db84336cd60a727499a39cfb6dd7049b, type: 2}
   nightmareStartingDeckDatabase: {fileID: 11400000, guid: 70e180a85297a15479847b8a957a8745, type: 2}
+  cardRemovalButton: {fileID: 1392366440}
+  cardRemovalPriceTemplate: {fileID: 100002, guid: c2dfeecc66544bfbb8c5e3443461a988, type: 3}
+  deckOverview: {fileID: 1428397099}
   soldOutSprite: {fileID: 21300000, guid: 62cf862c4840478eb8ca6fc0335554b7, type: 3}
   dreamSlots:
   - {fileID: 1590792570}

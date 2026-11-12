@@ -10,7 +10,7 @@ public static class RunSaveCodec
     }
     public static RunInventoryData CaptureInventory(RunAssetCatalog catalog)
     {
-        return new RunInventoryData {gold=RunGoldInventory.Gold,decks=RunDeckInventory.Capture(catalog),relics=RunRelicInventory.Capture(catalog)};
+        return new RunInventoryData {gold=RunGoldInventory.Gold,cardRemovals=RunGoldInventory.CardRemovals,decks=RunDeckInventory.Capture(catalog),relics=RunRelicInventory.Capture(catalog)};
     }
     public static void Validate(RunSaveData data,RunAssetCatalog catalog)
     {
@@ -32,7 +32,7 @@ public static class RunSaveCodec
     }
     public static void ValidateInventory(RunInventoryData data,RunAssetCatalog catalog)
     {
-        if(data==null || data.gold<0 || data.decks==null || data.relics==null || data.decks.Length>100 || data.relics.Length>1000)
+        if(data==null || data.gold<0 || data.cardRemovals<0 || data.decks==null || data.relics==null || data.decks.Length>100 || data.relics.Length>1000)
             throw new InvalidOperationException("Invalid inventory.");
         var keys=new HashSet<string>();
         foreach(RunDeckData deck in data.decks)
@@ -56,7 +56,7 @@ public static class RunSaveCodec
     {
         ValidateInventory(data,catalog);
         RunDeckInventory.Restore(data.decks,catalog);
-        RunGoldInventory.ResetForNewGame();RunGoldInventory.Add(data.gold);
+        RunGoldInventory.Restore(data.gold,data.cardRemovals);
         RunRelicInventory.Restore(data.relics,catalog);
     }
 }

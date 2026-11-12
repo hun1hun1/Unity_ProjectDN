@@ -103,6 +103,8 @@ public abstract class BattleCharacter : MonoBehaviour
         Debug.Log($"{gameObject.name} 방어도 +{amount} / 현재 방어도 {block}");
 
         UpdateUI();
+        if (Application.isPlaying && amount > 0 && TryGetComponent(out BattleCharacterPresentation presentation))
+            presentation.PlayBlockGain(amount);
     }
 
     public virtual void ResetBlock()

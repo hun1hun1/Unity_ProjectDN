@@ -656,6 +656,120 @@ public class MapSceneTests
     }
 
     [UnityTest]
+    public IEnumerator ShopRemovalCommitsPriceAndExactCardAcrossContinue()
+    {
+        yield return new EnterPlayMode();
+        string savePath = System.IO.Path.GetFullPath(".utmp/run-save/removal-" + System.Guid.NewGuid().ToString("N") + ".json");
+        RunSaves.UseStore(new RunSaveStore(savePath));
+        try
+        {
+            yield return SceneManager.LoadSceneAsync("MapScene");
+            yield return WaitForMap();
+            var session = RunSession.Instance;
+            var progress = session.Progress;
+            for (int i = 0; i < 2; i++)
+            {
+                Assert.That(progress.TrySelectOption(0), Is.True);
+                Assert.That(progress.RecordBattleResult(BattleResult.Victory), Is.True);
+                Assert.That(progress.CompleteNode(progress.FloorIndex, progress.NodeIndex), Is.True);
+            }
+
+            var shop = Object.FindFirstObjectByType<ShopHandler>();
+            var fields = new SerializedObject(shop);
+            var dream = (CardDatabase)fields.FindProperty("dreamStartingDeckDatabase").objectReferenceValue;
+            var nightmare = (CardDatabase)fields.FindProperty("nightmareStartingDeckDatabase").objectReferenceValue;
+            CardData[] Cards(CardDeckType type) => RunDeckInventory.GetCardSelections(dream, nightmare, type)
+                .Select(item => item.Card).ToArray();
+            var initial = Cards(CardDeckType.TypeDream);
+            var other = Cards(CardDeckType.TypeNightmare);
+            Object.FindFirstObjectByType<MapController>().SelectOption(1);
+            var button = GameObject.Find("CardRemovalButton").GetComponent<Button>();
+            Assert.That(button.interactable, Is.True);
+            var panel = GameObject.Find("ShopPanel");
+            float deadline = Time.realtimeSinceStartup + 3f;
+            while (!panel.GetComponent<CanvasGroup>().interactable && Time.realtimeSinceStartup < deadline)
+                yield return null;
+            Assert.That(panel.GetComponent<CanvasGroup>().interactable, Is.True);
+            string Price() => GameObject.Find("CardRemovalPrice").GetComponent<TMP_Text>().text;
+            Assert.That(Price(), Is.EqualTo("100"));
+            ClickUtilityButton(button);
+            var overview = Object.FindFirstObjectByType<DeckOverviewUI>();
+            Assert.That(overview.IsOpen, Is.True);
+            yield return null;
+            var deck = GameObject.Find("DeckOverviewPanel").transform;
+            var item = deck.Find("DreamSection").GetComponentInChildren<DeckCardUI>();
+            var target = (CardData)typeof(DeckCardUI).GetField("cardData", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .GetValue(item);
+            ClickUtilityButton(item.GetComponent<Button>());
+            var inspection = Object.FindFirstObjectByType<CardInspectionUI>();
+            Assert.That(inspection.IsOpen, Is.True);
+            inspection.Close();
+            yield return null;
+            yield return null;
+            Assert.That(Cards(CardDeckType.TypeDream), Is.EqualTo(initial));
+            Assert.That(Price(), Is.EqualTo("100"));
+
+            ClickUtilityButton(item.GetComponent<Button>());
+            var confirm = GameObject.Find("PurchaseButton").GetComponent<Button>();
+            Assert.That(confirm.GetComponentInChildren<TMP_Text>().text, Is.EqualTo("100골드로 제거"));
+            yield return null;
+            CaptureMap("map-shop-removal-confirm.png");
+            Assert.That(RunGoldInventory.TrySpend(1), Is.True);
+            ClickUtilityButton(confirm);
+            Assert.That(RunGoldInventory.Gold, Is.EqualTo(99));
+            Assert.That(Cards(CardDeckType.TypeDream), Is.EqualTo(initial));
+            RunGoldInventory.Add(1);
+
+            using (var locked = new System.IO.FileStream(savePath, System.IO.FileMode.Open,
+                System.IO.FileAccess.Read, System.IO.FileShare.None))
+            {
+                ClickUtilityButton(confirm);
+                Assert.That(inspection.IsOpen, Is.True);
+                Assert.That(RunGoldInventory.Gold, Is.EqualTo(100));
+                Assert.That(Price(), Is.EqualTo("100"));
+                Assert.That(Cards(CardDeckType.TypeDream), Is.EqualTo(initial));
+            }
+            ClickUtilityButton(confirm);
+            confirm.onClick.Invoke();
+            Assert.That(overview.IsOpen || inspection.IsOpen, Is.False);
+            Assert.That(RunGoldInventory.Gold, Is.Zero);
+            Assert.That(Price(), Is.EqualTo("150"));
+            var expected = initial.ToList();
+            expected.Remove(target);
+            Assert.That(Cards(CardDeckType.TypeDream), Is.EqualTo(expected));
+            Assert.That(Cards(CardDeckType.TypeNightmare), Is.EqualTo(other));
+            Assert.That(session.Progress.NodeIndex, Is.EqualTo(2));
+            yield return null;
+            yield return null;
+
+            Assert.That(session.ReturnToTitle(), Is.True);
+            yield return WaitForScene("TitleScene");
+            Object.FindFirstObjectByType<TitleMenuUI>().ContinueGame();
+            yield return WaitForMap();
+            Assert.That(Price(), Is.EqualTo("150"));
+            Assert.That(RunGoldInventory.Gold, Is.Zero);
+            Assert.That(Cards(CardDeckType.TypeDream), Is.EqualTo(expected));
+            CaptureMap("map-shop-removal-price.png");
+
+            RunGoldInventory.Add(157);
+            ClickUtilityButton(GameObject.Find("CardRemovalButton").GetComponent<Button>());
+            yield return null;
+            var nightmareCard = GameObject.Find("DeckOverviewPanel").transform.Find("NightmareSection")
+                .GetComponentInChildren<DeckCardUI>();
+            ClickUtilityButton(nightmareCard.GetComponent<Button>());
+            var second = GameObject.Find("PurchaseButton").GetComponent<Button>();
+            Assert.That(second.GetComponentInChildren<TMP_Text>().text, Is.EqualTo("150골드로 제거"));
+            yield return null;
+            ClickUtilityButton(second);
+            Assert.That(Price(), Is.EqualTo("200"));
+            Assert.That(RunGoldInventory.Gold, Is.EqualTo(7));
+            Assert.That(Cards(CardDeckType.TypeDream), Is.EqualTo(expected));
+            Assert.That(Cards(CardDeckType.TypeNightmare).Length, Is.EqualTo(other.Length - 1));
+        }
+        finally { RunSaves.UseStore(null); }
+    }
+
+    [UnityTest]
     public IEnumerator RestUpgradeFiltersBothDecksAndCommitsOneCardWithTheNode()
     {
         yield return new EnterPlayMode();

@@ -59,13 +59,13 @@ public class DeckListUI : MonoBehaviour
         FinishDisplay();
     }
 
-    internal int ShowUpgradeChoices(IReadOnlyList<RunDeckInventory.CardSelection> cards,
-        System.Action<RunDeckInventory.CardSelection> select)
+    internal int ShowCardChoices(IReadOnlyList<RunDeckInventory.CardSelection> cards,
+        System.Action<RunDeckInventory.CardSelection> select, bool upgradesOnly = false)
     {
         StartDisplay();
         var eligible = new List<RunDeckInventory.CardSelection>();
         foreach (var card in cards)
-            if (RunDeckInventory.GetUpgradeResult(card.Card) != null) eligible.Add(card);
+            if (!upgradesOnly || RunDeckInventory.GetUpgradeResult(card.Card) != null) eligible.Add(card);
 
         eligible.Sort((left, right) =>
         {

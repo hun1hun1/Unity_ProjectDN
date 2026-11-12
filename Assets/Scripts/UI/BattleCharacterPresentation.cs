@@ -19,6 +19,7 @@ public class BattleCharacterPresentation : MonoBehaviour
     private Vector2 visualBasePosition;
     private Vector2 presentationOffset;
     private float presentationRotation;
+    private BlockGainFeedback blockGainFeedback;
     public Vector2 PresentationOffset => presentationOffset;
     public float PresentationRotation => presentationRotation;
 
@@ -42,10 +43,32 @@ public class BattleCharacterPresentation : MonoBehaviour
     private void Awake() { EnsureInitialized(); }
     private void LateUpdate()
     {
-        if (profile == null || visual == null) return;
-        if (!initialized || appliedProfile != profile || lastLayoutHash != profile.LayoutHash()) ApplyProfile(profile);
-        else if (lastRootSize != ((RectTransform)transform).rect.size) ApplyLayout();
+        if (profile != null && visual != null)
+        {
+            if (!initialized || appliedProfile != profile || lastLayoutHash != profile.LayoutHash()) ApplyProfile(profile);
+            else if (lastRootSize != ((RectTransform)transform).rect.size) ApplyLayout();
+        }
+        blockGainFeedback?.Update();
     }
+
+    internal void PlayBlockGain(int amount)
+    {
+        if (!isActiveAndEnabled || visual == null || infoUI == null) return;
+        var number = infoUI.BlockNumber;
+        if (number == null || number.transform.parent == null ||
+            !number.transform.parent.TryGetComponent(out UnityEngine.UI.Image badge) || badge.sprite == null) return;
+
+        if (blockGainFeedback == null || !blockGainFeedback.Matches(visual, badge))
+        {
+            blockGainFeedback?.Dispose();
+            blockGainFeedback = new BlockGainFeedback(visual, badge, number);
+        }
+
+        Rect bounds = idleAnimation != null ? idleAnimation.contentBounds : new Rect(0f, 0f, 1f, 1f);
+        blockGainFeedback.Play(amount, bounds);
+    }
+
+    private void OnDisable() => blockGainFeedback?.Hide();
 
     public void Configure(RectTransform artwork, UISpriteAnimator animator, UISpriteAnimation idle, CharacterUIProfile selectedProfile)
     {

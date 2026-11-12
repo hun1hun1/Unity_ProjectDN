@@ -13,6 +13,9 @@ public sealed class ShopHandler : MapContentHandler
     [SerializeField] private TMP_Text goldText;
     [SerializeField] private TMP_Text statusText;
     [SerializeField] private UnityEngine.UI.Button leaveButton;
+    [SerializeField] private UnityEngine.UI.Button cardRemovalButton;
+    [SerializeField] private TMP_Text cardRemovalPriceTemplate;
+    [SerializeField] private DeckOverviewUI deckOverview;
     [SerializeField] private CardRewardPoolCatalog rewardPools;
     [SerializeField] private CardDatabase dreamStartingDeckDatabase;
     [SerializeField] private CardDatabase nightmareStartingDeckDatabase;
@@ -23,6 +26,7 @@ public sealed class ShopHandler : MapContentHandler
     [SerializeField] private TMP_Text[] nightmarePrices;
     [SerializeField] private TMP_Text dreamStockStatus;
     [SerializeField] private TMP_Text nightmareStockStatus;
+    private TMP_Text cardRemovalPrice;
     private Func<bool> complete;
     private RunNodeVisit visit;
     private int priceSeed;
@@ -54,11 +58,22 @@ public sealed class ShopHandler : MapContentHandler
 
     public override MapContentType ContentType => MapContentType.Shop;
 
-    private void Awake() => leaveButton.onClick.AddListener(Leave);
+    private void Awake()
+    {
+        leaveButton.onClick.AddListener(Leave);
+        if (cardRemovalButton == null || cardRemovalPriceTemplate == null || deckOverview == null) return;
+
+        cardRemovalPrice = Instantiate(cardRemovalPriceTemplate, cardRemovalButton.transform, false);
+        cardRemovalPrice.gameObject.name = "CardRemovalPrice";
+        cardRemovalPrice.gameObject.SetActive(true);
+        cardRemovalButton.onClick.AddListener(OpenRemovalChoices);
+        cardRemovalButton.interactable = true;
+    }
 
     private void OnDestroy()
     {
         if (leaveButton != null) leaveButton.onClick.RemoveListener(Leave);
+        if (cardRemovalButton != null) cardRemovalButton.onClick.RemoveListener(OpenRemovalChoices);
     }
 
     public override void Begin(MapChoice choice, RunProgress progress, Func<bool> complete)
@@ -151,9 +166,15 @@ public sealed class ShopHandler : MapContentHandler
 
     private void RefreshStock()
     {
-        goldText.text = $"보유 골드 {RunGoldInventory.Gold}";
+        RefreshWallet();
         RefreshShelf(dreamSlots, dreamOffers, dreamPrices, dreamStockStatus, CardDeckType.TypeDream);
         RefreshShelf(nightmareSlots, nightmareOffers, nightmarePrices, nightmareStockStatus, CardDeckType.TypeNightmare);
+    }
+
+    private void RefreshWallet()
+    {
+        goldText.text = $"보유 골드 {RunGoldInventory.Gold}";
+        if (cardRemovalPrice != null) cardRemovalPrice.text = RunGoldInventory.CardRemovalPrice.ToString();
     }
 
     private void RefreshShelf(DeckCardUI[] slots, Offer[] offers, TMP_Text[] prices,
@@ -232,6 +253,56 @@ public sealed class ShopHandler : MapContentHandler
         if (!committed) return "저장에 실패했습니다. 다시 시도해 주세요.";
 
         RefreshStock();
+        return null;
+    }
+
+    private void OpenRemovalChoices()
+    {
+        if (visit == null || IsEntering || !panel.activeInHierarchy || DeckOverviewUI.BlocksBattleInput ||
+            SettingsUI.BlocksBattleInput || CardInspectionUI.BlocksGameplayInput) return;
+
+        RunNodeVisit expectedVisit = visit;
+        deckOverview.ShowRemovalChoices(selection => OpenRemoval(expectedVisit, selection));
+    }
+
+    private void OpenRemoval(RunNodeVisit expectedVisit, RunDeckInventory.CardSelection selection)
+    {
+        if (expectedVisit != visit || !deckOverview.IsOpen ||
+            !RunDeckInventory.CanRemoveCard(dreamStartingDeckDatabase, nightmareStartingDeckDatabase, selection)) return;
+
+        long price = RunGoldInventory.CardRemovalPrice;
+        CardInspectionUI.TryOpenShopAction(selection.Card, $"{price}골드로 제거", goldText.font,
+            cardRemovalButton.targetGraphic as UnityEngine.UI.RawImage,
+            () => Remove(expectedVisit, ref selection, price));
+    }
+
+    private string Remove(RunNodeVisit expectedVisit, ref RunDeckInventory.CardSelection selection, long price)
+    {
+        if (expectedVisit != visit || !panel.activeInHierarchy || !deckOverview.IsOpen ||
+            price != RunGoldInventory.CardRemovalPrice ||
+            !RunDeckInventory.CanRemoveCard(dreamStartingDeckDatabase, nightmareStartingDeckDatabase, selection))
+            return "카드를 제거할 수 없습니다.";
+        if (RunGoldInventory.Gold < price) return "골드가 부족합니다.";
+
+        var target = selection;
+        bool committed = CommitAcquisition(visit, () =>
+        {
+            if (!RunGoldInventory.TryPayForCardRemoval(price) || !RunDeckInventory.TryRemoveCard(target))
+                throw new InvalidOperationException("Could not apply the shop card removal.");
+        });
+        if (!committed)
+        {
+            // Rollback replaces the run deck instances, so bind the restored item before retrying.
+            var restored = RunDeckInventory.GetCardSelections(dreamStartingDeckDatabase, nightmareStartingDeckDatabase, target.DeckType);
+            if (target.Index < restored.Count && restored[target.Index].Card == target.Card)
+                selection = restored[target.Index];
+            deckOverview.RefreshRemovalChoices();
+            return "저장에 실패했습니다. 다시 시도해 주세요.";
+        }
+
+        RefreshWallet();
+        deckOverview.CloseRemovalChoices();
+        if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(cardRemovalButton.gameObject);
         return null;
     }
 

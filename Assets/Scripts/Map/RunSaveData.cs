@@ -38,6 +38,7 @@ public sealed class RunChoiceData
 public sealed class RunInventoryData
 {
     public int gold;
+    public int cardRemovals;
     public RunDeckData[] decks=Array.Empty<RunDeckData>();
     public RunRelicData[] relics=Array.Empty<RunRelicData>();
 }
