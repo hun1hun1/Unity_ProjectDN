@@ -32,22 +32,281 @@ public class MapSceneTests
         RunDeckInventory.ResetForNewGame(); RunRelicInventory.ResetForNewGame();
     }
 
-    [Test] public void SerializedTemporaryRunOffersShopAndRestAlongsideBattles()
+    [Test] public void SerializedTemporaryRunOffersShopRestUnknownAndConduitAlongsideBattles()
     {
         RunDefinition definition = AssetDatabase.LoadAssetAtPath<RunDefinition>(MapAssetSetup.RunPath);
         Assert.That(definition, Is.Not.Null);
         var state = new RunProgress(definition, 12);
         Assert.That(state.Nodes.Count, Is.EqualTo(5));
-        Assert.That(state.Nodes.Select(n => n.Choices.Count), Is.EqualTo(new[] { 1, 1, 2, 2, 1 }));
+        Assert.That(state.Nodes.Select(n => n.Choices.Count), Is.EqualTo(new[] { 1, 2, 3, 2, 2 }));
         Assert.That(state.Nodes.All(n => n.Choices[0].Type == MapContentType.NormalBattle), Is.True);
         Assert.That(state.Nodes[2].Choices[1].Type, Is.EqualTo(MapContentType.Shop));
+        Assert.That(state.Nodes[2].Choices[2].Type, Is.EqualTo(MapContentType.Relic));
         Assert.That(state.Nodes[3].Choices[1].Type, Is.EqualTo(MapContentType.Rest));
+        Assert.That(state.Nodes[1].Choices[1].Type, Is.EqualTo(MapContentType.Unknown));
+        Assert.That(state.Nodes[4].Choices[1].Type, Is.EqualTo(MapContentType.Unknown));
         var battlesOnly = new RunProgress(definition, 12, new[] { MapContentType.NormalBattle });
         Assert.That(battlesOnly.Nodes.All(n => n.Choices.Count == 1), Is.True);
         Assert.That(EditorBuildSettings.scenes[0].path, Is.EqualTo("Assets/Scenes/TitleScene.unity"));
         Assert.That(EditorBuildSettings.scenes.Any(s => s.enabled && s.path == MapAssetSetup.MapScenePath), Is.True);
         Assert.That(EditorBuildSettings.scenes[0].enabled, Is.True);
         Assert.That(EditorBuildSettings.scenes.Any(s => s.enabled && s.path == "Assets/Scenes/BattleScene.unity"), Is.True);
+    }
+
+    [UnityTest] public IEnumerator ConduitCardRestoresTheOfferAndGrantsItOnce() => CheckDirectConduit(true);
+
+    [UnityTest] public IEnumerator ConduitCardRestoresTheOfferAndAllowsSkipping() => CheckDirectConduit(false);
+
+    private static IEnumerator CheckDirectConduit(bool acquire)
+    {
+        yield return new EnterPlayMode();
+        string savePath = System.IO.Path.GetFullPath(".utmp/run-save/conduit-" + System.Guid.NewGuid().ToString("N") + ".json");
+        RunSaves.UseStore(new RunSaveStore(savePath));
+        try
+        {
+            yield return SceneManager.LoadSceneAsync("MapScene");
+            yield return WaitForMap();
+            RunSession session = RunSession.Instance;
+            RunProgress progress = session.Progress;
+            for (int i = 0; i < 2; i++)
+            {
+                Assert.That(progress.TrySelectOption(0), Is.True);
+                Assert.That(progress.RecordBattleResult(BattleResult.Victory), Is.True);
+                if (i == 0) Assert.That(progress.CompleteNode(0, i), Is.True);
+                else Assert.That(session.CompleteBattle(progress, 0, i, 80, 80), Is.True);
+            }
+            yield return WaitForMap();
+
+            GameObject card = GameObject.Find("Choice3");
+            Assert.That(card, Is.Not.Null);
+            Assert.That(card.transform.Find("Title").GetComponent<TMP_Text>().text, Is.EqualTo("매개체"));
+            Image cardImage = card.transform.Find("ArtworkFrame/Artwork").GetComponent<Image>();
+            Assert.That(AssetDatabase.GetAssetPath(cardImage.sprite), Is.EqualTo("Assets/Images/UI/NodeIcons/conduit-node.png"));
+            CaptureMap("map-conduit-choice.png");
+            Vector2 restingPosition = cardImage.rectTransform.anchoredPosition;
+            yield return HoverChoice(card.GetComponent<Button>(), cardImage.rectTransform, restingPosition);
+            Assert.That(cardImage.GetComponent<Outline>()?.enabled, Is.True);
+            ClickUtilityButton(card.GetComponent<Button>());
+            Assert.That(session.IsTransitioning, Is.True);
+            Assert.That(GameObject.Find("RelicEncounterPanel"), Is.Null);
+            yield return null;
+            var light = GameObject.Find("ConduitLight")?.GetComponent<RawImage>();
+            Assert.That(light, Is.Not.Null);
+            Assert.That(cardImage.rectTransform.anchoredPosition, Is.EqualTo(restingPosition));
+            Assert.That(session.ReturnToTitle(), Is.False, "Entry is locked until the card animation finishes.");
+            float lightDeadline = Time.realtimeSinceStartup + 2f;
+            while (session.IsTransitioning && light.color.r <= light.color.b && Time.realtimeSinceStartup < lightDeadline)
+                yield return null;
+            Assert.That(light.color.r, Is.GreaterThan(light.color.b));
+            CaptureMap("map-conduit-light.png");
+            yield return WaitForMap();
+
+            Assert.That(progress.CurrentNode.SelectedChoice.Type, Is.EqualTo(MapContentType.Relic));
+            var relic = progress.CurrentNode.SelectedChoice.ContentData as AmmoCapacityRelic;
+            Assert.That(relic, Is.Not.Null);
+            Assert.That(RunRelicInventory.Contains(relic), Is.False);
+            Transform content = GameObject.Find("RelicEncounterPanel/Content").transform;
+            Assert.That(content.Find("Title").GetComponent<TMP_Text>().text, Is.EqualTo("매개체 발견"));
+            Assert.That(content.Find("RewardName").GetComponent<TMP_Text>().text, Is.EqualTo(relic.RelicName + " · 일반"));
+            Assert.That(content.Find("Description").GetComponent<TMP_Text>().text, Is.EqualTo(relic.Description));
+            Image artwork = content.Find("RewardArtwork/Artwork").GetComponent<Image>();
+            Assert.That(AssetDatabase.GetAssetPath(artwork.sprite), Does.EndWith("extended-magazine-900x520.png"));
+            foreach (TMP_Text label in content.GetComponentsInChildren<TMP_Text>())
+                Assert.That(label.font.HasCharacters(label.text, out uint[] _, true, true), Is.True, label.text);
+            CaptureMap("map-conduit-reward.png");
+
+            Assert.That(session.ReturnToTitle(), Is.True);
+            yield return WaitForScene("TitleScene");
+            Object.FindFirstObjectByType<TitleMenuUI>().ContinueGame();
+            yield return WaitForMap();
+            progress = session.Progress;
+            Assert.That(progress.Phase, Is.EqualTo(RunPhase.Content));
+            Assert.That(progress.CurrentNode.SelectedChoice.ContentData, Is.SameAs(relic));
+            Assert.That(RunRelicInventory.Contains(relic), Is.False);
+
+            GameObject panel = GameObject.Find("RelicEncounterPanel");
+            Button button = panel.transform.Find(acquire ? "Content/Accept" : "Content/Leave").GetComponent<Button>();
+            using (var locked = new System.IO.FileStream(savePath, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.None))
+            {
+                ClickUtilityButton(button);
+                Assert.That(progress.Phase, Is.EqualTo(RunPhase.Content));
+                Assert.That(panel.activeSelf, Is.True);
+                Assert.That(RunRelicInventory.Count, Is.Zero);
+            }
+            ClickUtilityButton(button);
+            button.onClick.Invoke();
+            Assert.That(progress.NodeIndex, Is.EqualTo(3));
+            Assert.That(panel.activeSelf, Is.False);
+            Assert.That(RunRelicInventory.Contains(relic), Is.EqualTo(acquire));
+            Assert.That(RunRelicInventory.MaxAmmoBonus, Is.EqualTo(acquire ? relic.MaxAmmoBonus : 0));
+        }
+        finally { RunSaves.UseStore(null); }
+    }
+
+    [UnityTest] public IEnumerator UnknownEventKeepsTheSameResultAndPaysOnceAfterContinue() =>
+        CheckUnknownEncounter(MapContentType.Event);
+
+    [UnityTest] public IEnumerator UnknownRelicKeepsTheSameResultAndPaysOnceAfterContinue() =>
+        CheckUnknownEncounter(MapContentType.Relic);
+
+    private static IEnumerator CheckUnknownEncounter(MapContentType outcomeType)
+    {
+        yield return new EnterPlayMode();
+        string savePath = System.IO.Path.GetFullPath(".utmp/run-save/unknown-" + System.Guid.NewGuid().ToString("N") + ".json");
+        RunSaves.UseStore(new RunSaveStore(savePath));
+        try
+        {
+            yield return SceneManager.LoadSceneAsync("TitleScene");
+            yield return WaitForScene("TitleScene");
+            RunDefinition definition = AssetDatabase.LoadAssetAtPath<RunDefinition>(MapAssetSetup.RunPath);
+            int seed = FindSeedForUnknownOutcome(definition, outcomeType);
+
+            RunSession session = RunSession.GetOrCreate();
+            session.StartNewRun(definition, seed, new[] { MapContentType.Shop, MapContentType.Rest, MapContentType.Relic, MapContentType.Event });
+            yield return WaitForMap();
+            RunProgress progress = session.Progress;
+            Assert.That(progress.TrySelectOption(0), Is.True);
+            Assert.That(progress.RecordBattleResult(BattleResult.Victory), Is.True);
+            Assert.That(session.CompleteBattle(progress, 0, 0, 80, 80), Is.True);
+            yield return WaitForMap();
+
+            var option = GameObject.Find("Choice2").GetComponent<Button>();
+            TMP_Text optionTitle = option.transform.Find("Title").GetComponent<TMP_Text>();
+            Assert.That(optionTitle.text, Is.EqualTo("미지"));
+            Image icon = option.transform.Find("ArtworkFrame/Artwork").GetComponent<Image>();
+            Assert.That(AssetDatabase.GetAssetPath(icon.sprite), Is.EqualTo("Assets/Images/UI/NodeIcons/unknown-node.png"));
+            CaptureMap("map-unknown-choice.png");
+            var pointer = new PointerEventData(EventSystem.current);
+            ExecuteEvents.Execute(option.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
+            yield return null;
+            Assert.That(GameObject.Find("UnknownMist"), Is.Not.Null);
+            ExecuteEvents.Execute(option.gameObject, pointer, ExecuteEvents.pointerExitHandler);
+            yield return null;
+            Assert.That(GameObject.Find("UnknownMist"), Is.Null);
+            using (var locked = new System.IO.FileStream(savePath, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.None))
+            {
+                ClickUtilityButton(option);
+                Assert.That(progress.Phase, Is.EqualTo(RunPhase.Map));
+                Assert.That(progress.CurrentNode.SelectedIndex, Is.EqualTo(-1));
+            }
+
+            ClickUtilityButton(option);
+            Assert.That(session.IsTransitioning, Is.True);
+            Assert.That(GameObject.Find(outcomeType + "EncounterPanel"), Is.Null);
+            Assert.That(optionTitle.text, Is.EqualTo("미지"));
+            yield return null;
+            var mist = GameObject.Find("UnknownMist")?.GetComponent<RawImage>();
+            Assert.That(mist, Is.Not.Null);
+            float revealDeadline = Time.realtimeSinceStartup + 2f;
+            while (session.IsTransitioning && optionTitle.text == "미지" && mist.color.a < .55f &&
+                   Time.realtimeSinceStartup < revealDeadline)
+                yield return null;
+            if (optionTitle.text == "미지") CaptureMap("map-unknown-mist.png");
+            while (session.IsTransitioning && optionTitle.text == "미지" && Time.realtimeSinceStartup < revealDeadline)
+                yield return null;
+            Assert.That(optionTitle.text, Is.EqualTo(MapChoiceCardUI.DefaultTitle(outcomeType)));
+            Assert.That(GameObject.Find(outcomeType + "EncounterPanel"), Is.Null);
+            yield return WaitForMap();
+
+            Assert.That(progress.Phase, Is.EqualTo(RunPhase.Content));
+            Assert.That(progress.CurrentNode.SelectedChoice.Type, Is.EqualTo(outcomeType));
+            var outcome = progress.CurrentNode.SelectedChoice.ContentData;
+            string panelName = outcomeType + "EncounterPanel";
+            GameObject encounterPanel = GameObject.Find(panelName);
+            Assert.That(encounterPanel, Is.Not.Null);
+            foreach (TMP_Text label in encounterPanel.GetComponentsInChildren<TMP_Text>())
+                Assert.That(label.font.HasCharacters(label.text, out uint[] _, true, true), Is.True, label.text);
+            CaptureMap("map-unknown-" + outcomeType + ".png");
+
+            Assert.That(session.ReturnToTitle(), Is.True);
+            yield return WaitForScene("TitleScene");
+            Object.FindFirstObjectByType<TitleMenuUI>().ContinueGame();
+            yield return WaitForMap();
+            progress = session.Progress;
+            Assert.That(progress.CurrentNode.Choices[progress.CurrentNode.SelectedIndex].Type, Is.EqualTo(MapContentType.Unknown));
+            Assert.That(progress.CurrentNode.SelectedChoice.ContentData, Is.SameAs(outcome));
+
+            var panel = GameObject.Find(panelName);
+            var accept = panel.transform.Find("Content/Accept").GetComponent<Button>();
+            int before = RunGoldInventory.Gold;
+            using (var locked = new System.IO.FileStream(savePath, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.None))
+            {
+                ClickUtilityButton(accept);
+                Assert.That(progress.Phase, Is.EqualTo(RunPhase.Content));
+                Assert.That(panel.activeSelf, Is.True);
+                TMP_Text saveError = panel.transform.Find("Content/Error").GetComponent<TMP_Text>();
+                Assert.That(saveError.text, Is.Not.Empty);
+                Assert.That(saveError.font.HasCharacters(saveError.text, out uint[] _, true, true), Is.True, saveError.text);
+                Assert.That(RunGoldInventory.Gold, Is.EqualTo(before));
+                Assert.That(RunRelicInventory.Count, Is.Zero);
+            }
+
+            ClickUtilityButton(accept);
+            accept.onClick.Invoke();
+            Assert.That(progress.NodeIndex, Is.EqualTo(2));
+            Assert.That(panel.activeSelf, Is.False);
+            if (outcome is MapEventDefinition mapEvent)
+                Assert.That(RunGoldInventory.Gold, Is.EqualTo(before + mapEvent.goldReward));
+            else
+                Assert.That(RunRelicInventory.Contains((AmmoCapacityRelic)outcome), Is.True);
+        }
+        finally { RunSaves.UseStore(null); }
+    }
+
+    [UnityTest] public IEnumerator UnknownBattleRevealsTheCardBeforeTheSceneFog()
+    {
+        yield return new EnterPlayMode();
+        string savePath = System.IO.Path.GetFullPath(".utmp/run-save/unknown-battle-" + System.Guid.NewGuid().ToString("N") + ".json");
+        RunSaves.UseStore(new RunSaveStore(savePath));
+        try
+        {
+            yield return SceneManager.LoadSceneAsync("TitleScene");
+            yield return WaitForScene("TitleScene");
+            RunDefinition definition = AssetDatabase.LoadAssetAtPath<RunDefinition>(MapAssetSetup.RunPath);
+            RunSession session = RunSession.GetOrCreate();
+            session.StartNewRun(definition, FindSeedForUnknownOutcome(definition, MapContentType.NormalBattle),
+                new[] { MapContentType.Shop, MapContentType.Rest, MapContentType.Relic, MapContentType.Event });
+            yield return WaitForMap();
+            RunProgress progress = session.Progress;
+            Assert.That(progress.TrySelectOption(0), Is.True);
+            Assert.That(progress.RecordBattleResult(BattleResult.Victory), Is.True);
+            Assert.That(session.CompleteBattle(progress, 0, 0, 80, 80), Is.True);
+            yield return WaitForMap();
+
+            var button = GameObject.Find("Choice2").GetComponent<Button>();
+            TMP_Text title = button.transform.Find("Title").GetComponent<TMP_Text>();
+            ClickUtilityButton(button);
+            Assert.That(progress.Phase, Is.EqualTo(RunPhase.Battle));
+            Assert.That(session.IsTransitioning, Is.True);
+            Assert.That(GameObject.Find("SceneFogTransition"), Is.Null);
+            Assert.That(RunSaves.Store.TryRead(out RunSaveData saved, out string error), Is.True, error);
+            Assert.That(saved.progress.nodes[1].resolvedChoice.type, Is.EqualTo(MapContentType.NormalBattle));
+
+            float deadline = Time.realtimeSinceStartup + 2f;
+            while (title != null && title.text == "미지" && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.That(title.text, Is.EqualTo("일반 전투"));
+            Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("MapScene"));
+            Assert.That(GameObject.Find("SceneFogTransition"), Is.Null);
+            Assert.That(button.transform.Find("ArtworkFrame/Artwork").GetComponent<Image>().sprite, Is.Not.Null);
+
+            yield return WaitForScene("BattleScene");
+            Assert.That(Object.FindFirstObjectByType<BattleManager>(), Is.Not.Null);
+        }
+        finally { RunSaves.UseStore(null); }
+    }
+
+    private static int FindSeedForUnknownOutcome(RunDefinition definition, MapContentType outcomeType)
+    {
+        for (int seed = 0; seed < 1000; seed++)
+        {
+            var trial = new RunProgress(definition, seed);
+            trial.TrySelectOption(0);
+            trial.RecordBattleResult(BattleResult.Victory);
+            trial.CompleteNode(0, 0);
+            if (trial.TrySelectOption(1) && trial.CurrentNode.SelectedChoice.Type == outcomeType) return seed;
+        }
+
+        throw new System.InvalidOperationException($"No test seed for {outcomeType}.");
     }
 
     [UnityTest] public IEnumerator AdventureAndBattleUseTheSameFogAcrossSceneChanges()
@@ -955,7 +1214,7 @@ public class MapSceneTests
                 .Single(item => item.FindPropertyRelative("type").intValue == (int)MapContentType.Relic);
             Assert.That(relicPresentation.FindPropertyRelative("title").stringValue, Is.EqualTo("매개체"));
             Assert.That(relicPresentation.FindPropertyRelative("description").stringValue,
-                Is.EqualTo("런에 도움을 주는\n매개체를 획득합니다."));
+                Is.EqualTo("매개체를 확인하고\n획득 여부를 선택합니다."));
             Assert.That(MapChoiceCardUI.DefaultTitle(MapContentType.Relic), Is.EqualTo("매개체"));
             Assert.That(MapChoiceCardUI.DefaultDescription(MapContentType.Relic), Does.Contain("매개체를"));
             var buttons = config.FindProperty("choiceButtons"); Assert.That(buttons.arraySize, Is.EqualTo(3));
@@ -985,7 +1244,7 @@ public class MapSceneTests
         for (int i = 0; i < 5; i++)
         {
             MapController map = Object.FindFirstObjectByType<MapController>();
-            Assert.That(map.CanChoose(0), Is.True); Assert.That(map.CanChoose(1), Is.EqualTo(i == 2 || i == 3));
+            Assert.That(map.CanChoose(0), Is.True); Assert.That(map.CanChoose(1), Is.EqualTo(i > 0));
             var button = GameObject.Find("Choice1").GetComponent<Button>();
             Assert.That(button.interactable, Is.True);
             button.onClick.Invoke(); button.onClick.Invoke();

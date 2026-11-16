@@ -7,11 +7,11 @@
 | 프리팹 | 그림/idle | 기본 프로필 |
 |---|---|---|
 | `Assets/Prefabs/Player/Soldier.prefab` | Soldier Idle v2 | Normal |
-| `Assets/Prefabs/Enemy/TestEnemy.prefab` | Slime Idle v1 | Small |
+| `Assets/Prefabs/Enemy/Slime.prefab` | Slime Idle v1 | Small |
 | `Assets/Prefabs/Enemy/Scarecrow.prefab` | Scarecrow Idle v1 | Normal |
 | `Assets/Prefabs/Enemy/Lizard.prefab` | Lizard Idle v1 | Large |
 
-기존 일반 전투의 Enemy Prefab은 TestEnemy로 유지됩니다. 다른 적을 선택하려면 해당 `BattleEncounterDefinition`의 Enemy Prefab에 Scarecrow 또는 Lizard를 지정합니다. 적 HP와 행동은 기존 방식대로 encounter 데이터가 결정하며, 이번 작업은 기존 encounter의 전투 수치를 바꾸지 않습니다.
+현재 임시 맵의 `NormalEncounter`는 슬라임 프리팹을 사용합니다. 허수아비와 도마뱀도 연결 가능한 프리팹이 준비되어 있습니다. 전투별 HP와 행동은 `BattleEncounterDefinition`에서 정합니다.
 
 ## Inspector에서 크기와 UI 교체
 
@@ -44,6 +44,27 @@ Inspector에서 지정한 프로필은 전투 실행 시 적용됩니다. 편집
 | LizardIdle | 0.12초 | 2.88초 |
 
 각 시트는 4608×3072, 6열×4행이며 프레임은 768×768입니다. 모든 프레임을 같은 셀 크기로 분할하고 Pivot `(0.5, 0.0625)`을 사용합니다. PNG 원본은 `GeneratedArt`에 유지하고 사용 시트만 `Assets/Images/Characters`로 복사합니다. 전체 애니메이션의 알파 영역을 측정해 행동 UI의 배치 기준을 저장합니다.
+
+## 신규 적 스프라이트와 대기 애니메이션
+
+아래 6종의 기본 스프라이트, 대기 스프라이트 시트, GIF 미리보기를 제작했습니다. 각 시트는 4608×3072 투명 PNG이며 768×768 프레임을 6열×4행으로 배치합니다. 왼쪽 위부터 행 순서로 읽고, 프레임당 100ms로 재생하면 2.4초 동안 한 바퀴 돕니다.
+
+| 적 | 기본 스프라이트 | 대기 애니메이션 | 동작 |
+|---|---|---|---|
+| 깨진 종 | [PNG](../GeneratedArt/BrokenBell/broken-bell-v1.png) | [스프라이트 시트](../GeneratedArt/BrokenBell/broken-bell-idle-spritesheet.png) · [GIF](../GeneratedArt/BrokenBell/broken-bell-idle-preview.gif) | 부유하며 좌우로 기울고 종추가 뒤따라 흔들립니다. |
+| 등불 나방 | [PNG](../GeneratedArt/LanternMoth/lantern-moth-v1.png) | [스프라이트 시트](../GeneratedArt/LanternMoth/lantern-moth-idle-spritesheet.png) · [GIF](../GeneratedArt/LanternMoth/lantern-moth-idle-preview.gif) | 부유하며 천천히 날갯짓하고 더듬이와 날개 끝이 흔들립니다. |
+| 잉크 까마귀 | [PNG](../GeneratedArt/InkCrow/ink-crow-v1.png) | [스프라이트 시트](../GeneratedArt/InkCrow/ink-crow-idle-spritesheet.png) · [GIF](../GeneratedArt/InkCrow/ink-crow-idle-preview.gif) | 날갯짓에 따라 날개 끝의 잉크 방울이 흩어졌다 모입니다. |
+| 움직이는 빗자루 | [PNG](../GeneratedArt/HauntedBroom/haunted-broom-v1.png) | [스프라이트 시트](../GeneratedArt/HauntedBroom/haunted-broom-idle-spritesheet.png) · [GIF](../GeneratedArt/HauntedBroom/haunted-broom-idle-preview.gif) | 공중에서 몸체가 기울고 빗살 끝이 뒤따라 움직입니다. |
+| 양철 나무꾼 | [PNG](../GeneratedArt/TinWoodcutter/tin-woodcutter-v1.png) | [스프라이트 시트](../GeneratedArt/TinWoodcutter/tin-woodcutter-idle-spritesheet.png) · [GIF](../GeneratedArt/TinWoodcutter/tin-woodcutter-idle-preview.gif) | 발을 고정하고 상체가 무게를 옮기며, 고개와 도끼가 뒤따라 움직입니다. |
+| 침대 시트 유령 | [PNG](../GeneratedArt/SheetGhost/sheet-ghost-v1.png) | [스프라이트 시트](../GeneratedArt/SheetGhost/sheet-ghost-idle-spritesheet.png) · [GIF](../GeneratedArt/SheetGhost/sheet-ghost-idle-preview.gif) | 몸체가 천천히 오르내리고 시트 밑단이 뒤따라 물결칩니다. |
+
+이 6종은 `GeneratedArt`에 저장했습니다. 프레임 여백과 GIF 반복을 확인했으며, Unity 임포트와 전투 프리팹·등장 풀 연결, 게임 안에서의 재생 검증은 예정입니다. [1층 적 디자인과 제작 상태](../ToDo_List.md#1층-적-디자인-아이디어)
+
+## 방어도 획득 연출
+
+플레이어와 적이 방어도를 실제로 얻으면 캐릭터 그림 위에 방패가 나타나고, HP 바 옆 방어도 배지 위로 `+획득량`이 올라갑니다. 방어 파괴 등으로 실제 획득량이 0이면 연출을 표시하지 않습니다. 0.14초 안에 연달아 획득한 방어도는 한 수치로 합산합니다. 마지막 획득을 기준으로 약 0.45초 동안 표시하며 배지 크기는 연출이 끝나면 원래대로 돌아갑니다.
+
+방패 이미지는 HUD의 방어도 배지에서 가져옵니다. [방어도 연출 테스트](../Assets/Tests/Editor/SharedHudArtworkTests.cs#L119)는 양쪽 캐릭터의 실제 획득량, 연속 획득 합산, 지연 카드에서 발생한 획득과 연출 종료를 다룹니다.
 
 ## 기존 UI와 호환
 

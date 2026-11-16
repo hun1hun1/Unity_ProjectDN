@@ -116,6 +116,7 @@ public class MapChoiceLayoutTests
         previewRun.floors = new[] { previewFloor };
         previewRun.enabledContent = (MapContentType[])System.Enum.GetValues(typeof(MapContentType));
         previewFloor.mode = FloorMapMode.PlannedFloor; previewFloor.nodeCount = 6;
+        previewFloor.unknown = new UnknownNodeSettings();
         previewFloor.eliteBattles = previewFloor.bossBattles = previewFloor.normalBattles;
         previewFloor.nonBattleContents = new[] { new WeightedMapContent { type = MapContentType.Shop, weight = 1 } };
         for (int count = 1; count <= 3; count++)

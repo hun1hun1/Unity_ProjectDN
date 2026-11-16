@@ -27,6 +27,8 @@ public sealed class RunNodeData
     public MapNodeStatus status;
     public int selected=-1;
     public RunChoiceData[] choices;
+    public bool hasResolvedChoice;
+    public RunChoiceData resolvedChoice;
 }
 [Serializable]
 public sealed class RunChoiceData

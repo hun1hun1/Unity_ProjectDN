@@ -1,29 +1,29 @@
 # 적 프리팹과 전투 화면
 
-정리 기준일: 2026-10-20.
+2026-11-17 기준입니다.
 
-맵에서 선택한 전투 데이터의 적 프리팹을 BattleScene에 생성한다. 이미지·Animator·캐릭터 HP와 상태창은 프리팹에 포함하고, 전투 화면 공통 행동 예고는 생성한 적에 다시 연결한다.
+맵에서 선택한 전투 데이터의 적 프리팹을 BattleScene에 생성한다. 이미지·애니메이션·캐릭터 HP와 상태창은 프리팹에 포함하고, 전투 화면 공통 행동 예고는 생성한 적에 다시 연결한다.
 
 ## 현재 구성
 
-- 기본 적 프리팹: `Assets/Prefabs/Enemy/TestEnemy.prefab`
+- 기본 적 프리팹은 `Assets/Prefabs/Enemy/Slime.prefab`이다.
 - 전투 데이터: `Assets/MapData/NormalEncounter.asset`의 `Enemy Prefab`
 - 생성 위치: BattleScene의 `EnemyArea/EnemySpawnRoot`
 - 생성과 전투 대상 연결: `BattleManager.ConfigureEncounter()`
 - 맵에서 선택한 전투 적용: `RunBattleBridge`
 
-기존 테스트 적의 이미지, HP·상태 UI, 행동 설정을 프리팹으로 옮겼다. 새 그림이나 애니메이션을 제작한 것은 아니며, 적마다 다른 외형과 Animator를 가진 프리팹을 연결할 수 있는 구조이다.
+슬라임·허수아비·도마뱀의 프리팹에는 `BattleCharacterPresentation`과 `UISpriteAnimator`를 연결했다. 기본 스프라이트와 대기 애니메이션을 제작한 신규 적 6종은 원본 파일 단계다. [신규 적 스프라이트와 대기 애니메이션](CharacterPresentation.md#신규-적-스프라이트와-대기-애니메이션)
 
 ## 다른 적 추가
 
-1. `TestEnemy.prefab`을 복제하거나 Prefab Variant를 만든다.
-2. 프리팹의 Image에 적 이미지를 지정한다. 애니메이션이 있으면 해당 적의 Animator와 Animator Controller를 프리팹에 설정한다. Animator의 기본 상태는 인스턴스가 활성화된 뒤 재생된다.
+1. `Slime.prefab`을 복제하거나 Prefab Variant를 만든다.
+2. 프리팹의 `Visual`에 적 이미지를 지정한다. 대기 스프라이트 시트를 Unity에서 분할하여 `UISpriteAnimation`을 만들고 `BattleCharacterPresentation`의 대기 애니메이션으로 연결한다. [캐릭터 아트 연결](CharacterPresentation.md#inspector에서-크기와-ui-교체)
 3. 프리팹 루트에는 `RectTransform`과 `Enemy`가 있어야 한다. 현재 화면은 Canvas 기반이므로 외형에는 uGUI Image를 사용한다. 기본 프리팹은 생성 영역을 채우는 루트와 비율 유지 이미지로 구성되어 있다.
 4. HP·방어도·상태 UI는 프리팹 내부 참조로 유지한다. 프리팹의 `Action UI`에는 씬 오브젝트를 연결하지 않는다. 전투 화면의 공통 행동 예고는 생성 시 연결된다.
 5. `Create → Map → Battle Encounter`로 전투 데이터를 만들고 `Enemy Prefab`, `Behavior`, `Enemy Max HP`, `Gold Reward`를 지정한다.
 6. 사용할 층의 `FloorMapDefinition` 전투 풀에 전투 데이터를 등록한다. 노드에 선택된 전투 데이터와 프리팹은 전투 화면에서도 그대로 사용한다.
 
-전투 데이터의 HP와 행동 설정이 해당 전투의 기준이다. 프리팹의 기본 HP나 행동이 다르더라도 선택된 전투 데이터를 먼저 적용하고 활성화한다. 이미지·Animator와 내부 오브젝트 구조는 프리팹의 구성을 그대로 사용한다. 기본 애니메이션은 활성화 후 재생되며, 공격·피격 등 행동별 트리거 호출은 별도 연결이 필요하다.
+전투 데이터의 HP와 행동 설정이 해당 전투의 기준이다. 프리팹의 기본 HP나 행동이 다르더라도 선택된 전투 데이터를 먼저 적용하고 활성화한다. 이미지·애니메이션과 내부 오브젝트 구조는 프리팹의 구성을 그대로 사용한다. 기본 애니메이션은 활성화 후 재생되며, 공격·피격 등 행동별 트리거 호출은 별도 연결이 필요하다.
 
 루트는 공통 생성 영역 안에서 배치하고, 외형의 별도 이동·확대가 필요하면 시각 요소를 자식으로 구성하여 그 자식에 애니메이션을 적용할 수 있다. HP UI까지 함께 움직이게 할지는 프리팹 구조에서 결정한다.
 

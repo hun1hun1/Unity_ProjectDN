@@ -31,7 +31,7 @@ public sealed class RunSaveAssetSetup : IPreprocessBuildWithReport
         var assets=new List<(string key,ScriptableObject asset)>();
         foreach(string guid in AssetDatabase.FindAssets("t:ScriptableObject",new[]{"Assets"}))
             foreach(ScriptableObject asset in AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GUIDToAssetPath(guid)).OfType<ScriptableObject>())
-                if(asset is CardData || asset is CardDatabase || asset is RunDefinition || asset is BattleEncounterDefinition || asset is AmmoCapacityRelic || content.Contains(asset))
+                if(asset is CardData || asset is CardDatabase || asset is RunDefinition || asset is BattleEncounterDefinition || asset is AmmoCapacityRelic || asset is MapEventDefinition || content.Contains(asset))
                 {
                     AssetDatabase.TryGetGUIDAndLocalFileIdentifier(asset,out string id,out long local);
                     assets.Add((id+":"+local,asset));

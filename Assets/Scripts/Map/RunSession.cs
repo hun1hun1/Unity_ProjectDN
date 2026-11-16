@@ -41,6 +41,7 @@ public class RunSession : MonoBehaviour
         if (IsTransitioning) throw new InvalidOperationException("Cannot replace a run during a scene transition.");
         // Validate/build first: a broken definition must not erase the previous run or inventory.
         var available = new List<MapContentType> { MapContentType.NormalBattle, MapContentType.EliteBattle, MapContentType.BossBattle };
+        available.Add(MapContentType.Unknown);
         if (supportedContent != null) available.AddRange(supportedContent);
         var next = new RunProgress(definition, seed, available);
         int startingGold = Mathf.Max(0, definition.startingGold);
@@ -66,18 +67,61 @@ public class RunSession : MonoBehaviour
             LoadScene(definition.mapScene, useFog: true);
     }
 
-    public bool SelectOption(int index)
+    public bool SelectOption(int index) => SelectOption(index, null);
+
+    internal bool SelectOption(int index, Func<MapContentType, bool> canDispatch,
+        Func<MapChoice, IEnumerator> reveal = null, Action<MapChoice> openContent = null)
     {
-        if (IsTransitioning || Progress == null || Progress.Phase != RunPhase.Map || Progress.CurrentNode == null ||
-            index < 0 || index >= Progress.CurrentNode.Choices.Count) return false;
-        MapChoice choice = Progress.CurrentNode.Choices[index];
-        if (choice.IsBattle && !Application.CanStreamedLevelBeLoaded(Progress.Definition.battleScene)) return false;
-        if (!Progress.TrySelectOption(index)) return false;
-        RunSaveData previous=checkpoint;
-        if(!SaveCheckpoint()){Progress.UndoNodeEntry();checkpoint=previous;Publish();return false;}
-        if (choice.IsBattle) LoadScene(Progress.Definition.battleScene, useFog: true);
-        else Publish();
+        if (IsTransitioning || Progress == null || !Progress.TrySelectOption(index, Available)) return false;
+        RunSaveData previous = checkpoint;
+        if (!SaveCheckpoint()) { Progress.UndoNodeEntry(); checkpoint = previous; Publish(); return false; }
+        MapNode selectedNode = Progress.CurrentNode;
+        if (reveal != null && Application.isPlaying)
+        {
+            IsTransitioning = true;
+            Publish();
+            StartCoroutine(EnterAfterReveal(Progress, selectedNode, reveal, openContent));
+        }
+        else EnterSelectedNode(selectedNode.SelectedChoice, openContent);
         return true;
+
+        bool Available(MapContentType type)
+        {
+            if (type == MapContentType.NormalBattle || type == MapContentType.EliteBattle || type == MapContentType.BossBattle)
+                return Application.CanStreamedLevelBeLoaded(Progress.Definition.battleScene);
+            return canDispatch?.Invoke(type) ?? true;
+        }
+    }
+
+    private IEnumerator EnterAfterReveal(RunProgress expected, MapNode node, Func<MapChoice, IEnumerator> reveal,
+        Action<MapChoice> openContent)
+    {
+        try
+        {
+            yield return reveal(node.SelectedChoice);
+        }
+        finally
+        {
+            IsTransitioning = false;
+        }
+
+        if (ReferenceEquals(Progress, expected) && ReferenceEquals(expected.CurrentNode, node))
+            EnterSelectedNode(node.SelectedChoice, openContent);
+        else
+            Publish();
+    }
+
+    private void EnterSelectedNode(MapChoice choice, Action<MapChoice> openContent)
+    {
+        if (choice.IsBattle)
+        {
+            LoadScene(Progress.Definition.battleScene, useFog: true);
+        }
+        else
+        {
+            Publish();
+            openContent?.Invoke(choice);
+        }
     }
 
     public bool RecordBattleResult(RunProgress expected, int floor, int node, BattleResult result, int currentHP, int maxHP)
@@ -133,6 +177,33 @@ public class RunSession : MonoBehaviour
         Publish();
         return completed;
     }
+
+    internal bool CompleteContentWithAcquisition(RunNodeVisit visit, Action acquisition)
+    {
+        if (!IsContentVisit(visit) || acquisition == null) return false;
+
+        var catalog = RunAssetCatalog.Load();
+        RunInventoryData inventory = RunSaveCodec.CaptureInventory(catalog);
+        bool completed;
+        try
+        {
+            acquisition();
+            completed = SaveContentCompletion(visit.Progress, visit.Floor, visit.Node, 0);
+        }
+        catch (Exception error)
+        {
+            SaveError = error.Message;
+            completed = false;
+        }
+        if (!completed) RunSaveCodec.RestoreInventory(inventory, catalog);
+        Publish();
+        return completed;
+    }
+
+    private bool IsContentVisit(RunNodeVisit visit) =>
+        visit != null && IsCurrentContent(visit.Progress, visit.Floor, visit.Node) &&
+        visit.Handler != null && visit.Handler.isActiveAndEnabled &&
+        visit.Handler.ContentType == Progress.CurrentNode.SelectedChoice.Type;
 
     private bool IsRestVisit(RunNodeVisit visit) =>
         CanCommit && visit != null && ReferenceEquals(visit.Progress, Progress) &&

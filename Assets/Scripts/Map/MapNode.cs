@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum MapContentType { NormalBattle, EliteBattle, BossBattle, Shop, Relic, Event, Upgrade, Rest }
+public enum MapContentType { NormalBattle, EliteBattle, BossBattle, Shop, Relic, Event, Upgrade, Rest, Unknown }
 public enum MapNodeRule { Start, Regular, Midpoint, GuaranteedRelic, Boss }
 public enum MapNodeStatus { Pending, Resolving, Completed }
 public enum RunPhase { Map, Battle, Rewards, Content, Completed, Defeated, Cancelled }
@@ -22,7 +22,9 @@ public sealed class MapNode
     public MapNodeRule Rule { get; }
     public IReadOnlyList<MapChoice> Choices { get; }
     public MapNodeStatus Status { get; internal set; }
-    public MapChoice SelectedChoice { get; internal set; }
+    public int SelectedIndex { get; internal set; } = -1;
+    internal MapChoice ResolvedChoice { get; set; }
+    public MapChoice SelectedChoice => ResolvedChoice ?? (SelectedIndex >= 0 ? Choices[SelectedIndex] : null);
 
     internal MapNode(MapNodeRule rule, List<MapChoice> choices)
     { Rule = rule; Choices = choices.AsReadOnly(); }

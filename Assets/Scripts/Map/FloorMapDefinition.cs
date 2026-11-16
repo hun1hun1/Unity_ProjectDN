@@ -11,6 +11,27 @@ public sealed class WeightedMapContent
     public ScriptableObject contentData;
 }
 
+[Serializable]
+public sealed class MapBattleLimit
+{
+    [Min(1)] public int firstNode = 1;
+    [Min(1)] public int lastNode = 5;
+    [Min(0)] public int maxBattles = 4;
+}
+
+[Serializable]
+public sealed class UnknownNodeSettings
+{
+    public int[] nodeNumbers = Array.Empty<int>();
+    [Min(0)] public int battleWeight = 40;
+    [Min(0)] public int eventWeight = 40;
+    [Min(0)] public int shopWeight = 9;
+    [Min(0)] public int restWeight = 9;
+    [Min(0)] public int relicWeight = 2;
+    public MapEventDefinition[] events = Array.Empty<MapEventDefinition>();
+    public AmmoCapacityRelic[] relics = Array.Empty<AmmoCapacityRelic>();
+}
+
 [CreateAssetMenu(fileName = "FloorMap", menuName = "Map/Floor Map")]
 public class FloorMapDefinition : ScriptableObject
 {
@@ -20,6 +41,8 @@ public class FloorMapDefinition : ScriptableObject
     public int fixedShopNodeNumber;
     [Min(0), Tooltip("Fixed rest choice in Normal Battles Only mode. 1 is the first node; 0 disables it.")]
     public int fixedRestNodeNumber;
+    [Min(0), Tooltip("Fixed Conduit choice in Normal Battles Only mode. Uses Guaranteed Relic Data. 0 disables it.")]
+    public int fixedRelicNodeNumber;
     [Range(0, 1)] public float midpointMinRatio = .4f;
     [Range(0, 1)] public float midpointMaxRatio = .6f;
     [Range(0, 1)] public float nonBattleChance = .35f;
@@ -31,8 +54,18 @@ public class FloorMapDefinition : ScriptableObject
         new WeightedMapContent { type = MapContentType.Event },
         new WeightedMapContent { type = MapContentType.Upgrade }
     };
+    public MapBattleLimit[] battleLimits = Array.Empty<MapBattleLimit>();
+    public UnknownNodeSettings unknown = new UnknownNodeSettings();
     public ScriptableObject guaranteedRelicData;
     public BattleEncounterDefinition[] normalBattles = Array.Empty<BattleEncounterDefinition>();
     public BattleEncounterDefinition[] eliteBattles = Array.Empty<BattleEncounterDefinition>();
     public BattleEncounterDefinition[] bossBattles = Array.Empty<BattleEncounterDefinition>();
+
+    internal MapBattleLimit GetBattleLimit(int nodeNumber)
+    {
+        if (battleLimits != null)
+            foreach (MapBattleLimit limit in battleLimits)
+                if (nodeNumber >= limit.firstNode && nodeNumber <= limit.lastNode) return limit;
+        return null;
+    }
 }

@@ -14397,6 +14397,8 @@ GameObject:
   - component: {fileID: 2070989724}
   - component: {fileID: 2070989726}
   - component: {fileID: 2070989727}
+  - component: {fileID: 2026111701}
+  - component: {fileID: 2026111702}
   m_Layer: 0
   m_Name: MapController
   m_TagString: Untagged
@@ -14448,10 +14450,9 @@ MonoBehaviour:
     description: "\uAFC8\uC18D \uC0C1\uC778\uC758 \uC9C4\uC5F4\uB300\uB97C\n\uB458\uB7EC\uBCFC
       \uC218 \uC788\uC2B5\uB2C8\uB2E4."
   - type: 4
-    artwork: {fileID: 0}
+    artwork: {fileID: 21300000, guid: d7ac8495121d468788e53c10ee9a0154, type: 3}
     title: "\uB9E4\uAC1C\uCCB4"
-    description: "\uB7F0\uC5D0 \uB3C4\uC6C0\uC744 \uC8FC\uB294\n\uB9E4\uAC1C\uCCB4\uB97C
-      \uD68D\uB4DD\uD569\uB2C8\uB2E4."
+    description: "\uB9E4\uAC1C\uCCB4\uB97C \uD655\uC778\uD558\uACE0\n\uD68D\uB4DD \uC5EC\uBD80\uB97C \uC120\uD0DD\uD569\uB2C8\uB2E4."
   - type: 5
     artwork: {fileID: 0}
     title: "\uC774\uBCA4\uD2B8"
@@ -14466,9 +14467,15 @@ MonoBehaviour:
     artwork: {fileID: 21300000, guid: 95408b8121c943a5989f91a601af85c8, type: 3}
     title: 
     description: 
+  - type: 8
+    artwork: {fileID: 21300000, guid: f24e00bf069c4a2ab1f15eed5f807a2f, type: 3}
+    title:
+    description:
   contentHandlers:
   - {fileID: 2070989726}
   - {fileID: 2070989727}
+  - {fileID: 2026111701}
+  - {fileID: 2026111702}
 --- !u!4 &2070989725
 Transform:
   m_ObjectHideFlags: 0
@@ -14545,6 +14552,36 @@ MonoBehaviour:
   recoveryDescription: {fileID: 1603183309}
   recoveryPercent: 30
   flatRecovery: 10
+--- !u!114 &2026111701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070989723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 495bb2c667354fbd8894e209cc24a40d, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  contentType: 5
+  canvas: {fileID: 54935001}
+  font: {fileID: 11400000, guid: 5f08794e97b171743a702aced630fc2a, type: 2}
+--- !u!114 &2026111702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070989723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 495bb2c667354fbd8894e209cc24a40d, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  contentType: 4
+  canvas: {fileID: 54935001}
+  font: {fileID: 11400000, guid: 5f08794e97b171743a702aced630fc2a, type: 2}
 --- !u!114 &2079818605
 MonoBehaviour:
   m_ObjectHideFlags: 0

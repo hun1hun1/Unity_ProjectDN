@@ -46,17 +46,38 @@ public sealed class RunProgress
         var saved=new RunNodeData[Nodes.Count];
         for(int i=0;i<Nodes.Count;i++)
         {
-            MapNode node=Nodes[i];var choices=new RunChoiceData[node.Choices.Count];int selected=-1;
+            MapNode node=Nodes[i];var choices=new RunChoiceData[node.Choices.Count];
             for(int j=0;j<choices.Length;j++)
             {
-                MapChoice choice=node.Choices[j];if(ReferenceEquals(node.SelectedChoice,choice))selected=j;
-                choices[j]=new RunChoiceData {type=choice.Type,encounter=catalog.Key(choice.Encounter),content=catalog.Key(choice.ContentData)};
+                choices[j] = SaveChoice(node.Choices[j], catalog);
             }
-            saved[i]=new RunNodeData {rule=node.Rule,status=node.Status,selected=selected,choices=choices};
+            saved[i] = new RunNodeData
+            {
+                rule = node.Rule, status = node.Status, selected = node.SelectedIndex, choices = choices,
+                hasResolvedChoice = node.ResolvedChoice != null,
+                resolvedChoice = node.ResolvedChoice == null ? null : SaveChoice(node.ResolvedChoice, catalog)
+            };
         }
         return new RunProgressData {definition=catalog.Key(Definition),seed=Seed,floor=FloorIndex,node=NodeIndex,completed=CompletedNodes,
             hp=CurrentHP,maxHP=MaxHP,phase=Phase,enabled=(MapContentType[])enabledContent.Clone(),nodes=saved};
     }
+    private static RunChoiceData SaveChoice(MapChoice choice, RunAssetCatalog catalog) =>
+        new RunChoiceData { type = choice.Type, encounter = catalog.Key(choice.Encounter), content = catalog.Key(choice.ContentData) };
+
+    private static MapChoice RestoreChoice(RunChoiceData saved, MapContentType[] enabled, RunAssetCatalog catalog)
+    {
+        if (saved == null || !Enum.IsDefined(typeof(MapContentType), saved.type) || Array.IndexOf(enabled, saved.type) < 0)
+            throw new InvalidOperationException("Invalid map choice.");
+        var choice = new MapChoice(saved.type, catalog.Resolve<BattleEncounterDefinition>(saved.encounter),
+            catalog.Resolve<ScriptableObject>(saved.content));
+        if (choice.IsBattle)
+        {
+            if (choice.Encounter == null) throw new InvalidOperationException("Missing encounter.");
+            choice.Encounter.Validate();
+        }
+        return choice;
+    }
+
     public static RunProgress Restore(RunProgressData data,RunAssetCatalog catalog)
     {
         if(data==null || data.enabled==null || data.nodes==null)throw new InvalidOperationException("Missing run progress.");
@@ -81,15 +102,19 @@ public sealed class RunProgress
             MapNodeStatus expected=i<data.node?MapNodeStatus.Completed:resolving?MapNodeStatus.Resolving:MapNodeStatus.Pending;
             if(saved.status!=expected || (expected==MapNodeStatus.Pending)!=(saved.selected==-1))throw new InvalidOperationException("Invalid node selection.");
             var choices=new List<MapChoice>();
-            foreach(RunChoiceData c in saved.choices)
+            foreach (RunChoiceData choice in saved.choices) choices.Add(RestoreChoice(choice, data.enabled, catalog));
+            bool selectedUnknown = saved.selected >= 0 && choices[saved.selected].Type == MapContentType.Unknown;
+            if (selectedUnknown != saved.hasResolvedChoice) throw new InvalidOperationException("Invalid unknown outcome.");
+            var node = new MapNode(saved.rule, choices) { Status = saved.status, SelectedIndex = saved.selected };
+            if (selectedUnknown)
             {
-                if(c==null || !Enum.IsDefined(typeof(MapContentType),c.type) || Array.IndexOf(data.enabled,c.type)<0)
-                    throw new InvalidOperationException("Invalid map choice.");
-                var choice=new MapChoice(c.type,catalog.Resolve<BattleEncounterDefinition>(c.encounter),catalog.Resolve<UnityEngine.ScriptableObject>(c.content));
-                if(choice.IsBattle){if(choice.Encounter==null)throw new InvalidOperationException("Missing encounter.");choice.Encounter.Validate();}
-                choices.Add(choice);
+                MapChoice outcome = RestoreChoice(saved.resolvedChoice, data.enabled, catalog);
+                if (!UnknownNodeResolver.IsOutcome(outcome.Type) || (outcome.IsBattle != (outcome.Encounter != null)) ||
+                    (outcome.Type == MapContentType.Event && !(outcome.ContentData is MapEventDefinition)) ||
+                    (outcome.Type == MapContentType.Relic && !(outcome.ContentData is AmmoCapacityRelic)))
+                    throw new InvalidOperationException("Invalid unknown outcome.");
+                node.ResolvedChoice = outcome;
             }
-            var node=new MapNode(saved.rule,choices) {Status=saved.status,SelectedChoice=saved.selected>=0?choices[saved.selected]:null};
             if(resolving && node.SelectedChoice.IsBattle!=(data.phase!=RunPhase.Content))throw new InvalidOperationException("Invalid node phase.");
             nodes.Add(node);
         }
@@ -105,13 +130,58 @@ public sealed class RunProgress
         CurrentHP=restored.CurrentHP;MaxHP=restored.MaxHP;Phase=restored.Phase;Nodes=restored.Nodes;
     }
     internal void UndoNodeEntry()
-    {CurrentNode.SelectedChoice=null;CurrentNode.Status=MapNodeStatus.Pending;Phase=RunPhase.Map;}
+    {
+        CurrentNode.SelectedIndex = -1;
+        CurrentNode.ResolvedChoice = null;
+        CurrentNode.Status = MapNodeStatus.Pending;
+        Phase = RunPhase.Map;
+    }
 
-    public bool TrySelectOption(int index)
+    private bool CanEnterBattle()
+    {
+        if (CurrentNode.Rule != MapNodeRule.Start && CurrentNode.Rule != MapNodeRule.Regular) return true;
+        MapBattleLimit limit = Definition.floors[FloorIndex].GetBattleLimit(NodeIndex + 1);
+        if (limit == null) return true;
+
+        int completedBattles = 0;
+        for (int i = limit.firstNode - 1; i < NodeIndex; i++)
+        {
+            MapNode node = Nodes[i];
+            if (node.Status == MapNodeStatus.Completed && (node.Rule == MapNodeRule.Start || node.Rule == MapNodeRule.Regular) &&
+                node.SelectedChoice.IsBattle) completedBattles++;
+        }
+        return completedBattles < limit.maxBattles;
+    }
+
+    internal bool IsBattleOptionBlocked(MapChoice choice) => choice.IsBattle && !CanEnterBattle();
+
+    internal bool CanChooseOption(int index, Func<MapContentType, bool> canDispatch)
     {
         if (Phase != RunPhase.Map || CurrentNode == null || CurrentNode.Status != MapNodeStatus.Pending ||
             index < 0 || index >= CurrentNode.Choices.Count) return false;
-        CurrentNode.SelectedChoice = CurrentNode.Choices[index];
+        MapChoice choice = CurrentNode.Choices[index];
+        if (choice.Type == MapContentType.Unknown)
+            return UnknownNodeResolver.HasOutcome(Definition.floors[FloorIndex].unknown, CanEnterBattle(), IsAvailable);
+        return !IsBattleOptionBlocked(choice) && IsAvailable(choice.Type);
+
+        bool IsAvailable(MapContentType type) => MapGenerator.Contains(enabledContent, type) && (canDispatch?.Invoke(type) ?? true);
+    }
+
+    public bool TrySelectOption(int index) => TrySelectOption(index, null);
+
+    internal bool TrySelectOption(int index, Func<MapContentType, bool> canDispatch)
+    {
+        if (!CanChooseOption(index, canDispatch)) return false;
+        MapChoice choice = CurrentNode.Choices[index];
+        if (choice.Type == MapContentType.Unknown)
+        {
+            var random = new System.Random(unchecked(NodeSeed ^ 0x4F1BBCDC));
+            MapChoice outcome = UnknownNodeResolver.Resolve(Definition.floors[FloorIndex], CanEnterBattle(),
+                type => MapGenerator.Contains(enabledContent, type) && (canDispatch?.Invoke(type) ?? true), random);
+            if (outcome == null) return false;
+            CurrentNode.ResolvedChoice = outcome;
+        }
+        CurrentNode.SelectedIndex = index;
         CurrentNode.Status = MapNodeStatus.Resolving;
         Phase = CurrentNode.SelectedChoice.IsBattle ? RunPhase.Battle : RunPhase.Content;
         return true;

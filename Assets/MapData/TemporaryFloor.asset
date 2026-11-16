@@ -16,6 +16,7 @@ MonoBehaviour:
   nodeCount: 5
   fixedShopNodeNumber: 3
   fixedRestNodeNumber: 4
+  fixedRelicNodeNumber: 3
   midpointMinRatio: 0.4
   midpointMaxRatio: 0.6
   nonBattleChance: 0.35
@@ -33,7 +34,20 @@ MonoBehaviour:
   - type: 6
     weight: 1
     contentData: {fileID: 0}
-  guaranteedRelicData: {fileID: 0}
+  battleLimits: []
+  unknown:
+    nodeNumbers: 0200000005000000
+    battleWeight: 40
+    eventWeight: 40
+    shopWeight: 9
+    restWeight: 9
+    relicWeight: 2
+    events:
+    - {fileID: 11400000, guid: 534af9e8d5054b22af68111f721be061, type: 2}
+    - {fileID: 11400000, guid: d4328cffe0a849e9ba95e78077921273, type: 2}
+    relics:
+    - {fileID: 11400000, guid: 2407dd8d3b2b4fe44baf3c56b199d087, type: 2}
+  guaranteedRelicData: {fileID: 11400000, guid: 2407dd8d3b2b4fe44baf3c56b199d087, type: 2}
   normalBattles:
   - {fileID: 11400000, guid: dcc1fcbe21d1b4845a5f7ca1d4fae20b, type: 2}
   eliteBattles: []

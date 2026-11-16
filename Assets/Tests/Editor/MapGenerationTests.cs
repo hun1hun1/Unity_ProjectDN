@@ -147,6 +147,102 @@ public class MapGenerationTests
         Assert.That(state.CurrentNode.Rule, Is.EqualTo(MapNodeRule.Boss));
     }
 
+    [Test] public void UnknownBattlesCountTowardBothSegmentsAndMidpointDoesNot()
+    {
+        floor.nodeCount = 13;
+        floor.midpointMinRatio = floor.midpointMaxRatio = 6f / 13;
+        floor.nonBattleChance = floor.eliteChance = 0;
+        floor.battleLimits = new[]
+        {
+            new MapBattleLimit { firstNode = 1, lastNode = 5, maxBattles = 4 },
+            new MapBattleLimit { firstNode = 8, lastNode = 12, maxBattles = 4 }
+        };
+        floor.unknown.nodeNumbers = new[] { 2, 5, 8, 12 };
+        floor.unknown.battleWeight = 100;
+        floor.unknown.eventWeight = floor.unknown.shopWeight = floor.unknown.restWeight = floor.unknown.relicWeight = 0;
+        var floorEvent = Asset<MapEventDefinition>();
+        floorEvent.title = "Floor event";
+        floor.unknown.events = new[] { floorEvent };
+        var state = new RunProgress(run, 83);
+
+        FinishChoice(0, MapContentType.NormalBattle);
+        FinishChoice(1, MapContentType.NormalBattle);
+        FinishChoice(0, MapContentType.NormalBattle);
+        FinishChoice(0, MapContentType.NormalBattle);
+        Assert.That(state.TrySelectOption(0), Is.False);
+        FinishChoice(1, MapContentType.Event);
+        FinishChoice(1, MapContentType.EliteBattle);
+        FinishChoice(0, MapContentType.Relic);
+        FinishChoice(1, MapContentType.NormalBattle);
+        FinishChoice(0, MapContentType.NormalBattle);
+        FinishChoice(0, MapContentType.NormalBattle);
+        FinishChoice(0, MapContentType.NormalBattle);
+        Assert.That(state.TrySelectOption(0), Is.False);
+        FinishChoice(1, MapContentType.Event);
+        FinishChoice(0, MapContentType.BossBattle);
+        Assert.That(state.Phase, Is.EqualTo(RunPhase.Completed));
+
+        void FinishChoice(int index, MapContentType expected)
+        {
+            Assert.That(state.TrySelectOption(index), Is.True, $"Node {state.NodeIndex + 1}");
+            MapChoice result = state.CurrentNode.SelectedChoice;
+            Assert.That(result.Type, Is.EqualTo(expected));
+            if (expected == MapContentType.Event) Assert.That(result.ContentData, Is.SameAs(floorEvent));
+            if (result.IsBattle) Assert.That(state.RecordBattleResult(BattleResult.Victory), Is.True);
+            Assert.That(state.CompleteNode(0, state.NodeIndex), Is.True);
+        }
+    }
+
+    [Test] public void CombatCapTransfersOnlyTheBattleRollsToTheFloorEventPool()
+    {
+        floor.mode = FloorMapMode.NormalBattlesOnly;
+        floor.nodeCount = 2;
+        floor.unknown.nodeNumbers = new[] { 2 };
+        var first = Asset<MapEventDefinition>();
+        var second = Asset<MapEventDefinition>();
+        first.title = "First";
+        second.title = "Second";
+        floor.unknown.events = new[] { first, second };
+        floor.unknown.relics = new[] { Asset<AmmoCapacityRelic>() };
+        var limit = new MapBattleLimit { firstNode = 1, lastNode = 2 };
+        floor.battleLimits = new[] { limit };
+        var seen = new HashSet<MapContentType>();
+        var seenEvents = new HashSet<ScriptableObject>();
+
+        for (int seed = 0; seed < 320; seed++)
+        {
+            MapChoice uncapped = Resolve(seed, 2);
+            MapChoice capped = Resolve(seed, 1);
+            seen.Add(uncapped.Type);
+            if (uncapped.Type == MapContentType.NormalBattle)
+            {
+                Assert.That(capped.Type, Is.EqualTo(MapContentType.Event));
+                seenEvents.Add(capped.ContentData);
+            }
+            else
+            {
+                Assert.That(capped.Type, Is.EqualTo(uncapped.Type), $"Seed {seed}");
+                Assert.That(capped.ContentData, Is.SameAs(uncapped.ContentData));
+            }
+        }
+
+        Assert.That(seen, Is.EquivalentTo(new[] { MapContentType.NormalBattle, MapContentType.Event, MapContentType.Shop,
+            MapContentType.Rest, MapContentType.Relic }));
+        Assert.That(seenEvents, Is.EquivalentTo(new[] { first, second }));
+
+        MapChoice Resolve(int seed, int maximum)
+        {
+            limit.maxBattles = maximum;
+            var state = new RunProgress(run, seed);
+            Assert.That(state.TrySelectOption(0), Is.True);
+            Assert.That(state.RecordBattleResult(BattleResult.Victory), Is.True);
+            Assert.That(state.CompleteNode(0, 0), Is.True);
+            Assert.That(state.TrySelectOption(1), Is.True);
+            Assert.That(state.CurrentNode.Choices[state.CurrentNode.SelectedIndex].Type, Is.EqualTo(MapContentType.Unknown));
+            return state.CurrentNode.SelectedChoice;
+        }
+    }
+
     [Test] public void CompletingFloorPreservesHealthAndStartsNextFloor()
     {
         floor.mode = FloorMapMode.NormalBattlesOnly; floor.nodeCount = 1;

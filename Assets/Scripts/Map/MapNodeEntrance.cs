@@ -115,7 +115,7 @@ internal sealed class MapNodeEntrance
         animation = null;
     }
 
-    private static Texture2D CreateGlowTexture()
+    internal static Texture2D CreateGlowTexture()
     {
         const int size = 48;
         var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);

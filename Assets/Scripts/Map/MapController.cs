@@ -18,7 +18,14 @@ public class MapController : MonoBehaviour
     [SerializeField] private MapChoicePresentation[] choicePresentations = Array.Empty<MapChoicePresentation>();
     [SerializeField] private MapContentHandler[] contentHandlers = Array.Empty<MapContentHandler>();
     private readonly List<TMP_Text> nodeLabels = new List<TMP_Text>();
+    private const float UnknownCoverDuration = .20f;
+    private const float UnknownClearDuration = .15f;
+    private const float UnknownResultDuration = .15f;
+    private const float ConduitLightDuration = .30f;
+    private static readonly Color UnknownBlue = new Color(.44f, .60f, .91f);
+    private static readonly Color ConduitGold = new Color(.93f, .70f, .36f);
     private RunSession session;
+    private MapNode revealedNode;
     public RunDefinition Definition => runDefinition;
 
     private void Awake() => session = RunSession.GetOrCreate();
@@ -56,32 +63,95 @@ public class MapController : MonoBehaviour
     public bool CanChoose(int index)
     {
         RunProgress state = session.Progress;
-        if (session.IsTransitioning || state == null || state.Phase != RunPhase.Map || state.CurrentNode == null ||
-            index < 0 || index >= state.CurrentNode.Choices.Count) return false;
-        MapChoice choice = state.CurrentNode.Choices[index];
-        return choice.IsBattle ? Application.CanStreamedLevelBeLoaded(state.Definition.battleScene) : FindHandler(choice.Type) != null;
+        return !session.IsTransitioning && state != null && state.CanChooseOption(index, CanDispatch);
     }
+
+    private bool CanDispatch(MapContentType type) =>
+        type == MapContentType.NormalBattle || type == MapContentType.EliteBattle || type == MapContentType.BossBattle
+            ? Application.CanStreamedLevelBeLoaded(session.Progress.Definition.battleScene)
+            : FindHandler(type) != null;
     public void SelectOption(int index)
     {
         if (DeckOverviewUI.BlocksBattleInput || SettingsUI.BlocksBattleInput ||
             CardInspectionUI.BlocksGameplayInput || !CanChoose(index)) return;
         RunProgress expected = session.Progress;
         int floor = expected.FloorIndex, node = expected.NodeIndex;
-        MapChoice choice = expected.CurrentNode.Choices[index];
-        MapContentHandler handler = choice.IsBattle ? null : FindHandler(choice.Type);
-        if (!session.SelectOption(index)) return;
-        if (choice.IsBattle && index < choiceButtons.Length)
+        MapNode selectedNode = expected.CurrentNode;
+        MapContentType source = selectedNode.Choices[index].Type;
+        bool hasReveal = index < choiceButtons.Length && (source == MapContentType.Unknown || source == MapContentType.Relic);
+        Func<MapChoice, IEnumerator> reveal = hasReveal ? result => RevealChoice(index, source, selectedNode, result) : null;
+        if (!session.SelectOption(index, CanDispatch, reveal, OpenContent)) return;
+        if (!hasReveal && selectedNode.SelectedChoice?.IsBattle == true && index < choiceButtons.Length)
             StartCoroutine(HighlightBattleChoice(index));
-        if (handler != null)
+
+        void OpenContent(MapChoice choice)
         {
+            if (this == null) return;
+            MapContentHandler handler = FindHandler(choice.Type);
+            if (handler == null) return;
             handler.Begin(choice, expected, () => session.CompleteContent(expected, floor, node));
             if (ReferenceEquals(expected, session.Progress) && expected.Phase == RunPhase.Content)
             {
                 session.SaveCheckpoint(contentState: handler.CaptureState());
-                if (index < choiceButtons.Length)
+                if (!hasReveal && index < choiceButtons.Length)
                     handler.PlayEntrance(choiceButtons, index);
             }
         }
+    }
+
+    private IEnumerator RevealChoice(int index, MapContentType source, MapNode node, MapChoice result)
+    {
+        if (this == null || !isActiveAndEnabled) yield break;
+        UnityEngine.UI.Button button = choiceButtons[index];
+        if (button == null || !button.TryGetComponent(out MapChoiceCardUI card)) yield break;
+        bool unknown = source == MapContentType.Unknown;
+        var highlight = new MapChoiceHighlight(choiceButtons, index, unknown ? UnknownBlue : ConduitGold);
+        card.BeginReveal();
+        try
+        {
+            if (unknown)
+            {
+                yield return AnimateCard(card, UnknownCoverDuration, step =>
+                {
+                    highlight.SetStrength(.7f * Mathf.Sin(step * Mathf.PI * .5f));
+                    card.ShowRevealMist(Mathf.SmoothStep(0f, 1f, step), step * .50f, Mathf.Lerp(.20f, .9f, step));
+                });
+                if (card == null || !card.isActiveAndEnabled) yield break;
+
+                revealedNode = node;
+                ShowChoice(button, result, revealed: true);
+                yield return AnimateCard(card, UnknownClearDuration, step =>
+                {
+                    highlight.SetStrength(.7f * (1f - step));
+                    card.ShowRevealMist(1f - Mathf.SmoothStep(0f, 1f, step), .50f + step * .50f, .9f * (1f - step));
+                });
+                yield return AnimateCard(card, UnknownResultDuration, _ => { });
+            }
+            else
+            {
+                yield return AnimateCard(card, ConduitLightDuration, step =>
+                {
+                    highlight.SetStrength(.7f * Mathf.Sin(step * Mathf.PI));
+                    card.ShowConduitLight(step);
+                });
+            }
+        }
+        finally
+        {
+            highlight.Restore();
+            if (card != null) card.EndReveal();
+        }
+    }
+
+    private static IEnumerator AnimateCard(MapChoiceCardUI card, float duration, Action<float> draw)
+    {
+        for (float elapsed = 0f; card != null && card.isActiveAndEnabled && elapsed < duration;
+             elapsed += Time.unscaledDeltaTime)
+        {
+            draw(elapsed / duration);
+            yield return null;
+        }
+        if (card != null && card.isActiveAndEnabled) draw(1f);
     }
     private IEnumerator HighlightBattleChoice(int index)
     {
@@ -151,24 +221,38 @@ public class MapController : MonoBehaviour
         for (int i = 0; i < choiceButtons.Length; i++)
         {
             bool visible = !state.IsFinished && state.CurrentNode != null && i < state.CurrentNode.Choices.Count;
+            if (visible && state.IsBattleOptionBlocked(state.CurrentNode.Choices[i]))
+                visible = false;
             choiceButtons[i].gameObject.SetActive(visible);
             if (!visible) continue;
-            MapChoice choice = state.CurrentNode.Choices[i];
-            bool supported = choice.IsBattle || FindHandler(choice.Type) != null;
-            MapChoicePresentation presentation = FindPresentation(choice.Type);
-            string title = presentation != null && !string.IsNullOrWhiteSpace(presentation.title)
-                ? presentation.title : MapChoiceCardUI.DefaultTitle(choice.Type);
-            string description = presentation != null && !string.IsNullOrWhiteSpace(presentation.description)
-                ? presentation.description : MapChoiceCardUI.DefaultDescription(choice.Type);
-            MapChoiceCardUI card = choiceButtons[i].GetComponent<MapChoiceCardUI>();
-            if (card != null)
-                card.SetContent(title, description, presentation?.artwork, supported, choice.Type == MapContentType.NormalBattle);
-            else choiceButtons[i].GetComponentInChildren<TMP_Text>().text = title + (supported ? "" : " · 준비 중");
+            MapNode node = state.CurrentNode;
+            bool revealed = node.Choices[i].Type == MapContentType.Unknown && node.SelectedIndex == i &&
+                (ReferenceEquals(revealedNode, node) || (!session.IsTransitioning && state.Phase == RunPhase.Content));
+            MapChoice choice = revealed ? node.SelectedChoice : node.Choices[i];
+            MapChoiceCardUI card = ShowChoice(choiceButtons[i], choice, revealed);
             bool canChoose = CanChoose(i);
             choiceButtons[i].interactable = canChoose;
             if (!canChoose && card != null) card.ResetHover();
         }
     }
+    private MapChoiceCardUI ShowChoice(UnityEngine.UI.Button button, MapChoice choice, bool revealed)
+    {
+        MapContentType type = choice.Type;
+        MapChoicePresentation presentation = FindPresentation(type);
+        string title = presentation != null && !string.IsNullOrWhiteSpace(presentation.title)
+            ? presentation.title : MapChoiceCardUI.DefaultTitle(type);
+        string description = presentation != null && !string.IsNullOrWhiteSpace(presentation.description)
+            ? presentation.description : MapChoiceCardUI.DefaultDescription(type);
+        bool supported = revealed || type == MapContentType.Unknown || choice.IsBattle || FindHandler(type) != null;
+        MapChoiceCardUI card = button.GetComponent<MapChoiceCardUI>();
+        if (card != null)
+            card.SetContent(title, description, presentation?.artwork, supported, type == MapContentType.NormalBattle,
+                type, revealed && type == MapContentType.Event ? "!" : null);
+        else
+            button.GetComponentInChildren<TMP_Text>().text = title + (supported ? "" : " · 준비 중");
+        return card;
+    }
+
     private MapChoicePresentation FindPresentation(MapContentType type)
     {
         foreach (MapChoicePresentation presentation in choicePresentations)
