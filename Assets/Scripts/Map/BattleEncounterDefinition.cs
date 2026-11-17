@@ -10,6 +10,7 @@ public class BattleEncounterDefinition : ScriptableObject
     public Enemy enemyPrefab;
     [Min(1)] public int enemyMaxHP = 50;
     [Min(0)] public int goldReward = 20;
+    public AmmoCapacityRelic victoryConduit;
 
     public void Validate()
     {

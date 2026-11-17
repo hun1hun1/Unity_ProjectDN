@@ -6171,8 +6171,10 @@ GameObject:
   - component: {fileID: 873350930}
   - component: {fileID: 873350932}
   - component: {fileID: 873350931}
+  - component: {fileID: 873350933}
+  - component: {fileID: 873350934}
   m_Layer: 5
-  m_Name: RelicArea
+  m_Name: ConduitArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6235,6 +6237,45 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 873350929}
   m_CullTransparentMesh: 1
+--- !u!114 &873350933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 873350929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  m_Padding:
+    m_Left: 24
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 3
+  m_Spacing: 12
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
+--- !u!114 &873350934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 873350929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb9853da08274a2cad017ea3b1ba928c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  tooltipPrefab: {fileID: 4969807975334942594, guid: dd93858de4e24f1fa41360533edc34ae, type: 3}
 --- !u!1001 &888895671
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6923,6 +6964,7 @@ MonoBehaviour:
   nightmareTitle: {fileID: 1724385860}
   toggleButton: {fileID: 1401701866}
   closeButton: {fileID: 2091301842}
+  panelTitle: {fileID: 0}
 --- !u!224 &958185455
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15949,8 +15991,8 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.94}
   m_RaycastTarget: 0

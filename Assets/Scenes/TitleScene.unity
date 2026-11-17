@@ -6324,7 +6324,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abf1536ff2a8bd5489eb785965ff6718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runDefinition: {fileID: 11400000, guid: 70df6c5e874760043acc805e683b7d7c, type: 2}
+  runDefinition: {fileID: 11400000, guid: e84a18e5060a48f7a0c348387940c585, type: 2}
+  soldierStartingConduit: {fileID: 11400000, guid: 5306d49120c24c20b78ef1e82cc6b290, type: 2}
   supportedContent: 03000000040000000500000007000000
   mainMenu: {fileID: 507570351}
   characterSelection: {fileID: 1043968200}

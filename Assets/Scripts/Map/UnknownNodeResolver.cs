@@ -26,7 +26,9 @@ internal static class UnknownNodeResolver
             switch (outcome.type)
             {
                 case MapContentType.NormalBattle:
-                    return new MapChoice(outcome.type, floor.normalBattles[random.Next(floor.normalBattles.Length)]);
+                    return floor.mode == FloorMapMode.FirstFloor
+                        ? new MapChoice(outcome.type)
+                        : new MapChoice(outcome.type, floor.normalBattles[random.Next(floor.normalBattles.Length)]);
                 case MapContentType.Event:
                     return new MapChoice(outcome.type, contentData: settings.events[random.Next(settings.events.Length)]);
                 case MapContentType.Relic:
@@ -67,7 +69,7 @@ internal static class UnknownNodeResolver
         var relics = new List<AmmoCapacityRelic>();
         if (settings.relics == null) return relics;
         foreach (AmmoCapacityRelic relic in settings.relics)
-            if (relic != null && relic.MaxAmmoBonus > 0 && !RunRelicInventory.Contains(relic)) relics.Add(relic);
+            if (relic != null && relic.HasEffect && !RunRelicInventory.Contains(relic)) relics.Add(relic);
         return relics;
     }
 }

@@ -17,6 +17,10 @@ public sealed class RunProgress
     public bool IsFinished => Phase == RunPhase.Completed || Phase == RunPhase.Defeated || Phase == RunPhase.Cancelled;
     public int NodeSeed => unchecked(Seed ^ (FloorIndex+1)*73856093 ^ (NodeIndex+1)*19349663);
     private readonly MapContentType[] enabledContent;
+    private BattleEncounterDefinition[] earlyEncounters, lateEncounters, eliteEncounters;
+    private FloorMapDefinition CurrentFloor => Definition.floors[FloorIndex];
+    private bool UsesFirstFloorRules => CurrentFloor.mode == FloorMapMode.FirstFloor;
+    private int FloorSeed(int floor) => unchecked(Seed + floor * 7919);
 
     public RunProgress(RunDefinition definition, int seed, IReadOnlyCollection<MapContentType> supportedContent = null)
     {
@@ -36,10 +40,66 @@ public sealed class RunProgress
         foreach (FloorMapDefinition floor in definition.floors) MapGenerator.Validate(floor, enabledContent);
         Definition = definition; Seed = seed; MaxHP = CurrentHP = definition.startingMaxHP;
         Nodes = GenerateFloor(0);
+        InitializeEncounterOrder();
     }
 
     private IReadOnlyList<MapNode> GenerateFloor(int floor) =>
-        MapGenerator.Generate(Definition.floors[floor], enabledContent, unchecked(Seed + floor * 7919));
+        MapGenerator.Generate(Definition.floors[floor], enabledContent, FloorSeed(floor));
+
+    private void InitializeEncounterOrder()
+    {
+        if (!UsesFirstFloorRules) return;
+        earlyEncounters = Shuffle(CurrentFloor.normalBattles, 0x12FE613D);
+        lateEncounters = Shuffle(CurrentFloor.lateNormalBattles, 0x283AD9C7);
+        eliteEncounters = Shuffle(CurrentFloor.eliteBattles, 0x70C5F121);
+
+        BattleEncounterDefinition[] Shuffle(BattleEncounterDefinition[] source, int salt)
+        {
+            var order = (BattleEncounterDefinition[])source.Clone();
+            var random = new System.Random(FloorSeed(FloorIndex) ^ salt);
+            for (int i = order.Length - 1; i > 0; i--)
+            {
+                int j = random.Next(i + 1);
+                (order[i], order[j]) = (order[j], order[i]);
+            }
+            return order;
+        }
+    }
+
+    private BattleEncounterDefinition NextEncounter(MapContentType type)
+    {
+        MapBattleLimit firstSegment = CurrentFloor.GetBattleLimit(1);
+        bool early = NodeIndex < firstSegment.lastNode;
+        BattleEncounterDefinition[] order = type == MapContentType.EliteBattle ? eliteEncounters
+            : early ? earlyEncounters : lateEncounters;
+        int consumed = 0;
+        int firstIndex = type == MapContentType.EliteBattle || early ? 0 : firstSegment.lastNode;
+        // Completed choices are the cursor. A failed selection save cannot advance it.
+        for (int i = firstIndex; i < NodeIndex; i++)
+            if (Nodes[i].Status == MapNodeStatus.Completed && Nodes[i].SelectedChoice.Type == type) consumed++;
+        return order[consumed % order.Length];
+    }
+
+    private void PrepareCurrentChoices()
+    {
+        if (!UsesFirstFloorRules) return;
+        MapNode replacement;
+        if (CurrentNode.Rule == MapNodeRule.GuaranteedRelic)
+        {
+            bool eliteWon = Nodes[NodeIndex - 1].SelectedChoice.Type == MapContentType.EliteBattle;
+            replacement = MapGenerator.BuildFirstFloorNode(CurrentFloor, NodeIndex, FloorSeed(FloorIndex),
+                midpointEliteWon: eliteWon);
+        }
+        else if (CurrentFloor.firstFloorLayout[NodeIndex] == FirstFloorNodeLayout.Regular && !CanEnterBattle())
+        {
+            replacement = MapGenerator.BuildFirstFloorNode(CurrentFloor, NodeIndex, FloorSeed(FloorIndex), capped: true);
+        }
+        else return;
+
+        var updated = new List<MapNode>(Nodes);
+        updated[NodeIndex] = replacement;
+        Nodes = updated.AsReadOnly();
+    }
 
     public RunProgressData Capture(RunAssetCatalog catalog)
     {
@@ -59,12 +119,18 @@ public sealed class RunProgress
             };
         }
         return new RunProgressData {definition=catalog.Key(Definition),seed=Seed,floor=FloorIndex,node=NodeIndex,completed=CompletedNodes,
-            hp=CurrentHP,maxHP=MaxHP,phase=Phase,enabled=(MapContentType[])enabledContent.Clone(),nodes=saved};
+            hp=CurrentHP,maxHP=MaxHP,phase=Phase,enabled=(MapContentType[])enabledContent.Clone(),nodes=saved,
+            encounterOrder = UsesFirstFloorRules ? new RunEncounterOrderData
+            {
+                early = Array.ConvertAll(earlyEncounters, catalog.Key),
+                late = Array.ConvertAll(lateEncounters, catalog.Key),
+                elite = Array.ConvertAll(eliteEncounters, catalog.Key)
+            } : null};
     }
     private static RunChoiceData SaveChoice(MapChoice choice, RunAssetCatalog catalog) =>
         new RunChoiceData { type = choice.Type, encounter = catalog.Key(choice.Encounter), content = catalog.Key(choice.ContentData) };
 
-    private static MapChoice RestoreChoice(RunChoiceData saved, MapContentType[] enabled, RunAssetCatalog catalog)
+    private static MapChoice RestoreChoice(RunChoiceData saved, MapContentType[] enabled, RunAssetCatalog catalog, bool allowDeferredBattle = false)
     {
         if (saved == null || !Enum.IsDefined(typeof(MapContentType), saved.type) || Array.IndexOf(enabled, saved.type) < 0)
             throw new InvalidOperationException("Invalid map choice.");
@@ -72,8 +138,9 @@ public sealed class RunProgress
             catalog.Resolve<ScriptableObject>(saved.content));
         if (choice.IsBattle)
         {
-            if (choice.Encounter == null) throw new InvalidOperationException("Missing encounter.");
-            choice.Encounter.Validate();
+            if (choice.Encounter == null && (!allowDeferredBattle || choice.Type == MapContentType.BossBattle))
+                throw new InvalidOperationException("Missing encounter.");
+            choice.Encounter?.Validate();
         }
         return choice;
     }
@@ -90,6 +157,27 @@ public sealed class RunProgress
         for(int i=0;i<data.floor;i++)completed+=definition.floors[i].nodeCount;
         if(data.completed!=completed)throw new InvalidOperationException("Invalid completed node count.");
         var result=new RunProgress(definition,data.seed,data.enabled);
+        bool deferredBattles = definition.floors[data.floor].mode == FloorMapMode.FirstFloor;
+        if (deferredBattles)
+        {
+            if (data.encounterOrder == null) throw new InvalidOperationException("Missing encounter order.");
+            result.earlyEncounters = RestoreOrder(data.encounterOrder.early);
+            result.lateEncounters = RestoreOrder(data.encounterOrder.late);
+            result.eliteEncounters = RestoreOrder(data.encounterOrder.elite);
+        }
+
+        BattleEncounterDefinition[] RestoreOrder(string[] saved)
+        {
+            if (saved == null || saved.Length == 0) throw new InvalidOperationException("An encounter order is empty.");
+            var order = Array.ConvertAll(saved, catalog.Resolve<BattleEncounterDefinition>);
+            foreach (BattleEncounterDefinition encounter in order)
+            {
+                if (encounter == null) throw new InvalidOperationException("Missing encounter in order.");
+                encounter.Validate();
+            }
+            return order;
+        }
+
         var nodes=new List<MapNode>();
         for(int i=0;i<data.nodes.Length;i++)
         {
@@ -102,14 +190,19 @@ public sealed class RunProgress
             MapNodeStatus expected=i<data.node?MapNodeStatus.Completed:resolving?MapNodeStatus.Resolving:MapNodeStatus.Pending;
             if(saved.status!=expected || (expected==MapNodeStatus.Pending)!=(saved.selected==-1))throw new InvalidOperationException("Invalid node selection.");
             var choices=new List<MapChoice>();
-            foreach (RunChoiceData choice in saved.choices) choices.Add(RestoreChoice(choice, data.enabled, catalog));
-            bool selectedUnknown = saved.selected >= 0 && choices[saved.selected].Type == MapContentType.Unknown;
-            if (selectedUnknown != saved.hasResolvedChoice) throw new InvalidOperationException("Invalid unknown outcome.");
+            foreach (RunChoiceData choice in saved.choices)
+                choices.Add(RestoreChoice(choice, data.enabled, catalog, deferredBattles));
+            MapChoice selected = saved.selected >= 0 ? choices[saved.selected] : null;
+            bool selectedUnknown = selected?.Type == MapContentType.Unknown;
+            bool selectedDeferredBattle = deferredBattles && selected?.IsBattle == true && selected.Encounter == null;
+            bool needsOutcome = selectedUnknown || selectedDeferredBattle;
+            if (needsOutcome != saved.hasResolvedChoice) throw new InvalidOperationException("Invalid resolved choice.");
             var node = new MapNode(saved.rule, choices) { Status = saved.status, SelectedIndex = saved.selected };
-            if (selectedUnknown)
+            if (needsOutcome)
             {
                 MapChoice outcome = RestoreChoice(saved.resolvedChoice, data.enabled, catalog);
-                if (!UnknownNodeResolver.IsOutcome(outcome.Type) || (outcome.IsBattle != (outcome.Encounter != null)) ||
+                bool validType = selectedUnknown ? UnknownNodeResolver.IsOutcome(outcome.Type) : outcome.Type == selected.Type;
+                if (!validType || (outcome.IsBattle != (outcome.Encounter != null)) ||
                     (outcome.Type == MapContentType.Event && !(outcome.ContentData is MapEventDefinition)) ||
                     (outcome.Type == MapContentType.Relic && !(outcome.ContentData is AmmoCapacityRelic)))
                     throw new InvalidOperationException("Invalid unknown outcome.");
@@ -128,6 +221,7 @@ public sealed class RunProgress
         if(restored.Definition!=Definition || restored.Seed!=Seed)throw new InvalidOperationException("Checkpoint belongs to a different run.");
         FloorIndex=restored.FloorIndex;NodeIndex=restored.NodeIndex;CompletedNodes=restored.CompletedNodes;
         CurrentHP=restored.CurrentHP;MaxHP=restored.MaxHP;Phase=restored.Phase;Nodes=restored.Nodes;
+        earlyEncounters=restored.earlyEncounters;lateEncounters=restored.lateEncounters;eliteEncounters=restored.eliteEncounters;
     }
     internal void UndoNodeEntry()
     {
@@ -179,7 +273,13 @@ public sealed class RunProgress
             MapChoice outcome = UnknownNodeResolver.Resolve(Definition.floors[FloorIndex], CanEnterBattle(),
                 type => MapGenerator.Contains(enabledContent, type) && (canDispatch?.Invoke(type) ?? true), random);
             if (outcome == null) return false;
+            if (UsesFirstFloorRules && outcome.Type == MapContentType.NormalBattle)
+                outcome = new MapChoice(outcome.Type, NextEncounter(outcome.Type));
             CurrentNode.ResolvedChoice = outcome;
+        }
+        else if (UsesFirstFloorRules && choice.IsBattle && choice.Encounter == null)
+        {
+            CurrentNode.ResolvedChoice = new MapChoice(choice.Type, NextEncounter(choice.Type));
         }
         CurrentNode.SelectedIndex = index;
         CurrentNode.Status = MapNodeStatus.Resolving;
@@ -211,7 +311,9 @@ public sealed class RunProgress
         {
             if (nextFloor == null) { Phase = RunPhase.Completed; return true; }
             FloorIndex++; NodeIndex = 0; Nodes = nextFloor;
+            InitializeEncounterOrder();
         }
+        PrepareCurrentChoices();
         Phase = RunPhase.Map;
         return true;
     }

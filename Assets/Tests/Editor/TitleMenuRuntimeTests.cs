@@ -125,9 +125,34 @@ public partial class TitleMenuTests
 
         Assert.That(mainMenu.alpha, Is.Zero);
         Assert.That(panel.interactable, Is.True);
+        var info = Ref<GameObject>(selection, "soldierInfo").transform;
+        var conduitRow = info.Find("StartingConduit");
+        Assert.That(conduitRow, Is.Not.Null);
+        Assert.That(conduitRow.gameObject.activeInHierarchy, Is.False);
+
         soldier.OnSubmit(null);
         Assert.That(soldier.isOn, Is.True);
         Assert.That(Ref<Button>(selection, "adventureButton").IsInteractable(), Is.True);
+        Assert.That(conduitRow.gameObject.activeInHierarchy, Is.True);
+        var conduit = Ref<AmmoCapacityRelic>(menu, "soldierStartingConduit");
+        Assert.That(conduitRow.Find("Icon").GetComponent<Image>().sprite, Is.SameAs(conduit.HudArtwork));
+        Assert.That(conduitRow.Find("Label").GetComponent<TMP_Text>().text, Is.EqualTo("시작 매개체 · " + conduit.RelicName));
+        Assert.That(conduitRow.Find("Effect").GetComponent<TMP_Text>().text, Is.EqualTo(conduit.Description));
+
+        selection.ToggleDeckDetails();
+        Canvas.ForceUpdateCanvases();
+        Assert.That(Top(info.Find("Resource")), Is.GreaterThan(Top(conduitRow)));
+        Assert.That(Bottom(info.Find("Resource")), Is.GreaterThan(Top(conduitRow)));
+        Assert.That(Bottom(conduitRow), Is.GreaterThan(Top(info.Find("DreamDeck"))));
+        Assert.That(Bottom(info.Find("DeckDetailsButton")), Is.GreaterThan(Top(info.Find("DeckDetails"))));
+        Assert.That(Bottom(info.Find("DeckDetails")), Is.GreaterThan(Bottom(info)));
+
+        soldier.OnSubmit(null);
+        Assert.That(conduitRow.gameObject.activeInHierarchy, Is.False);
+        Assert.That(Ref<GameObject>(selection, "deckDetails").activeSelf, Is.False);
+
+        static float Top(Transform item) => item.TransformPoint(((RectTransform)item).rect.max).y;
+        static float Bottom(Transform item) => item.TransformPoint(((RectTransform)item).rect.min).y;
     }
 
     [UnityTest]
@@ -199,10 +224,76 @@ public partial class TitleMenuTests
         Assert.That(RunGoldInventory.Gold, Is.EqualTo(100));
         Assert.That(RunSaves.TryLoad(out RunSaveData initialSave, out _), Is.True);
         Assert.That(initialSave.inventory.gold, Is.EqualTo(100));
+        var casing = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/SoldierStartingCasing.asset");
+        Assert.That(casing, Is.Not.Null);
+        Assert.That(casing.Artwork, Is.Not.Null);
+        Assert.That(RunRelicInventory.Contains(casing), Is.True);
+        Assert.That(initialSave.inventory.relics.Length, Is.EqualTo(1));
+        Assert.That(initialSave.inventory.relics[0].id, Is.EqualTo(RunAssetCatalog.Load().Key(casing)));
+        Assert.That(initialSave.inventory.relics[0].battleStartAmmo, Is.EqualTo(2));
         Assert.That((uint)typeof(RunDeckInventory).GetProperty("GameVersion",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic).GetValue(null),Is.EqualTo(version+1));
         yield return Until(()=>SceneManager.GetActiveScene().name=="MapScene"&&!session.IsTransitioning);
         Assert.That(session.Progress.Definition,Is.SameAs(Object.FindFirstObjectByType<MapController>().Definition));
+        Assert.That(session.Progress.Nodes.Count, Is.EqualTo(13));
         Assert.That(session.Progress.Phase,Is.EqualTo(RunPhase.Map));Assert.That(session.Progress.CurrentHP,Is.EqualTo(session.Progress.MaxHP));
+        Assert.That(session.SelectOption(0), Is.True);
+        yield return Until(() => SceneManager.GetActiveScene().name == "BattleScene" && !session.IsTransitioning);
+        Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Battle));
+        Assert.That(session.Progress.CurrentNode.SelectedChoice.Encounter, Is.Not.Null);
+        BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
+        Assert.That(battle.GetTarget(), Is.Not.Null);
+        AmmoSystem ammo = battle.GetPlayer().GetAmmoSystem();
+        Assert.That(ammo.CurrentAmmo, Is.EqualTo(2));
+        Assert.That(ammo.MaxAmmo, Is.EqualTo(ammo.BaseMaxAmmo));
+        Assert.That(ammo.TrySpend(1), Is.True);
+        AssertConduitIcons(casing);
+
+        var later = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/MidpointEliteConduit.asset");
+        var last = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/FirstFloorConduit.asset");
+        Assert.That(later.Acquire(), Is.True);
+        Assert.That(last.Acquire(), Is.True);
+        Assert.That(later.Acquire(), Is.False);
+        AssertConduitIcons(casing, later, last);
+        Assert.That(session.SaveCheckpoint(), Is.True, session.SaveError);
+
+        Assert.That(session.ReturnToTitle(), Is.True);
+        yield return Until(() => SceneManager.GetActiveScene().name == "TitleScene" && !session.IsTransitioning);
+        Object.Destroy(session.gameObject);
+        yield return null;
+        Object.FindFirstObjectByType<TitleMenuUI>().ContinueGame();
+        yield return Until(() => SceneManager.GetActiveScene().name == "BattleScene" &&
+            RunSession.Instance != null && !RunSession.Instance.IsTransitioning);
+        ammo = Object.FindFirstObjectByType<BattleManager>().GetPlayer().GetAmmoSystem();
+        Assert.That(ammo.CurrentAmmo, Is.EqualTo(2));
+        AssertConduitIcons(casing, later, last);
+        Assert.That(RunRelicInventory.Count, Is.EqualTo(3));
+    }
+
+    private static void AssertConduitIcons(params AmmoCapacityRelic[] expected)
+    {
+        var area = GameObject.Find("ConduitArea").GetComponent<RectTransform>();
+        var group = area.GetComponent<HorizontalLayoutGroup>();
+        Assert.That(group, Is.Not.Null);
+        Assert.That(group.childAlignment, Is.EqualTo(TextAnchor.MiddleLeft));
+        Assert.That(group.padding.left, Is.EqualTo(24));
+        Assert.That(group.spacing, Is.EqualTo(12));
+        Canvas.ForceUpdateCanvases();
+        Assert.That(area.GetChild(0).name, Is.EqualTo("ConduitBackground"));
+        Assert.That(area.childCount, Is.EqualTo(expected.Length + 1));
+        for (int i = 0; i < expected.Length; i++)
+        {
+            var slot = (RectTransform)area.GetChild(i + 1);
+            var icon = slot.Find("Artwork").GetComponent<UnityEngine.UI.Image>();
+            Assert.That(slot.name, Is.EqualTo(expected[i].name));
+            Assert.That(icon.sprite, Is.Not.Null);
+            Assert.That(icon.sprite, Is.SameAs(expected[i].HudArtwork));
+            Assert.That(icon.sprite.rect.size, Is.EqualTo(new Vector2(256, 256)));
+            Assert.That(icon.preserveAspect, Is.True);
+            Assert.That(icon.raycastTarget, Is.False);
+            Assert.That(slot.GetComponent<UnityEngine.UI.Image>().raycastTarget, Is.True);
+            Assert.That(icon.rectTransform.rect.size, Is.EqualTo(new Vector2(64, 64)));
+            Assert.That(slot.anchoredPosition.x, Is.EqualTo(56 + 76 * i).Within(.01f));
+        }
     }
 
     [UnityTest]

@@ -46,7 +46,8 @@ public static class RunSaveCodec
         keys.Clear();long bonus=0;
         foreach(RunRelicData relic in data.relics)
         {
-            if(relic==null || relic.bonus<=0 || !keys.Add(relic.id) || catalog.Resolve<AmmoCapacityRelic>(relic.id)==null)
+            if(relic==null || relic.bonus<0 || relic.battleStartAmmo<0 || (relic.bonus==0 && relic.battleStartAmmo==0) ||
+                !keys.Add(relic.id) || catalog.Resolve<AmmoCapacityRelic>(relic.id)==null)
                 throw new InvalidOperationException("Invalid saved relic.");
             bonus+=relic.bonus;
         }

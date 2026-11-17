@@ -95,6 +95,93 @@ public class StatusTooltipTests
         yield return new ExitPlayMode();
     }
 
+    [UnityTest]
+    public IEnumerator ConduitHoverEnlargesOnlyArtAndSharesTheStatusTooltip()
+    {
+        yield return new EnterPlayMode();
+        AsyncOperation load = SceneManager.LoadSceneAsync("BattleScene");
+        while (!load.isDone) yield return null;
+        yield return null;
+
+        var area = GameObject.Find("ConduitArea").transform;
+        Assert.That(area.childCount, Is.Zero);
+        var casing = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/SoldierStartingCasing.asset");
+        Assert.That(casing.Acquire(), Is.True);
+        var background = area.Find("ConduitBackground");
+        Assert.That(background, Is.Not.Null);
+        Assert.That(background.GetSiblingIndex(), Is.Zero);
+        Assert.That(background.GetComponent<UnityEngine.UI.LayoutElement>().ignoreLayout, Is.True);
+        var frame = background.GetComponent<UnityEngine.UI.Image>();
+        var statusFrame = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/StatusTooltip.prefab").GetComponent<UnityEngine.UI.Image>();
+        Assert.That(frame.sprite, Is.SameAs(statusFrame.sprite));
+        Assert.That(frame.type, Is.EqualTo(UnityEngine.UI.Image.Type.Sliced));
+        Assert.That(frame.pixelsPerUnitMultiplier, Is.EqualTo(8f));
+        Assert.That(frame.color.a, Is.EqualTo(.30f));
+        Assert.That(frame.raycastTarget, Is.False);
+        Assert.That(frame.rectTransform.rect.size, Is.EqualTo(new Vector2(88, 84)));
+        Assert.That(frame.rectTransform.anchoredPosition.x, Is.EqualTo(12));
+        var second = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/MidpointEliteConduit.asset");
+        var third = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/FirstFloorConduit.asset");
+        Assert.That(second.Acquire(), Is.True);
+        Assert.That(third.Acquire(), Is.True);
+        Assert.That(frame.rectTransform.rect.size, Is.EqualTo(new Vector2(240, 84)));
+        BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
+        Player player = battle.GetPlayer();
+        player.StatusEffects.Apply(Definition("Rust"), 2);
+        StatusIconUI status = player.GetComponentInChildren<StatusIconUI>();
+        var slot = (RectTransform)area.Find(casing.name);
+        var artwork = (RectTransform)slot.Find("Artwork");
+        Assert.That(artwork, Is.Not.Null);
+        Canvas canvas = slot.GetComponentInParent<Canvas>().rootCanvas;
+        StatusTooltipUI tooltip = canvas.GetComponentInChildren<StatusTooltipUI>(true);
+        TMP_Text text = tooltip.GetComponentInChildren<TMP_Text>(true);
+        Canvas.ForceUpdateCanvases();
+        yield return null;
+
+        var pointer = new PointerEventData(EventSystem.current)
+        {
+            position = RectTransformUtility.WorldToScreenPoint(null, slot.position)
+        };
+        var hits = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, hits);
+        Assert.That(hits.Count, Is.GreaterThan(0));
+        Assert.That(hits[0].gameObject, Is.SameAs(slot.gameObject));
+
+        ExecuteEvents.Execute(slot.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
+        Assert.That(tooltip.gameObject.activeSelf, Is.False);
+        float deadline = Time.realtimeSinceStartup + 5f;
+        while (!tooltip.gameObject.activeSelf && Time.realtimeSinceStartup < deadline) yield return null;
+        Assert.That(tooltip.gameObject.activeSelf, Is.True);
+        Assert.That(canvas.GetComponentsInChildren<StatusTooltipUI>(true), Has.Length.EqualTo(1));
+        Assert.That(text.text, Does.Contain(casing.RelicName).And.Contain(casing.Description));
+        Assert.That(artwork.localScale.x, Is.EqualTo(1.10f).Within(.001f));
+        Assert.That(slot.localScale, Is.EqualTo(Vector3.one));
+        Assert.That(slot.rect.size, Is.EqualTo(new Vector2(64, 64)));
+        var corners = new Vector3[4];
+        slot.GetWorldCorners(corners);
+        Assert.That(tooltip.transform.position.y, Is.LessThan(corners[0].y));
+        AssertInsideCanvas(tooltip, canvas);
+
+        ExecuteEvents.Execute(status.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
+        ExecuteEvents.Execute(slot.gameObject, pointer, ExecuteEvents.pointerExitHandler);
+        Assert.That(tooltip.gameObject.activeSelf, Is.True);
+        Assert.That(text.text, Does.Contain("녹슬음"));
+        deadline = Time.realtimeSinceStartup + 5f;
+        while (!artwork.localScale.Equals(Vector3.one) && Time.realtimeSinceStartup < deadline) yield return null;
+        Assert.That(artwork.localScale, Is.EqualTo(Vector3.one));
+
+        ExecuteEvents.Execute(status.gameObject, pointer, ExecuteEvents.pointerExitHandler);
+        ExecuteEvents.Execute(slot.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
+        deadline = Time.realtimeSinceStartup + 5f;
+        while (!tooltip.gameObject.activeSelf && Time.realtimeSinceStartup < deadline) yield return null;
+        Assert.That(tooltip.gameObject.activeSelf, Is.True);
+        RunRelicInventory.ResetForNewGame();
+        Assert.That(background.gameObject.activeSelf, Is.False);
+        Assert.That(tooltip.gameObject.activeSelf, Is.False);
+        Assert.That(artwork.localScale, Is.EqualTo(Vector3.one));
+        yield return new ExitPlayMode();
+    }
+
     private static StatusEffectData Definition(string name) =>
         AssetDatabase.LoadAssetAtPath<StatusEffectData>($"Assets/StatusData/{name}.asset");
 

@@ -19,6 +19,13 @@ public sealed class RunProgressData
     public RunPhase phase;
     public MapContentType[] enabled;
     public RunNodeData[] nodes;
+    public RunEncounterOrderData encounterOrder;
+}
+
+[Serializable]
+public sealed class RunEncounterOrderData
+{
+    public string[] early, late, elite;
 }
 [Serializable]
 public sealed class RunNodeData
@@ -55,6 +62,7 @@ public sealed class RunRelicData
 {
     public string id;
     public int bonus;
+    public int battleStartAmmo;
 }
 [Serializable]
 public sealed class RunRewardData

@@ -14437,11 +14437,11 @@ MonoBehaviour:
     description: "\uC801\uACFC \uC804\uD22C\uD558\uACE0\n\uC2B9\uB9AC \uBCF4\uC0C1\uC744
       \uD68D\uB4DD\uD569\uB2C8\uB2E4."
   - type: 1
-    artwork: {fileID: 0}
+    artwork: {fileID: 1668366167335641749, guid: 6ad8f95fa64975d499233721c8e0b1c7, type: 3}
     title: "\uC5D8\uB9AC\uD2B8 \uC804\uD22C"
     description: "\uAC15\uB825\uD55C \uC801\uACFC\uC758 \uC804\uD22C\uC5D0\n\uB3C4\uC804\uD569\uB2C8\uB2E4."
   - type: 2
-    artwork: {fileID: 0}
+    artwork: {fileID: 1668366167335641749, guid: 6ad8f95fa64975d499233721c8e0b1c7, type: 3}
     title: "\uBCF4\uC2A4 \uC804\uD22C"
     description: "\uC774 \uCE35\uC758 \uBCF4\uC2A4\uC5D0\uAC8C\n\uB3C4\uC804\uD569\uB2C8\uB2E4."
   - type: 3

@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ceed63113d6bf4086984f4629237a8, type: 3}
+  m_Name: BrokenBellIdle
+  m_EditorClassIdentifier: 
+  setupVersion: 1
+  frames:
+  - {fileID: -1763213079, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: -2135736451, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: -1748303108, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: -959038722, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: 1152975579, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: -647950959, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: -1342136795, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: 41620995, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: -2060624640, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: -1492424076, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: -2089402210, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: 626895484, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: 1800936999, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: -302167795, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: 814047920, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: -118548766, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: 1526580043, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: -845502693, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: 1143739069, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: 879927579, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: 1673713671, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: 1935538932, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: 362355909, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  - {fileID: -737121938, guid: 9e72a446d8d31a441adf1df67049a34c, type: 3}
+  frameDuration: 0.1
+  groundPivot: {x: 0.5, y: 0.0625}
+  contentBounds:
+    serializedVersion: 2
+    x: 0.16276042
+    y: 0.14713542
+    width: 0.6770833
+    height: 0.81640625

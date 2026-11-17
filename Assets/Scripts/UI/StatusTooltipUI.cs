@@ -7,19 +7,46 @@ public class StatusTooltipUI : MonoBehaviour
     [SerializeField] private float preferredWidth = 320f;
     [SerializeField] private float padding = 12f;
     [SerializeField] private Vector2 pointerOffset = new Vector2(16f, -16f);
-    private StatusIconUI owner;
+    private Behaviour owner;
     private Canvas canvas;
     private Vector2 screenPosition;
+    private RectTransform anchor;
+
+    internal static StatusTooltipUI GetOrCreate(Canvas parent, StatusTooltipUI prefab)
+    {
+        if (parent == null || prefab == null) return null;
+        Canvas root = parent.rootCanvas;
+        var tooltip = root.GetComponentInChildren<StatusTooltipUI>(true);
+        if (tooltip != null) return tooltip;
+
+        tooltip = Instantiate(prefab, root.transform, false);
+        tooltip.gameObject.SetActive(false);
+        return tooltip;
+    }
+
+    private bool Begin(Behaviour source, Vector2 position, RectTransform anchor = null)
+    {
+        if (source == null || contentText == null) return false;
+        canvas = GetComponentInParent<Canvas>()?.rootCanvas;
+        if (canvas == null) return false;
+        owner = source;
+        screenPosition = position;
+        this.anchor = anchor;
+        gameObject.SetActive(true);
+        transform.SetAsLastSibling();
+        return true;
+    }
+
+    internal void ShowConduit(ConduitIconHoverUI icon, AmmoCapacityRelic conduit, RectTransform anchor)
+    {
+        if (conduit == null || !Begin(icon, Vector2.zero, anchor)) return;
+        contentText.text = $"{CardStatusDescriptionBuilder.FormatTitle(conduit.RelicName)}\n{conduit.Description}";
+        UpdatePosition();
+    }
 
     public void Show(StatusIconUI icon, ActiveStatusEffect effect, Vector2 position)
     {
-        if (icon == null || effect == null || contentText == null) return;
-        canvas = GetComponentInParent<Canvas>()?.rootCanvas;
-        if (canvas == null) return;
-        owner = icon;
-        screenPosition = position;
-        gameObject.SetActive(true);
-        transform.SetAsLastSibling();
+        if (effect == null || !Begin(icon, position)) return;
         Refresh(icon, effect);
     }
 
@@ -34,13 +61,7 @@ public class StatusTooltipUI : MonoBehaviour
 
     public void ShowContinuous(StatusIconUI icon, ActiveContinuousCard card, Vector2 position)
     {
-        if (icon == null || card == null || contentText == null) return;
-        canvas = GetComponentInParent<Canvas>()?.rootCanvas;
-        if (canvas == null) return;
-        owner = icon;
-        screenPosition = position;
-        gameObject.SetActive(true);
-        transform.SetAsLastSibling();
+        if (card == null || !Begin(icon, position)) return;
         RefreshContinuous(icon, card);
     }
 
@@ -55,11 +76,7 @@ public class StatusTooltipUI : MonoBehaviour
 
     public void ShowDelayed(StatusIconUI icon, PendingDelayedEffect entry, Vector2 position)
     {
-        if (icon == null || entry == null || contentText == null) return;
-        canvas = GetComponentInParent<Canvas>()?.rootCanvas;
-        if (canvas == null) return;
-        owner = icon; screenPosition = position;
-        gameObject.SetActive(true); transform.SetAsLastSibling();
+        if (entry == null || !Begin(icon, position)) return;
         RefreshDelayed(icon, entry);
     }
 
@@ -79,14 +96,18 @@ public class StatusTooltipUI : MonoBehaviour
         UpdatePosition();
     }
 
-    public void Hide(StatusIconUI icon)
+    public void Hide(Behaviour icon)
     {
         if (owner != icon) return;
         owner = null;
         gameObject.SetActive(false);
     }
 
-    private void OnDisable() { owner = null; }
+    private void OnDisable()
+    {
+        owner = null;
+        anchor = null;
+    }
 
     private void LateUpdate()
     {
@@ -108,11 +129,20 @@ public class StatusTooltipUI : MonoBehaviour
         float textWidth = Mathf.Max(1f, width - padding * 2f);
         float height = Mathf.Min(contentText.GetPreferredValues(contentText.text, textWidth, Mathf.Infinity).y + padding * 2f, bounds.height);
         panel.sizeDelta = new Vector2(width, height);
-        Camera camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
-        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPosition, camera, out Vector2 point)) return;
-        Vector2 target = point + pointerOffset;
-        if (target.x + width > bounds.xMax) target.x = point.x - pointerOffset.x - width;
-        if (target.y - height < bounds.yMin) target.y = point.y - pointerOffset.y + height;
+        Vector2 target;
+        if (anchor != null)
+        {
+            Vector3 bottomLeft = anchor.TransformPoint(anchor.rect.min);
+            target = (Vector2)canvasRect.InverseTransformPoint(bottomLeft) + new Vector2(0f, -8f);
+        }
+        else
+        {
+            Camera camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPosition, camera, out Vector2 point)) return;
+            target = point + pointerOffset;
+            if (target.x + width > bounds.xMax) target.x = point.x - pointerOffset.x - width;
+            if (target.y - height < bounds.yMin) target.y = point.y - pointerOffset.y + height;
+        }
         target.x = Mathf.Clamp(target.x, bounds.xMin, bounds.xMax - width);
         target.y = Mathf.Clamp(target.y, bounds.yMin + height, bounds.yMax);
         // The prefab uses a top-left pivot and is a direct child of the root Canvas.

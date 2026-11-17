@@ -12,7 +12,7 @@
 - 생성과 전투 대상 연결: `BattleManager.ConfigureEncounter()`
 - 맵에서 선택한 전투 적용: `RunBattleBridge`
 
-슬라임·허수아비·도마뱀의 프리팹에는 `BattleCharacterPresentation`과 `UISpriteAnimator`를 연결했다. 기본 스프라이트와 대기 애니메이션을 제작한 신규 적 6종은 원본 파일 단계다. [신규 적 스프라이트와 대기 애니메이션](CharacterPresentation.md#신규-적-스프라이트와-대기-애니메이션)
+슬라임·허수아비·도마뱀과 신규 적 6종의 프리팹에 `BattleCharacterPresentation`과 `UISpriteAnimator`를 연결했다. 신규 적은 Normal 크기 프로필과 공용 전투 HUD를 사용한다. 전투 패턴이 정해질 때까지 프리팹에는 기존 테스트 행동을 사용한다. [신규 적 스프라이트와 대기 애니메이션](CharacterPresentation.md#신규-적-스프라이트와-대기-애니메이션)
 
 ## 다른 적 추가
 

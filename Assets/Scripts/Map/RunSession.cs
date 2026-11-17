@@ -36,7 +36,8 @@ public class RunSession : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics() => Instance = null;
 
-    public void StartNewRun(RunDefinition definition, int seed, IReadOnlyCollection<MapContentType> supportedContent = null)
+    public void StartNewRun(RunDefinition definition, int seed, IReadOnlyCollection<MapContentType> supportedContent = null,
+        AmmoCapacityRelic startingConduit = null)
     {
         if (IsTransitioning) throw new InvalidOperationException("Cannot replace a run during a scene transition.");
         // Validate/build first: a broken definition must not erase the previous run or inventory.
@@ -45,21 +46,32 @@ public class RunSession : MonoBehaviour
         if (supportedContent != null) available.AddRange(supportedContent);
         var next = new RunProgress(definition, seed, available);
         int startingGold = Mathf.Max(0, definition.startingGold);
+        if (startingConduit != null && !startingConduit.HasEffect)
+            throw new InvalidOperationException("The starting conduit needs a valid effect.");
         if (Application.isPlaying && (!Application.CanStreamedLevelBeLoaded(definition.mapScene) || !Application.CanStreamedLevelBeLoaded(definition.battleScene)))
             throw new InvalidOperationException("Both run scenes must be enabled in Build Settings.");
         RunSaveData initial=null;
         if(Application.isPlaying)
         {
-            initial = new RunSaveData
-            {
-                progress = next.Capture(RunAssetCatalog.Load()),
-                inventory = new RunInventoryData { gold = startingGold }
-            };
-            RunSaveCodec.Validate(initial,RunAssetCatalog.Load());
+            RunAssetCatalog catalog = RunAssetCatalog.Load();
+            var inventory = new RunInventoryData { gold = startingGold };
+            if (startingConduit != null)
+                inventory.relics = new[]
+                {
+                    new RunRelicData
+                    {
+                        id = catalog.Key(startingConduit),
+                        bonus = startingConduit.MaxAmmoBonus,
+                        battleStartAmmo = startingConduit.BattleStartAmmo
+                    }
+                };
+            initial = new RunSaveData { progress = next.Capture(catalog), inventory = inventory };
+            RunSaveCodec.Validate(initial, catalog);
             if(!RunSaves.Store.TryWrite(initial,out string error))throw new InvalidOperationException("Could not save the new run: "+error);
         }
         RunDeckInventory.ResetForNewGame();
         RunRelicInventory.ResetForNewGame();
+        if (startingConduit != null) startingConduit.Acquire();
         RunGoldInventory.Add(startingGold);
         Progress = next; finishedRaised = false;checkpoint=initial;SaveError=null;
         Publish();
@@ -140,14 +152,22 @@ public class RunSession : MonoBehaviour
     {
         if (Progress == null || !ReferenceEquals(expected, Progress) || Progress.Phase != RunPhase.Rewards || IsTransitioning ||
             floor != Progress.FloorIndex || node != Progress.NodeIndex) return false;
-        RunProgressData before=Application.isPlaying?Progress.Capture(RunAssetCatalog.Load()):null;
-        RunSaveData previous=checkpoint;
+        RunAssetCatalog catalog = Application.isPlaying ? RunAssetCatalog.Load() : null;
+        RunProgressData before = catalog != null ? Progress.Capture(catalog) : null;
+        RunSaveData previous = checkpoint;
+        MapChoice selected = Progress.CurrentNode.SelectedChoice;
+        AmmoCapacityRelic conduit = selected.Type == MapContentType.EliteBattle ? selected.Encounter.victoryConduit : null;
+        RunRelicData[] relicsBefore = catalog != null && conduit != null ? RunRelicInventory.Capture(catalog) : null;
         Progress.CaptureHealth(currentHP, maxHP);
         if (!Progress.CompleteNode(floor, node)) return false;
-        if(!(Progress.IsFinished?ClearCheckpoint():SaveCheckpoint()))
+        if (conduit != null) conduit.Acquire();
+        if (!(Progress.IsFinished ? ClearCheckpoint() : SaveCheckpoint()))
         {
-            if(before!=null)Progress.RestoreCheckpointInPlace(before,RunAssetCatalog.Load());
-            checkpoint=previous;Publish();return false;
+            if (before != null) Progress.RestoreCheckpointInPlace(before, catalog);
+            if (relicsBefore != null) RunRelicInventory.Restore(relicsBefore, catalog);
+            checkpoint = previous;
+            Publish();
+            return false;
         }
         Publish();
         LoadScene(Progress.Definition.mapScene);

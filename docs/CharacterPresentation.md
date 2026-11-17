@@ -58,7 +58,7 @@ Inspector에서 지정한 프로필은 전투 실행 시 적용됩니다. 편집
 | 양철 나무꾼 | [PNG](../GeneratedArt/TinWoodcutter/tin-woodcutter-v1.png) | [스프라이트 시트](../GeneratedArt/TinWoodcutter/tin-woodcutter-idle-spritesheet.png) · [GIF](../GeneratedArt/TinWoodcutter/tin-woodcutter-idle-preview.gif) | 발을 고정하고 상체가 무게를 옮기며, 고개와 도끼가 뒤따라 움직입니다. |
 | 침대 시트 유령 | [PNG](../GeneratedArt/SheetGhost/sheet-ghost-v1.png) | [스프라이트 시트](../GeneratedArt/SheetGhost/sheet-ghost-idle-spritesheet.png) · [GIF](../GeneratedArt/SheetGhost/sheet-ghost-idle-preview.gif) | 몸체가 천천히 오르내리고 시트 밑단이 뒤따라 물결칩니다. |
 
-이 6종은 `GeneratedArt`에 저장했습니다. 프레임 여백과 GIF 반복을 확인했으며, Unity 임포트와 전투 프리팹·등장 풀 연결, 게임 안에서의 재생 검증은 예정입니다. [1층 적 디자인과 제작 상태](../ToDo_List.md#1층-적-디자인-아이디어)
+원본은 `GeneratedArt`에 보관합니다. Unity에서는 각 적의 `Assets/Images/Characters/<적 이름>/Base.png`와 `Idle.png`를 사용합니다. 분할한 24프레임은 `Assets/CharacterPresentation/Animations`의 대기 애니메이션에 연결했고, 프리팹은 `Assets/Prefabs/Enemy`에 저장했습니다. 등장 풀 등록은 각 적의 행동과 전투 배치가 확정된 뒤 진행합니다. [1층 적 디자인과 제작 상태](../ToDo_List.md#1층-적-디자인-아이디어)
 
 ## 방어도 획득 연출
 

@@ -9,6 +9,12 @@ public static class MapGenerator
         Validate(definition, enabled);
         var random = new System.Random(seed);
         var nodes = new List<MapNode>(definition.nodeCount);
+        if (definition.mode == FloorMapMode.FirstFloor)
+        {
+            for (int i = 0; i < definition.nodeCount; i++)
+                nodes.Add(BuildFirstFloorNode(definition, i, seed));
+            return nodes.AsReadOnly();
+        }
         bool planned = definition.mode == FloorMapMode.PlannedFloor;
         bool hasFixedShop = !planned && definition.fixedShopNodeNumber > 0 && Contains(enabled, MapContentType.Shop);
         bool hasFixedRest = !planned && definition.fixedRestNodeNumber > 0 && Contains(enabled, MapContentType.Rest);
@@ -81,6 +87,11 @@ public static class MapGenerator
             throw new InvalidOperationException("A floor needs a valid mode and at least one node.");
         Require(enabled, MapContentType.NormalBattle); ValidatePool(definition.normalBattles);
         ValidateUnknownAndLimits(definition, enabled);
+        if (definition.mode == FloorMapMode.FirstFloor)
+        {
+            ValidateFirstFloor(definition, enabled);
+            return;
+        }
         if (definition.mode == FloorMapMode.NormalBattlesOnly)
         {
             if (definition.fixedShopNodeNumber < 0 || definition.fixedShopNodeNumber > definition.nodeCount)
@@ -90,7 +101,7 @@ public static class MapGenerator
             if (definition.fixedRelicNodeNumber < 0 || definition.fixedRelicNodeNumber > definition.nodeCount)
                 throw new InvalidOperationException("The fixed Conduit choice must be disabled (0) or use an existing node number.");
             if (definition.fixedRelicNodeNumber > 0 && Contains(enabled, MapContentType.Relic) &&
-                (!(definition.guaranteedRelicData is AmmoCapacityRelic relic) || relic.MaxAmmoBonus <= 0))
+                (!(definition.guaranteedRelicData is AmmoCapacityRelic relic) || !relic.HasEffect))
                 throw new InvalidOperationException("A fixed Conduit choice needs a valid Conduit asset.");
             return;
         }
@@ -119,9 +130,14 @@ public static class MapGenerator
         }
 
         UnknownNodeSettings settings = floor.unknown;
-        if (!Contains(enabled, MapContentType.Unknown) || settings?.nodeNumbers == null || settings.nodeNumbers.Length == 0) return;
+        if (!Contains(enabled, MapContentType.Unknown)) return;
+        int[] unknownNodes = floor.mode == FloorMapMode.FirstFloor
+            ? FirstFloorUnknownNodes(floor.firstFloorLayout)
+            : settings?.nodeNumbers;
+        if (unknownNodes == null || unknownNodes.Length == 0) return;
+        if (settings == null) throw new InvalidOperationException("Unknown nodes need outcome settings.");
         occupied.Clear();
-        foreach (int node in settings.nodeNumbers)
+        foreach (int node in unknownNodes)
             if (node < 1 || node > floor.nodeCount || !occupied.Add(node))
                 throw new InvalidOperationException("Unknown nodes must use distinct existing node numbers.");
 
@@ -132,12 +148,127 @@ public static class MapGenerator
             if (mapEvent == null || string.IsNullOrWhiteSpace(mapEvent.title) || mapEvent.goldReward < 0)
                 throw new InvalidOperationException("The floor event pool contains an invalid event.");
         foreach (AmmoCapacityRelic relic in settings.relics ?? Array.Empty<AmmoCapacityRelic>())
-            if (relic == null || relic.MaxAmmoBonus <= 0)
+            if (relic == null || !relic.HasEffect)
                 throw new InvalidOperationException("The unknown relic pool contains an invalid relic.");
-        foreach (int node in settings.nodeNumbers)
+        foreach (int node in unknownNodes)
             if (floor.GetBattleLimit(node) != null && settings.battleWeight > 0 &&
                 (!Contains(enabled, MapContentType.Event) || (settings.events == null || settings.events.Length == 0)))
                 throw new InvalidOperationException("A capped unknown node needs an event pool to receive the blocked battle weight.");
+    }
+
+    private static int[] FirstFloorUnknownNodes(FirstFloorNodeLayout[] layouts)
+    {
+        if (layouts == null) return Array.Empty<int>();
+        var nodes = new List<int>();
+        for (int i = 0; i < layouts.Length; i++)
+            if (layouts[i] == FirstFloorNodeLayout.Regular || layouts[i] == FirstFloorNodeLayout.EliteChoice ||
+                layouts[i] == FirstFloorNodeLayout.RestChoice) nodes.Add(i + 1);
+        return nodes.ToArray();
+    }
+
+    internal static MapNode BuildFirstFloorNode(FloorMapDefinition floor, int index, int seed, bool capped = false,
+        bool midpointEliteWon = false)
+    {
+        var random = new System.Random(unchecked(seed ^ (index + 1) * 19349663));
+        var layout = floor.firstFloorLayout[index];
+        var choices = new List<MapChoice>(3);
+        switch (layout)
+        {
+            case FirstFloorNodeLayout.Start:
+                choices.Add(new MapChoice(MapContentType.NormalBattle));
+                return new MapNode(MapNodeRule.Start, choices);
+            case FirstFloorNodeLayout.Midpoint:
+                choices.Add(new MapChoice(MapContentType.EliteBattle));
+                choices.Add(new MapChoice(MapContentType.NormalBattle));
+                return new MapNode(MapNodeRule.Midpoint, choices);
+            case FirstFloorNodeLayout.Conduit:
+                choices.Add(new MapChoice(MapContentType.Relic,
+                    contentData: midpointEliteWon ? floor.midpointEliteConduit : floor.guaranteedRelicData));
+                return new MapNode(MapNodeRule.GuaranteedRelic, choices);
+            case FirstFloorNodeLayout.Boss:
+                choices.Add(Battle(MapContentType.BossBattle, floor.bossBattles, random));
+                return new MapNode(MapNodeRule.Boss, choices);
+            case FirstFloorNodeLayout.RestChoice:
+                choices.Add(new MapChoice(MapContentType.Rest));
+                AddNonBattle(MapContentType.Rest);
+                break;
+            case FirstFloorNodeLayout.EliteChoice:
+                choices.Add(new MapChoice(MapContentType.EliteBattle));
+                choices.Add(new MapChoice(MapContentType.NormalBattle));
+                AddNonBattle();
+                break;
+            default:
+                if (!capped) choices.Add(new MapChoice(MapContentType.NormalBattle));
+                bool addSecond = random.NextDouble() < floor.secondNonBattleChance;
+                MapContentType first = AddNonBattle();
+                if (capped || addSecond) AddNonBattle(first);
+                break;
+        }
+        return new MapNode(MapNodeRule.Regular, choices);
+
+        MapContentType AddNonBattle(MapContentType? excluded = null)
+        {
+            WeightedMapContent[] candidates = floor.nonBattleContents;
+            int total = 0;
+            foreach (WeightedMapContent candidate in candidates)
+                if (candidate.type != excluded) total += candidate.weight;
+            int roll = random.Next(total);
+            foreach (WeightedMapContent candidate in candidates)
+            {
+                if (candidate.type == excluded) continue;
+                roll -= candidate.weight;
+                if (roll >= 0) continue;
+                choices.Add(new MapChoice(candidate.type, contentData: candidate.contentData));
+                return candidate.type;
+            }
+            throw new InvalidOperationException("The node has no eligible nonbattle choice.");
+        }
+    }
+
+    private static void ValidateFirstFloor(FloorMapDefinition floor, IReadOnlyCollection<MapContentType> enabled)
+    {
+        if (floor.nodeCount != 13 || floor.firstFloorLayout?.Length != floor.nodeCount ||
+            !Probability(floor.secondNonBattleChance) || Array.Exists(floor.firstFloorLayout,
+                layout => !Enum.IsDefined(typeof(FirstFloorNodeLayout), layout)))
+            throw new InvalidOperationException("The first floor needs a valid layout for all thirteen nodes.");
+
+        Require(enabled, MapContentType.EliteBattle);
+        Require(enabled, MapContentType.BossBattle);
+        Require(enabled, MapContentType.Relic);
+        Require(enabled, MapContentType.Event);
+        MapBattleLimit early = floor.GetBattleLimit(1);
+        MapBattleLimit late = floor.GetBattleLimit(8);
+        if (early == null || early.firstNode != 1 || early.lastNode != 5 || early.maxBattles != 4 ||
+            late == null || late.firstNode != 8 || late.lastNode != 12 || late.maxBattles != 4 ||
+            floor.battleLimits.Length != 2)
+            throw new InvalidOperationException("The first floor needs four-battle limits for nodes 1–5 and 8–12.");
+
+        ValidatePool(floor.lateNormalBattles);
+        ValidatePool(floor.eliteBattles);
+        ValidatePool(floor.bossBattles);
+        if (new HashSet<BattleEncounterDefinition>(floor.eliteBattles).Count != floor.eliteBattles.Length ||
+            floor.eliteBattles.Length < 3)
+            throw new InvalidOperationException("The first floor needs at least three distinct elite encounters.");
+        var eliteRewards = new HashSet<AmmoCapacityRelic>();
+        foreach (BattleEncounterDefinition encounter in floor.eliteBattles)
+            if (encounter.victoryConduit == null || !encounter.victoryConduit.HasEffect ||
+                encounter.victoryConduit == floor.guaranteedRelicData || encounter.victoryConduit == floor.midpointEliteConduit ||
+                !eliteRewards.Add(encounter.victoryConduit))
+                throw new InvalidOperationException("Each first-floor elite needs a distinct victory conduit.");
+
+        var types = new HashSet<MapContentType> { MapContentType.Unknown, MapContentType.Shop, MapContentType.Rest };
+        if (floor.nonBattleContents == null || floor.nonBattleContents.Length != types.Count)
+            throw new InvalidOperationException("The first floor needs unknown, shop and rest weights.");
+        foreach (WeightedMapContent candidate in floor.nonBattleContents)
+        {
+            if (candidate == null || !types.Remove(candidate.type) || candidate.weight <= 0)
+                throw new InvalidOperationException("First-floor nonbattle choices must be distinct and have positive weights.");
+            Require(enabled, candidate.type);
+        }
+        if (!(floor.guaranteedRelicData is AmmoCapacityRelic standard) || !standard.HasEffect ||
+            floor.midpointEliteConduit == null || !floor.midpointEliteConduit.HasEffect ||
+            floor.midpointEliteConduit.Rarity != ConduitRarity.Uncommon)
+            throw new InvalidOperationException("The first floor needs standard and uncommon conduit rewards.");
     }
 
     private static bool Probability(float value) => !float.IsNaN(value) && value >= 0 && value <= 1;

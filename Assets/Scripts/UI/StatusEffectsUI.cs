@@ -82,12 +82,7 @@ public class StatusEffectsUI : MonoBehaviour
         if (parent == null || tooltipPrefab == null) return null;
         Canvas root = parent.rootCanvas;
         if (tooltip != null && tooltip.transform.parent == root.transform) return tooltip;
-        tooltip = root.GetComponentInChildren<StatusTooltipUI>(true);
-        if (tooltip == null)
-        {
-            tooltip = Instantiate(tooltipPrefab, root.transform, false);
-            tooltip.gameObject.SetActive(false);
-        }
+        tooltip = StatusTooltipUI.GetOrCreate(root, tooltipPrefab);
         return tooltip;
     }
 
@@ -216,14 +211,19 @@ public class StatusEffectsUI : MonoBehaviour
 
         Image image = panel.GetComponent<Image>();
         image.rectTransform.anchorMin = image.rectTransform.anchorMax = row.pivot;
+        ApplyListBackgroundStyle(image, tooltipPrefab, .94f);
+        return image;
+    }
+
+    internal static void ApplyListBackgroundStyle(Image image, StatusTooltipUI tooltipPrefab, float opacity)
+    {
         image.raycastTarget = false;
         if (tooltipPrefab != null && tooltipPrefab.TryGetComponent<Image>(out Image tooltipFrame))
             image.sprite = tooltipFrame.sprite;
         image.type = Image.Type.Sliced;
         image.pixelsPerUnitMultiplier = 8f;
         image.color = image.sprite != null
-            ? new Color(1f, 1f, 1f, .94f)
-            : new Color(.06f, .08f, .14f, .94f);
-        return image;
+            ? new Color(1f, 1f, 1f, opacity)
+            : new Color(.06f, .08f, .14f, opacity);
     }
 }

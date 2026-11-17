@@ -23,6 +23,103 @@ public class MapGenerationTests
     [TearDown] public void Cleanup() { foreach (Object item in created) Object.DestroyImmediate(item); created.Clear(); }
     private T Asset<T>() where T : ScriptableObject { T item = ScriptableObject.CreateInstance<T>(); created.Add(item); return item; }
 
+    [Test] public void FirstFloorOffersFixedMilestonesAndRespectsBothCaps()
+    {
+        var definition = UnityEditor.AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
+        Assert.That(definition, Is.Not.Null);
+        var state = new RunProgress(definition, 42);
+        Assert.That(state.Nodes.Count, Is.EqualTo(13));
+        Assert.That(Types(), Is.EqualTo(new[] { MapContentType.NormalBattle }));
+        for (int i = 0; i < 3; i++) Finish(MapContentType.NormalBattle);
+        Assert.That(Types(), Has.Member(MapContentType.EliteBattle));
+        Assert.That(Types().Length, Is.EqualTo(3));
+        Finish(MapContentType.EliteBattle);
+        Assert.That(Types().Length, Is.EqualTo(2));
+        Assert.That(Types().Distinct().Count(), Is.EqualTo(2));
+        Assert.That(state.CurrentNode.Choices.All(c => !c.IsBattle), Is.True);
+        Finish(Types().First(t => t != MapContentType.Unknown));
+        Assert.That(Types(), Is.EquivalentTo(new[] { MapContentType.EliteBattle, MapContentType.NormalBattle }));
+        Finish(MapContentType.NormalBattle);
+        Assert.That(Types(), Is.EqualTo(new[] { MapContentType.Relic }));
+        Finish(MapContentType.Relic);
+        for (int i = 0; i < 4; i++) Finish(MapContentType.NormalBattle);
+        Assert.That(Types().Length, Is.EqualTo(2));
+        Assert.That(Types(), Has.Member(MapContentType.Rest));
+        Assert.That(Types(), Has.No.Member(MapContentType.NormalBattle));
+        Finish(MapContentType.Rest);
+        Assert.That(Types(), Is.EqualTo(new[] { MapContentType.BossBattle }));
+        Finish(MapContentType.BossBattle);
+        Assert.That(state.Phase, Is.EqualTo(RunPhase.Completed));
+
+        MapContentType[] Types() => state.CurrentNode.Choices.Select(c => c.Type).ToArray();
+
+        void Finish(MapContentType type)
+        {
+            Assert.That(state.TrySelectOption(Array.IndexOf(Types(), type)), Is.True);
+            if (state.Phase == RunPhase.Battle)
+                Assert.That(state.RecordBattleResult(BattleResult.Victory), Is.True);
+            Assert.That(state.CompleteNode(0, state.NodeIndex), Is.True);
+        }
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void FirstFloorNodeTwelveUnknownFollowsTheCompletedBattleCount(bool capped)
+    {
+        var definition = UnityEditor.AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
+        // This seed offers a mystery at node twelve and resolves it to battle when permitted.
+        var state = Enumerable.Range(0, 1000).Select(seed => new RunProgress(definition, seed))
+            .First(runState => runState.Nodes[11].Choices.Any(choice => choice.Type == MapContentType.Unknown) &&
+                runState.Nodes[7].Choices.Any(choice => choice.Type == MapContentType.Shop || choice.Type == MapContentType.Rest) &&
+                new System.Random(unchecked((runState.Seed ^ 73856093 ^ (12 * 19349663)) ^ 0x4F1BBCDC))
+                    .NextDouble() < .4);
+        var catalog = RunAssetCatalog.Load();
+        for (int node = 0; node < 11; node++)
+        {
+            int index = 0;
+            if (node == 7 && !capped)
+                index = state.CurrentNode.Choices.ToList().FindIndex(choice => choice.Type != MapContentType.Unknown && !choice.IsBattle);
+            if (node == 4)
+                index = state.CurrentNode.Choices.ToList().FindIndex(choice => choice.Type != MapContentType.Unknown);
+            if (node == 6)
+                Assert.That(((AmmoCapacityRelic)state.CurrentNode.Choices[index].ContentData).Rarity, Is.EqualTo(ConduitRarity.Uncommon));
+            Assert.That(state.TrySelectOption(index), Is.True);
+            if (state.Phase == RunPhase.Battle)
+                Assert.That(state.RecordBattleResult(BattleResult.Victory), Is.True);
+            Assert.That(state.CompleteNode(0, node), Is.True);
+        }
+
+        int unknown = state.CurrentNode.Choices.ToList().FindIndex(choice => choice.Type == MapContentType.Unknown);
+        Assert.That(state.TrySelectOption(unknown), Is.True);
+        Assert.That(state.CurrentNode.SelectedChoice.Type, Is.EqualTo(capped ? MapContentType.Event : MapContentType.NormalBattle));
+        RunProgress restored = RunProgress.Restore(state.Capture(catalog), catalog);
+        Assert.That(restored.CurrentNode.SelectedChoice.Type, Is.EqualTo(state.CurrentNode.SelectedChoice.Type));
+        Assert.That(restored.CurrentNode.SelectedChoice.Encounter, Is.SameAs(state.CurrentNode.SelectedChoice.Encounter));
+    }
+
+    [Test] public void FirstFloorNormalEncounterOrderSurvivesRestoreAndWrapsAfterThreeEnemies()
+    {
+        var definition = UnityEditor.AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
+        var state = new RunProgress(definition, 41);
+        var catalog = RunAssetCatalog.Load();
+        var encounters = new List<BattleEncounterDefinition>();
+
+        for (int node = 0; node < 4; node++)
+        {
+            int normal = state.CurrentNode.Choices.ToList().FindIndex(choice => choice.Type == MapContentType.NormalBattle);
+            Assert.That(state.TrySelectOption(normal), Is.True);
+            BattleEncounterDefinition chosen = state.CurrentNode.SelectedChoice.Encounter;
+            state = RunProgress.Restore(state.Capture(catalog), catalog);
+            Assert.That(state.CurrentNode.SelectedChoice.Encounter, Is.SameAs(chosen));
+            encounters.Add(chosen);
+            Assert.That(state.RecordBattleResult(BattleResult.Victory), Is.True);
+            Assert.That(state.CompleteNode(0, node), Is.True);
+        }
+
+        Assert.That(encounters.Take(3).Distinct().Count(), Is.EqualTo(3));
+        Assert.That(encounters[3], Is.SameAs(encounters[0]));
+    }
+
     [TestCase(4)] [TestCase(5)] [TestCase(12)] [TestCase(21)]
     public void PlannedFloorsAlwaysReserveStartMidpointRelicAndBoss(int count)
     {

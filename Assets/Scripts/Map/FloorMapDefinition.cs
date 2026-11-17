@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
 
-public enum FloorMapMode { PlannedFloor, NormalBattlesOnly }
+public enum FloorMapMode { PlannedFloor, NormalBattlesOnly, FirstFloor }
+public enum FirstFloorNodeLayout { Regular, Start, EliteChoice, Midpoint, Conduit, RestChoice, Boss }
 
 [Serializable]
 public sealed class WeightedMapContent
@@ -54,6 +55,10 @@ public class FloorMapDefinition : ScriptableObject
         new WeightedMapContent { type = MapContentType.Event },
         new WeightedMapContent { type = MapContentType.Upgrade }
     };
+    public FirstFloorNodeLayout[] firstFloorLayout = Array.Empty<FirstFloorNodeLayout>();
+    [Range(0, 1)] public float secondNonBattleChance = .3f;
+    public BattleEncounterDefinition[] lateNormalBattles = Array.Empty<BattleEncounterDefinition>();
+    public AmmoCapacityRelic midpointEliteConduit;
     public MapBattleLimit[] battleLimits = Array.Empty<MapBattleLimit>();
     public UnknownNodeSettings unknown = new UnknownNodeSettings();
     public ScriptableObject guaranteedRelicData;

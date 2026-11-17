@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9258e5431efb3fd43ab0ad319b3ff517, type: 3}
+  m_Name: FirstFloor
+  m_EditorClassIdentifier:
+  mode: 2
+  nodeCount: 13
+  firstFloorLayout: 01000000000000000000000002000000000000000300000004000000000000000000000002000000000000000500000006000000
+  secondNonBattleChance: 0.3
+  nonBattleContents:
+  - type: 8
+    weight: 40
+    contentData: {fileID: 0}
+  - type: 3
+    weight: 30
+    contentData: {fileID: 0}
+  - type: 7
+    weight: 30
+    contentData: {fileID: 0}
+  battleLimits:
+  - firstNode: 1
+    lastNode: 5
+    maxBattles: 4
+  - firstNode: 8
+    lastNode: 12
+    maxBattles: 4
+  unknown:
+    nodeNumbers:
+    battleWeight: 40
+    eventWeight: 40
+    shopWeight: 9
+    restWeight: 9
+    relicWeight: 2
+    events:
+    - {fileID: 11400000, guid: 534af9e8d5054b22af68111f721be061, type: 2}
+    - {fileID: 11400000, guid: d4328cffe0a849e9ba95e78077921273, type: 2}
+    relics:
+    - {fileID: 11400000, guid: 2407dd8d3b2b4fe44baf3c56b199d087, type: 2}
+  guaranteedRelicData: {fileID: 11400000, guid: 9bca0cc2505449ca92216485b4655b3a, type: 2}
+  midpointEliteConduit: {fileID: 11400000, guid: 1299e955ff3b43908bb8fb1f60573fe7, type: 2}
+  normalBattles:
+  - {fileID: 11400000, guid: dcc1fcbe21d1b4845a5f7ca1d4fae20b, type: 2}
+  - {fileID: 11400000, guid: 5db08a6a6eeb4295ab6c58ce6e06701a, type: 2}
+  - {fileID: 11400000, guid: 4db63ffbd8284ed1a794ecb62417d024, type: 2}
+  lateNormalBattles:
+  - {fileID: 11400000, guid: dcc1fcbe21d1b4845a5f7ca1d4fae20b, type: 2}
+  - {fileID: 11400000, guid: 5db08a6a6eeb4295ab6c58ce6e06701a, type: 2}
+  - {fileID: 11400000, guid: 4db63ffbd8284ed1a794ecb62417d024, type: 2}
+  eliteBattles:
+  - {fileID: 11400000, guid: 3eb62ec2ed98495e90ebf0c578d3d218, type: 2}
+  - {fileID: 11400000, guid: 768f708ba66740e2b0ccdd36f518a561, type: 2}
+  - {fileID: 11400000, guid: 52f1b5e464984c6897f80cb68dbe4ea1, type: 2}
+  bossBattles:
+  - {fileID: 11400000, guid: 70894e146f8b4416b7a3291478f101e7, type: 2}

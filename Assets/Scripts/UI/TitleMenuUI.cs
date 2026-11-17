@@ -14,6 +14,7 @@ public class TitleMenuUI : MonoBehaviour
     }
 
     [SerializeField] private RunDefinition runDefinition;
+    [SerializeField] private AmmoCapacityRelic soldierStartingConduit;
     [SerializeField] private MapContentType[] supportedContent = Array.Empty<MapContentType>();
     [SerializeField] private CanvasGroup mainMenu;
     [SerializeField] private CharacterSelectionUI characterSelection;
@@ -69,7 +70,7 @@ public class TitleMenuUI : MonoBehaviour
     public void StartGame()
     {
         if (!CanActivate || characterSelection == null) return;
-        characterSelection.Open();
+        characterSelection.Open(soldierStartingConduit);
         RefreshMenu();
         ClearSelection();
     }
@@ -89,7 +90,7 @@ public class TitleMenuUI : MonoBehaviour
         characterSelection.SetBusy(true);
         try
         {
-            RunSession.GetOrCreate().StartNewRun(runDefinition,Environment.TickCount,supportedContent);
+            RunSession.GetOrCreate().StartNewRun(runDefinition, Environment.TickCount, supportedContent, soldierStartingConduit);
         }
         catch(Exception error) when(error is ArgumentException || error is InvalidOperationException)
         {

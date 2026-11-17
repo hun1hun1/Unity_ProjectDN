@@ -14,6 +14,9 @@ public class CharacterSelectionUI : MonoBehaviour
     [SerializeField] private Button backButton;
     [SerializeField] private GameObject soldierPreview, soldierInfo;
     [SerializeField] private GameObject deckDetails;
+    [SerializeField] private GameObject startingConduitRow;
+    [SerializeField] private UnityEngine.UI.Image startingConduitIcon;
+    [SerializeField] private TMP_Text startingConduitLabel, startingConduitEffect;
     [SerializeField] private TMP_Text dreamSummary, nightmareSummary, dreamCards, nightmareCards, statusText;
     [SerializeField] private CardDatabase dreamDeck, nightmareDeck;
 
@@ -37,13 +40,14 @@ public class CharacterSelectionUI : MonoBehaviour
         }
     }
 
-    public void Open()
+    public void Open(AmmoCapacityRelic startingConduit = null)
     {
         panelGroup ??= GetComponent<CanvasGroup>();
         openingElapsed = 0f;
         panelGroup.alpha = 0f;
         panelGroup.interactable = false;
         soldierToggle.SetIsOnWithoutNotify(false);
+        BindStartingConduit(startingConduit);
         gameObject.SetActive(true);
         transform.SetAsLastSibling();
         statusText.text = string.Empty;
@@ -55,6 +59,18 @@ public class CharacterSelectionUI : MonoBehaviour
         nightmareSummary.text = $"악몽 시작 덱 · {nightmare.Count}장";
         dreamCards.text = "꿈 · " + FormatDeck(dream);
         nightmareCards.text = "악몽 · " + FormatDeck(nightmare);
+    }
+
+    private void BindStartingConduit(AmmoCapacityRelic conduit)
+    {
+        if (startingConduitRow == null) return;
+        startingConduitRow.SetActive(conduit != null);
+        if (conduit == null) return;
+
+        startingConduitIcon.sprite = conduit.HudArtwork;
+        startingConduitIcon.enabled = startingConduitIcon.sprite != null;
+        startingConduitLabel.text = "시작 매개체 · " + conduit.RelicName;
+        startingConduitEffect.text = conduit.Description;
     }
 
     private void Update()

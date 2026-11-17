@@ -26,7 +26,7 @@ public class MapController : MonoBehaviour
     private static readonly Color ConduitGold = new Color(.93f, .70f, .36f);
     private RunSession session;
     private MapNode revealedNode;
-    public RunDefinition Definition => runDefinition;
+    public RunDefinition Definition => session?.Progress?.Definition ?? runDefinition;
 
     private void Awake() => session = RunSession.GetOrCreate();
     private void OnEnable() { session.Changed += Refresh; }
