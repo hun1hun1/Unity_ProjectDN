@@ -1,0 +1,754 @@
+fileFormatVersion: 2
+guid: 8036b7144e6312e4e82c4b5c17d6a30f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4723107735738678597
+    second: Idle_0
+  - first:
+      213: -7385789195546760866
+    second: Idle_1
+  - first:
+      213: 3234629978573100161
+    second: Idle_2
+  - first:
+      213: 6373048116405451881
+    second: Idle_3
+  - first:
+      213: 7264182050183361747
+    second: Idle_4
+  - first:
+      213: -2834552850196481573
+    second: Idle_5
+  - first:
+      213: 3278449094680734212
+    second: Idle_6
+  - first:
+      213: 3384493420599841878
+    second: Idle_7
+  - first:
+      213: -2331352242086191015
+    second: Idle_8
+  - first:
+      213: -3914248031228685145
+    second: Idle_9
+  - first:
+      213: 7132915409514813599
+    second: Idle_10
+  - first:
+      213: -2055793278435719954
+    second: Idle_11
+  - first:
+      213: -1133706752296058015
+    second: Idle_12
+  - first:
+      213: -7873313509577613512
+    second: Idle_13
+  - first:
+      213: 719741960001666856
+    second: Idle_14
+  - first:
+      213: -2017107389029466533
+    second: Idle_15
+  - first:
+      213: -7851968663669621680
+    second: Idle_16
+  - first:
+      213: -216799431487514718
+    second: Idle_17
+  - first:
+      213: 3610992343889596186
+    second: Idle_18
+  - first:
+      213: 6538181465538999060
+    second: Idle_19
+  - first:
+      213: 6239617922696411994
+    second: Idle_20
+  - first:
+      213: 3604202040009161566
+    second: Idle_21
+  - first:
+      213: 7714808819881066536
+    second: Idle_22
+  - first:
+      213: 4839914909742284145
+    second: Idle_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2304
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 27bd15e1009afe943bdbbdb81e19d535
+      internalID: -1834969508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_01
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 2304
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 23ecac6e7dd9c41459c5d666703c790e
+      internalID: -1279701061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_02
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 2304
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 205e53e7bcebeba43966c4d652dbb221
+      internalID: 1683960083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_03
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 2304
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 20e5add51c69e1843a4ae476de88d32c
+      internalID: 221773793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_04
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 2304
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1542f3ed56304a249ab3352253640de4
+      internalID: 1814130376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_05
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 2304
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e9c4772d86ab46d4983ff56f92a7f3f8
+      internalID: 1776543802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_06
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1536
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b550a38d4026a4041922e917657e07e2
+      internalID: 895513760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_07
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1536
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6f53dc09569d494a9131af9c93baa9b
+      internalID: 915655326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_08
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1536
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5572da205ec8ca47bab647a645b8d80
+      internalID: 2027599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_09
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 1536
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0eac283e0e9eedd4e9ac63238efdebb7
+      internalID: 220975470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_10
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1536
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba911bb1e9018ce4bb2adbabf8ffffea
+      internalID: -1590486399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_11
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1536
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3b197cdb3c11fee49a9fef48c88956dc
+      internalID: -1096710395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 768
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec0040c6936e00e47b13fd5d59ba0823
+      internalID: -142250703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_13
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 768
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70183403907cf714b94c357679a9c125
+      internalID: 998650474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_14
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 768
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c03ed1cef25cf5f439fc71d9e59585e1
+      internalID: -903125654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_15
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 768
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 877e7b2114e4b9a49bf7859cfe9aa751
+      internalID: 1578109027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_16
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 768
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e6439960880bdc346a3f54636120edf8
+      internalID: 817655478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_17
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 768
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 610d66cabdbd6184683073dfcf8ec393
+      internalID: 303309607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3947f95caafb81844aef7b693919d347
+      internalID: -20594454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_19
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 0
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1156b74fbcf558b4b865843024ce343b
+      internalID: 652390099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_20
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 0
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53684eda823180d44b23a87f56a865e4
+      internalID: -793610152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_21
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 0
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5d303eebceb6af40bbc9b83e34dd552
+      internalID: -1904906117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_22
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 0
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 26cdb6f49e9c2c34b88b8780441e1d2e
+      internalID: 1590616200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FoldedPaperSoldier_23
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 0
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8139b3be1eb044542a44dcbe816903d9
+      internalID: 1482881379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: acee0b89419574f4bb305e5003746034
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      FoldedPaperSoldier_00: -1834969508
+      FoldedPaperSoldier_01: -1279701061
+      FoldedPaperSoldier_02: 1683960083
+      FoldedPaperSoldier_03: 221773793
+      FoldedPaperSoldier_04: 1814130376
+      FoldedPaperSoldier_05: 1776543802
+      FoldedPaperSoldier_06: 895513760
+      FoldedPaperSoldier_07: 915655326
+      FoldedPaperSoldier_08: 2027599
+      FoldedPaperSoldier_09: 220975470
+      FoldedPaperSoldier_10: -1590486399
+      FoldedPaperSoldier_11: -1096710395
+      FoldedPaperSoldier_12: -142250703
+      FoldedPaperSoldier_13: 998650474
+      FoldedPaperSoldier_14: -903125654
+      FoldedPaperSoldier_15: 1578109027
+      FoldedPaperSoldier_16: 817655478
+      FoldedPaperSoldier_17: 303309607
+      FoldedPaperSoldier_18: -20594454
+      FoldedPaperSoldier_19: 652390099
+      FoldedPaperSoldier_20: -793610152
+      FoldedPaperSoldier_21: -1904906117
+      FoldedPaperSoldier_22: 1590616200
+      FoldedPaperSoldier_23: 1482881379
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

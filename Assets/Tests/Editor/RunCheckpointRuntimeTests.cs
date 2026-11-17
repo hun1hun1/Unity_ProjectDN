@@ -30,6 +30,60 @@ public partial class RunCheckpointRuntimeTests
         title.ConfirmAdventure();
     }
 
+    [UnityTest]
+    public IEnumerator ThornThicketGrantsThreePermanentThornsAtBattleStartAndAfterContinue()
+    {
+        yield return new EnterPlayMode();
+        yield return VerifyThornThicket();
+        yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator VerifyThornThicket()
+    {
+        Isolate();
+        yield return Load("TitleScene");
+        var conduit = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/ThornThicket.asset");
+        var definition = AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
+        Assert.That(conduit, Is.Not.Null);
+        Assert.That(conduit.HudArtwork, Is.Not.Null);
+        Assert.That(conduit.HudArtwork.rect.size, Is.EqualTo(new Vector2(256, 256)));
+        RunSession session = RunSession.GetOrCreate();
+        session.StartNewRun(definition, 41, new[] { MapContentType.Shop, MapContentType.Rest,
+            MapContentType.Relic, MapContentType.Event }, conduit);
+        yield return WaitMap();
+        Assert.That(RunSaves.TryLoad(out RunSaveData saved, out string error), Is.True, error);
+        RunRelicData grant = saved.inventory.relics.Single();
+        Assert.That(grant.battleStartBuffPower, Is.EqualTo(3));
+        Assert.That(RunAssetCatalog.Load().Resolve<StatusEffectData>(grant.battleStartBuff).Type,
+            Is.EqualTo(StatusEffectType.Thorns));
+        Assert.That(session.SelectOption(0), Is.True, session.SaveError);
+        yield return WaitBattle();
+
+        BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
+        Player player = battle.GetPlayer();
+        Enemy enemy = battle.GetTarget();
+        Assert.That(player.StatusEffects.GetBuffPower(StatusEffectType.Thorns), Is.EqualTo(3));
+        Assert.That(enemy.StatusEffects.GetBuffPower(StatusEffectType.Thorns), Is.Zero);
+        Assert.That(player.StatusEffects.ActiveEffects.Single().IsPermanent, Is.True);
+        player.StatusEffects.ReduceRemainingTurns();
+        int enemyHP = enemy.GetCurrentHP();
+        player.TakeDamage(1, enemy);
+        Assert.That(enemy.GetCurrentHP(), Is.EqualTo(enemyHP - 3));
+        GameObject slot = GameObject.Find("ConduitArea").transform.Find(conduit.name).gameObject;
+        Assert.That(slot.transform.Find("Artwork").GetComponent<Image>().sprite, Is.SameAs(conduit.HudArtwork));
+
+        Assert.That(session.ReturnToTitle(), Is.True, session.SaveError);
+        yield return LoadDone("TitleScene");
+        Object.Destroy(RunSession.Instance.gameObject);
+        yield return null;
+        RunRelicInventory.ResetForNewGame();
+        Object.FindFirstObjectByType<TitleMenuUI>().ContinueGame();
+        yield return WaitBattle();
+        Assert.That(RunRelicInventory.Contains(conduit), Is.True);
+        Assert.That(Object.FindFirstObjectByType<BattleManager>().GetPlayer().StatusEffects.GetBuffPower(StatusEffectType.Thorns),
+            Is.EqualTo(3));
+    }
+
     [UnityTest] public IEnumerator ReturnFromBattleRestartsItsEntryStateAcrossSessionDestruction()
     {yield return new EnterPlayMode();yield return VerifyBattleReturn();yield return new ExitPlayMode();}
     private static IEnumerator VerifyBattleReturn()

@@ -5,8 +5,34 @@ using UnityEngine;
 // Runtime state belongs to the current game, never to a shared relic asset.
 public static class RunRelicInventory
 {
-    private static readonly Dictionary<AmmoCapacityRelic, (int Capacity, int StartAmmo)> ownedRelics =
-        new Dictionary<AmmoCapacityRelic, (int Capacity, int StartAmmo)>();
+    private readonly struct RelicEffects
+    {
+        public readonly int Capacity, StartAmmo, BuffPower;
+        public readonly StatusEffectData StartBuff;
+
+        public RelicEffects(int capacity, int startAmmo, StatusEffectData startBuff, int buffPower)
+        {
+            Capacity = capacity;
+            StartAmmo = startAmmo;
+            StartBuff = startBuff;
+            BuffPower = buffPower;
+        }
+
+        public RelicEffects(AmmoCapacityRelic relic)
+            : this(relic.MaxAmmoBonus, relic.BattleStartAmmo, relic.BattleStartBuff, relic.BattleStartBuffPower) { }
+
+        public RunRelicData Capture(AmmoCapacityRelic relic, RunAssetCatalog catalog) => new RunRelicData
+        {
+            id = catalog.Key(relic),
+            bonus = Capacity,
+            battleStartAmmo = StartAmmo,
+            battleStartBuff = catalog.Key(StartBuff),
+            battleStartBuffPower = BuffPower
+        };
+    }
+
+    private static readonly Dictionary<AmmoCapacityRelic, RelicEffects> ownedRelics =
+        new Dictionary<AmmoCapacityRelic, RelicEffects>();
     private static readonly List<AmmoCapacityRelic> acquisitionOrder = new List<AmmoCapacityRelic>();
     internal static IReadOnlyList<AmmoCapacityRelic> InAcquisitionOrder { get; } = acquisitionOrder.AsReadOnly();
     public static int Count => ownedRelics.Count;
@@ -19,7 +45,7 @@ public static class RunRelicInventory
     {
         if (relic == null || !relic.HasEffect || ownedRelics.ContainsKey(relic)) return false;
         // Capture the values on acquisition so editing the asset cannot rewrite run state.
-        Add(relic, relic.MaxAmmoBonus, relic.BattleStartAmmo);
+        Add(relic, new RelicEffects(relic));
         Changed?.Invoke();
         return true;
     }
@@ -29,19 +55,26 @@ public static class RunRelicInventory
         return relic != null && ownedRelics.ContainsKey(relic);
     }
 
+    internal static RunRelicData CaptureStartingConduit(AmmoCapacityRelic relic, RunAssetCatalog catalog) =>
+        new RelicEffects(relic).Capture(relic, catalog);
+
+    internal static void ApplyBattleStartBuffs(Player player)
+    {
+        foreach (AmmoCapacityRelic relic in acquisitionOrder)
+        {
+            RelicEffects effect = ownedRelics[relic];
+            if (effect.StartBuff != null)
+                player.StatusEffects.Apply(effect.StartBuff, 0, effect.BuffPower);
+        }
+    }
+
     internal static RunRelicData[] Capture(RunAssetCatalog catalog)
     {
         var result = new RunRelicData[acquisitionOrder.Count];
         for (int i = 0; i < result.Length; i++)
         {
             AmmoCapacityRelic relic = acquisitionOrder[i];
-            var effect = ownedRelics[relic];
-            result[i] = new RunRelicData
-            {
-                id = catalog.Key(relic),
-                bonus = effect.Capacity,
-                battleStartAmmo = effect.StartAmmo
-            };
+            result[i] = ownedRelics[relic].Capture(relic, catalog);
         }
         return result;
     }
@@ -49,16 +82,17 @@ public static class RunRelicInventory
     {
         Clear();
         foreach (RunRelicData entry in data)
-            Add(catalog.Resolve<AmmoCapacityRelic>(entry.id), entry.bonus, entry.battleStartAmmo);
+            Add(catalog.Resolve<AmmoCapacityRelic>(entry.id), new RelicEffects(entry.bonus, entry.battleStartAmmo,
+                catalog.Resolve<StatusEffectData>(entry.battleStartBuff), entry.battleStartBuffPower));
         unchecked { GameVersion++; }
         Changed?.Invoke();
     }
-    private static void Add(AmmoCapacityRelic relic, int capacity, int startAmmo)
+    private static void Add(AmmoCapacityRelic relic, RelicEffects effect)
     {
-        ownedRelics.Add(relic, (capacity, startAmmo));
+        ownedRelics.Add(relic, effect);
         acquisitionOrder.Add(relic);
-        MaxAmmoBonus = (int)Math.Min(int.MaxValue, (long)MaxAmmoBonus + capacity);
-        BattleStartAmmo = (int)Math.Min(int.MaxValue, (long)BattleStartAmmo + startAmmo);
+        MaxAmmoBonus = (int)Math.Min(int.MaxValue, (long)MaxAmmoBonus + effect.Capacity);
+        BattleStartAmmo = (int)Math.Min(int.MaxValue, (long)BattleStartAmmo + effect.StartAmmo);
     }
 
     private static void Clear()

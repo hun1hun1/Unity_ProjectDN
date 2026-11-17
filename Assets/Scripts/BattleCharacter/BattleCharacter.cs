@@ -59,7 +59,10 @@ public abstract class BattleCharacter : MonoBehaviour
 
     public virtual void TakeDamage(int damage, BattleCharacter attacker)
     {
-        damage = DamageCalculator.Calculate(damage, attacker, this);
+        bool isAttack = damage > 0 && currentHP > 0 && attacker != null && attacker != this && attacker.currentHP > 0;
+        int thorns = isAttack ? StatusEffects.GetBuffPower(StatusEffectType.Thorns) : 0;
+        damage = isAttack && StatusEffects.HasStatus(StatusEffectType.Ward)
+            ? 0 : DamageCalculator.Calculate(damage, attacker, this);
         // 방어도가 먼저 피해를 흡수
         int remainingDamage = damage - block;
 
@@ -72,6 +75,12 @@ public abstract class BattleCharacter : MonoBehaviour
             block = 0;
 
         ApplyDamageToHealth(damage, remainingDamage);
+        if (!isAttack) return;
+        StatusEffects.ConsumeTriggeredBuffs(BuffDuration.NextIncomingAttack);
+        if (attacker != null) attacker.StatusEffects.ConsumeTriggeredBuffs(BuffDuration.NextAttack);
+        // Fixed retaliation does not count as attacking and cannot trigger another reaction.
+        if (thorns > 0 && currentHP > 0 && attacker != null && attacker.currentHP > 0)
+            attacker.TakeFixedDamage(thorns);
     }
 
     internal void TakeFixedDamage(int damage) => ApplyDamageToHealth(damage, damage);

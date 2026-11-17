@@ -46,9 +46,15 @@ public static class RunSaveCodec
         keys.Clear();long bonus=0;
         foreach(RunRelicData relic in data.relics)
         {
-            if(relic==null || relic.bonus<0 || relic.battleStartAmmo<0 || (relic.bonus==0 && relic.battleStartAmmo==0) ||
+            if(relic==null || relic.bonus<0 || relic.battleStartAmmo<0 || relic.battleStartBuffPower<0 ||
                 !keys.Add(relic.id) || catalog.Resolve<AmmoCapacityRelic>(relic.id)==null)
                 throw new InvalidOperationException("Invalid saved relic.");
+            bool hasStartBuff = !string.IsNullOrEmpty(relic.battleStartBuff);
+            if (hasStartBuff != (relic.battleStartBuffPower > 0) ||
+                (hasStartBuff && !AmmoCapacityRelic.IsValidBattleStartBuff(
+                    catalog.Resolve<StatusEffectData>(relic.battleStartBuff), relic.battleStartBuffPower)) ||
+                (!hasStartBuff && relic.bonus == 0 && relic.battleStartAmmo == 0))
+                throw new InvalidOperationException("Invalid saved relic effects.");
             bonus+=relic.bonus;
         }
         if(bonus>int.MaxValue)throw new InvalidOperationException("Invalid relic bonus.");

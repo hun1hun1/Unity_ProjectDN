@@ -250,11 +250,14 @@ public static class MapGenerator
             floor.eliteBattles.Length < 3)
             throw new InvalidOperationException("The first floor needs at least three distinct elite encounters.");
         var eliteRewards = new HashSet<AmmoCapacityRelic>();
-        foreach (BattleEncounterDefinition encounter in floor.eliteBattles)
-            if (encounter.victoryConduit == null || !encounter.victoryConduit.HasEffect ||
-                encounter.victoryConduit == floor.guaranteedRelicData || encounter.victoryConduit == floor.midpointEliteConduit ||
-                !eliteRewards.Add(encounter.victoryConduit))
-                throw new InvalidOperationException("Each first-floor elite needs a distinct victory conduit.");
+        if (floor.eliteVictoryConduits == null || floor.eliteVictoryConduits.Length == 0)
+            throw new InvalidOperationException("The first floor needs an elite victory conduit pool.");
+        foreach (AmmoCapacityRelic conduit in floor.eliteVictoryConduits)
+            if (conduit == null || !conduit.HasEffect ||
+                (conduit.Rarity != ConduitRarity.Common && conduit.Rarity != ConduitRarity.Uncommon) ||
+                conduit == floor.guaranteedRelicData || conduit == floor.midpointEliteConduit ||
+                !eliteRewards.Add(conduit))
+                throw new InvalidOperationException("The first-floor elite pool needs unique Common or Uncommon conduits reserved for random rewards.");
 
         var types = new HashSet<MapContentType> { MapContentType.Unknown, MapContentType.Shop, MapContentType.Rest };
         if (floor.nonBattleContents == null || floor.nonBattleContents.Length != types.Count)

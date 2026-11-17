@@ -2,7 +2,7 @@
 
 ## 캐릭터
 
-`Assets/Prefabs/Player/Soldier.prefab`에 Soldier, CostSystem, DeckController, AmmoSystem이 포함되어 있습니다. 총알 UI는 캐릭터 프리팹에 포함하지 않고 BattleScene의 별도 HUD에 배치합니다. 기본 최대 총알은 10알, 전투 시작 총알은 0알입니다. AmmoSystem의 Max Ammo / Starting Ammo를 Inspector에서 변경할 수 있습니다. 총알은 턴 전환 시 유지되고, 캐릭터 또는 전투가 초기화될 때 시작값으로 설정됩니다.
+`Assets/Prefabs/Player/Soldier.prefab`에 Soldier, CostSystem, DeckController, AmmoSystem이 포함되어 있습니다. 총알 UI는 BattleScene의 별도 HUD에 배치합니다. 프리팹의 기본 최대 총알은 10알, 기본 시작값은 0알입니다. AmmoSystem의 Max Ammo와 Starting Ammo를 Inspector에서 변경할 수 있습니다. 총알은 턴 전환 시 유지됩니다. 전투가 시작되면 잔탄을 시작값으로 초기화하고, 보유 매개체의 장전량을 최대 탄약 한도 내에서 더합니다.
 
 실행 중 Inspector에서 최대량이나 현재량을 변경하면 다음 프레임에 총알 UI가 갱신됩니다. Starting Ammo를 변경해도 진행 중인 전투의 잔탄을 초기화하지는 않습니다.
 
@@ -75,9 +75,9 @@ Create > Card > Effect > Increase Max Ammo에서 `IncreaseMaxAmmoEffect`를 생�
 
 `AmmoSystem.ResetForBattle()`은 전투 한정 보너스를 제거하고 잔탄을 Starting Ammo로 초기화하며 매개체 보너스는 유지합니다. BattleManager의 Start에서 호출하므로 같은 Soldier를 다음 전투에서 재사용해도 카드 증가분이 넘어가지 않습니다. 기본 Player처럼 AmmoSystem이 없는 캐릭터에는 증가 효과가 적용되지 않습니다.
 
-### 이번 게임 동안 증가하는 매개체
+### 탄약 매개체
 
-Create > Relic > Ammo Capacity에서 `AmmoCapacityRelic`을 생성합니다. Relic Name, Description, Max Ammo Bonus를 Inspector에서 설정합니다. 매개체 획득 처리에서는 아래 둘 중 하나를 호출합니다.
+**Create → Conduit → Ammo Capacity**에서 `AmmoCapacityRelic`을 생성합니다. Inspector에서 이름·설명·등급·이미지와 Max Ammo Bonus 또는 Battle Start Ammo를 설정합니다. 매개체 획득 처리에서는 아래 둘 중 하나를 호출합니다.
 
 ```csharp
 bool acquired = relic.Acquire();
@@ -88,6 +88,6 @@ bool acquired = relic.Acquire();
 
 새 게임을 시작할 때 `RunRelicInventory.ResetForNewGame()`을 호출합니다. 매개체 보유 상태와 보너스를 비우고 현재 Soldier의 전투 보너스와 잔탄도 초기화합니다. 비활성 Soldier도 다시 활성화할 때 새 게임 초기화를 적용합니다. Play Mode에 새로 진입하면 상태가 자동 초기화됩니다.
 
-런 체크포인트에는 보유 매개체와 획득 당시 확정한 탄약 보너스를 기록합니다. 유효한 체크포인트에서 이어서 하면 이를 복원합니다. 매개체 획득 화면은 미구현이며 위 API로 획득을 처리할 수 있습니다. [노드 체크포인트와 이어서 하기](RunCheckpoints.md) 참고.
+타이틀에서 새 모험을 시작한 군인은 탄피를 가지고 시작합니다. 탄피는 전투마다 시작 시 2알을 장전합니다. 7번 매개체 노드, 미지 결과, 엘리트 보상에서 확장 탄창 계열을 얻을 수 있습니다. 런 체크포인트는 보유 매개체의 획득 순서와 획득 당시 확정한 최대 탄약 증가량·전투 시작 장전량을 복원합니다. [매개체 노드](MapSystem.md#매개체-노드) · [노드 체크포인트](RunCheckpoints.md#1층-조우와-매개체-복원)
 
-`Examples/IncreaseMaxAmmo.asset`은 전투 최대량 +1 카드, `Examples/AmmoCapacityRelic.asset`은 게임 최대량 +1 매개체 예시입니다. 기본 덱과 BattleScene에는 자동 적용하지 않습니다.
+`Examples/IncreaseMaxAmmo.asset`은 전투 최대량 +1 카드 예시입니다. `Examples/AmmoCapacityRelic.asset`은 런 최대량 +1 매개체이며, 1층 미지의 매개체 후보에 등록되어 있습니다.

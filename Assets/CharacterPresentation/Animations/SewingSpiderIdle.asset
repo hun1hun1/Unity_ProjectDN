@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ceed63113d6bf4086984f4629237a8, type: 3}
+  m_Name: SewingSpiderIdle
+  m_EditorClassIdentifier: 
+  setupVersion: 1
+  frames:
+  - {fileID: -2142667620, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -2070445604, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -73832164, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -566267572, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -1836342282, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: 32346211, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: 1571249184, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: 673553328, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: 201789105, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: 642950851, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -1624362776, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: 598618650, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: 1176753115, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -1700449115, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -741382032, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -42681035, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -2080665428, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: 1421808819, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -231202935, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -843150034, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -815584685, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: 247626387, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -289985370, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  - {fileID: -808728046, guid: eeb42eed40202694da6f78bac6516243, type: 3}
+  frameDuration: 0.1
+  groundPivot: {x: 0.5, y: 0.0625}
+  contentBounds:
+    serializedVersion: 2
+    x: 0.057291668
+    y: 0.0625
+    width: 0.8802083
+    height: 0.6171875

@@ -56,15 +56,7 @@ public class RunSession : MonoBehaviour
             RunAssetCatalog catalog = RunAssetCatalog.Load();
             var inventory = new RunInventoryData { gold = startingGold };
             if (startingConduit != null)
-                inventory.relics = new[]
-                {
-                    new RunRelicData
-                    {
-                        id = catalog.Key(startingConduit),
-                        bonus = startingConduit.MaxAmmoBonus,
-                        battleStartAmmo = startingConduit.BattleStartAmmo
-                    }
-                };
+                inventory.relics = new[] { RunRelicInventory.CaptureStartingConduit(startingConduit, catalog) };
             initial = new RunSaveData { progress = next.Capture(catalog), inventory = inventory };
             RunSaveCodec.Validate(initial, catalog);
             if(!RunSaves.Store.TryWrite(initial,out string error))throw new InvalidOperationException("Could not save the new run: "+error);
@@ -155,8 +147,7 @@ public class RunSession : MonoBehaviour
         RunAssetCatalog catalog = Application.isPlaying ? RunAssetCatalog.Load() : null;
         RunProgressData before = catalog != null ? Progress.Capture(catalog) : null;
         RunSaveData previous = checkpoint;
-        MapChoice selected = Progress.CurrentNode.SelectedChoice;
-        AmmoCapacityRelic conduit = selected.Type == MapContentType.EliteBattle ? selected.Encounter.victoryConduit : null;
+        AmmoCapacityRelic conduit = Progress.GetEliteVictoryConduit();
         RunRelicData[] relicsBefore = catalog != null && conduit != null ? RunRelicInventory.Capture(catalog) : null;
         Progress.CaptureHealth(currentHP, maxHP);
         if (!Progress.CompleteNode(floor, node)) return false;

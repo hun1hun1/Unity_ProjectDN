@@ -76,26 +76,30 @@ public partial class RunCheckpointRuntimeTests
         Assert.That(session.SelectOption(0), Is.True);
         yield return WaitBattle();
         Assert.That(state.CurrentNode.SelectedChoice.Type, Is.EqualTo(MapContentType.EliteBattle));
-        AmmoCapacityRelic reward = state.CurrentNode.SelectedChoice.Encounter.victoryConduit;
-        Assert.That(reward, Is.Not.Null);
+        Assert.That(state.CurrentNode.SelectedChoice.Encounter.victoryConduit, Is.Null);
         Object.FindFirstObjectByType<BattleManager>().GetTarget().TakeDamage(100000);
         BattleRewardSystem rewards = Object.FindFirstObjectByType<BattleRewardSystem>();
+        int originalCount = RunRelicInventory.Count;
         using (var locked = new FileStream(RunSaves.Store.Path, FileMode.Open, FileAccess.Read, FileShare.None))
         {
             rewards.SkipRemaining();
             Assert.That(state.Phase, Is.EqualTo(RunPhase.Rewards));
-            Assert.That(RunRelicInventory.Contains(reward), Is.False);
+            Assert.That(RunRelicInventory.Count, Is.EqualTo(originalCount));
         }
         Assert.That(rewards.SkipRemaining(), Is.True);
         yield return WaitMap();
-        Assert.That(RunRelicInventory.Contains(reward), Is.True);
-        Assert.That(RunRelicInventory.Count, Is.EqualTo(2));
+        Assert.That(RunRelicInventory.Count, Is.EqualTo(originalCount + 1));
         Assert.That(RunSaves.TryLoad(out RunSaveData saved, out _), Is.True);
         Assert.That(saved.inventory.relics.Length, Is.EqualTo(2));
         RunAssetCatalog catalog = RunAssetCatalog.Load();
         var casing = UnityEditor.AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/SoldierStartingCasing.asset");
-        Assert.That(System.Array.ConvertAll(saved.inventory.relics, entry => entry.id),
-            Is.EquivalentTo(new[] { catalog.Key(casing), catalog.Key(reward) }));
+        Assert.That(saved.inventory.relics[0].id, Is.EqualTo(catalog.Key(casing)));
+        RunRelicData granted = saved.inventory.relics[1];
+        Assert.That(granted, Is.Not.Null);
+        AmmoCapacityRelic reward = catalog.Resolve<AmmoCapacityRelic>(granted.id);
+        Assert.That(reward, Is.Not.Null);
+        Assert.That(state.Definition.floors[0].eliteVictoryConduits, Does.Contain(reward));
+        Assert.That(RunRelicInventory.Contains(reward), Is.True);
         yield return new ExitPlayMode();
     }
 

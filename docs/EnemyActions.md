@@ -1,6 +1,6 @@
-# 적 디버프와 복합 행동
+# 적 상태 부여와 복합 행동
 
-정리 기준일: 2026-10-20.
+정리 기준일 2026-11-18.
 
 `EnemyApplyStatusAction`은 상태이상을 부여하고, `EnemyCompositeAction`은 여러 `EnemyAction`을 등록 순서대로 한 턴에 실행합니다. 기존 공격·방어 행동을 그대로 재사용합니다. 행동 선택 방식은 [적 행동 패턴](EnemyBehaviors.md), 프리팹 연결은 [적 프리팹](EnemyPrefabs.md)을 참고합니다.
 
@@ -11,6 +11,8 @@
 | `Assets/Enemy/Examples/Debuff.asset` | 플레이어에게 약점 노출 2턴 부여 |
 | `Assets/Enemy/Examples/DebuffAttack.asset` | 약점 노출 부여 → 기본 공격 10 |
 | `Assets/Enemy/Examples/BlockAttack.asset` | 방어도 8 획득 → 기본 공격 10 |
+| `Assets/Enemy/Examples/BuffThorns.asset` | 적 자신에게 전투 종료까지 가시 3 부여 |
+| `Assets/Enemy/Examples/BuffWard.asset` | 적 자신에게 다음 공격 피해를 한 번 상쇄하는 방호막 부여 |
 | `Assets/Enemy/Examples/AllActions.asset` | 방어 → 중첩 복합 행동(약점 노출 → 공격) |
 | `Assets/Enemy/Examples/ExpandedBehavior.asset` | 위의 디버프, 디버프+공격, 방어+공격을 순서대로 사용하는 예제 패턴 |
 | `Assets/Enemy/DefaultEnemyActionIcons.asset` | 공격·방어·디버프의 7가지 조합별 Sprite |
@@ -18,20 +20,20 @@
 
 예제는 기본 전투에 자동으로 넣지 않습니다. `NormalEncounter`의 HP·보상·행동 참조와 `Behavior_Test`의 공격 10 → 방어 8 순서는 유지합니다. 기존 공격·방어 에셋에는 공통 아이콘 세트 참조만 추가했습니다.
 
-## 디버프 행동 만들기
+## 상태 부여 행동 만들기
 
 1. `Create → Enemy → Action → Apply Status`로 에셋을 만듭니다.
 2. `Status`에 `Assets/StatusData/`의 상태 정의를 연결합니다.
-3. `Turns`에 지속 턴, `Target`에 `Player` 또는 `Self`를 지정합니다. 기본값은 플레이어·2턴입니다.
+3. `Target`을 `Player` 또는 `Self`로 정합니다. 턴제는 `Turns`, 화상은 `Turns`에 추가 중첩 수, 버프는 `Buff Power`에 부여 수치를 지정합니다. 버프의 지속 방식은 상태 정의의 `Buff Duration`을 따릅니다.
 4. `Icon Set`에 `DefaultEnemyActionIcons`를 연결하거나 `Action Icon`에 개별 아이콘을 지정합니다.
 5. 해당 적이 사용할 `EnemyBehavior`의 `Actions`에 등록합니다.
 
-기존 상태이상 적용 규칙을 사용합니다. 양쪽 캐릭터 모두 플레이어 턴 시작에 남은 턴이 1 줄어들므로, 적 턴에 부여한 **1턴 상태는 바로 다음 플레이어 턴 시작에 만료**됩니다. 2턴이면 다음 플레이어 턴에 1턴으로 남습니다. 이를 보정하려고 내부에서 지속 턴을 자동으로 더하지 않습니다. 같은 상태를 재부여하면 기간이 더해지고 배율은 중복되지 않습니다.
+턴제 디버프는 기존 지속 규칙을 사용합니다. 양쪽 캐릭터 모두 플레이어 턴 시작에 남은 턴이 1 줄어들므로, 적 턴에 부여한 **1턴 상태는 바로 다음 플레이어 턴 시작에 만료**됩니다. 2턴이면 다음 플레이어 턴에 1턴으로 남습니다. 이를 보정하려고 내부에서 지속 턴을 자동으로 더하지 않습니다. 같은 상태를 재부여하면 기간이 더해지고 배율은 중복되지 않습니다.
 
 ## 복합 행동 만들기
 
 1. `Create → Enemy → Action → Composite`로 에셋을 만듭니다.
-2. `Actions` 배열에 원하는 순서로 기존 공격·방어·디버프 행동을 연결합니다.
+2. `Actions` 배열에 원하는 순서로 기존 공격·방어·상태 부여 행동을 연결합니다.
 3. `Icon Set`에 `DefaultEnemyActionIcons`를 연결합니다.
 4. 적의 `EnemyBehavior.Actions`에는 이 **복합 행동 에셋**을 하나의 항목으로 등록합니다.
 5. 맵 전투는 `BattleEncounterDefinition.behavior`, 단독 전투는 Enemy의 Behavior를 통해 기존 방식으로 연결합니다.
@@ -44,7 +46,7 @@
 
 ## 조합별 아이콘
 
-각 행동은 `EnemyActionKinds`로 공격(1), 방어(2), 디버프(4)를 제공합니다. 복합 행동은 중첩된 내부 행동까지 종류를 합칩니다. 같은 종류가 여러 번 있어도 종류 하나로 표시합니다.
+각 행동은 `EnemyActionKinds`로 공격(1), 방어(2), 디버프(4)를 제공합니다. 복합 행동은 중첩된 내부 행동까지 종류를 합칩니다. 같은 종류가 여러 번 있어도 종류 하나로 표시합니다. 단독 버프 행동은 개별 아이콘을 지정하거나 상태 정의의 아이콘을 사용합니다. 버프가 공격·방어·디버프와 함께 있으면 조합 아이콘은 기존 종류 조합으로 정하고 버프 이름과 수치는 예고 설명에 표시합니다.
 
 | 내부 종류 | 아이콘 세트 필드 |
 |---|---|
@@ -64,7 +66,7 @@
 
 ## 예고와 실행의 일치
 
-`EnemyActionPreviewContext`는 양쪽 상태이상과 플레이어 HP·방어도를 복사합니다. 복합 행동 설명은 같은 복사본에 내부 행동을 순서대로 반영하므로, 앞에서 부여한 약점 노출·녹슬음·방어 파괴를 뒤의 피해·방어도 예고에 반영합니다. 치명 피해 뒤의 행동은 예고에서도 제외합니다.
+`EnemyActionPreviewContext`는 양쪽 상태이상과 플레이어 HP·방어도를 복사합니다. 복합 행동 설명은 같은 복사본에 내부 행동을 순서대로 반영하므로, 앞에서 부여한 약점 노출·녹슬음·방어 파괴를 뒤의 피해·방어도 예고에 반영합니다. 치명 피해 뒤의 행동은 예고에서도 제외합니다. 방호막이 있으면 연속 공격 예고의 첫 타격을 0으로 계산하고, 다음 타격부터 남은 방호막이 없는 상태로 계산합니다.
 
 HP·방어도 변경은 `BattleCharacter.VitalsChanged`로 통지하며, 적은 양쪽 캐릭터의 상태이상과 HP·방어도 변화를 구독합니다. 방어 카드 사용·피격·회복·턴 시작 방어도 초기화 시에도 현재 예고만 갱신하고 행동은 다시 추첨하지 않습니다.
 

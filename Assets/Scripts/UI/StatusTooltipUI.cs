@@ -55,6 +55,18 @@ public class StatusTooltipUI : MonoBehaviour
         if (owner != icon || effect == null || contentText == null) return;
         string statusAmount = effect.IsPermanent ? "전투 종료까지 지속" : $"남은 턴: {effect.RemainingTurns}";
         if (effect.Type == StatusEffectType.Burn) statusAmount = $"중첩: {effect.StackCount}";
+        if (effect.Definition.Category == StatusEffectCategory.Buff)
+        {
+            if (effect.RemainingTurns == 0 && !effect.IsPermanent)
+                statusAmount = "";
+            if (effect.HasNextAttackBuff)
+                statusAmount += (statusAmount.Length > 0 ? "\n" : "") + "다음 공격 시 소모";
+            if (effect.HasNextIncomingAttackBuff)
+                statusAmount += (statusAmount.Length > 0 ? "\n" : "") + "다음 공격을 받을 때 소모";
+            if (effect.IsPending) statusAmount += (statusAmount.Length > 0 ? "\n" : "") + "다음 플레이어 턴에 발동";
+            if (effect.IsActive && effect.Type != StatusEffectType.Ward)
+                statusAmount = $"버프 수치: {effect.BuffPower}\n{statusAmount}";
+        }
         contentText.text = $"{CardStatusDescriptionBuilder.FormatTitle(effect.Definition.DisplayName)}\n{effect.Definition.Description}\n{statusAmount}";
         UpdatePosition();
     }

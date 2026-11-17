@@ -39,7 +39,9 @@
 
 전체 음량은 `AudioListener.volume`으로 적용합니다. 배경음·효과음은 해당 AudioSource의 **Settings Audio Source** 컴포넌트에서 Bus를 Music 또는 Effects로 지정합니다. 컴포넌트는 원래 AudioSource Volume을 보존하고 채널 배율을 곱하므로 반복 변경 시 음량이 누적해서 줄어들지 않습니다.
 
-기존 카드 연출이 생성하는 소리는 Effects로 자동 연결했습니다. 배경음을 추가할 때는 그 AudioSource에 SettingsAudioSource를 추가하고 Bus를 Music으로 지정합니다. AudioMixer나 새 패키지는 추가하지 않았습니다.
+카드와 적 행동의 `PlaySoundPresentationStep`이 생성하는 AudioSource는 Effects를 사용합니다. 예를 들어 전체 80%, 효과음 50%라면 원래 음량에 40%를 적용합니다. 효과음 0%에서는 Effects 소리가 음소거되며, Music 소리는 전체·배경음 설정을 따릅니다. [카드·적 행동 연출](CardPresentations.md)
+
+현재 타이틀과 전투 씬에 AudioListener가 있습니다. 맵의 AudioListener, 씬 공용 효과음 재생기와 UI·전투 효과음 배치는 [효과음 작업 목록](../ToDo_List.md#게임-효과음)에 있습니다.
 
 ## 저장과 검증
 

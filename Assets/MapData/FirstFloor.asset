@@ -50,14 +50,24 @@ MonoBehaviour:
   normalBattles:
   - {fileID: 11400000, guid: dcc1fcbe21d1b4845a5f7ca1d4fae20b, type: 2}
   - {fileID: 11400000, guid: 5db08a6a6eeb4295ab6c58ce6e06701a, type: 2}
-  - {fileID: 11400000, guid: 4db63ffbd8284ed1a794ecb62417d024, type: 2}
+  - {fileID: 11400000, guid: efef01161a981b642bc763e346014bba, type: 2}
+  - {fileID: 11400000, guid: f94a5739ede01c5469b393c7dde9846a, type: 2}
   lateNormalBattles:
-  - {fileID: 11400000, guid: dcc1fcbe21d1b4845a5f7ca1d4fae20b, type: 2}
-  - {fileID: 11400000, guid: 5db08a6a6eeb4295ab6c58ce6e06701a, type: 2}
+  - {fileID: 11400000, guid: 3bbef2a109290674bbbf04e6eb76bb0a, type: 2}
   - {fileID: 11400000, guid: 4db63ffbd8284ed1a794ecb62417d024, type: 2}
+  - {fileID: 11400000, guid: a195721717d50fa40bb291d97b159d38, type: 2}
+  - {fileID: 11400000, guid: 620c1b5d0cb7ddd419cc70557b62c688, type: 2}
+  - {fileID: 11400000, guid: 855b3c21ca1314f47b4b5dde59d19851, type: 2}
   eliteBattles:
-  - {fileID: 11400000, guid: 3eb62ec2ed98495e90ebf0c578d3d218, type: 2}
-  - {fileID: 11400000, guid: 768f708ba66740e2b0ccdd36f518a561, type: 2}
-  - {fileID: 11400000, guid: 52f1b5e464984c6897f80cb68dbe4ea1, type: 2}
+  - {fileID: 11400000, guid: 6e3291c09841cda4d87c2adb2155353c, type: 2}
+  - {fileID: 11400000, guid: 34d751ca2e8ef84459dc14a715b2fcff, type: 2}
+  - {fileID: 11400000, guid: c0db79a27e9b30543be351ddfff33006, type: 2}
+  eliteVictoryConduits:
+  - {fileID: 11400000, guid: a0f46c07b432405d83aa60fa5b251954, type: 2}
+  - {fileID: 11400000, guid: 8003eb46661240dc916749efa190d9c2, type: 2}
+  - {fileID: 11400000, guid: 41d43c4722e94085a07381ce57ab977f, type: 2}
+  - {fileID: 11400000, guid: 97ef5fd85ab645d7810e21fcf9c2864b, type: 2}
+  - {fileID: 11400000, guid: fb43a56cf3ca4a0cbbe7d79d6b697389, type: 2}
+  - {fileID: 11400000, guid: 02beb830ee8141a9a995f93c89c8316a, type: 2}
   bossBattles:
   - {fileID: 11400000, guid: 70894e146f8b4416b7a3291478f101e7, type: 2}

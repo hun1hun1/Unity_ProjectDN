@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Rust
   m_EditorClassIdentifier: 
   statusType: 1
+  category: 0
   displayName: "\uB179\uC2AC\uC74C"
   icon: {fileID: 21300000, guid: 982aea2ba4fd00044bcda179f2c31242, type: 3}
   description: "\uACF5\uACA9\uC73C\uB85C \uC8FC\uB294 \uD53C\uD574\uAC00 25% \uAC10\uC18C\uD569\uB2C8\uB2E4."

@@ -127,7 +127,9 @@ public sealed class CardPreviewContext
         bool symbolic = mode == EffectAmountMode.PerSpentAmmo && !CanResolveSpentAmmo;
         if (!symbolic) baseDamage = EffectAmount.Resolve(baseDamage, mode, spentAmmo.GetValueOrDefault());
         HashSet<StatusEffectType> defender = target == CardTarget.Player ? playerStatuses : enemyStatuses;
-        int amount = DamageCalculator.CalculateWithModifiers(baseDamage,
+        bool warded = applyStatusModifiers && canExecute && hasEnemy && target == CardTarget.Enemy &&
+            !symbolic && baseDamage > 0 && defender.Remove(StatusEffectType.Ward);
+        int amount = warded ? 0 : DamageCalculator.CalculateWithModifiers(baseDamage,
             applyStatusModifiers && playerStatuses.Contains(StatusEffectType.Rust),
             applyStatusModifiers && defender.Contains(StatusEffectType.WeaknessExposure));
         string value = amount.ToString(CultureInfo.InvariantCulture);
@@ -149,9 +151,14 @@ public sealed class CardPreviewContext
         values["block:" + path] = symbolic ? value + " × N" : value;
     }
 
-    public void ApplyStatus(StatusEffectData status, int turns, CardTarget target)
+    public void ApplyStatus(StatusEffectData status, int turns, CardTarget target, int buffPower = 1)
     {
-        if (status == null || (!isContinuous && turns <= 0) || !Enum.IsDefined(typeof(StatusEffectType), status.Type)) return;
+        if (status == null) return;
+        if (status.Category == StatusEffectCategory.Buff)
+        {
+            if (!status.CanApply(turns, buffPower) || status.Duration == BuffDuration.NextTurn) return;
+        }
+        else if (!isContinuous && turns <= 0 || !Enum.IsDefined(typeof(StatusEffectType), status.Type)) return;
         if (target == CardTarget.Player && hasPlayer) playerStatuses.Add(status.Type);
         else if (target == CardTarget.Enemy && hasEnemy) enemyStatuses.Add(status.Type);
     }

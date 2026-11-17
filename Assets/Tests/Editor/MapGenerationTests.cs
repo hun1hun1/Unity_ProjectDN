@@ -97,27 +97,88 @@ public class MapGenerationTests
         Assert.That(restored.CurrentNode.SelectedChoice.Encounter, Is.SameAs(state.CurrentNode.SelectedChoice.Encounter));
     }
 
-    [Test] public void FirstFloorNormalEncounterOrderSurvivesRestoreAndWrapsAfterThreeEnemies()
+    [Test] public void FirstFloorEncounterPoolsContainTheAssignedEnemies()
+    {
+        var definition = UnityEditor.AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
+        FloorMapDefinition firstFloor = definition.floors[0];
+
+        Assert.That(firstFloor.normalBattles.Select(encounter => encounter.enemyPrefab.name),
+            Is.EquivalentTo(new[] { "Slime", "Lizard", "FoldedPaperSoldier", "LanternMoth" }));
+        Assert.That(firstFloor.lateNormalBattles.Select(encounter => encounter.enemyPrefab.name),
+            Is.EquivalentTo(new[] { "SewingSpider", "Scarecrow", "HauntedBroom", "InkCrow", "SheetGhost" }));
+        Assert.That(firstFloor.eliteBattles.Select(encounter => encounter.enemyPrefab.name),
+            Is.EquivalentTo(new[] { "TinWoodcutter", "BrokenBell", "InvertedHourglass" }));
+    }
+
+    [TestCase(25, ConduitRarity.Common)]
+    [TestCase(27, ConduitRarity.Uncommon)]
+    public void FirstFloorEliteRewardsUseTheRolledGradeAndNeverRedrawOwnedConduits(int seed, ConduitRarity expected)
+    {
+        var definition = UnityEditor.AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
+        var state = new RunProgress(definition, seed);
+        for (int node = 0; node < 3; node++)
+        {
+            Assert.That(state.TrySelectOption(0), Is.True);
+            Assert.That(state.RecordBattleResult(BattleResult.Victory), Is.True);
+            Assert.That(state.CompleteNode(0, node), Is.True);
+        }
+        Assert.That(state.TrySelectOption(0), Is.True);
+        Assert.That(state.RecordBattleResult(BattleResult.Victory), Is.True);
+
+        var draw = typeof(RunProgress).GetMethod("GetEliteVictoryConduit",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        RunAssetCatalog catalog = RunAssetCatalog.Load();
+        RunRelicInventory.ResetForNewGame();
+        try
+        {
+            var drawn = new HashSet<AmmoCapacityRelic>();
+            AmmoCapacityRelic[] pool = definition.floors[0].eliteVictoryConduits;
+            int preferredCount = pool.Count(conduit => conduit.Rarity == expected);
+            ConduitRarity other = expected == ConduitRarity.Common ? ConduitRarity.Uncommon : ConduitRarity.Common;
+            Assert.That(preferredCount, Is.InRange(1, pool.Length - 1));
+            for (int i = 0; i < pool.Length; i++)
+            {
+                var conduit = (AmmoCapacityRelic)draw.Invoke(state, null);
+                Assert.That(conduit, Is.Not.Null);
+                Assert.That(conduit.Rarity, Is.EqualTo(i < preferredCount ? expected : other));
+                Assert.That(drawn.Add(conduit), Is.True);
+                Assert.That(conduit.Acquire(), Is.True);
+                RunInventoryData saved = RunSaveCodec.CaptureInventory(catalog);
+                RunRelicInventory.ResetForNewGame();
+                RunSaveCodec.RestoreInventory(saved, catalog);
+            }
+            Assert.That(draw.Invoke(state, null), Is.Null);
+        }
+        finally { RunRelicInventory.ResetForNewGame(); }
+    }
+
+    [Test] public void FirstFloorNormalEncounterOrderSurvivesRestoreWithoutRepeatsInEitherSegment()
     {
         var definition = UnityEditor.AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
         var state = new RunProgress(definition, 41);
         var catalog = RunAssetCatalog.Load();
-        var encounters = new List<BattleEncounterDefinition>();
+        var early = new List<BattleEncounterDefinition>();
+        var late = new List<BattleEncounterDefinition>();
 
-        for (int node = 0; node < 4; node++)
+        for (int node = 0; node <= 10; node++)
         {
-            int normal = state.CurrentNode.Choices.ToList().FindIndex(choice => choice.Type == MapContentType.NormalBattle);
-            Assert.That(state.TrySelectOption(normal), Is.True);
-            BattleEncounterDefinition chosen = state.CurrentNode.SelectedChoice.Encounter;
-            state = RunProgress.Restore(state.Capture(catalog), catalog);
-            Assert.That(state.CurrentNode.SelectedChoice.Encounter, Is.SameAs(chosen));
-            encounters.Add(chosen);
-            Assert.That(state.RecordBattleResult(BattleResult.Victory), Is.True);
+            int index = state.CurrentNode.Choices.ToList().FindIndex(choice => node == 4 || node == 6
+                ? !choice.IsBattle && choice.Type != MapContentType.Unknown
+                : choice.Type == MapContentType.NormalBattle);
+            Assert.That(state.TrySelectOption(index), Is.True);
+            if (state.Phase == RunPhase.Battle)
+            {
+                BattleEncounterDefinition chosen = state.CurrentNode.SelectedChoice.Encounter;
+                state = RunProgress.Restore(state.Capture(catalog), catalog);
+                Assert.That(state.CurrentNode.SelectedChoice.Encounter, Is.SameAs(chosen));
+                (node < 5 ? early : late).Add(chosen);
+                Assert.That(state.RecordBattleResult(BattleResult.Victory), Is.True);
+            }
             Assert.That(state.CompleteNode(0, node), Is.True);
         }
 
-        Assert.That(encounters.Take(3).Distinct().Count(), Is.EqualTo(3));
-        Assert.That(encounters[3], Is.SameAs(encounters[0]));
+        Assert.That(early, Is.EquivalentTo(definition.floors[0].normalBattles));
+        Assert.That(late, Is.EquivalentTo(definition.floors[0].lateNormalBattles));
     }
 
     [TestCase(4)] [TestCase(5)] [TestCase(12)] [TestCase(21)]

@@ -11,7 +11,7 @@
 | `Assets/Prefabs/Enemy/Scarecrow.prefab` | Scarecrow Idle v1 | Normal |
 | `Assets/Prefabs/Enemy/Lizard.prefab` | Lizard Idle v1 | Large |
 
-현재 임시 맵의 `NormalEncounter`는 슬라임 프리팹을 사용합니다. 허수아비와 도마뱀도 연결 가능한 프리팹이 준비되어 있습니다. 전투별 HP와 행동은 `BattleEncounterDefinition`에서 정합니다.
+현재 1층의 전반부·후반부·엘리트 조우는 각 풀의 적 프리팹을 사용하며 보스는 허수아비 프리팹을 사용합니다. 전투별 HP와 행동은 `BattleEncounterDefinition`에서 정합니다. [1층 조우 목록](MapSystem.md#조우-순서)
 
 ## Inspector에서 크기와 UI 교체
 
@@ -47,7 +47,7 @@ Inspector에서 지정한 프로필은 전투 실행 시 적용됩니다. 편집
 
 ## 신규 적 스프라이트와 대기 애니메이션
 
-아래 6종의 기본 스프라이트, 대기 스프라이트 시트, GIF 미리보기를 제작했습니다. 각 시트는 4608×3072 투명 PNG이며 768×768 프레임을 6열×4행으로 배치합니다. 왼쪽 위부터 행 순서로 읽고, 프레임당 100ms로 재생하면 2.4초 동안 한 바퀴 돕니다.
+아래 9종의 기본 스프라이트, 대기 스프라이트 시트, GIF 미리보기를 제작했습니다. 각 시트는 4608×3072 투명 PNG이며 768×768 프레임을 6열×4행으로 배치합니다. 왼쪽 위부터 행 순서로 읽고, 프레임당 100ms로 재생하면 2.4초 동안 한 바퀴 돕니다.
 
 | 적 | 기본 스프라이트 | 대기 애니메이션 | 동작 |
 |---|---|---|---|
@@ -57,8 +57,11 @@ Inspector에서 지정한 프로필은 전투 실행 시 적용됩니다. 편집
 | 움직이는 빗자루 | [PNG](../GeneratedArt/HauntedBroom/haunted-broom-v1.png) | [스프라이트 시트](../GeneratedArt/HauntedBroom/haunted-broom-idle-spritesheet.png) · [GIF](../GeneratedArt/HauntedBroom/haunted-broom-idle-preview.gif) | 공중에서 몸체가 기울고 빗살 끝이 뒤따라 움직입니다. |
 | 양철 나무꾼 | [PNG](../GeneratedArt/TinWoodcutter/tin-woodcutter-v1.png) | [스프라이트 시트](../GeneratedArt/TinWoodcutter/tin-woodcutter-idle-spritesheet.png) · [GIF](../GeneratedArt/TinWoodcutter/tin-woodcutter-idle-preview.gif) | 발을 고정하고 상체가 무게를 옮기며, 고개와 도끼가 뒤따라 움직입니다. |
 | 침대 시트 유령 | [PNG](../GeneratedArt/SheetGhost/sheet-ghost-v1.png) | [스프라이트 시트](../GeneratedArt/SheetGhost/sheet-ghost-idle-spritesheet.png) · [GIF](../GeneratedArt/SheetGhost/sheet-ghost-idle-preview.gif) | 몸체가 천천히 오르내리고 시트 밑단이 뒤따라 물결칩니다. |
+| 접힌 종이병정 | [PNG](../GeneratedArt/FoldedPaperSoldier/folded-paper-soldier-v1.png) | [스프라이트 시트](../GeneratedArt/FoldedPaperSoldier/folded-paper-soldier-idle-spritesheet.png) · [GIF](../GeneratedArt/FoldedPaperSoldier/folded-paper-soldier-idle-preview.gif) | 발을 고정하고 몸통과 접힌 팔이 조금씩 엇박자로 흔들립니다. |
+| 뒤집힌 모래시계 | [PNG](../GeneratedArt/InvertedHourglass/inverted-hourglass-v1.png) | [스프라이트 시트](../GeneratedArt/InvertedHourglass/inverted-hourglass-idle-spritesheet.png) · [GIF](../GeneratedArt/InvertedHourglass/inverted-hourglass-idle-preview.gif) | 본체가 떠서 좌우로 기울고 모래가 아래에서 위로 흐릅니다. |
+| 재봉거미 | [PNG](../GeneratedArt/SewingSpider/sewing-spider-v1.png) | [스프라이트 시트](../GeneratedArt/SewingSpider/sewing-spider-idle-spritesheet.png) · [GIF](../GeneratedArt/SewingSpider/sewing-spider-idle-preview.gif) | 몸통이 오르내리고 앞다리와 풀린 실 끝이 움직입니다. |
 
-원본은 `GeneratedArt`에 보관합니다. Unity에서는 각 적의 `Assets/Images/Characters/<적 이름>/Base.png`와 `Idle.png`를 사용합니다. 분할한 24프레임은 `Assets/CharacterPresentation/Animations`의 대기 애니메이션에 연결했고, 프리팹은 `Assets/Prefabs/Enemy`에 저장했습니다. 등장 풀 등록은 각 적의 행동과 전투 배치가 확정된 뒤 진행합니다. [1층 적 디자인과 제작 상태](../ToDo_List.md#1층-적-디자인-아이디어)
+원본은 `GeneratedArt`에 보관합니다. Unity에서는 각 적의 `Assets/Images/Characters/<적 이름>/Base.png`와 `Idle.png`를 사용합니다. 분할한 24프레임은 `Assets/CharacterPresentation/Animations`의 대기 애니메이션에 연결했고, 프리팹은 `Assets/Prefabs/Enemy`에 저장했습니다. 9종 모두 1층 조우 풀에 등록되어 있습니다. [1층 조우 목록](MapSystem.md#조우-순서)
 
 ## 방어도 획득 연출
 

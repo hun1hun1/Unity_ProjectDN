@@ -1,0 +1,754 @@
+fileFormatVersion: 2
+guid: fc60d453895b10a4483d5be93d5cee55
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4723107735738678597
+    second: Idle_0
+  - first:
+      213: -7385789195546760866
+    second: Idle_1
+  - first:
+      213: 3234629978573100161
+    second: Idle_2
+  - first:
+      213: 6373048116405451881
+    second: Idle_3
+  - first:
+      213: 7264182050183361747
+    second: Idle_4
+  - first:
+      213: -2834552850196481573
+    second: Idle_5
+  - first:
+      213: 3278449094680734212
+    second: Idle_6
+  - first:
+      213: 3384493420599841878
+    second: Idle_7
+  - first:
+      213: -2331352242086191015
+    second: Idle_8
+  - first:
+      213: -3914248031228685145
+    second: Idle_9
+  - first:
+      213: 7132915409514813599
+    second: Idle_10
+  - first:
+      213: -2055793278435719954
+    second: Idle_11
+  - first:
+      213: -1133706752296058015
+    second: Idle_12
+  - first:
+      213: -7873313509577613512
+    second: Idle_13
+  - first:
+      213: 719741960001666856
+    second: Idle_14
+  - first:
+      213: -2017107389029466533
+    second: Idle_15
+  - first:
+      213: -7851968663669621680
+    second: Idle_16
+  - first:
+      213: -216799431487514718
+    second: Idle_17
+  - first:
+      213: 3610992343889596186
+    second: Idle_18
+  - first:
+      213: 6538181465538999060
+    second: Idle_19
+  - first:
+      213: 6239617922696411994
+    second: Idle_20
+  - first:
+      213: 3604202040009161566
+    second: Idle_21
+  - first:
+      213: 7714808819881066536
+    second: Idle_22
+  - first:
+      213: 4839914909742284145
+    second: Idle_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: InvertedHourglass_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2304
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8ab35c476cd8d0e4aaf61d1ce5197567
+      internalID: -1364735246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_01
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 2304
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d1e98fd683319946b3c1417980845a8
+      internalID: 1935662138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_02
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 2304
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a4fecfb37f63504a9d30ffc09b8c2cb
+      internalID: 1877193585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_03
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 2304
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: accd7ab51ecbe26438ff814673ee96cb
+      internalID: -1979309757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_04
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 2304
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03021e3d7945eac4594dcc36e0991763
+      internalID: 694525144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_05
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 2304
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a39123bfc540474cb3d41abdf2b7073
+      internalID: -138033670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_06
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1536
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4cb199b1c50db9b40852fe198e72cf92
+      internalID: 1809516672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_07
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1536
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c01da09f3c9b3b40b71688d181e9ac9
+      internalID: -227463285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_08
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1536
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7fa50cd94d2599e4facd61b87a22a048
+      internalID: -444887317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_09
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 1536
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7eb58a83645030409f5815082fb47fb
+      internalID: -1673127598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_10
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1536
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77e00ae9ed7f6074eac04b4f381012b0
+      internalID: 1436858736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_11
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1536
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4f7ec396928bfe4697f53d80c08eff3
+      internalID: 2077568539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 768
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34d567bc6f7125d48b014aa2aa40839b
+      internalID: 498880651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_13
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 768
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 149ed268d6e72274d8a6455b6c079b9f
+      internalID: -979811953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_14
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 768
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1fe24a2428dce344e8643738f4456691
+      internalID: -960501802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_15
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 768
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 11e9f5caf8c73d646949c61e8682ac52
+      internalID: 1224529508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_16
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 768
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b888bfe0a4a4170428d42b610e39b6c0
+      internalID: -612256697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_17
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 768
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8178e70968c2754a9006dbe74a18bf7
+      internalID: -1164267224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2d62e830214318f4d8ef87a79e54e519
+      internalID: 1434639800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_19
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 0
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c760efa22ddf7ff498be623ce5583445
+      internalID: 1816452509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_20
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 0
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67b4f6b12c4e2f6478cbbcd084c01696
+      internalID: -1258071609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_21
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 0
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: faaa5c49717842e4b9bd3ff65d2f609b
+      internalID: -1013410778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_22
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 0
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c520bce91e988144d8d96519fe92089e
+      internalID: -350163077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvertedHourglass_23
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 0
+        width: 768
+        height: 768
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fdb07893b0bb7ca46a257a75762c06e8
+      internalID: -1848230239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: b8806796217d0a04788c1090826f9875
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      InvertedHourglass_00: -1364735246
+      InvertedHourglass_01: 1935662138
+      InvertedHourglass_02: 1877193585
+      InvertedHourglass_03: -1979309757
+      InvertedHourglass_04: 694525144
+      InvertedHourglass_05: -138033670
+      InvertedHourglass_06: 1809516672
+      InvertedHourglass_07: -227463285
+      InvertedHourglass_08: -444887317
+      InvertedHourglass_09: -1673127598
+      InvertedHourglass_10: 1436858736
+      InvertedHourglass_11: 2077568539
+      InvertedHourglass_12: 498880651
+      InvertedHourglass_13: -979811953
+      InvertedHourglass_14: -960501802
+      InvertedHourglass_15: 1224529508
+      InvertedHourglass_16: -612256697
+      InvertedHourglass_17: -1164267224
+      InvertedHourglass_18: 1434639800
+      InvertedHourglass_19: 1816452509
+      InvertedHourglass_20: -1258071609
+      InvertedHourglass_21: -1013410778
+      InvertedHourglass_22: -350163077
+      InvertedHourglass_23: -1848230239
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

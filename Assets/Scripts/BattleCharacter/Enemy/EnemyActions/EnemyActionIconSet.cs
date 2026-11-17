@@ -13,6 +13,8 @@ public class EnemyActionIconSet : ScriptableObject
 
     public Sprite GetIcon(EnemyActionKinds kinds)
     {
+        // Existing attack/block combinations remain available for actions that also grant a buff.
+        kinds &= ~EnemyActionKinds.Buff;
         switch (kinds)
         {
             case EnemyActionKinds.Attack: return attack;

@@ -12,6 +12,10 @@
 - 보상 목록의 건너뛰기는 아직 받지 않은 골드와 카드를 포기합니다. 카드 선택 중에는 사용할 수 없습니다.
 - 모든 항목을 수령하거나 포기한 뒤 완료 버튼을 누르면 보상창을 닫습니다.
 
+1층 엘리트는 전투 보상 처리를 마칠 때 공용 `Elite Victory Conduits`에서 매개체를 뽑아 지급합니다. 일반 70%, 고급 30%로 등급을 정하고, 해당 등급의 남은 후보를 균등 추첨합니다. 같은 런에서 이미 보유했거나 앞선 1층 노드에서 제시된 매개체는 제외합니다. 7번 노드 전용인 두 매개체도 무작위 후보에서 제외합니다. 한 등급이 소진되면 다른 등급을 사용하고, 양쪽 모두 소진됐으면 매개체 보상 없이 노드를 완료합니다.
+
+골드·카드를 건너뛰어도 엘리트 매개체를 지급하며, 지급과 다음 노드 진행을 함께 저장합니다. 6번 엘리트 승리 시 7번 매개체 노드에서는 별도로 고급 확장 탄창을 제시합니다. 현재 공용 풀에 일반·고급 확장 탄창 예시를 세 개씩 등록했으며 효과는 모두 최대 탄약 +1입니다. [매개체 노드](MapSystem.md#매개체-노드) · [체크포인트](RunCheckpoints.md#1층-조우와-매개체-복원)
+
 ## 보상 화면
 
 보상 요약(`SummaryPanel`), 덱 선택(`DeckSelectPanel`), 카드 선택(`CardRewardPanel`)은 `Assets/Images/UI/Rewards/battle-reward-panel.png`를 9슬라이스로 공유합니다. 보상 화면 뒤의 전투 영역은 어둡게 처리합니다.
@@ -43,11 +47,13 @@
 - `BattleManager.Result`와 `BattleEnded`가 승리/패배/중단을 구분합니다.
 - `BattleRewardSystem`이 수령 여부와 Summary → DeckChoice → CardChoice 흐름을 관리합니다.
 - `CardRewardUI`가 상태에 맞는 화면과 버튼을 표시합니다. 보상 카드 설명은 원본 수치로 표시합니다.
-- `RunGoldInventory.Gold`는 씬 전환과 체크포인트 복원 시 유지됩니다. 새 런은 기존 골드를 초기화하고 `RunDefinition.startingGold`를 지급합니다. 현재 `TemporaryRun`의 시작 골드는 100입니다.
+- `RunGoldInventory.Gold`는 씬 전환과 체크포인트 복원 시 유지됩니다. 새 런은 기존 골드를 초기화하고 `RunDefinition.startingGold`를 지급합니다. 현재 `FirstFloorRun`의 시작 골드는 100입니다.
 - 런의 보상 완료는 `RunBattleBridge`를 거쳐 현재 노드를 완료하고 MapScene으로 돌아갑니다. 보상 수령이나 완료를 저장하지 못하면 마지막 체크포인트 상태로 되돌아가 다시 시도할 수 있습니다. [노드 체크포인트와 이어서 하기](RunCheckpoints.md) 참고.
 - `BattleRewardAssetSetup.CreateAssets()`는 현재 BattleScene에 보상 UI와 14개 DB 참조를 구성한 에디터 도구입니다. 메뉴: ProjectDN → Setup Battle Rewards. 재실행 시 보상 UI와 기본 골드 값을 다시 구성하고, 공유 풀 설정은 유지합니다.
 
 ## 검증
+
+2026-11-17 Unity 6000.0.85f2에서 공용 엘리트 보상의 일반·고급 추첨과 보유 매개체 제외, 완료 체크포인트의 단일 지급 검사 3/3이 통과했습니다. 결과는 로컬 `.utmp/elite-conduits-verify.xml`에 있습니다. 해당 변경의 대상 재검사이며 전체 EditMode와 독립 실행 빌드 검증은 남아 있습니다.
 
 2026-11-08 Unity 6000.0.85f2에서 공유 풀 연결 뒤 전투 보상·상점 관련 테스트 43/43이 통과했습니다. 전투 보상 카드의 선택·확정, 상점의 빈 악몽 슬롯과 분류별 추첨을 포함합니다. 결과는 로컬 `.utmp/shop-stock-verified.xml`에 있습니다.
 

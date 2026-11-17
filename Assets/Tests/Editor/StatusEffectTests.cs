@@ -14,6 +14,184 @@ public class StatusEffectTests
 {
     private readonly List<Object> created = new List<Object>();
 
+    [Test]
+    public void ExistingStatusAssetsAreDebuffsAndThornsIsABuff()
+    {
+        foreach (string name in new[] { "WeaknessExposure", "Rust", "DefenseBreak", "Burn", "Thorns" })
+        {
+            var definition = AssetDatabase.LoadAssetAtPath<StatusEffectData>($"Assets/StatusData/{name}.asset");
+            Assert.That(definition, Is.Not.Null, name);
+            var category = new SerializedObject(definition).FindProperty("category");
+            Assert.That(category, Is.Not.Null, name);
+            Assert.That(category.enumNames[category.enumValueIndex], Is.EqualTo(name == "Thorns" ? "Buff" : "Debuff"));
+        }
+    }
+
+    [TestCase(true)]
+    [TestCase(false)]
+    public void WardAbsorbsOnlyTheNextIncomingAttackAndPreservesBlock(bool onPlayer)
+    {
+        CreateBattle(out Player player, out Enemy enemy);
+        BattleCharacter defender = onPlayer ? (BattleCharacter)player : enemy;
+        BattleCharacter attacker = onPlayer ? (BattleCharacter)enemy : player;
+        var ward = AssetDatabase.LoadAssetAtPath<StatusEffectData>("Assets/StatusData/Ward.asset");
+        Assert.That(ward, Is.Not.Null);
+        Assert.That(ward.Icon, Is.Not.Null);
+        Assert.That(defender.StatusEffects.Apply(ward, 1), Is.True);
+        Assert.That(defender.StatusEffects.Apply(ward, 1, 3), Is.True);
+        defender.StatusEffects.ReduceRemainingTurns();
+        Assert.That(defender.StatusEffects.HasStatus(ward.Type), Is.True);
+        attacker.TakeDamage(1, defender);
+        defender.TakeDamage(1);
+        defender.TakeDamage(1, defender);
+        Assert.That(defender.StatusEffects.HasStatus(ward.Type), Is.True);
+        defender.AddBlock(4);
+
+        defender.TakeDamage(100, attacker);
+        Assert.That(defender.GetCurrentHP(), Is.EqualTo(78));
+        Assert.That(defender.GetBlock(), Is.EqualTo(4));
+        Assert.That(defender.StatusEffects.HasStatus(ward.Type), Is.False);
+
+        defender.TakeDamage(10, attacker);
+        Assert.That(defender.GetCurrentHP(), Is.EqualTo(72));
+        Assert.That(defender.GetBlock(), Is.Zero);
+    }
+
+    [Test]
+    public void WardPreviewsShowZeroOnlyForTheFirstHitWithoutConsumingTheLiveBuff()
+    {
+        BattleManager manager = CreateBattle(out Player player, out Enemy enemy);
+        var playerGrant = AssetDatabase.LoadAssetAtPath<ApplyStatusEffect>("Assets/CardData/Status/Examples/Ward_PlayerEffect.asset");
+        var enemyGrant = AssetDatabase.LoadAssetAtPath<EnemyApplyStatusAction>("Assets/Enemy/Examples/BuffWard.asset");
+        Assert.That(playerGrant, Is.Not.Null);
+        Assert.That(enemyGrant, Is.Not.Null);
+        playerGrant.Execute(manager);
+        enemyGrant.Execute(manager);
+        Assert.That(enemyGrant.GetActionKinds(), Is.EqualTo(EnemyActionKinds.Buff));
+        Assert.That(enemyGrant.GetActionIcon(), Is.Not.Null);
+
+        var strike = CreateAsset<EnemyAttackAction>();
+        SetField(strike, "damage", 6);
+        var combo = CreateAsset<EnemyCompositeAction>();
+        SetField(combo, "actions", new EnemyAction[] { strike, strike });
+        Assert.That(combo.GetActionDescription(manager), Is.EqualTo("공격 0\n공격 6"));
+
+        var damage = CreateAsset<DamageEffect>();
+        damage.damage = 6;
+        SetField(damage, "target", CardTarget.Enemy);
+        var card = CreateAsset<CardData>();
+        card.description = "{damage:0} / {damage:1}";
+        card.effects = new CardEffect[] { damage, damage };
+        Assert.That(CardDescriptionBuilder.Build(card, manager), Is.EqualTo("<color=#E57373>0</color> / 6"));
+        Assert.That(player.StatusEffects.HasStatus(StatusEffectType.Ward), Is.True);
+        Assert.That(enemy.StatusEffects.HasStatus(StatusEffectType.Ward), Is.True);
+    }
+
+    [Test]
+    public void WardHudUsesTheImportedIconAndRemovesItAfterBlockingAnAttack()
+    {
+        Player player = CreatePlayer();
+        Player opponent = CreatePlayer();
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/CharacterInfoUI.prefab");
+        GameObject instance = Object.Instantiate(prefab);
+        created.Add(instance);
+        StatusEffectsUI ui = instance.GetComponentInChildren<StatusEffectsUI>();
+        ui.Bind(player.StatusEffects);
+        typeof(StatusEffectsUI).GetMethod("OnEnable", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(ui, null);
+        var ward = AssetDatabase.LoadAssetAtPath<StatusEffectData>("Assets/StatusData/Ward.asset");
+        var sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Images/UI/StatusIcon/ward.png");
+
+        Assert.That(player.StatusEffects.Apply(ward, 0), Is.True);
+        var icon = ui.GetComponentInChildren<StatusIconUI>();
+        Assert.That(icon.GetComponent<UnityEngine.UI.Image>().sprite, Is.SameAs(sprite).And.Not.Null);
+        Assert.That(icon.GetComponentInChildren<TMP_Text>().text, Is.EqualTo("1"));
+        player.TakeDamage(10, opponent);
+        Assert.That(ui.GetComponentInChildren<StatusIconUI>(), Is.Null);
+    }
+
+    [Test]
+    public void BuffApplicationsHaveIndependentDurationsAndNextAttackIgnoresSelfDamage()
+    {
+        Player owner = CreatePlayer();
+        Player opponent = CreatePlayer();
+        var status = owner.StatusEffects;
+        StatusEffectType type = StatusEffectType.Thorns;
+        Assert.That(status.Apply(CreateBuff(BuffDuration.UntilBattleEnd), 0, 2), Is.True);
+        Assert.That(status.Apply(CreateBuff(BuffDuration.FixedTurns), 2, 3), Is.True);
+        Assert.That(status.Apply(CreateBuff(BuffDuration.NextTurn), 0, 5), Is.True);
+        Assert.That(status.Apply(CreateBuff(BuffDuration.NextAttack), 0, 7), Is.True);
+        Assert.That(status.ActiveEffects, Has.Count.EqualTo(1));
+        Assert.That(status.GetBuffPower(type), Is.EqualTo(12));
+        Assert.That(status.ActiveEffects[0].IsPending, Is.True);
+
+        owner.TakeDamage(1, owner);
+        opponent.TakeDamage(0, owner);
+        Assert.That(status.GetBuffPower(type), Is.EqualTo(12));
+        status.ReduceRemainingTurns();
+        Assert.That(status.GetBuffPower(type), Is.EqualTo(17));
+        Assert.That(status.ActiveEffects[0].IsPending, Is.False);
+
+        opponent.TakeDamage(1, owner);
+        Assert.That(status.GetBuffPower(type), Is.EqualTo(10));
+        status.ReduceRemainingTurns();
+        Assert.That(status.GetBuffPower(type), Is.EqualTo(2));
+        Assert.That(status.ActiveEffects[0].IsPermanent, Is.True);
+        status.Clear();
+        Assert.That(status.ActiveEffects, Is.Empty);
+    }
+
+    [Test]
+    public void ThornsRetaliatesOnBlockedAttacksWithoutConsumingBlockOrChaining()
+    {
+        BattleManager manager = CreateBattle(out Player player, out Enemy enemy);
+        var grant = AssetDatabase.LoadAssetAtPath<ApplyStatusEffect>("Assets/CardData/Status/Examples/Thorns_PlayerEffect.asset");
+        var enemyBuff = AssetDatabase.LoadAssetAtPath<EnemyApplyStatusAction>("Assets/Enemy/Examples/BuffThorns.asset");
+        Assert.That(grant, Is.Not.Null);
+        Assert.That(enemyBuff, Is.Not.Null);
+        grant.Execute(manager);
+        enemyBuff.Execute(manager);
+        Assert.That(enemyBuff.GetActionKinds(), Is.EqualTo(EnemyActionKinds.Buff));
+        Assert.That(enemyBuff.GetActionIcon(), Is.Not.Null);
+        Assert.That(player.StatusEffects.GetBuffPower(StatusEffectType.Thorns), Is.EqualTo(3));
+        Assert.That(enemy.StatusEffects.GetBuffPower(StatusEffectType.Thorns), Is.EqualTo(3));
+
+        player.AddBlock(8);
+        enemy.AddBlock(8);
+        player.TakeDamage(5, enemy);
+        Assert.That(player.GetCurrentHP(), Is.EqualTo(80));
+        Assert.That(enemy.GetCurrentHP(), Is.EqualTo(77));
+        Assert.That(enemy.GetBlock(), Is.EqualTo(8));
+
+        player.TakeDamage(1);
+        player.TakeDamage(1, player);
+        Assert.That(enemy.GetCurrentHP(), Is.EqualTo(77));
+        Assert.That(player.StatusEffects.GetBuffPower(StatusEffectType.Thorns), Is.EqualTo(3));
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void FatalAttackOrRetaliationEndsTheCompositeWithoutAnotherHit(bool ownerDies)
+    {
+        BattleManager manager = CreateBattle(out Player player, out Enemy enemy);
+        typeof(BattleManager).GetMethod("BindBattleCharacters", BindingFlags.Instance | BindingFlags.NonPublic)
+            .Invoke(manager, null);
+        if (ownerDies) player.RestoreHealth(3, 80);
+        else enemy.RestoreHealth(3, 80);
+        player.StatusEffects.Apply(CreateBuff(BuffDuration.UntilBattleEnd), 0, 3);
+
+        EnemyAttackAction attack = CreateAsset<EnemyAttackAction>();
+        SetField(attack, "damage", 4);
+        EnemyCompositeAction composite = CreateAsset<EnemyCompositeAction>();
+        SetField(composite, "actions", new EnemyAction[] { attack, attack });
+        Assert.That(composite.GetActionDescription(manager), Is.EqualTo("공격 4"));
+        composite.Execute(manager);
+
+        Assert.That(manager.Result, Is.EqualTo(ownerDies ? BattleResult.Defeat : BattleResult.Victory));
+        Assert.That(player.GetCurrentHP(), Is.EqualTo(ownerDies ? 0 : 76));
+        Assert.That(enemy.GetCurrentHP(), Is.EqualTo(ownerDies ? 80 : 0));
+        Assert.That(player.StatusEffects.GetBuffPower(StatusEffectType.Thorns), Is.Zero);
+    }
+
     [TearDown]
     public void TearDown()
     {
@@ -556,6 +734,14 @@ public class StatusEffectTests
     {
         StatusEffectData data = CreateAsset<StatusEffectData>();
         SetField(data, "statusType", type);
+        return data;
+    }
+
+    private StatusEffectData CreateBuff(BuffDuration duration)
+    {
+        StatusEffectData data = CreateStatus(StatusEffectType.Thorns);
+        SetField(data, "category", StatusEffectCategory.Buff);
+        SetField(data, "buffDuration", duration);
         return data;
     }
 

@@ -78,7 +78,13 @@ public class StatusIconUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         gameObject.name = effect.Definition.DisplayName;
         if (icon != null && effect.Definition.Icon != null) icon.sprite = effect.Definition.Icon;
         int amount = effect.Type == StatusEffectType.Burn ? effect.StackCount : effect.RemainingTurns;
-        if (turnsText != null) turnsText.text = effect.IsPermanent ? "∞" : amount.ToString();
+        if (turnsText != null)
+        {
+            if (effect.IsPermanent) turnsText.text = "∞";
+            else if (effect.IsPending && !effect.IsActive) turnsText.text = "–";
+            else if (amount == 0 && (effect.HasNextAttackBuff || effect.HasNextIncomingAttackBuff)) turnsText.text = "1";
+            else turnsText.text = amount.ToString();
+        }
         if (hovered && tooltip != null) tooltip.Refresh(this, effect);
     }
 }

@@ -35,6 +35,11 @@ public sealed class RunSaveAssetSetup : IPreprocessBuildWithReport
                 {
                     AssetDatabase.TryGetGUIDAndLocalFileIdentifier(asset,out string id,out long local);
                     assets.Add((id+":"+local,asset));
+                    if (asset is AmmoCapacityRelic relic && relic.BattleStartBuff is StatusEffectData buff)
+                    {
+                        AssetDatabase.TryGetGUIDAndLocalFileIdentifier(buff, out string buffId, out long buffLocal);
+                        assets.Add((buffId + ":" + buffLocal, buff));
+                    }
                 }
         var state=new SerializedObject(catalog);var entries=state.FindProperty("entries");
         var sorted=assets.GroupBy(a=>a.key).Select(g=>g.First()).OrderBy(a=>a.key,StringComparer.Ordinal).ToArray();entries.arraySize=sorted.Length;

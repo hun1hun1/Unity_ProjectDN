@@ -63,6 +63,8 @@ public sealed class RunRelicData
     public string id;
     public int bonus;
     public int battleStartAmmo;
+    public string battleStartBuff;
+    public int battleStartBuffPower;
 }
 [Serializable]
 public sealed class RunRewardData

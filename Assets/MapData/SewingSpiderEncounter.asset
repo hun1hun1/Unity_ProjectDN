@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec1dfd9560543dd4ab48922fcfc38429, type: 3}
+  m_Name: SewingSpiderEncounter
+  m_EditorClassIdentifier: 
+  displayName: "\uC7AC\uBD09\uAC70\uBBF8"
+  behavior: {fileID: 11400000, guid: 446a5b677568aeb49860f965302336e4, type: 2}
+  enemyPrefab: {fileID: 639819139860038969, guid: 7dff0ad68d4e45340a443540f9f68e8e, type: 3}
+  enemyMaxHP: 50
+  goldReward: 20
+  victoryConduit: {fileID: 0}

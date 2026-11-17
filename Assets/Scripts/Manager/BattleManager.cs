@@ -168,6 +168,8 @@ public class BattleManager : MonoBehaviour
         mulligans.Cancel();
         if (player != null) player.ContinuousCards.ResetForBattle();
         if (target != null) target.ContinuousCards.ResetForBattle();
+        if (player != null) player.StatusEffects.ClearBuffs();
+        if (target != null) target.StatusEffects.ClearBuffs();
         isResolvingEffects = false;
         CardInspectionUI.CloseForBattleEnd();
         BattleEnded?.Invoke(Result);
@@ -217,6 +219,7 @@ public class BattleManager : MonoBehaviour
                 ammo.ResetForBattle();
                 ammo.Load(RunRelicInventory.BattleStartAmmo);
             }
+            RunRelicInventory.ApplyBattleStartBuffs(player);
         }
         if (deckController != null) deckController.ResetForBattle();
         DrawStartingHands();

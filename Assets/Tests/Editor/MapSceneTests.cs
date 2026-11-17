@@ -452,14 +452,8 @@ public class MapSceneTests
         RunSaves.UseStore(new RunSaveStore(savePath));
         try
         {
-            yield return SceneManager.LoadSceneAsync("TitleScene");
-            yield return WaitForScene("TitleScene");
-            var title = Object.FindFirstObjectByType<TitleMenuUI>();
-            title.StartGame();
-            var selection = Object.FindFirstObjectByType<CharacterSelectionUI>();
-            yield return TitleMenuTests.WaitForCharacterSelection(selection);
-            selection.GetComponentInChildren<Toggle>().isOn = true;
-            title.ConfirmAdventure();
+            // Direct map entry uses the test floor with a fixed shop at node three.
+            yield return SceneManager.LoadSceneAsync("MapScene");
             yield return WaitForMap();
             for (int i = 0; i < 2; i++)
             {
@@ -772,14 +766,8 @@ public class MapSceneTests
         RunSaves.UseStore(new RunSaveStore(savePath));
         try
         {
-            yield return SceneManager.LoadSceneAsync("TitleScene");
-            yield return WaitForScene("TitleScene");
-            var title = Object.FindFirstObjectByType<TitleMenuUI>();
-            title.StartGame();
-            var selection = Object.FindFirstObjectByType<CharacterSelectionUI>();
-            yield return TitleMenuTests.WaitForCharacterSelection(selection);
-            selection.GetComponentInChildren<Toggle>().isOn = true;
-            title.ConfirmAdventure();
+            // Direct map entry uses the test floor with a fixed rest at node four.
+            yield return SceneManager.LoadSceneAsync("MapScene");
             yield return WaitForMap();
             for (int i = 0; i < 3; i++)
             {

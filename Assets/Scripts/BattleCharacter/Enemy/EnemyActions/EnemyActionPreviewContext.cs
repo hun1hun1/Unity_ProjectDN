@@ -13,6 +13,7 @@ public sealed class EnemyActionPreviewContext
     private int playerHP;
     private int enemyHP;
     private int playerBlock;
+    private int playerThorns;
     public bool CanContinue => (!hasPlayer || playerHP > 0) && (!hasEnemy || enemyHP > 0);
 
     public EnemyActionPreviewContext(BattleManager battle, bool summarizeStatuses = false)
@@ -25,6 +26,7 @@ public sealed class EnemyActionPreviewContext
         playerHP = hasPlayer ? player.GetCurrentHP() : 0;
         enemyHP = hasEnemy ? enemy.GetCurrentHP() : 0;
         playerBlock = hasPlayer ? player.GetBlock() : 0;
+        playerThorns = hasPlayer ? player.StatusEffects.GetBuffPower(StatusEffectType.Thorns) : 0;
         playerStatuses = Copy(player); enemyStatuses = Copy(enemy);
     }
 
@@ -39,12 +41,15 @@ public sealed class EnemyActionPreviewContext
 
     public int Attack(int damage)
     {
-        int amount = DamageCalculator.CalculateWithModifiers(damage,
+        bool warded = damage > 0 && hasPlayer && hasEnemy && CanContinue && playerStatuses.Remove(StatusEffectType.Ward);
+        int amount = warded ? 0 : DamageCalculator.CalculateWithModifiers(damage,
             enemyStatuses.Contains(StatusEffectType.Rust), playerStatuses.Contains(StatusEffectType.WeaknessExposure));
         if (hasPlayer)
         {
             playerHP = Math.Max(0, playerHP - Math.Max(0, amount - playerBlock));
             playerBlock = Math.Max(0, playerBlock - amount);
+            if (damage > 0 && playerHP > 0 && hasEnemy)
+                enemyHP = Math.Max(0, enemyHP - playerThorns);
         }
         return amount;
     }
@@ -52,9 +57,15 @@ public sealed class EnemyActionPreviewContext
     public int Block(int block) => BlockCalculator.CalculateWithModifiers(block,
         enemyStatuses.Contains(StatusEffectType.DefenseBreak));
 
-    public void Apply(StatusEffectData status, EnemyTargetType target, int turns)
+    public void Apply(StatusEffectData status, EnemyTargetType target, int turns, int buffPower = 1)
     {
-        if (status == null || turns <= 0) return;
+        if (status == null || !status.CanApply(turns, buffPower)) return;
+        if (status.Category == StatusEffectCategory.Buff)
+        {
+            if (status.Duration == BuffDuration.NextTurn) return;
+            if (status.Type == StatusEffectType.Thorns && target == EnemyTargetType.Player)
+                playerThorns = (int)Math.Min(int.MaxValue, (long)playerThorns + buffPower);
+        }
         (target == EnemyTargetType.Player ? playerStatuses : enemyStatuses).Add(status.Type);
     }
 }

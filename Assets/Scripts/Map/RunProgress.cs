@@ -249,13 +249,41 @@ public sealed class RunProgress
 
     internal bool IsBattleOptionBlocked(MapChoice choice) => choice.IsBattle && !CanEnterBattle();
 
+    internal AmmoCapacityRelic GetEliteVictoryConduit()
+    {
+        if (Phase != RunPhase.Rewards || CurrentNode.SelectedChoice.Type != MapContentType.EliteBattle)
+            return null;
+        if (!UsesFirstFloorRules) return CurrentNode.SelectedChoice.Encounter.victoryConduit;
+
+        // A failed completion save rolls back the inventory and node, so retry uses the same draw.
+        var random = new System.Random(NodeSeed ^ 0x2BA67E31);
+        ConduitRarity rarity = random.Next(100) < 70 ? ConduitRarity.Common : ConduitRarity.Uncommon;
+        var preferred = new List<AmmoCapacityRelic>();
+        var fallback = new List<AmmoCapacityRelic>();
+        foreach (AmmoCapacityRelic conduit in CurrentFloor.eliteVictoryConduits)
+            if (!RunRelicInventory.Contains(conduit) && CanOfferRandomConduit(conduit))
+                (conduit.Rarity == rarity ? preferred : fallback).Add(conduit);
+        List<AmmoCapacityRelic> candidates = preferred.Count > 0 ? preferred : fallback;
+        return candidates.Count > 0 ? candidates[random.Next(candidates.Count)] : null;
+    }
+
+    private bool CanOfferRandomConduit(AmmoCapacityRelic conduit)
+    {
+        if (conduit == CurrentFloor.guaranteedRelicData || conduit == CurrentFloor.midpointEliteConduit)
+            return false;
+        for (int i = 0; i < NodeIndex; i++)
+            if (Nodes[i].SelectedChoice?.ContentData == conduit) return false;
+        return true;
+    }
+
     internal bool CanChooseOption(int index, Func<MapContentType, bool> canDispatch)
     {
         if (Phase != RunPhase.Map || CurrentNode == null || CurrentNode.Status != MapNodeStatus.Pending ||
             index < 0 || index >= CurrentNode.Choices.Count) return false;
         MapChoice choice = CurrentNode.Choices[index];
         if (choice.Type == MapContentType.Unknown)
-            return UnknownNodeResolver.HasOutcome(Definition.floors[FloorIndex].unknown, CanEnterBattle(), IsAvailable);
+            return UnknownNodeResolver.HasOutcome(CurrentFloor.unknown, CanEnterBattle(), IsAvailable,
+                UsesFirstFloorRules ? CanOfferRandomConduit : null);
         return !IsBattleOptionBlocked(choice) && IsAvailable(choice.Type);
 
         bool IsAvailable(MapContentType type) => MapGenerator.Contains(enabledContent, type) && (canDispatch?.Invoke(type) ?? true);
@@ -270,8 +298,9 @@ public sealed class RunProgress
         if (choice.Type == MapContentType.Unknown)
         {
             var random = new System.Random(unchecked(NodeSeed ^ 0x4F1BBCDC));
-            MapChoice outcome = UnknownNodeResolver.Resolve(Definition.floors[FloorIndex], CanEnterBattle(),
-                type => MapGenerator.Contains(enabledContent, type) && (canDispatch?.Invoke(type) ?? true), random);
+            MapChoice outcome = UnknownNodeResolver.Resolve(CurrentFloor, CanEnterBattle(),
+                type => MapGenerator.Contains(enabledContent, type) && (canDispatch?.Invoke(type) ?? true), random,
+                UsesFirstFloorRules ? CanOfferRandomConduit : null);
             if (outcome == null) return false;
             if (UsesFirstFloorRules && outcome.Type == MapContentType.NormalBattle)
                 outcome = new MapChoice(outcome.Type, NextEncounter(outcome.Type));
