@@ -27,7 +27,7 @@
 - 빌드 시작 씬은 `TitleScene`입니다. 군인으로 새 모험을 시작하면 [FirstFloorRun](../Assets/MapData/FirstFloorRun.asset)과 [FirstFloor](../Assets/MapData/FirstFloor.asset)를 사용해 `MapScene`으로 이동합니다.
 - 활성 런 없이 `MapScene`을 직접 실행하면 [TemporaryRun](../Assets/MapData/TemporaryRun.asset)으로 5노드 맵을 엽니다. 2·5번의 미지, 3번의 상점·매개체, 4번의 휴식을 일반 전투와 함께 배치합니다.
 - 13번 보스의 전투 보상 처리가 끝나면 맵에서 `런 완료`를 표시하고 선택지를 숨깁니다.
-- 패배 또는 전투 중단 시 진행을 멈추고 맵에 런 종료 상태를 표시합니다.
+- 패배하면 전투 씬에서 사망 모션과 패배 패널을 표시합니다. 전투를 중단하면 맵에 런 종료 상태를 표시합니다.
 - 군인의 새 모험은 최대 HP 80, 보유 골드 100, 시작 매개체 탄피로 시작합니다. 1층 전투의 골드 보상은 노드 시드로 정한 20~25에 현재 노드 번호(1부터 시작)를 더합니다. 첫 노드 보상은 21~26골드입니다. [전투 보상](BattleRewards.md)
 
 ## 규칙 조정
@@ -86,7 +86,9 @@ flowchart TD
     E --> G{남은 노드 또는 층}
     G -->|있음| A
     G -->|없음| H[Completed: 런 완료]
-    C -->|패배 또는 중단| I[Defeated 또는 Cancelled: 런 종료]
+    C -->|패배| I[Defeated: 사망 모션과 패배 패널]
+    I -->|타이틀로 돌아가기| J[TitleScene]
+    C -->|중단| K[Cancelled: 맵에서 런 종료]
 ```
 
 - 선택 전 노드는 `Pending`이며, 선택하면 `Resolving`이 되어 다른 선택을 막습니다. 미지를 선택하면 실제 결과를 확정해 원래 선택지와 함께 저장합니다.
@@ -275,7 +277,7 @@ Unity Project 창에서 **Create → Conduit → Ammo Capacity**를 선택하고
 - `RunBattleBridge`: 모든 캐릭터의 Awake 이후, BattleManager.Start 이전에 HP와 적·보상 설정을 적용합니다. 전투 결과와 보상 완료를 현재 런에 전달합니다.
 - `MapController`: 진행 상황과 선택지 표시, 콘텐츠 처리기 연결.
 
-승리 시 `Battle → Rewards`로 전환하며 `BattleRewardSystem.Completed` 전에는 노드가 완료되지 않습니다. 선택은 즉시 잠기고, 전투 결과·보상 완료·비전투 완료에는 현재 런과 노드 검증을 적용합니다. 패배와 중단은 보상을 생성하거나 노드를 완료하지 않습니다.
+승리 시 `Battle → Rewards`로 전환하며 `BattleRewardSystem.Completed` 전에는 노드가 완료되지 않습니다. 선택은 즉시 잠기고, 전투 결과·보상 완료·비전투 완료에는 현재 런과 노드 검증을 적용합니다. 패배와 중단은 보상을 생성하거나 노드를 완료하지 않습니다. 패배 패널은 사망 모션 후 캐릭터, 도달한 층과 노드, 마지막 조우를 표시합니다. 타이틀 복귀 버튼을 누르면 체크포인트가 정리된 상태로 타이틀 씬을 엽니다.
 
 HP와 최대 HP는 다음 전투에 복원합니다. 꿈·악몽의 런 덱과 골드·매개체는 유지하며, 패·드로우/버림/소멸 더미·상태이상·지속 카드·지연 효과·탄약과 코스트는 기존 전투별 초기화 규칙을 유지합니다. 데이터베이스와 CardData 원본을 런 상태로 수정하지 않습니다.
 
@@ -286,7 +288,7 @@ HP와 최대 HP는 다음 전투에 복원합니다. 꿈·악몽의 런 덱과 �
 타이틀에서 새 런을 시작하려면 [캐릭터 선택 창](TitleMenu.md#캐릭터-선택)에서 군인을 선택하고 `모험 시작`을 확정합니다. 현재 `TemporaryRun`으로 맵에 진입하며 시작 골드는 100입니다.
 
 - `RunSession.GetOrCreate().StartNewRun(definition, seed, supportedContent)`: 설정을 검증한 뒤 모든 런 인벤토리와 HP·진행을 새로 시작합니다. 맵 씬에서는 등록된 처리기 종류를 전달합니다. 처리기를 전달하지 않으면 전투만 지원하는 것으로 취급합니다.
-- `RunSession.RunFinished`: `Completed`, `Defeated`, `Cancelled` 중 결과를 런당 한 번 알립니다. 현재는 종료 상태를 맵에 표시합니다.
+- `RunSession.RunFinished`: `Completed`, `Defeated`, `Cancelled` 중 결과를 런당 한 번 알립니다.
 - `RunSession.Progress`: 진행·HP·결과 조회.
 
 `ProjectDN/Setup Map System`은 Unity Editor API로 기본 에셋과 씬을 생성하고 전투 연결을 구성합니다. 이미 존재하는 설정값과 맵 UI는 재생성하지 않습니다. 기존 맵에서 런 설정 참조가 누락됐을 때만 기본 설정을 복구합니다.

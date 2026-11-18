@@ -20,6 +20,50 @@ public partial class RunCheckpointRuntimeTests
         Assert.That(stale(),Is.False);
         Assert.That(RunGoldInventory.Gold, Is.EqualTo(goldBefore));
     }
+    [UnityTest]
+    public IEnumerator DefeatPanelStaysOpenWhenCheckpointCleanupFailsAndCanRetry()
+    {
+        yield return new EnterPlayMode();
+        yield return VerifyDefeatCleanupFailure();
+        yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator VerifyDefeatCleanupFailure()
+    {
+        Isolate();
+        yield return Load("TitleScene");
+        yield return StartNewAdventure(Object.FindFirstObjectByType<TitleMenuUI>());
+        yield return WaitMap();
+        RunSession session = RunSession.Instance;
+        Assert.That(session.SelectOption(0), Is.True, session.SaveError);
+        yield return WaitBattle();
+
+        string blockedMarker = RunSaves.Store.Path + ".ended";
+        Directory.CreateDirectory(blockedMarker);
+        try
+        {
+            Object.FindFirstObjectByType<BattleManager>().GetPlayer().TakeDamage(100000);
+            GameOverUI gameOver = Object.FindFirstObjectByType<GameOverUI>();
+            var button = Ref<UnityEngine.UI.Button>(gameOver, "returnButton");
+            yield return Until(() => button.interactable);
+
+            Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Defeated));
+            Assert.That(session.SaveError, Is.Not.Empty);
+            button.onClick.Invoke();
+            Assert.That(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, Is.EqualTo("BattleScene"));
+            Assert.That(Ref<TMPro.TMP_Text>(gameOver, "navigationError").text, Is.Not.Empty);
+            Assert.That(button.interactable, Is.True);
+        }
+        finally
+        {
+            Directory.Delete(blockedMarker);
+        }
+
+        Ref<UnityEngine.UI.Button>(Object.FindFirstObjectByType<GameOverUI>(), "returnButton").onClick.Invoke();
+        yield return LoadDone("TitleScene");
+        Assert.That(RunSaves.HasContinue, Is.False);
+    }
+
     [UnityTest] public IEnumerator FailedRewardSaveDoesNotKeepAnUncommittedGoldClaim()
     {yield return new EnterPlayMode();yield return VerifyClaimFailure();yield return new ExitPlayMode();}
     private static IEnumerator VerifyClaimFailure()

@@ -6,6 +6,7 @@ public class RunBattleBridge : MonoBehaviour
 {
     [SerializeField] private BattleManager battle;
     [SerializeField] private BattleRewardSystem rewards;
+    [SerializeField] private GameOverUI gameOver;
     private RunSession session;
     private RunProgress progress;
     private int floor;
@@ -56,11 +57,23 @@ public class RunBattleBridge : MonoBehaviour
     }
     private void OnBattleEnded(BattleResult result)
     {
-        if (restoring || session == null || progress == null || !ReferenceEquals(session.Progress,progress)) return;
+        if (restoring) return;
         Player player = battle.GetPlayer();
-        if(session.RecordBattleResult(progress, floor, node, result, player.GetCurrentHP(), player.GetMaxHP()) && result==BattleResult.Victory)
+        if (progress == null)
         {
-            rewards.PrepareVictory();OnRewardsChanged();
+            if (result == BattleResult.Defeat && gameOver != null) gameOver.Show(player, null);
+            return;
+        }
+        if (session == null || !ReferenceEquals(session.Progress, progress)) return;
+
+        bool presentDefeat = result == BattleResult.Defeat && gameOver != null;
+        bool recorded = session.RecordBattleResult(progress, floor, node, result, player.GetCurrentHP(),
+            player.GetMaxHP(), keepBattleSceneOnDefeat: presentDefeat);
+        if (presentDefeat && progress.Phase == RunPhase.Defeated) gameOver.Show(player, progress);
+        if (recorded && result == BattleResult.Victory)
+        {
+            rewards.PrepareVictory();
+            OnRewardsChanged();
         }
     }
     private void OnRewardsChanged()

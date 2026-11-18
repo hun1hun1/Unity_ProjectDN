@@ -128,7 +128,8 @@ public class RunSession : MonoBehaviour
         }
     }
 
-    public bool RecordBattleResult(RunProgress expected, int floor, int node, BattleResult result, int currentHP, int maxHP)
+    public bool RecordBattleResult(RunProgress expected, int floor, int node, BattleResult result, int currentHP, int maxHP,
+        bool keepBattleSceneOnDefeat = false)
     {
         if (Progress == null || !ReferenceEquals(expected, Progress) || Progress.Phase != RunPhase.Battle ||
             floor != Progress.FloorIndex || node != Progress.NodeIndex || result == BattleResult.None) return false;
@@ -136,7 +137,8 @@ public class RunSession : MonoBehaviour
         Progress.CaptureHealth(currentHP, maxHP);
         if(Progress.IsFinished && !ClearCheckpoint()){Publish();return false;}
         Publish();
-        if (Progress.IsFinished) LoadScene(Progress.Definition.mapScene);
+        if (Progress.IsFinished && !(keepBattleSceneOnDefeat && result == BattleResult.Defeat))
+            LoadScene(Progress.Definition.mapScene);
         return true;
     }
 

@@ -1281,7 +1281,7 @@ public class MapSceneTests
         CaptureMap("map-completed.png");
     }
 
-    [UnityTest] public IEnumerator DefeatReturnsToTerminalMapWithoutAdvancingAndNewRunResetsAllInventories()
+    [UnityTest] public IEnumerator DefeatShowsResultAfterFallAndReturnsToTitleWithoutContinuing()
     {
         yield return new EnterPlayMode();
         yield return SceneManager.LoadSceneAsync("MapScene"); yield return WaitForMap();
@@ -1294,22 +1294,76 @@ public class MapSceneTests
         CardData extra = battle.GetDeckController().GetDeck(CardDeckType.TypeDream)[0];
         int initialDeck = battle.GetDeckController().GetDeck(CardDeckType.TypeDream).Count;
         battle.GetDeckController().AddCardToDeck(extra, CardDeckType.TypeDream);
+        Assert.That(RunSaves.HasContinue, Is.True);
+        string encounterName = session.Progress.CurrentNode.SelectedChoice.Encounter.displayName;
+        RectTransform visual = battle.GetPlayer().GetComponent<BattleCharacterPresentation>().Visual;
+        UISpriteAnimator animator = visual.GetComponent<UISpriteAnimator>();
+        var defeatClip = AssetDatabase.LoadAssetAtPath<UISpriteAnimation>(
+            "Assets/CharacterPresentation/Animations/SoldierDefeat.asset");
+
         battle.GetPlayer().TakeDamage(100000);
         Assert.That(Object.FindFirstObjectByType<BattleRewardSystem>().State, Is.EqualTo(BattleRewardState.Closed));
-        yield return WaitForMap();
         Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Defeated));
-        Assert.That(session.Progress.CompletedNodes, Is.Zero); Assert.That(session.Progress.CurrentHP, Is.Zero);
+        Assert.That(session.Progress.CompletedNodes, Is.Zero);
+        Assert.That(session.Progress.CurrentHP, Is.Zero);
         Assert.That(finished.Count, Is.EqualTo(1));
-        Assert.That(Object.FindFirstObjectByType<MapController>().CanChoose(0), Is.False);
-        RunProgress old = session.Progress;
+        Assert.That(RunSaves.HasContinue, Is.False);
+        Assert.That(session.IsTransitioning, Is.False, "Defeat must wait in BattleScene.");
+        Assert.That(GameObject.Find("GameOverPanel"), Is.Null);
+
+        float deadline = Time.realtimeSinceStartup + 5f;
+        while (animator.Animation != defeatClip)
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline), "The soldier's defeat animation never started.");
+            yield return null;
+        }
+        Assert.That(animator.Loop, Is.False);
+        Assert.That(GameObject.Find("GameOverPanel"), Is.Null, "The fall must play before the panel appears.");
+
+        GameObject panel;
+        while ((panel = GameObject.Find("GameOverPanel")) == null ||
+               !panel.GetComponentInChildren<Button>().interactable)
+        {
+            Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline), "The GameOver panel never became interactive.");
+            yield return null;
+        }
+        Assert.That(animator.IsComplete, Is.True);
+        Assert.That(animator.CurrentFrame, Is.EqualTo(defeatClip.frames.Length - 1));
+        Assert.That(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, Is.EqualTo("BattleScene"));
+        var panelText = panel.GetComponentsInChildren<TMP_Text>().Select(label => label.text).ToArray();
+        Assert.That(panelText, Does.Contain("패배").And.Contain("군인").And.Contain("1층 · 1번째 노드")
+            .And.Contain(encounterName).And.Contain("타이틀로 돌아가기"));
+        foreach (TMP_Text label in panel.GetComponentsInChildren<TMP_Text>())
+            foreach (char character in label.text.Where(character => !char.IsWhiteSpace(character)))
+                Assert.That(label.font.HasCharacter(character, true, true), Is.True, $"Missing '{character}' in {label.name}.");
+        CaptureMap("GameOver-1280x720.png", panel.GetComponentInParent<Canvas>().rootCanvas);
+        Button returnButton = panel.GetComponentInChildren<Button>();
+        Canvas.ForceUpdateCanvases();
+        RectTransform buttonRect = (RectTransform)returnButton.transform;
+        var pointer = new PointerEventData(EventSystem.current)
+        {
+            position = RectTransformUtility.WorldToScreenPoint(null, buttonRect.TransformPoint(buttonRect.rect.center)),
+            button = PointerEventData.InputButton.Left
+        };
+        var hits = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, hits);
+        Assert.That(hits, Is.Not.Empty);
+        Assert.That(ExecuteEvents.GetEventHandler<IPointerClickHandler>(hits[0].gameObject), Is.SameAs(returnButton.gameObject));
+        ExecuteEvents.ExecuteHierarchy(hits[0].gameObject, pointer, ExecuteEvents.pointerClickHandler);
+        returnButton.onClick.Invoke();
+        yield return WaitForScene("TitleScene");
+        Assert.That(RunSession.Instance.Progress, Is.Null);
+        Assert.That(RunSaves.HasContinue, Is.False);
+
         session.StartNewRun(definition, 81);
+        yield return WaitForMap();
         Assert.That(RunGoldInventory.Gold, Is.EqualTo(definition.startingGold));
         Assert.That(RunRelicInventory.Count, Is.Zero);
         Assert.That(session.Progress.CurrentHP, Is.EqualTo(80));
-        Assert.That(session.CompleteContent(old, 0, 0), Is.False);
         session.SelectOption(0); yield return WaitForScene("BattleScene");
         Assert.That(Object.FindFirstObjectByType<BattleManager>().GetDeckController().GetDeck(CardDeckType.TypeDream).Count, Is.EqualTo(initialDeck));
     }
+
 
     [UnityTest] public IEnumerator CancelledBattleDoesNotGrantCompletionOrRewards()
     {
