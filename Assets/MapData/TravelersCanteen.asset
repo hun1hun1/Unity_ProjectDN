@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62f2cb8cd5b97ca46aae3e30395a3bb7, type: 3}
+  m_Name: TravelersCanteen
+  m_EditorClassIdentifier:
+  relicName: "여행자의 물통"
+  description: "휴식 노드에서 체력 회복을 선택하면 체력을 10 더 회복합니다."
+  artwork: {fileID: 21300000, guid: 1d8cb3946ab44e4d9f17cc81e3d5dfbf, type: 3}
+  rarity: 0
+  maxAmmoBonus: 0
+  battleStartAmmo: 0
+  restRecoveryBonus: 10

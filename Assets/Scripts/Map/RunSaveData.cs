@@ -20,6 +20,7 @@ public sealed class RunProgressData
     public MapContentType[] enabled;
     public RunNodeData[] nodes;
     public RunEncounterOrderData encounterOrder;
+    public RunConduitOrderData conduitOrder;
 }
 
 [Serializable]
@@ -27,6 +28,12 @@ public sealed class RunEncounterOrderData
 {
     public string[] early, late, elite;
 }
+[Serializable]
+public sealed class RunConduitOrderData
+{
+    public string[] common, uncommon;
+}
+
 [Serializable]
 public sealed class RunNodeData
 {
@@ -63,6 +70,18 @@ public sealed class RunRelicData
     public string id;
     public int bonus;
     public int battleStartAmmo;
+    public int turnStartAmmo;
+    public int battleStartBlock;
+    public int battleVictoryHeal;
+    public int restRecoveryBonus;
+    public int dreamHandSizeBonus;
+    public int nightmareHandSizeBonus;
+    public int weaknessExposureBonusTurns;
+    public int shopDiscountPercent;
+    public int goldGainBonusPercent;
+    public bool equalizeEliteConduitOdds;
+    public bool startWithHalfDreamGauge;
+    public bool rustImmunity;
     public string battleStartBuff;
     public int battleStartBuffPower;
 }

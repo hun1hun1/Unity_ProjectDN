@@ -65,13 +65,27 @@ public partial class TitleMenuTests
         Assert.That(service.Current.masterVolume,Is.EqualTo(.35f).Within(.001f));
         Assert.That(platform.CurrentResolution,Is.EqualTo(new GameResolution(1280,720)));
         Assert.That(platform.Fullscreen,Is.True);
-        Assert.That(Ref<Button>(options,"returnButton").GetComponentInChildren<TMP_Text>().text,Is.EqualTo("타이틀로 돌아가기"));
+        Assert.That(Ref<Button>(options, "returnButton").gameObject.activeInHierarchy, Is.False);
+        Assert.That(Ref<Button>(options, "quitButton").gameObject.activeInHierarchy, Is.False);
+        Button resetButton = Ref<Button>(options, "resetButton");
+        Assert.That(resetButton.gameObject.activeInHierarchy, Is.True);
+        RectTransform resetRect = (RectTransform)resetButton.transform;
+        RectTransform footer = (RectTransform)resetRect.parent;
+        Canvas.ForceUpdateCanvases();
+        Assert.That(resetRect.TransformPoint(resetRect.rect.center).x,
+            Is.EqualTo(footer.TransformPoint(footer.rect.center).x).Within(.01f));
+        Assert.That(Ref<Button>(options, "closeButton").gameObject.activeInHierarchy, Is.True);
         menu.StartGame();Assert.That(SceneManager.GetActiveScene().name,Is.EqualTo("TitleScene"));
-        Ref<Button>(options,"returnButton").onClick.Invoke();menu.StartGame();
+        Ref<Button>(options, "closeButton").onClick.Invoke();menu.StartGame();
         Assert.That(options.IsOpen,Is.False);Assert.That(RunSession.Instance==null||!RunSession.Instance.IsTransitioning,Is.True);
         yield return null;yield return null;
         Assert.That(Ref<CanvasGroup>(menu,"mainMenu").interactable,Is.True);
-        menu.OpenOptions();Assert.That(options.IsOpen,Is.True);options.HandleEscape();yield return null;yield return null;
+        menu.OpenOptions();
+        Assert.That(options.IsOpen, Is.True);
+        options.HandleEscape();
+        Assert.That(options.IsOpen, Is.False);
+        Assert.That(platform.QuitRequests, Is.Zero);
+        yield return null;yield return null;
         Assert.That(Ref<CanvasGroup>(menu,"mainMenu").interactable,Is.True);
     }
 
@@ -340,7 +354,24 @@ public partial class TitleMenuTests
         menu.OpenTutorial();menu.CloseTutorial();
         Assert.That(EventSystem.current.currentSelectedGameObject,Is.Null,"Closing the tutorial must clear selection.");
         yield return null;yield return null;
-        menu.RequestQuit();menu.CancelQuit();
+        Ref<Button>(menu, "quitButton").onClick.Invoke();
+        Assert.That(Ref<GameObject>(menu, "quitPanel").activeSelf, Is.True);
+        Assert.That(EventSystem.current.currentSelectedGameObject, Is.Null, "Opening quit must leave both buttons unselected.");
+        foreach (string field in new[] { "cancelQuitButton", "confirmQuitButton" })
+        {
+            Button button = Ref<Button>(menu, field);
+            var pointer = new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left };
+            Assert.That(button.image.overrideSprite, Is.EqualTo(button.image.sprite), field + " before hover");
+            ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
+            Assert.That(button.image.overrideSprite, Is.EqualTo(button.spriteState.highlightedSprite), field + " hover");
+            ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerDownHandler);
+            ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerUpHandler);
+            Assert.That(EventSystem.current.currentSelectedGameObject, Is.Null, field + " after mouse press");
+            ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerExitHandler);
+            Assert.That(button.image.overrideSprite, Is.EqualTo(button.image.sprite), field + " after pointer exit");
+        }
+        menu.HandleEscape();
+        Assert.That(Ref<GameObject>(menu, "quitPanel").activeSelf, Is.False);
         Assert.That(EventSystem.current.currentSelectedGameObject,Is.Null,"Cancelling quit must clear selection.");
         yield return null;yield return null;
         EventSystem.current.SetSelectedGameObject(Ref<Button>(menu,"optionsButton").gameObject);

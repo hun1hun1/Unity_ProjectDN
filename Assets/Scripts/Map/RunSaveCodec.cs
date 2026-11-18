@@ -46,14 +46,23 @@ public static class RunSaveCodec
         keys.Clear();long bonus=0;
         foreach(RunRelicData relic in data.relics)
         {
-            if(relic==null || relic.bonus<0 || relic.battleStartAmmo<0 || relic.battleStartBuffPower<0 ||
+            if(relic==null || relic.bonus<0 || relic.battleStartAmmo<0 || relic.turnStartAmmo<0 ||
+                relic.battleStartBlock<0 || relic.battleVictoryHeal<0 || relic.restRecoveryBonus<0 ||
+                relic.dreamHandSizeBonus<0 || relic.nightmareHandSizeBonus<0 ||
+                relic.battleStartBuffPower<0 || relic.weaknessExposureBonusTurns<0 ||
+                relic.shopDiscountPercent < 0 || relic.shopDiscountPercent > 100 || relic.goldGainBonusPercent < 0 ||
                 !keys.Add(relic.id) || catalog.Resolve<AmmoCapacityRelic>(relic.id)==null)
                 throw new InvalidOperationException("Invalid saved relic.");
             bool hasStartBuff = !string.IsNullOrEmpty(relic.battleStartBuff);
             if (hasStartBuff != (relic.battleStartBuffPower > 0) ||
                 (hasStartBuff && !AmmoCapacityRelic.IsValidBattleStartBuff(
                     catalog.Resolve<StatusEffectData>(relic.battleStartBuff), relic.battleStartBuffPower)) ||
-                (!hasStartBuff && relic.bonus == 0 && relic.battleStartAmmo == 0))
+                (!hasStartBuff && !relic.rustImmunity && relic.bonus == 0 && relic.battleStartAmmo == 0 &&
+                    relic.turnStartAmmo == 0 && relic.battleStartBlock == 0 && relic.battleVictoryHeal == 0 &&
+                    relic.restRecoveryBonus == 0 &&
+                    relic.dreamHandSizeBonus == 0 && relic.nightmareHandSizeBonus == 0 &&
+                    relic.weaknessExposureBonusTurns == 0 && relic.shopDiscountPercent == 0 &&
+                    relic.goldGainBonusPercent == 0 && !relic.equalizeEliteConduitOdds && !relic.startWithHalfDreamGauge))
                 throw new InvalidOperationException("Invalid saved relic effects.");
             bonus+=relic.bonus;
         }

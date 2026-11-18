@@ -149,7 +149,10 @@ public class MapSceneTests
     [UnityTest] public IEnumerator UnknownRelicKeepsTheSameResultAndPaysOnceAfterContinue() =>
         CheckUnknownEncounter(MapContentType.Relic);
 
-    private static IEnumerator CheckUnknownEncounter(MapContentType outcomeType)
+    [UnityTest] public IEnumerator MidasHandBoostsUnknownEventGoldOnceAfterContinue() =>
+        CheckUnknownEncounter(MapContentType.Event, withMidas: true);
+
+    private static IEnumerator CheckUnknownEncounter(MapContentType outcomeType, bool withMidas = false)
     {
         yield return new EnterPlayMode();
         string savePath = System.IO.Path.GetFullPath(".utmp/run-save/unknown-" + System.Guid.NewGuid().ToString("N") + ".json");
@@ -160,9 +163,16 @@ public class MapSceneTests
             yield return WaitForScene("TitleScene");
             RunDefinition definition = AssetDatabase.LoadAssetAtPath<RunDefinition>(MapAssetSetup.RunPath);
             int seed = FindSeedForUnknownOutcome(definition, outcomeType);
+            AmmoCapacityRelic midas = null;
+            if (withMidas)
+            {
+                midas = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/MidasHand.asset");
+                Assert.That(midas, Is.Not.Null);
+            }
 
             RunSession session = RunSession.GetOrCreate();
-            session.StartNewRun(definition, seed, new[] { MapContentType.Shop, MapContentType.Rest, MapContentType.Relic, MapContentType.Event });
+            session.StartNewRun(definition, seed,
+                new[] { MapContentType.Shop, MapContentType.Rest, MapContentType.Relic, MapContentType.Event }, midas);
             yield return WaitForMap();
             RunProgress progress = session.Progress;
             Assert.That(progress.TrySelectOption(0), Is.True);
@@ -229,6 +239,11 @@ public class MapSceneTests
             var panel = GameObject.Find(panelName);
             var accept = panel.transform.Find("Content/Accept").GetComponent<Button>();
             int before = RunGoldInventory.Gold;
+            int relicCount = RunRelicInventory.Count;
+            int eventGold = outcome is MapEventDefinition goldEvent ? goldEvent.goldReward : 0;
+            if (withMidas) eventGold = eventGold * 3 / 2;
+            if (eventGold > 0)
+                Assert.That(accept.GetComponentInChildren<TMP_Text>().text, Does.Contain(eventGold.ToString()));
             using (var locked = new System.IO.FileStream(savePath, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.None))
             {
                 ClickUtilityButton(accept);
@@ -238,15 +253,15 @@ public class MapSceneTests
                 Assert.That(saveError.text, Is.Not.Empty);
                 Assert.That(saveError.font.HasCharacters(saveError.text, out uint[] _, true, true), Is.True, saveError.text);
                 Assert.That(RunGoldInventory.Gold, Is.EqualTo(before));
-                Assert.That(RunRelicInventory.Count, Is.Zero);
+                Assert.That(RunRelicInventory.Count, Is.EqualTo(relicCount));
             }
 
             ClickUtilityButton(accept);
             accept.onClick.Invoke();
             Assert.That(progress.NodeIndex, Is.EqualTo(2));
             Assert.That(panel.activeSelf, Is.False);
-            if (outcome is MapEventDefinition mapEvent)
-                Assert.That(RunGoldInventory.Gold, Is.EqualTo(before + mapEvent.goldReward));
+            if (outcome is MapEventDefinition)
+                Assert.That(RunGoldInventory.Gold, Is.EqualTo(before + eventGold));
             else
                 Assert.That(RunRelicInventory.Contains((AmmoCapacityRelic)outcome), Is.True);
         }
@@ -759,6 +774,71 @@ public class MapSceneTests
         return prices;
     }
 
+    [UnityTest] public IEnumerator TravelersCanteenAddsTenToRestRecoveryAfterContinue()
+    {
+        yield return new EnterPlayMode();
+        yield return VerifyTravelersCanteen();
+        yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator VerifyTravelersCanteen()
+    {
+        string savePath = System.IO.Path.GetFullPath(".utmp/run-save/canteen-" + System.Guid.NewGuid().ToString("N") + ".json");
+        RunSaves.UseStore(new RunSaveStore(savePath));
+        try
+        {
+            var canteen = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/TravelersCanteen.asset");
+            var floor = AssetDatabase.LoadAssetAtPath<FloorMapDefinition>("Assets/MapData/FirstFloor.asset");
+            Assert.That(canteen, Is.Not.Null, "The Traveler's Canteen asset must exist.");
+            Assert.That(canteen.Rarity, Is.EqualTo(ConduitRarity.Common));
+            Assert.That(canteen.MaxAmmoBonus, Is.Zero);
+            Assert.That(AssetDatabase.GetAssetPath(canteen.Artwork), Is.EqualTo("Assets/Images/UI/Conduits/travelers-canteen.png"));
+            Assert.That(floor.commonConduitRewards.conduits, Does.Contain(canteen));
+
+            yield return SceneManager.LoadSceneAsync("MapScene");
+            yield return WaitForMap();
+            var session = RunSession.Instance;
+            var progress = session.Progress;
+            Assert.That(canteen.Acquire(), Is.True);
+            for (int i = 0; i < 3; i++)
+            {
+                Assert.That(progress.TrySelectOption(0), Is.True);
+                Assert.That(progress.RecordBattleResult(BattleResult.Victory), Is.True);
+                Assert.That(progress.CompleteNode(0, i), Is.True);
+            }
+            progress.CaptureHealth(50, 80);
+            Object.FindFirstObjectByType<MapController>().SelectOption(1);
+            Assert.That(progress.Phase, Is.EqualTo(RunPhase.Content));
+            Assert.That(session.ReturnToTitle(), Is.True, session.SaveError);
+            yield return WaitForScene("TitleScene");
+            RunRelicInventory.ResetForNewGame();
+            Object.FindFirstObjectByType<TitleMenuUI>().ContinueGame();
+            yield return WaitForMap();
+
+            Assert.That(RunRelicInventory.Contains(canteen), Is.True);
+            var rest = Object.FindFirstObjectByType<RestHandler>();
+            var bindings = new SerializedObject(rest);
+            var description = (TMP_Text)bindings.FindProperty("recoveryDescription").objectReferenceValue;
+            var recover = (Button)bindings.FindProperty("recoverButton").objectReferenceValue;
+            Assert.That(description.text, Does.Contain("30% + 20"));
+            using (var locked = new System.IO.FileStream(savePath, System.IO.FileMode.Open,
+                System.IO.FileAccess.Read, System.IO.FileShare.None))
+            {
+                ClickUtilityButton(recover);
+                Assert.That(session.Progress.CurrentHP, Is.EqualTo(50));
+                Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Content));
+            }
+
+            ClickUtilityButton(recover);
+            recover.onClick.Invoke();
+            Assert.That(session.Progress.CurrentHP, Is.EqualTo(79));
+            Assert.That(session.Progress.Phase, Is.EqualTo(RunPhase.Map));
+            Assert.That(RunSaves.TryLoad(out RunSaveData saved, out _), Is.True);
+            Assert.That(saved.progress.hp, Is.EqualTo(79));
+        }
+        finally { RunSaves.UseStore(null); }
+    }
+
     [UnityTest] public IEnumerator RestRecoveryHealsMissingHealthAndAdvancesOnlyAfterSaving()
     {
         yield return new EnterPlayMode();
@@ -900,6 +980,111 @@ public class MapSceneTests
         yield return new WaitForSecondsRealtime(.18f);
         Assert.That(button.targetGraphic.canvasRenderer.GetColor(), Is.EqualTo(imageBefore));
         Assert.That(labels.Select(TextColor), Is.EqualTo(textBefore));
+    }
+
+    [UnityTest]
+    public IEnumerator MerchantGuildTokenDiscountsBothShelvesAndCardRemovalAcrossContinue()
+    {
+        yield return new EnterPlayMode();
+        string savePath = System.IO.Path.GetFullPath(".utmp/run-save/merchant-token-" + System.Guid.NewGuid().ToString("N") + ".json");
+        RunSaves.UseStore(new RunSaveStore(savePath));
+        try
+        {
+            var floor = AssetDatabase.LoadAssetAtPath<FloorMapDefinition>("Assets/MapData/FirstFloor.asset");
+            var token = floor.uncommonConduitRewards.conduits.SingleOrDefault(c => c != null && c.name == "MerchantGuildToken");
+            Assert.That(token, Is.Not.Null, "The uncommon reward pool must include Merchant Guild Token.");
+            Assert.That(token.Rarity, Is.EqualTo(ConduitRarity.Uncommon));
+            Assert.That(token.MaxAmmoBonus, Is.Zero);
+            Assert.That(AssetDatabase.GetAssetPath(token.Artwork), Is.EqualTo("Assets/Images/UI/Conduits/merchant-guild-token.png"));
+
+            yield return SceneManager.LoadSceneAsync("MapScene");
+            yield return WaitForMap();
+            var session = RunSession.Instance;
+            var progress = session.Progress;
+            for (int i = 0; i < 2; i++)
+            {
+                Assert.That(progress.TrySelectOption(0), Is.True);
+                Assert.That(progress.RecordBattleResult(BattleResult.Victory), Is.True);
+                Assert.That(progress.CompleteNode(progress.FloorIndex, progress.NodeIndex), Is.True);
+            }
+
+            Object.FindFirstObjectByType<MapController>().SelectOption(1);
+            Transform panel = GameObject.Find("ShopPanel").transform;
+            CanvasGroup entrance = panel.GetComponent<CanvasGroup>();
+            float deadline = Time.realtimeSinceStartup + 3f;
+            while (!entrance.interactable && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.That(entrance.interactable, Is.True);
+
+            var shop = Object.FindFirstObjectByType<ShopHandler>();
+            var stock = JsonUtility.FromJson<SavedShopStock>(shop.CaptureState());
+            var catalog = RunAssetCatalog.Load();
+            var nightmareCard = AssetDatabase.LoadAssetAtPath<CardData>(
+                "Assets/CardData/Soldier/Basic/Starting/Nightmare/Skill/02.Card_Target_Tracking/Target_Tracking.asset");
+            // Supply a nightmare offer even when this project's reward catalog leaves that shelf empty.
+            stock.nightmare[0] = catalog.Key(nightmareCard);
+            string offerState = JsonUtility.ToJson(stock);
+            shop.RestoreState(offerState);
+            Transform dreamSlot = panel.Find("Display/DreamSlots").GetChild(0);
+            Transform nightmareSlot = panel.Find("Display/NightmareSlots").GetChild(0);
+            int baseDream = int.Parse(GetShopPriceLabel(dreamSlot).text);
+            int baseNightmare = int.Parse(GetShopPriceLabel(nightmareSlot).text);
+
+            Assert.That(token.Acquire(), Is.True);
+            shop.RestoreState(offerState);
+            yield return null;
+            int dreamPrice = baseDream * 70 / 100;
+            int nightmarePrice = baseNightmare * 70 / 100;
+            Assert.That(GetShopPriceLabel(dreamSlot).text, Is.EqualTo(dreamPrice.ToString()));
+            Assert.That(GetShopPriceLabel(nightmareSlot).text, Is.EqualTo(nightmarePrice.ToString()));
+
+            RunGoldInventory.Add(nightmarePrice + 70);
+            int startingGold = RunGoldInventory.Gold;
+            ClickPointer(nightmareSlot.GetComponentInChildren<DeckCardUI>().gameObject, PointerEventData.InputButton.Left);
+            var confirm = GameObject.Find("PurchaseButton").GetComponent<Button>();
+            Assert.That(confirm.GetComponentInChildren<TMP_Text>().text, Is.EqualTo($"구매 · {nightmarePrice}골드"));
+            yield return null;
+            ClickUtilityButton(confirm);
+            Assert.That(RunGoldInventory.Gold, Is.EqualTo(startingGold - nightmarePrice));
+            AssertSoldOut(nightmareSlot);
+            yield return null;
+
+            string RemovalPrice() => GameObject.Find("CardRemovalPrice").GetComponent<TMP_Text>().text;
+            Assert.That(RemovalPrice(), Is.EqualTo("70"));
+            ClickUtilityButton(GameObject.Find("CardRemovalButton").GetComponent<Button>());
+            yield return null;
+            var selected = GameObject.Find("DeckOverviewPanel").transform.Find("DreamSection").GetComponentInChildren<DeckCardUI>();
+            ClickUtilityButton(selected.GetComponent<Button>());
+            confirm = GameObject.Find("PurchaseButton").GetComponent<Button>();
+            Assert.That(confirm.GetComponentInChildren<TMP_Text>().text, Is.EqualTo("70골드로 제거"));
+            yield return null;
+            ClickUtilityButton(confirm);
+            int remainingGold = startingGold - nightmarePrice - 70;
+            Assert.That(RunGoldInventory.Gold, Is.EqualTo(remainingGold));
+            Assert.That(RemovalPrice(), Is.EqualTo("105"));
+            yield return null;
+
+            Assert.That(session.ReturnToTitle(), Is.True);
+            yield return WaitForScene("TitleScene");
+            RunRelicInventory.ResetForNewGame();
+            Object.FindFirstObjectByType<TitleMenuUI>().ContinueGame();
+            yield return WaitForMap();
+            panel = GameObject.Find("ShopPanel").transform;
+            Assert.That(RunRelicInventory.Contains(token), Is.True);
+            Assert.That(RunGoldInventory.Gold, Is.EqualTo(remainingGold));
+            Assert.That(RemovalPrice(), Is.EqualTo("105"));
+            dreamSlot = panel.Find("Display/DreamSlots").GetChild(0);
+            Assert.That(GetShopPriceLabel(dreamSlot).text, Is.EqualTo(dreamPrice.ToString()));
+            AssertSoldOut(panel.Find("Display/NightmareSlots").GetChild(0));
+
+            RunGoldInventory.Add(dreamPrice);
+            ClickPointer(dreamSlot.GetComponentInChildren<DeckCardUI>().gameObject, PointerEventData.InputButton.Left);
+            yield return null;
+            ClickUtilityButton(GameObject.Find("PurchaseButton").GetComponent<Button>());
+            Assert.That(RunGoldInventory.Gold, Is.EqualTo(remainingGold));
+            AssertSoldOut(dreamSlot);
+        }
+        finally { RunSaves.UseStore(null); }
+        yield return new ExitPlayMode();
     }
 
     [UnityTest]

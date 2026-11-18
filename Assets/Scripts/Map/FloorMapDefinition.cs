@@ -58,9 +58,8 @@ public class FloorMapDefinition : ScriptableObject
     public FirstFloorNodeLayout[] firstFloorLayout = Array.Empty<FirstFloorNodeLayout>();
     [Range(0, 1)] public float secondNonBattleChance = .3f;
     public BattleEncounterDefinition[] lateNormalBattles = Array.Empty<BattleEncounterDefinition>();
-    public AmmoCapacityRelic midpointEliteConduit;
-    [Tooltip("Shared first-floor elite victory rewards. The draw chooses Common (70%) or Uncommon (30%) first.")]
-    public AmmoCapacityRelic[] eliteVictoryConduits = Array.Empty<AmmoCapacityRelic>();
+    public ConduitRewardDatabase commonConduitRewards;
+    public ConduitRewardDatabase uncommonConduitRewards;
     public MapBattleLimit[] battleLimits = Array.Empty<MapBattleLimit>();
     public UnknownNodeSettings unknown = new UnknownNodeSettings();
     public ScriptableObject guaranteedRelicData;

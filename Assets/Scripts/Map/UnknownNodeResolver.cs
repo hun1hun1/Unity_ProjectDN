@@ -8,15 +8,15 @@ internal static class UnknownNodeResolver
         type == MapContentType.Rest || type == MapContentType.Relic;
 
     internal static bool HasOutcome(UnknownNodeSettings settings, bool canBattle, Func<MapContentType, bool> available,
-        Func<AmmoCapacityRelic, bool> canOfferRelic = null) =>
-        GetOutcomes(settings, canBattle, available, AvailableRelics(settings, canOfferRelic)).Count != 0;
+        bool? sharedConduitAvailable = null) =>
+        GetOutcomes(settings, canBattle, available, sharedConduitAvailable ?? (AvailableRelics(settings).Count > 0)).Count != 0;
 
     internal static MapChoice Resolve(FloorMapDefinition floor, bool canBattle, Func<MapContentType, bool> available, Random random,
-        Func<AmmoCapacityRelic, bool> canOfferRelic = null)
+        AmmoCapacityRelic sharedConduit = null)
     {
         UnknownNodeSettings settings = floor.unknown;
-        var relics = AvailableRelics(settings, canOfferRelic);
-        var outcomes = GetOutcomes(settings, canBattle, available, relics);
+        var relics = floor.mode == FloorMapMode.FirstFloor ? null : AvailableRelics(settings);
+        var outcomes = GetOutcomes(settings, canBattle, available, sharedConduit != null || relics?.Count > 0);
         long total = 0;
         foreach (var outcome in outcomes) total += outcome.weight;
         if (total == 0) return null;
@@ -35,7 +35,7 @@ internal static class UnknownNodeResolver
                 case MapContentType.Event:
                     return new MapChoice(outcome.type, contentData: settings.events[random.Next(settings.events.Length)]);
                 case MapContentType.Relic:
-                    return new MapChoice(outcome.type, contentData: relics[random.Next(relics.Count)]);
+                    return new MapChoice(outcome.type, contentData: sharedConduit ?? relics[random.Next(relics.Count)]);
                 default:
                     return new MapChoice(outcome.type);
             }
@@ -44,7 +44,7 @@ internal static class UnknownNodeResolver
     }
 
     private static List<(MapContentType type, long weight)> GetOutcomes(UnknownNodeSettings settings, bool canBattle,
-        Func<MapContentType, bool> available, List<AmmoCapacityRelic> relics)
+        Func<MapContentType, bool> available, bool hasConduit)
     {
         var outcomes = new List<(MapContentType type, long weight)>(5);
         if (settings == null) return outcomes;
@@ -56,7 +56,7 @@ internal static class UnknownNodeResolver
         if (hasEvent) Add(MapContentType.Event, settings.eventWeight + transferred);
         Add(MapContentType.Shop, settings.shopWeight);
         Add(MapContentType.Rest, settings.restWeight);
-        if (settings.relicWeight > 0 && available(MapContentType.Relic) && relics.Count > 0)
+        if (settings.relicWeight > 0 && available(MapContentType.Relic) && hasConduit)
             outcomes.Add((MapContentType.Relic, settings.relicWeight));
         return outcomes;
 
@@ -66,12 +66,12 @@ internal static class UnknownNodeResolver
         }
     }
 
-    private static List<AmmoCapacityRelic> AvailableRelics(UnknownNodeSettings settings, Func<AmmoCapacityRelic, bool> canOfferRelic)
+    private static List<AmmoCapacityRelic> AvailableRelics(UnknownNodeSettings settings)
     {
         var relics = new List<AmmoCapacityRelic>();
         if (settings?.relics == null) return relics;
         foreach (AmmoCapacityRelic relic in settings.relics)
-            if (relic != null && relic.HasEffect && !RunRelicInventory.Contains(relic) && (canOfferRelic?.Invoke(relic) ?? true))
+            if (relic != null && relic.HasEffect && !RunRelicInventory.Contains(relic))
                 relics.Add(relic);
         return relics;
     }

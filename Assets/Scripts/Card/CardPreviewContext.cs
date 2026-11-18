@@ -11,11 +11,14 @@ public sealed class CardPreviewContext
     private readonly HashSet<CardEffect> visiting;
     private readonly bool hasPlayer;
     private readonly bool hasEnemy;
+    private readonly bool playerRustImmunity;
+    private readonly bool enemyRustImmunity;
     private readonly bool hasAmmoSystem;
     private readonly bool hasBattleContext;
     private readonly bool applyStatusModifiers;
     private readonly bool isContinuous;
     private readonly bool openingAvailable;
+    private readonly int weaknessExposureBonusTurns;
     private bool canExecute;
     private int ammo;
     private int maxAmmo;
@@ -36,7 +39,11 @@ public sealed class CardPreviewContext
         isContinuous = card != null && card.type == CardType.Continuous && !forTurnStart;
         hasPlayer = player != null;
         hasEnemy = enemy != null;
+        playerRustImmunity = hasPlayer && player.StatusEffects.IsImmune(StatusEffectType.Rust);
+        enemyRustImmunity = hasEnemy && enemy.StatusEffects.IsImmune(StatusEffectType.Rust);
         hasBattleContext = battle != null && hasPlayer;
+        weaknessExposureBonusTurns = hasBattleContext && applyStatusModifiers
+            ? RunRelicInventory.WeaknessExposureBonusTurns : 0;
         hasAmmoSystem = source != null;
         ammo = source != null ? source.CurrentAmmo : 0;
         maxAmmo = source != null ? source.MaxAmmo : 0;
@@ -62,8 +69,11 @@ public sealed class CardPreviewContext
         openingAvailable = !delayed && source.openingAvailable;
         hasPlayer = source.hasPlayer;
         hasEnemy = source.hasEnemy;
+        playerRustImmunity = source.playerRustImmunity;
+        enemyRustImmunity = source.enemyRustImmunity;
         hasAmmoSystem = source.hasAmmoSystem;
         hasBattleContext = source.hasBattleContext;
+        weaknessExposureBonusTurns = source.weaknessExposureBonusTurns;
         canExecute = source.canExecute;
         ammo = source.ammo;
         maxAmmo = source.maxAmmo;
@@ -151,9 +161,19 @@ public sealed class CardPreviewContext
         values["block:" + path] = symbolic ? value + " × N" : value;
     }
 
+    internal void RecordStatusTurns(string path, StatusEffectData status, int turns, CardTarget target)
+    {
+        if (isContinuous || status == null || status.Category != StatusEffectCategory.Debuff ||
+            status.Type == StatusEffectType.Burn || !status.CanApply(turns, 1)) return;
+
+        int appliedTurns = ApplyStatusEffect.GetAppliedTurns(status, target, turns, weaknessExposureBonusTurns);
+        values["statusTurns:" + path] = appliedTurns.ToString(CultureInfo.InvariantCulture);
+    }
+
     public void ApplyStatus(StatusEffectData status, int turns, CardTarget target, int buffPower = 1)
     {
-        if (status == null) return;
+        if (status == null || (status.Type == StatusEffectType.Rust &&
+            (target == CardTarget.Player ? playerRustImmunity : enemyRustImmunity))) return;
         if (status.Category == StatusEffectCategory.Buff)
         {
             if (!status.CanApply(turns, buffPower) || status.Duration == BuffDuration.NextTurn) return;

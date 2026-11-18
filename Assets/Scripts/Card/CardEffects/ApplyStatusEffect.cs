@@ -16,6 +16,7 @@ public class ApplyStatusEffect : CardEffect
 
     public override void Preview(CardPreviewContext context, string path)
     {
+        context.RecordStatusTurns(path, status, turns, target);
         context.ApplyStatus(status, turns, target, buffPower);
     }
 
@@ -40,7 +41,20 @@ public class ApplyStatusEffect : CardEffect
             case CardTarget.Enemy: character = battleManager.GetTarget(); break;
             default: return;
         }
-        if (character != null) character.StatusEffects.Apply(status, turns, buffPower);
+        if (character != null)
+        {
+            int appliedTurns = GetAppliedTurns(status, target, turns, RunRelicInventory.WeaknessExposureBonusTurns);
+            character.StatusEffects.Apply(status, appliedTurns, buffPower);
+        }
+    }
+
+    internal static int GetAppliedTurns(StatusEffectData definition, CardTarget target, int turns, int weaknessBonus)
+    {
+        if (turns <= 0 || target != CardTarget.Enemy || definition == null ||
+            definition.Category != StatusEffectCategory.Debuff || definition.Type != StatusEffectType.WeaknessExposure)
+            return turns;
+
+        return (int)System.Math.Min(int.MaxValue, (long)turns + weaknessBonus);
     }
     public override string GetEffectSummary(System.Collections.Generic.HashSet<CardEffect> visiting)
     {

@@ -158,7 +158,8 @@ public sealed class ShopHandler : MapContentHandler
         {
             CardData card = cards[i];
             // A sold slot keeps its original offer and consumes the same price roll.
-            int price = card != null ? ShopStockSampler.RollPrice(card.rarity, random) : 0;
+            int basePrice = card != null ? ShopStockSampler.RollPrice(card.rarity, random) : 0;
+            int price = (int)RunGoldInventory.GetShopPrice(basePrice);
             offers[i] = new Offer(card, price, soldOut is { Length: > 0 } && soldOut[i]);
         }
         return offers;
@@ -238,8 +239,8 @@ public sealed class ShopHandler : MapContentHandler
     private string Purchase(RunNodeVisit expectedVisit, CardDeckType type, int index, CardData card, int price)
     {
         Offer offer = GetOffer(type, index);
-        if (visit != expectedVisit || !panel.activeInHierarchy || offer.SoldOut || offer.Card != card ||
-            offer.Price != price || price <= 0 || dreamStartingDeckDatabase == null || nightmareStartingDeckDatabase == null)
+        if (visit != expectedVisit || !panel.activeInHierarchy || offer.SoldOut || card == null || offer.Card != card ||
+            offer.Price != price || price < 0 || dreamStartingDeckDatabase == null || nightmareStartingDeckDatabase == null)
             return "카드를 구매할 수 없습니다.";
         if (RunGoldInventory.Gold < price) return "골드가 부족합니다.";
 

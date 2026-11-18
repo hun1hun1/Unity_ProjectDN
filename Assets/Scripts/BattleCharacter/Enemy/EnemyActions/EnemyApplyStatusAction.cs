@@ -33,6 +33,7 @@ public class EnemyApplyStatusAction : EnemyAction
     internal override string Preview(EnemyActionPreviewContext context)
     {
         string text = GetActionDescription();
+        if (context.IsImmune(target, status.Type)) return $"{status.DisplayName} · 면역";
         context.Apply(status, target, turns, buffPower);
         if (!context.SummarizeStatuses) return text;
         return status.Category == StatusEffectCategory.Buff ? $"{status.DisplayName} {buffPower} 부여" : "디버프";

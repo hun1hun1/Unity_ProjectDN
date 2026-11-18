@@ -139,7 +139,7 @@ public class TitleMenuUI : MonoBehaviour
     {
         if(!CanActivate)return;
         quitRequested=false;confirmQuitButton.interactable=true;
-        quitPanel.SetActive(true);quitPanel.transform.SetAsLastSibling();RefreshMenu();Select(cancelQuitButton);
+        quitPanel.SetActive(true);quitPanel.transform.SetAsLastSibling();RefreshMenu();ClearSelection();
     }
     public void CancelQuit()
     {

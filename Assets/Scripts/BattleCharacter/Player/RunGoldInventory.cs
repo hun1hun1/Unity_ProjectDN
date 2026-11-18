@@ -4,7 +4,12 @@ public static class RunGoldInventory
 {
     public static int Gold { get; private set; }
     internal static int CardRemovals { get; private set; }
-    internal static long CardRemovalPrice => 100L + 50L * CardRemovals;
+    internal static long CardRemovalPrice => GetShopPrice(100L + 50L * CardRemovals);
+
+    internal static long GetShopPrice(long basePrice) => basePrice * (100 - RunRelicInventory.ShopDiscountPercent) / 100;
+    internal static int GetGoldReward(int baseAmount) => (int)System.Math.Min(int.MaxValue,
+        (long)Mathf.Max(0, baseAmount) * (100L + RunRelicInventory.GoldGainBonusPercent) / 100);
+
     public static void Add(int amount)
     {
         if (amount > 0) Gold = (int)System.Math.Min(int.MaxValue, (long)Gold + amount);

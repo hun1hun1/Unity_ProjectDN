@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 public static class CardDescriptionBuilder
 {
-    private static readonly Regex Tokens = new Regex(@"\{(damage|block|ammoCost|ammoCondition|openingCondition|spentAmmo|spentAmmoCondition|turnDamage|turnBlock|turnAmmoCost|turnAmmoCondition|turnOpeningCondition|turnSpentAmmo|turnSpentAmmoCondition):(\d+(?:\.\d+)*)\}");
+    private static readonly Regex Tokens = new Regex(@"\{(damage|block|ammoCost|ammoCondition|openingCondition|spentAmmo|spentAmmoCondition|statusTurns|turnDamage|turnBlock|turnAmmoCost|turnAmmoCondition|turnOpeningCondition|turnSpentAmmo|turnSpentAmmoCondition|turnStatusTurns):(\d+(?:\.\d+)*)\}");
 
     public static string BuildEffects(string template, CardEffect[] effects, int? spentAmmo = null)
     {
@@ -45,6 +45,7 @@ public static class CardDescriptionBuilder
                 "turnOpeningCondition" => "openingCondition",
                 "turnSpentAmmo" => "spentAmmo",
                 "turnSpentAmmoCondition" => "spentAmmoCondition",
+                "turnStatusTurns" => "statusTurns",
                 _ => kind
             };
             string key = token + ":" + match.Groups[2].Value;

@@ -203,6 +203,7 @@ public class BattleManager : MonoBehaviour
         {
             player.ContinuousCards.ResetForBattle();
             player.StatusEffects.Clear();
+            player.StatusEffects.SetRustImmunity(RunRelicInventory.RustImmunity);
         }
         if (target != null)
         {
@@ -218,10 +219,17 @@ public class BattleManager : MonoBehaviour
             {
                 ammo.ResetForBattle();
                 ammo.Load(RunRelicInventory.BattleStartAmmo);
+                // The opening player turn starts here, before the initial draw.
+                ammo.Load(RunRelicInventory.TurnStartAmmo);
             }
             RunRelicInventory.ApplyBattleStartBuffs(player);
+            int startingBlock = RunRelicInventory.BattleStartBlock;
+            if (startingBlock > 0) player.AddBlock(startingBlock);
+            if (RunRelicInventory.StartWithHalfDreamGauge) player.GetCostSystem()?.FillDreamGaugeToHalf();
         }
         if (deckController != null) deckController.ResetForBattle();
+        dreamCardHand?.SetRunHandSizeBonus(RunRelicInventory.DreamHandSizeBonus);
+        nightmareCardHand?.SetRunHandSizeBonus(RunRelicInventory.NightmareHandSizeBonus);
         DrawStartingHands();
     }
 
@@ -687,6 +695,7 @@ public class BattleManager : MonoBehaviour
             }
 
             player.ResetBlock();
+            player.GetAmmoSystem()?.Load(RunRelicInventory.TurnStartAmmo);
 
             yield return player.ContinuousCards.ProcessTurnStartEffectsRoutine(this);
             if (target != null) yield return target.ContinuousCards.ProcessTurnStartEffectsRoutine(this);

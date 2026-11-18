@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62f2cb8cd5b97ca46aae3e30395a3bb7, type: 3}
+  m_Name: AutomaticLoader
+  m_EditorClassIdentifier:
+  relicName: "자동 장전기"
+  description: "매 턴 시작 시 총알을 1발 장전합니다."
+  artwork: {fileID: 21300000, guid: 47870c5eea5e4175b2130df0f8d2de48, type: 3}
+  rarity: 1
+  maxAmmoBonus: 0
+  battleStartAmmo: 0
+  turnStartAmmo: 1

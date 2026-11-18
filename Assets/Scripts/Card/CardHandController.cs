@@ -8,6 +8,7 @@ public class CardHandController : MonoBehaviour
     [SerializeField] private CardUI cardPrefab;
 
     [SerializeField] private int maxHandSize = 3;
+    private int runHandSizeBonus;
 
     private List<CardUI> cards = new List<CardUI>();
     private bool handLayoutDirty = true;
@@ -67,7 +68,7 @@ public class CardHandController : MonoBehaviour
 
     public bool IsFull()
     {
-        return cards.Count >= maxHandSize;
+        return cards.Count >= GetMaxHandSize();
     }
 
     public IEnumerator DiscardAllCards(System.Action<CardData> onDiscard)
@@ -149,6 +150,8 @@ public class CardHandController : MonoBehaviour
         maxHandSize += amount;
     }
 
+    internal void SetRunHandSizeBonus(int amount) => runHandSizeBonus = Mathf.Max(0, amount);
+
     public int GetCurrentHandSize()
     {
         return cards.Count;
@@ -156,7 +159,7 @@ public class CardHandController : MonoBehaviour
 
     public int GetMaxHandSize()
     {
-        return maxHandSize;
+        return (int)System.Math.Min(int.MaxValue, (long)maxHandSize + runHandSizeBonus);
     }
 
     public List<CardData> RemoveAllCards()

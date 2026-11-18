@@ -37,7 +37,7 @@ public sealed class RestHandler : MapContentHandler
     {
         visit = CaptureVisit(progress);
         healthText.text = $"HP {progress.CurrentHP} / {progress.MaxHP}";
-        recoveryDescription.text = $"잃은 체력의 {recoveryPercent}% + {flatRecovery}만큼\n회복합니다.";
+        recoveryDescription.text = $"잃은 체력의 {recoveryPercent}% + {RunSession.GetRestFlatRecovery(flatRecovery)}만큼\n회복합니다.";
         panel.SetActive(true);
         if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(recoverButton.gameObject);
     }

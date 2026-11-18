@@ -72,6 +72,8 @@ public class RunBattleBridge : MonoBehaviour
         if (presentDefeat && progress.Phase == RunPhase.Defeated) gameOver.Show(player, progress);
         if (recorded && result == BattleResult.Victory)
         {
+            int recoveredHP = progress.CurrentHP - player.GetCurrentHP();
+            if (recoveredHP > 0) player.Heal(recoveredHP);
             rewards.PrepareVictory();
             OnRewardsChanged();
         }

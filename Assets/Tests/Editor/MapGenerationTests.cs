@@ -110,9 +110,91 @@ public class MapGenerationTests
             Is.EquivalentTo(new[] { "TinWoodcutter", "BrokenBell", "InvertedHourglass" }));
     }
 
-    [TestCase(25, ConduitRarity.Common)]
+    [Test]
+    public void FirstFloorOffersWeaknessEngraverAsACommonConduit()
+    {
+        var definition = UnityEditor.AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
+        var conduit = definition.floors[0].commonConduitRewards.conduits
+            .SingleOrDefault(candidate => candidate != null && candidate.name == "WeaknessEngraver");
+        Assert.That(conduit, Is.Not.Null, "The common reward pool must include Weakness Engraver.");
+        Assert.That(conduit.Rarity, Is.EqualTo(ConduitRarity.Common));
+        Assert.That(conduit.WeaknessExposureBonusTurns, Is.EqualTo(1));
+        Assert.That(conduit.MaxAmmoBonus, Is.Zero);
+        Assert.That(conduit.Artwork, Is.Not.Null);
+        Assert.That(UnityEditor.AssetDatabase.GetAssetPath(conduit.Artwork),
+            Is.EqualTo("Assets/Images/UI/Conduits/weakness-engraver.png"));
+        RunAssetCatalog catalog = RunAssetCatalog.Load();
+        Assert.That(catalog.Resolve<AmmoCapacityRelic>(catalog.Key(conduit)), Is.SameAs(conduit));
+    }
+
+    [Test]
+    public void EliteHunterMedalChangesOnlyEliteOddsAndSurvivesRestore()
+    {
+        var definition = UnityEditor.AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
+        var medal = definition.floors[0].commonConduitRewards.conduits
+            .SingleOrDefault(candidate => candidate != null && candidate.name == "EliteHunterMedal");
+        Assert.That(medal, Is.Not.Null, "The common reward pool must include Elite Hunter Medal.");
+        Assert.That(medal.Rarity, Is.EqualTo(ConduitRarity.Common));
+        Assert.That(UnityEditor.AssetDatabase.GetAssetPath(medal.Artwork),
+            Is.EqualTo("Assets/Images/UI/Conduits/elite-hunter-medal.png"));
+
+        // This seed rolls between the two cutoffs at both the unknown and the first elite node.
+        var state = new RunProgress(definition, 142);
+        var draw = typeof(RunProgress).GetMethod("GetEliteVictoryConduit",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        AmmoCapacityRelic DrawElite() => (AmmoCapacityRelic)draw.Invoke(state, null);
+        void Select(MapContentType type)
+        {
+            int index = state.CurrentNode.Choices.ToList().FindIndex(choice => choice.Type == type);
+            Assert.That(state.TrySelectOption(index), Is.True);
+            if (state.CurrentNode.SelectedChoice.IsBattle)
+                Assert.That(state.RecordBattleResult(BattleResult.Victory), Is.True);
+        }
+        void Finish(MapContentType type)
+        {
+            Select(type);
+            Assert.That(state.CompleteNode(0, state.NodeIndex), Is.True);
+        }
+
+        RunRelicInventory.ResetForNewGame();
+        try
+        {
+            Assert.That(medal.Acquire(), Is.True);
+            Finish(MapContentType.NormalBattle);
+            Select(MapContentType.Unknown);
+            Assert.That(state.CurrentNode.SelectedChoice.Type, Is.EqualTo(MapContentType.Relic));
+            Assert.That(((AmmoCapacityRelic)state.CurrentNode.SelectedChoice.ContentData).Rarity, Is.EqualTo(ConduitRarity.Common));
+            Assert.That(state.CompleteNode(0, state.NodeIndex), Is.True);
+            Finish(MapContentType.NormalBattle);
+            Select(MapContentType.EliteBattle);
+
+            RunRelicInventory.ResetForNewGame();
+            Assert.That(DrawElite().Rarity, Is.EqualTo(ConduitRarity.Common));
+            Assert.That(medal.Acquire(), Is.True);
+            AmmoCapacityRelic award = DrawElite();
+            Assert.That(award.Rarity, Is.EqualTo(ConduitRarity.Uncommon));
+
+            RunAssetCatalog catalog = RunAssetCatalog.Load();
+            var saved = JsonUtility.FromJson<RunInventoryData>(JsonUtility.ToJson(RunSaveCodec.CaptureInventory(catalog)));
+            state = RunProgress.Restore(state.Capture(catalog), catalog);
+            RunRelicInventory.ResetForNewGame();
+            RunSaveCodec.RestoreInventory(saved, catalog);
+            Assert.That(RunRelicInventory.Contains(medal), Is.True);
+            Assert.That(DrawElite(), Is.SameAs(award));
+
+            Assert.That(state.CompleteNode(0, state.NodeIndex), Is.True);
+            Finish(MapContentType.NormalBattle);
+            Finish(MapContentType.NormalBattle);
+            Assert.That(state.CurrentNode.Rule, Is.EqualTo(MapNodeRule.GuaranteedRelic));
+            Assert.That(((AmmoCapacityRelic)state.CurrentNode.Choices.Single().ContentData).Rarity,
+                Is.EqualTo(ConduitRarity.Common));
+        }
+        finally { RunRelicInventory.ResetForNewGame(); }
+    }
+
+    [TestCase(24, ConduitRarity.Common)]
     [TestCase(27, ConduitRarity.Uncommon)]
-    public void FirstFloorEliteRewardsUseTheRolledGradeAndNeverRedrawOwnedConduits(int seed, ConduitRarity expected)
+    public void FirstFloorEliteRewardsUseTheRolledGradeAndReserveCandidatesForNodeSeven(int seed, ConduitRarity expected)
     {
         var definition = UnityEditor.AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
         var state = new RunProgress(definition, seed);
@@ -131,23 +213,106 @@ public class MapGenerationTests
         RunRelicInventory.ResetForNewGame();
         try
         {
-            var drawn = new HashSet<AmmoCapacityRelic>();
-            AmmoCapacityRelic[] pool = definition.floors[0].eliteVictoryConduits;
-            int preferredCount = pool.Count(conduit => conduit.Rarity == expected);
-            ConduitRarity other = expected == ConduitRarity.Common ? ConduitRarity.Uncommon : ConduitRarity.Common;
-            Assert.That(preferredCount, Is.InRange(1, pool.Length - 1));
-            for (int i = 0; i < pool.Length; i++)
+            var drawn = new HashSet<string>();
+            ConduitRarity fallback = expected == ConduitRarity.Common ? ConduitRarity.Uncommon : ConduitRarity.Common;
+            RunConduitOrderData order = state.Capture(catalog).conduitOrder;
+            int preferredCount = (expected == ConduitRarity.Common ? order.common.Length : order.uncommon.Length) - 1;
+            int randomCandidateCount = order.common.Length + order.uncommon.Length - 2;
+            for (int i = 0; i < randomCandidateCount; i++)
             {
                 var conduit = (AmmoCapacityRelic)draw.Invoke(state, null);
                 Assert.That(conduit, Is.Not.Null);
-                Assert.That(conduit.Rarity, Is.EqualTo(i < preferredCount ? expected : other));
-                Assert.That(drawn.Add(conduit), Is.True);
+                Assert.That(new[] { "FoldingCover", "ThornThicket", "AutomaticLoader",
+                    "BarrierGenerator", "AntiRustOil", "DreamBookmark", "NightmareBookmark", "WeaknessEngraver",
+                    "MerchantGuildToken", "EliteHunterMedal", "HalfMoonChalice", "MidasHand",
+                    "EmergencyBandage", "TravelersCanteen" }, Does.Contain(conduit.name));
+                Assert.That(conduit.Rarity, Is.EqualTo(i < preferredCount ? expected : fallback));
+                Assert.That(drawn.Add(conduit.name), Is.True);
                 Assert.That(conduit.Acquire(), Is.True);
                 RunInventoryData saved = RunSaveCodec.CaptureInventory(catalog);
+                state = RunProgress.Restore(state.Capture(catalog), catalog);
                 RunRelicInventory.ResetForNewGame();
                 RunSaveCodec.RestoreInventory(saved, catalog);
             }
-            Assert.That(draw.Invoke(state, null), Is.Null);
+            Assert.That(draw.Invoke(state, null), Is.Null, "Both grades must retain their final candidate for node seven.");
+        }
+        finally { RunRelicInventory.ResetForNewGame(); }
+    }
+
+    [TestCase(142, ConduitRarity.Common, false)]
+    [TestCase(31, ConduitRarity.Uncommon, true)]
+    public void FirstFloorUnknownEliteAndNodeSevenShareTheSavedOrder(int seed, ConduitRarity unknownRarity, bool midpointElite)
+    {
+        var definition = UnityEditor.AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
+        RunAssetCatalog catalog = RunAssetCatalog.Load();
+        RunRelicInventory.ResetForNewGame();
+        try
+        {
+            var state = new RunProgress(definition, seed);
+            RunConduitOrderData order = state.Capture(catalog).conduitOrder;
+            AmmoCapacityRelic Common(int index) => catalog.Resolve<AmmoCapacityRelic>(order.common[index]);
+            AmmoCapacityRelic Uncommon(int index) => catalog.Resolve<AmmoCapacityRelic>(order.uncommon[index]);
+
+            var draw = typeof(RunProgress).GetMethod("GetEliteVictoryConduit",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var completeWithAward = typeof(RunProgress).GetMethod("CompleteNode",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            void Select(MapContentType type)
+            {
+                int index = state.CurrentNode.Choices.ToList().FindIndex(choice => choice.Type == type);
+                Assert.That(state.TrySelectOption(index), Is.True, $"Node {state.NodeIndex + 1}: {type}");
+                if (state.CurrentNode.SelectedChoice.IsBattle)
+                    Assert.That(state.RecordBattleResult(BattleResult.Victory), Is.True);
+            }
+            void Finish(MapContentType type)
+            {
+                Select(type);
+                Assert.That(state.CompleteNode(0, state.NodeIndex), Is.True);
+            }
+            AmmoCapacityRelic DrawElite() => (AmmoCapacityRelic)draw.Invoke(state, null);
+
+            Finish(MapContentType.NormalBattle);
+            Select(MapContentType.Unknown);
+            AmmoCapacityRelic unknown = unknownRarity == ConduitRarity.Common ? Common(0) : Uncommon(0);
+            Assert.That(state.CurrentNode.SelectedChoice.ContentData, Is.SameAs(unknown));
+            state = RunProgress.Restore(state.Capture(catalog), catalog);
+            Assert.That(state.CurrentNode.SelectedChoice.ContentData, Is.SameAs(unknown));
+            Assert.That(state.CompleteNode(0, 1), Is.True); // Pass without acquiring the revealed item.
+            Assert.That(RunRelicInventory.Contains(unknown), Is.False);
+
+            Finish(MapContentType.NormalBattle);
+            Select(MapContentType.EliteBattle);
+            AmmoCapacityRelic firstElite = DrawElite();
+            Assert.That(firstElite, Is.SameAs(unknownRarity == ConduitRarity.Common ? Common(1) : Uncommon(1)));
+            Assert.That(firstElite.Acquire(), Is.True);
+            Assert.That(state.CompleteNode(0, 3), Is.True);
+            Finish(MapContentType.NormalBattle);
+
+            if (midpointElite)
+            {
+                Select(MapContentType.EliteBattle);
+                AmmoCapacityRelic midpointAward = DrawElite();
+                Assert.That(midpointAward, Is.SameAs(Uncommon(2)));
+                Assert.That(completeWithAward.Invoke(state, new object[] { 0, 5, midpointAward }), Is.True);
+                Assert.That(midpointAward.Acquire(), Is.True);
+            }
+            else Finish(MapContentType.NormalBattle);
+
+            Assert.That(state.CurrentNode.Rule, Is.EqualTo(MapNodeRule.GuaranteedRelic));
+            AmmoCapacityRelic guarantee = midpointElite ? Uncommon(3) : Common(2);
+            Assert.That(state.CurrentNode.Choices.Single().ContentData, Is.SameAs(guarantee));
+            state = RunProgress.Restore(state.Capture(catalog), catalog);
+            Assert.That(state.CurrentNode.Choices.Single().ContentData, Is.SameAs(guarantee));
+
+            // Legacy saves already at node seven keep the reward that was offered.
+            var legacy = state.Capture(catalog);
+            legacy.conduitOrder = null;
+            var oldReward = UnityEditor.AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>(midpointElite
+                ? "Assets/MapData/MidpointEliteConduit.asset" : "Assets/MapData/FirstFloorConduit.asset");
+            legacy.nodes[6].choices[0].content = catalog.Key(oldReward);
+            state = RunProgress.Restore(legacy, catalog);
+            Assert.That(state.CurrentNode.Choices.Single().ContentData, Is.SameAs(oldReward));
+            Assert.That(state.Capture(catalog).conduitOrder.common, Is.EqualTo(order.common));
         }
         finally { RunRelicInventory.ResetForNewGame(); }
     }

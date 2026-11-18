@@ -108,10 +108,21 @@ public sealed class StatusEffectSystem
 {
     private readonly List<ActiveStatusEffect> active = new List<ActiveStatusEffect>();
     private readonly ReadOnlyCollection<ActiveStatusEffect> view;
+    private bool rustImmunity;
     public IReadOnlyList<ActiveStatusEffect> ActiveEffects => view;
     public event Action Changed;
 
     public StatusEffectSystem() { view = active.AsReadOnly(); }
+
+    internal bool IsImmune(StatusEffectType type) => type == StatusEffectType.Rust && rustImmunity;
+
+    internal void SetRustImmunity(bool immune)
+    {
+        if (rustImmunity == immune) return;
+        rustImmunity = immune;
+        if (immune) active.RemoveAll(effect => effect.Type == StatusEffectType.Rust);
+        Changed?.Invoke();
+    }
 
     public int GetRemainingTurns(StatusEffectType type)
     {
@@ -133,7 +144,7 @@ public sealed class StatusEffectSystem
     public Action ApplyContinuous(StatusEffectData definition, ActiveContinuousCard source)
     {
         if (definition == null || definition.Category != StatusEffectCategory.Debuff ||
-            definition.Type == StatusEffectType.Burn || source == null || !source.IsActive ||
+            definition.Type == StatusEffectType.Burn || IsImmune(definition.Type) || source == null || !source.IsActive ||
             !definition.CanApply(1, 1)) return null;
         ActiveStatusEffect entry = active.Find(effect => effect.Type == definition.Type);
         if (entry == null)
@@ -162,7 +173,7 @@ public sealed class StatusEffectSystem
     // For Burn, turns is the number of stacks to add.
     public bool Apply(StatusEffectData definition, int turns, int buffPower = 1)
     {
-        if (definition == null || !definition.CanApply(turns, buffPower))
+        if (definition == null || IsImmune(definition.Type) || !definition.CanApply(turns, buffPower))
             return false;
         if (definition.Category == StatusEffectCategory.Buff)
         {

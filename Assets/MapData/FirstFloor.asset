@@ -43,10 +43,9 @@ MonoBehaviour:
     events:
     - {fileID: 11400000, guid: 534af9e8d5054b22af68111f721be061, type: 2}
     - {fileID: 11400000, guid: d4328cffe0a849e9ba95e78077921273, type: 2}
-    relics:
-    - {fileID: 11400000, guid: 2407dd8d3b2b4fe44baf3c56b199d087, type: 2}
-  guaranteedRelicData: {fileID: 11400000, guid: 9bca0cc2505449ca92216485b4655b3a, type: 2}
-  midpointEliteConduit: {fileID: 11400000, guid: 1299e955ff3b43908bb8fb1f60573fe7, type: 2}
+    relics: []
+  commonConduitRewards: {fileID: 11400000, guid: ed559c81584a414f9405871d01c3b48d, type: 2}
+  uncommonConduitRewards: {fileID: 11400000, guid: 149ea965955847c79a43042b41d088d4, type: 2}
   normalBattles:
   - {fileID: 11400000, guid: dcc1fcbe21d1b4845a5f7ca1d4fae20b, type: 2}
   - {fileID: 11400000, guid: 5db08a6a6eeb4295ab6c58ce6e06701a, type: 2}
@@ -62,12 +61,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6e3291c09841cda4d87c2adb2155353c, type: 2}
   - {fileID: 11400000, guid: 34d751ca2e8ef84459dc14a715b2fcff, type: 2}
   - {fileID: 11400000, guid: c0db79a27e9b30543be351ddfff33006, type: 2}
-  eliteVictoryConduits:
-  - {fileID: 11400000, guid: a0f46c07b432405d83aa60fa5b251954, type: 2}
-  - {fileID: 11400000, guid: 8003eb46661240dc916749efa190d9c2, type: 2}
-  - {fileID: 11400000, guid: 41d43c4722e94085a07381ce57ab977f, type: 2}
-  - {fileID: 11400000, guid: 97ef5fd85ab645d7810e21fcf9c2864b, type: 2}
-  - {fileID: 11400000, guid: fb43a56cf3ca4a0cbbe7d79d6b697389, type: 2}
-  - {fileID: 11400000, guid: 02beb830ee8141a9a995f93c89c8316a, type: 2}
   bossBattles:
   - {fileID: 11400000, guid: 70894e146f8b4416b7a3291478f101e7, type: 2}

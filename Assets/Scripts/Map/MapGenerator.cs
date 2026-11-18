@@ -167,7 +167,7 @@ public static class MapGenerator
     }
 
     internal static MapNode BuildFirstFloorNode(FloorMapDefinition floor, int index, int seed, bool capped = false,
-        bool midpointEliteWon = false)
+        AmmoCapacityRelic guaranteedConduit = null)
     {
         var random = new System.Random(unchecked(seed ^ (index + 1) * 19349663));
         var layout = floor.firstFloorLayout[index];
@@ -182,8 +182,7 @@ public static class MapGenerator
                 choices.Add(new MapChoice(MapContentType.NormalBattle));
                 return new MapNode(MapNodeRule.Midpoint, choices);
             case FirstFloorNodeLayout.Conduit:
-                choices.Add(new MapChoice(MapContentType.Relic,
-                    contentData: midpointEliteWon ? floor.midpointEliteConduit : floor.guaranteedRelicData));
+                choices.Add(new MapChoice(MapContentType.Relic, contentData: guaranteedConduit));
                 return new MapNode(MapNodeRule.GuaranteedRelic, choices);
             case FirstFloorNodeLayout.Boss:
                 choices.Add(Battle(MapContentType.BossBattle, floor.bossBattles, random));
@@ -249,15 +248,12 @@ public static class MapGenerator
         if (new HashSet<BattleEncounterDefinition>(floor.eliteBattles).Count != floor.eliteBattles.Length ||
             floor.eliteBattles.Length < 3)
             throw new InvalidOperationException("The first floor needs at least three distinct elite encounters.");
-        var eliteRewards = new HashSet<AmmoCapacityRelic>();
-        if (floor.eliteVictoryConduits == null || floor.eliteVictoryConduits.Length == 0)
-            throw new InvalidOperationException("The first floor needs an elite victory conduit pool.");
-        foreach (AmmoCapacityRelic conduit in floor.eliteVictoryConduits)
-            if (conduit == null || !conduit.HasEffect ||
-                (conduit.Rarity != ConduitRarity.Common && conduit.Rarity != ConduitRarity.Uncommon) ||
-                conduit == floor.guaranteedRelicData || conduit == floor.midpointEliteConduit ||
-                !eliteRewards.Add(conduit))
-                throw new InvalidOperationException("The first-floor elite pool needs unique Common or Uncommon conduits reserved for random rewards.");
+        if (floor.firstFloorLayout[5] != FirstFloorNodeLayout.Midpoint ||
+            Array.IndexOf(floor.firstFloorLayout, FirstFloorNodeLayout.Conduit) != 6 ||
+            Array.LastIndexOf(floor.firstFloorLayout, FirstFloorNodeLayout.Conduit) != 6)
+            throw new InvalidOperationException("The first floor needs its midpoint battle and guaranteed conduit at nodes six and seven.");
+        ValidateConduitRewards(floor.commonConduitRewards, ConduitRarity.Common);
+        ValidateConduitRewards(floor.uncommonConduitRewards, ConduitRarity.Uncommon);
 
         var types = new HashSet<MapContentType> { MapContentType.Unknown, MapContentType.Shop, MapContentType.Rest };
         if (floor.nonBattleContents == null || floor.nonBattleContents.Length != types.Count)
@@ -268,10 +264,16 @@ public static class MapGenerator
                 throw new InvalidOperationException("First-floor nonbattle choices must be distinct and have positive weights.");
             Require(enabled, candidate.type);
         }
-        if (!(floor.guaranteedRelicData is AmmoCapacityRelic standard) || !standard.HasEffect ||
-            floor.midpointEliteConduit == null || !floor.midpointEliteConduit.HasEffect ||
-            floor.midpointEliteConduit.Rarity != ConduitRarity.Uncommon)
-            throw new InvalidOperationException("The first floor needs standard and uncommon conduit rewards.");
+    }
+
+    private static void ValidateConduitRewards(ConduitRewardDatabase database, ConduitRarity rarity)
+    {
+        if (database == null || database.conduits == null || database.conduits.Length == 0)
+            throw new InvalidOperationException($"The first floor needs a {rarity} conduit reward database.");
+        var unique = new HashSet<AmmoCapacityRelic>();
+        foreach (AmmoCapacityRelic conduit in database.conduits)
+            if (conduit == null || !conduit.HasEffect || conduit.Rarity != rarity || !unique.Add(conduit))
+                throw new InvalidOperationException($"The {rarity} database must contain unique, valid conduits of that rarity.");
     }
 
     private static bool Probability(float value) => !float.IsNaN(value) && value >= 0 && value <= 1;

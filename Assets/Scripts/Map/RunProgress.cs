@@ -4,6 +4,8 @@ using UnityEngine;
 
 public sealed class RunProgress
 {
+    private const int DefaultCommonConduitChance = 70;
+
     public RunDefinition Definition { get; }
     public int Seed { get; }
     public int FloorIndex { get; private set; }
@@ -18,6 +20,7 @@ public sealed class RunProgress
     public int NodeSeed => unchecked(Seed ^ (FloorIndex+1)*73856093 ^ (NodeIndex+1)*19349663);
     private readonly MapContentType[] enabledContent;
     private BattleEncounterDefinition[] earlyEncounters, lateEncounters, eliteEncounters;
+    private AmmoCapacityRelic[] commonConduits, uncommonConduits;
     private FloorMapDefinition CurrentFloor => Definition.floors[FloorIndex];
     private bool UsesFirstFloorRules => CurrentFloor.mode == FloorMapMode.FirstFloor;
     private int FloorSeed(int floor) => unchecked(Seed + floor * 7919);
@@ -40,30 +43,37 @@ public sealed class RunProgress
         foreach (FloorMapDefinition floor in definition.floors) MapGenerator.Validate(floor, enabledContent);
         Definition = definition; Seed = seed; MaxHP = CurrentHP = definition.startingMaxHP;
         Nodes = GenerateFloor(0);
-        InitializeEncounterOrder();
+        InitializeFloorOrders();
     }
 
     private IReadOnlyList<MapNode> GenerateFloor(int floor) =>
         MapGenerator.Generate(Definition.floors[floor], enabledContent, FloorSeed(floor));
 
-    private void InitializeEncounterOrder()
+    private void InitializeFloorOrders()
     {
         if (!UsesFirstFloorRules) return;
         earlyEncounters = Shuffle(CurrentFloor.normalBattles, 0x12FE613D);
         lateEncounters = Shuffle(CurrentFloor.lateNormalBattles, 0x283AD9C7);
         eliteEncounters = Shuffle(CurrentFloor.eliteBattles, 0x70C5F121);
+        InitializeConduitOrder();
+    }
 
-        BattleEncounterDefinition[] Shuffle(BattleEncounterDefinition[] source, int salt)
+    private void InitializeConduitOrder()
+    {
+        commonConduits = Shuffle(CurrentFloor.commonConduitRewards.conduits, 0x563D719B);
+        uncommonConduits = Shuffle(CurrentFloor.uncommonConduitRewards.conduits, 0x4C07B853);
+    }
+
+    private T[] Shuffle<T>(T[] source, int salt)
+    {
+        var order = (T[])source.Clone();
+        var random = new System.Random(FloorSeed(FloorIndex) ^ salt);
+        for (int i = order.Length - 1; i > 0; i--)
         {
-            var order = (BattleEncounterDefinition[])source.Clone();
-            var random = new System.Random(FloorSeed(FloorIndex) ^ salt);
-            for (int i = order.Length - 1; i > 0; i--)
-            {
-                int j = random.Next(i + 1);
-                (order[i], order[j]) = (order[j], order[i]);
-            }
-            return order;
+            int j = random.Next(i + 1);
+            (order[i], order[j]) = (order[j], order[i]);
         }
+        return order;
     }
 
     private BattleEncounterDefinition NextEncounter(MapContentType type)
@@ -80,21 +90,14 @@ public sealed class RunProgress
         return order[consumed % order.Length];
     }
 
-    private void PrepareCurrentChoices()
+    private void PrepareCurrentChoices(MapNode replacement)
     {
         if (!UsesFirstFloorRules) return;
-        MapNode replacement;
-        if (CurrentNode.Rule == MapNodeRule.GuaranteedRelic)
+        if (replacement == null)
         {
-            bool eliteWon = Nodes[NodeIndex - 1].SelectedChoice.Type == MapContentType.EliteBattle;
-            replacement = MapGenerator.BuildFirstFloorNode(CurrentFloor, NodeIndex, FloorSeed(FloorIndex),
-                midpointEliteWon: eliteWon);
-        }
-        else if (CurrentFloor.firstFloorLayout[NodeIndex] == FirstFloorNodeLayout.Regular && !CanEnterBattle())
-        {
+            if (CurrentFloor.firstFloorLayout[NodeIndex] != FirstFloorNodeLayout.Regular || CanEnterBattle()) return;
             replacement = MapGenerator.BuildFirstFloorNode(CurrentFloor, NodeIndex, FloorSeed(FloorIndex), capped: true);
         }
-        else return;
 
         var updated = new List<MapNode>(Nodes);
         updated[NodeIndex] = replacement;
@@ -125,6 +128,11 @@ public sealed class RunProgress
                 early = Array.ConvertAll(earlyEncounters, catalog.Key),
                 late = Array.ConvertAll(lateEncounters, catalog.Key),
                 elite = Array.ConvertAll(eliteEncounters, catalog.Key)
+            } : null,
+            conduitOrder = UsesFirstFloorRules ? new RunConduitOrderData
+            {
+                common = Array.ConvertAll(commonConduits, catalog.Key),
+                uncommon = Array.ConvertAll(uncommonConduits, catalog.Key)
             } : null};
     }
     private static RunChoiceData SaveChoice(MapChoice choice, RunAssetCatalog catalog) =>
@@ -157,6 +165,7 @@ public sealed class RunProgress
         for(int i=0;i<data.floor;i++)completed+=definition.floors[i].nodeCount;
         if(data.completed!=completed)throw new InvalidOperationException("Invalid completed node count.");
         var result=new RunProgress(definition,data.seed,data.enabled);
+        result.FloorIndex = data.floor;
         bool deferredBattles = definition.floors[data.floor].mode == FloorMapMode.FirstFloor;
         if (deferredBattles)
         {
@@ -164,6 +173,13 @@ public sealed class RunProgress
             result.earlyEncounters = RestoreOrder(data.encounterOrder.early);
             result.lateEncounters = RestoreOrder(data.encounterOrder.late);
             result.eliteEncounters = RestoreOrder(data.encounterOrder.elite);
+            if (data.conduitOrder == null)
+                result.InitializeConduitOrder();
+            else
+            {
+                result.commonConduits = RestoreConduitOrder(data.conduitOrder.common, ConduitRarity.Common, catalog);
+                result.uncommonConduits = RestoreConduitOrder(data.conduitOrder.uncommon, ConduitRarity.Uncommon, catalog);
+            }
         }
 
         BattleEncounterDefinition[] RestoreOrder(string[] saved)
@@ -192,6 +208,10 @@ public sealed class RunProgress
             var choices=new List<MapChoice>();
             foreach (RunChoiceData choice in saved.choices)
                 choices.Add(RestoreChoice(choice, data.enabled, catalog, deferredBattles));
+            if (deferredBattles && saved.rule == MapNodeRule.GuaranteedRelic && i <= data.node &&
+                (choices.Count != 1 || choices[0].Type != MapContentType.Relic ||
+                    !(choices[0].ContentData is AmmoCapacityRelic)))
+                throw new InvalidOperationException("Missing guaranteed conduit.");
             MapChoice selected = saved.selected >= 0 ? choices[saved.selected] : null;
             bool selectedUnknown = selected?.Type == MapContentType.Unknown;
             bool selectedDeferredBattle = deferredBattles && selected?.IsBattle == true && selected.Encounter == null;
@@ -211,10 +231,21 @@ public sealed class RunProgress
             if(resolving && node.SelectedChoice.IsBattle!=(data.phase!=RunPhase.Content))throw new InvalidOperationException("Invalid node phase.");
             nodes.Add(node);
         }
-        result.FloorIndex=data.floor;result.NodeIndex=data.node;result.CompletedNodes=data.completed;
+        result.NodeIndex=data.node;result.CompletedNodes=data.completed;
         result.CurrentHP=data.hp;result.MaxHP=data.maxHP;result.Phase=data.phase;result.Nodes=nodes.AsReadOnly();
         return result;
     }
+    private static AmmoCapacityRelic[] RestoreConduitOrder(string[] saved, ConduitRarity rarity, RunAssetCatalog catalog)
+    {
+        if (saved == null || saved.Length == 0) throw new InvalidOperationException("A conduit order is empty.");
+        var order = Array.ConvertAll(saved, catalog.Resolve<AmmoCapacityRelic>);
+        var unique = new HashSet<AmmoCapacityRelic>();
+        foreach (AmmoCapacityRelic conduit in order)
+            if (conduit == null || !conduit.HasEffect || conduit.Rarity != rarity || !unique.Add(conduit))
+                throw new InvalidOperationException("Invalid conduit in saved reward order.");
+        return order;
+    }
+
     internal void RestoreCheckpointInPlace(RunProgressData data,RunAssetCatalog catalog)
     {
         RunProgress restored=Restore(data,catalog);
@@ -222,6 +253,8 @@ public sealed class RunProgress
         FloorIndex=restored.FloorIndex;NodeIndex=restored.NodeIndex;CompletedNodes=restored.CompletedNodes;
         CurrentHP=restored.CurrentHP;MaxHP=restored.MaxHP;Phase=restored.Phase;Nodes=restored.Nodes;
         earlyEncounters=restored.earlyEncounters;lateEncounters=restored.lateEncounters;eliteEncounters=restored.eliteEncounters;
+        commonConduits = restored.commonConduits;
+        uncommonConduits = restored.uncommonConduits;
     }
     internal void UndoNodeEntry()
     {
@@ -255,22 +288,41 @@ public sealed class RunProgress
             return null;
         if (!UsesFirstFloorRules) return CurrentNode.SelectedChoice.Encounter.victoryConduit;
 
-        // A failed completion save rolls back the inventory and node, so retry uses the same draw.
-        var random = new System.Random(NodeSeed ^ 0x2BA67E31);
-        ConduitRarity rarity = random.Next(100) < 70 ? ConduitRarity.Common : ConduitRarity.Uncommon;
-        var preferred = new List<AmmoCapacityRelic>();
-        var fallback = new List<AmmoCapacityRelic>();
-        foreach (AmmoCapacityRelic conduit in CurrentFloor.eliteVictoryConduits)
-            if (!RunRelicInventory.Contains(conduit) && CanOfferRandomConduit(conduit))
-                (conduit.Rarity == rarity ? preferred : fallback).Add(conduit);
-        List<AmmoCapacityRelic> candidates = preferred.Count > 0 ? preferred : fallback;
-        return candidates.Count > 0 ? candidates[random.Next(candidates.Count)] : null;
+        int commonChance = RunRelicInventory.EqualizeEliteConduitOdds ? 50 : DefaultCommonConduitChance;
+        return GetRandomConduit(commonChance);
     }
 
-    private bool CanOfferRandomConduit(AmmoCapacityRelic conduit)
+    private AmmoCapacityRelic GetRandomConduit(int commonChance = DefaultCommonConduitChance)
     {
-        if (conduit == CurrentFloor.guaranteedRelicData || conduit == CurrentFloor.midpointEliteConduit)
-            return false;
+        int guaranteedIndex = Array.IndexOf(CurrentFloor.firstFloorLayout, FirstFloorNodeLayout.Conduit);
+        bool beforeGuarantee = NodeIndex < guaranteedIndex;
+        bool midpointEliteWon = NodeIndex == guaranteedIndex - 1 && Phase == RunPhase.Rewards &&
+            CurrentNode.SelectedChoice.Type == MapContentType.EliteBattle;
+        // Once the midpoint elite wins, the guarantee only needs the final Uncommon candidate.
+        AmmoCapacityRelic common = NextConduit(commonConduits, beforeGuarantee && !midpointEliteWon);
+        AmmoCapacityRelic uncommon = NextConduit(uncommonConduits, beforeGuarantee);
+        var random = new System.Random(NodeSeed ^ 0x2BA67E31);
+        return random.Next(100) < commonChance ? common ?? uncommon : uncommon ?? common;
+    }
+
+    private AmmoCapacityRelic NextConduit(AmmoCapacityRelic[] order, bool reserveLast = false,
+        AmmoCapacityRelic pendingAward = null)
+    {
+        AmmoCapacityRelic next = null;
+        foreach (AmmoCapacityRelic conduit in order)
+        {
+            if (conduit == pendingAward || !CanOfferConduit(conduit)) continue;
+            if (!reserveLast) return conduit;
+            if (next != null) return next;
+            next = conduit;
+        }
+        return null;
+    }
+
+    private bool CanOfferConduit(AmmoCapacityRelic conduit)
+    {
+        // Owned and previously presented rewards serve as the cursor in both saved queues.
+        if (RunRelicInventory.Contains(conduit)) return false;
         for (int i = 0; i < NodeIndex; i++)
             if (Nodes[i].SelectedChoice?.ContentData == conduit) return false;
         return true;
@@ -283,7 +335,7 @@ public sealed class RunProgress
         MapChoice choice = CurrentNode.Choices[index];
         if (choice.Type == MapContentType.Unknown)
             return UnknownNodeResolver.HasOutcome(CurrentFloor.unknown, CanEnterBattle(), IsAvailable,
-                UsesFirstFloorRules ? CanOfferRandomConduit : null);
+                UsesFirstFloorRules ? GetRandomConduit() != null : (bool?)null);
         return !IsBattleOptionBlocked(choice) && IsAvailable(choice.Type);
 
         bool IsAvailable(MapContentType type) => MapGenerator.Contains(enabledContent, type) && (canDispatch?.Invoke(type) ?? true);
@@ -300,7 +352,7 @@ public sealed class RunProgress
             var random = new System.Random(unchecked(NodeSeed ^ 0x4F1BBCDC));
             MapChoice outcome = UnknownNodeResolver.Resolve(CurrentFloor, CanEnterBattle(),
                 type => MapGenerator.Contains(enabledContent, type) && (canDispatch?.Invoke(type) ?? true), random,
-                UsesFirstFloorRules ? CanOfferRandomConduit : null);
+                UsesFirstFloorRules ? GetRandomConduit() : null);
             if (outcome == null) return false;
             if (UsesFirstFloorRules && outcome.Type == MapContentType.NormalBattle)
                 outcome = new MapChoice(outcome.Type, NextEncounter(outcome.Type));
@@ -329,9 +381,20 @@ public sealed class RunProgress
         return true;
     }
 
-    public bool CompleteNode(int expectedFloor, int expectedNode)
+    public bool CompleteNode(int expectedFloor, int expectedNode) => CompleteNode(expectedFloor, expectedNode, null);
+
+    internal bool CompleteNode(int expectedFloor, int expectedNode, AmmoCapacityRelic pendingAward)
     {
         if (expectedFloor != FloorIndex || expectedNode != NodeIndex || (Phase != RunPhase.Rewards && Phase != RunPhase.Content)) return false;
+        MapNode guaranteedNode = null;
+        if (UsesFirstFloorRules && NodeIndex + 1 < Nodes.Count && Nodes[NodeIndex + 1].Rule == MapNodeRule.GuaranteedRelic)
+        {
+            var order = CurrentNode.SelectedChoice.Type == MapContentType.EliteBattle ? uncommonConduits : commonConduits;
+            AmmoCapacityRelic reward = NextConduit(order, pendingAward: pendingAward);
+            if (reward == null) return false;
+            guaranteedNode = MapGenerator.BuildFirstFloorNode(CurrentFloor, NodeIndex + 1, FloorSeed(FloorIndex),
+                guaranteedConduit: reward);
+        }
         IReadOnlyList<MapNode> nextFloor = null;
         if (NodeIndex == Nodes.Count - 1 && FloorIndex + 1 < Definition.floors.Length) nextFloor = GenerateFloor(FloorIndex + 1);
         CurrentNode.Status = MapNodeStatus.Completed;
@@ -340,9 +403,9 @@ public sealed class RunProgress
         {
             if (nextFloor == null) { Phase = RunPhase.Completed; return true; }
             FloorIndex++; NodeIndex = 0; Nodes = nextFloor;
-            InitializeEncounterOrder();
+            InitializeFloorOrders();
         }
-        PrepareCurrentChoices();
+        PrepareCurrentChoices(guaranteedNode);
         Phase = RunPhase.Map;
         return true;
     }

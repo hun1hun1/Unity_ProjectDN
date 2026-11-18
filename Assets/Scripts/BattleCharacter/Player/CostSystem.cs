@@ -146,6 +146,12 @@ public class CostSystem : MonoBehaviour
         UpdateUI();
     }
 
+    internal void FillDreamGaugeToHalf()
+    {
+        currentDreamGauge = maxDreamGauge / 2;
+        UpdateGaugeUI();
+    }
+
     public void AddRemainingCostToGauge()
     {
         currentDreamGauge += currentDreamCost;

@@ -4,6 +4,8 @@
 
 | 자리표시자 | 의미 |
 |---|---|
+| `{statusTurns:0}` | `effects[0]`에서 부여하는 턴제 디버프의 지속 턴. 전투 중 적에게 부여하는 약점 노출은 매개체 보너스를 반영합니다. |
+| `{turnStatusTurns:0}` | 지속 카드의 `turnStartEffects[0]`에서 새로 부여하는 턴제 디버프의 지속 턴 |
 | `{damage:0}` | `effects[0]`인 DamageEffect의 상태이상 보정 후 피해 |
 | `{damage:2.0}` | `effects[2]`인 총알 조건부 효과의 `bonusEffects[0]` 피해 |
 | `{ammoCost:2}` | `effects[2]`인 총알 조건부 효과의 소모량 |

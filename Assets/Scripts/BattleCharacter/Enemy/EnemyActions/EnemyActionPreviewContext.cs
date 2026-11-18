@@ -10,6 +10,8 @@ public sealed class EnemyActionPreviewContext
     private readonly HashSet<StatusEffectType> enemyStatuses;
     private readonly bool hasPlayer;
     private readonly bool hasEnemy;
+    private readonly bool playerRustImmunity;
+    private readonly bool enemyRustImmunity;
     private int playerHP;
     private int enemyHP;
     private int playerBlock;
@@ -23,6 +25,8 @@ public sealed class EnemyActionPreviewContext
         Player player = battle != null ? battle.GetPlayer() : null;
         Enemy enemy = battle != null ? battle.GetTarget() : null;
         hasPlayer = player != null; hasEnemy = enemy != null;
+        playerRustImmunity = hasPlayer && player.StatusEffects.IsImmune(StatusEffectType.Rust);
+        enemyRustImmunity = hasEnemy && enemy.StatusEffects.IsImmune(StatusEffectType.Rust);
         playerHP = hasPlayer ? player.GetCurrentHP() : 0;
         enemyHP = hasEnemy ? enemy.GetCurrentHP() : 0;
         playerBlock = hasPlayer ? player.GetBlock() : 0;
@@ -57,9 +61,12 @@ public sealed class EnemyActionPreviewContext
     public int Block(int block) => BlockCalculator.CalculateWithModifiers(block,
         enemyStatuses.Contains(StatusEffectType.DefenseBreak));
 
+    internal bool IsImmune(EnemyTargetType target, StatusEffectType type) => type == StatusEffectType.Rust &&
+        (target == EnemyTargetType.Player ? playerRustImmunity : enemyRustImmunity);
+
     public void Apply(StatusEffectData status, EnemyTargetType target, int turns, int buffPower = 1)
     {
-        if (status == null || !status.CanApply(turns, buffPower)) return;
+        if (status == null || IsImmune(target, status.Type) || !status.CanApply(turns, buffPower)) return;
         if (status.Category == StatusEffectCategory.Buff)
         {
             if (status.Duration == BuffDuration.NextTurn) return;

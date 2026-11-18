@@ -134,6 +134,8 @@ public class RunSession : MonoBehaviour
         if (Progress == null || !ReferenceEquals(expected, Progress) || Progress.Phase != RunPhase.Battle ||
             floor != Progress.FloorIndex || node != Progress.NodeIndex || result == BattleResult.None) return false;
         if (!Progress.RecordBattleResult(result)) return false;
+        if (result == BattleResult.Victory)
+            currentHP = (int)Math.Min(maxHP, (long)currentHP + RunRelicInventory.BattleVictoryHeal);
         Progress.CaptureHealth(currentHP, maxHP);
         if(Progress.IsFinished && !ClearCheckpoint()){Publish();return false;}
         Publish();
@@ -152,7 +154,7 @@ public class RunSession : MonoBehaviour
         AmmoCapacityRelic conduit = Progress.GetEliteVictoryConduit();
         RunRelicData[] relicsBefore = catalog != null && conduit != null ? RunRelicInventory.Capture(catalog) : null;
         Progress.CaptureHealth(currentHP, maxHP);
-        if (!Progress.CompleteNode(floor, node)) return false;
+        if (!Progress.CompleteNode(floor, node, conduit)) return false;
         if (conduit != null) conduit.Acquire();
         if (!(Progress.IsFinished ? ClearCheckpoint() : SaveCheckpoint()))
         {
@@ -170,13 +172,16 @@ public class RunSession : MonoBehaviour
     public bool CompleteContent(RunProgress expected, int floor, int node) =>
         CompleteContent(expected, floor, node, 0);
 
+    internal static long GetRestFlatRecovery(int flatRecovery) =>
+        (long)Mathf.Max(0, flatRecovery) + RunRelicInventory.RestRecoveryBonus;
+
     internal bool CompleteRest(RunNodeVisit visit, int recoveryPercent, int flatRecovery)
     {
         if (!IsRestVisit(visit)) return false;
 
         int missingHP = Progress.MaxHP - Progress.CurrentHP;
         int proportionalRecovery = (int)Math.Ceiling(missingHP * (decimal)Mathf.Clamp(recoveryPercent, 0, 100) / 100);
-        int recovery = (int)Math.Min(missingHP, (long)proportionalRecovery + Mathf.Max(0, flatRecovery));
+        int recovery = (int)Math.Min(missingHP, proportionalRecovery + GetRestFlatRecovery(flatRecovery));
         return CompleteContent(visit.Progress, visit.Floor, visit.Node, recovery);
     }
 

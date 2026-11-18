@@ -71,7 +71,7 @@
 | 엘리트 (4·6·10번) | 양철 나무꾼, 깨진 종, 뒤집힌 모래시계 |
 | 보스 (13번) | 허수아비 |
 
-전반부 일반 4종과 후반부 일반 5종은 각 풀의 최대 사용 횟수를 채우므로 1층 새 런에서 같은 일반 적이 반복되지 않습니다. 현재 조우는 공용 테스트 행동을 사용합니다. 1층 엘리트는 공용 매개체 풀에서 보상을 추첨합니다. 기존 런의 이어서 하기는 저장한 조우와 풀 순서를 사용합니다. [1층 에셋](../Assets/MapData/FirstFloor.asset) · [전투 보상](BattleRewards.md)
+전반부 일반 4종과 후반부 일반 5종은 각 풀의 최대 사용 횟수를 채우므로 1층 새 런에서 같은 일반 적이 반복되지 않습니다. 현재 조우는 공용 테스트 행동을 사용합니다. 1층의 엘리트·미지·7번 노드는 등급별 공용 매개체 목록에서 보상을 가져옵니다. 기존 런의 이어서 하기는 저장한 조우와 풀 순서를 사용합니다. [1층 에셋](../Assets/MapData/FirstFloor.asset) · [전투 보상](BattleRewards.md)
 
 ## 노드 선택부터 완료까지
 
@@ -102,6 +102,8 @@ flowchart TD
 
 체력 회복을 누르기 직전의 `최대 HP - 현재 HP`를 기준으로 30%를 계산합니다. 이 값을 정수로 올림하고 10을 더해 최대 HP까지 회복합니다. 예를 들어 59/80에서는 17을 회복해 76/80이 됩니다. 이미 최대 HP면 체력 변화 없이 휴식을 마칩니다. 비율과 고정 회복량은 `RestHandler`의 Inspector에서 조정할 수 있습니다.
 
+[여행자의 물통](../Assets/MapData/TravelersCanteen.asset)을 보유하면 체력 회복을 선택했을 때 고정 회복량이 10 증가합니다. 기본 설정에서는 잃은 체력의 30%를 올림한 값에 20을 더해 최대 HP까지 회복합니다.
+
 회복과 노드 완료는 함께 저장합니다. 저장에 실패하면 기존 HP와 휴식 패널을 유지하고, 이어서 하기에서 휴식 입장 상태를 복원하면 저장된 HP를 표시합니다.
 
 ## 콘텐츠의 연결 경계
@@ -129,6 +131,8 @@ flowchart TD
 
 일반 카드는 30~40골드, 고급 카드는 60~70골드, 희귀 카드는 90~110골드에서 양 끝을 포함해 균등하게 가격을 뽑습니다. 복원한 진열과 노드 시드로 같은 가격을 재현합니다. 품절 슬롯도 가격 계산 순서에 포함해 다른 슬롯의 가격을 유지합니다.
 
+[상인 조합 증표](../Assets/MapData/MerchantGuildToken.asset)를 보유하면 카드 구매와 제거의 최종 가격을 30% 할인합니다. 소수점 이하는 버리며, 진열대·확인창과 골드 차감에 같은 가격을 사용합니다. 제거 기본가 100·150·200골드는 각각 70·105·140골드가 됩니다.
+
 이미 진열한 카드는 같은 방문에서 다시 뽑지 않습니다. 후보가 없는 분류는 제외하고 남은 분류끼리 같은 확률로 뽑습니다. 현재 꿈 3칸을 사용하며, 악몽 데이터베이스가 비어 있어 악몽 2칸 대신 `입고 예정`을 표시합니다. 진열 카드는 슬롯 순서와 품절 여부를 저장하고 이어서 하기에서 복원합니다. 품절 표지는 입력을 받지 않습니다. 적용 이미지는 [shop-sold-out.png](../Assets/Images/UI/MapScene/shop-sold-out.png), 원본은 [768×240 투명 PNG](../GeneratedArt/UI/ShopSoldOut-v1/shop-sold-out.png)입니다. `DeckCard` 프리팹 인스턴스의 카드는 마우스를 올리면 확대되고, 좌클릭하면 카드 효과와 상태이상 설명을 확인할 수 있습니다.
 
 ### 상점 카드 제거
@@ -139,33 +143,75 @@ flowchart TD
 
 ## 미지 노드
 
-`FirstFloor`에서는 비전투 선택지를 추첨할 때 미지 카드가 나올 수 있습니다. `NormalBattlesOnly`와 `PlannedFloor`에서는 `FloorMapDefinition.unknown.nodeNumbers`에 1부터 세는 위치를 지정합니다. 미지 결과의 기본 가중치는 일반 전투 40, 이벤트 40, 상점 9, 휴식 9, 매개체 2입니다. 이벤트 유형이 뽑히면 같은 층의 `unknown.events`에서 균등 추첨합니다. 이벤트는 한 층에서 다시 나올 수 있습니다. 매개체 추첨은 보유 목록을 제외하며, 1층에서는 앞서 제시하고 지나간 매개체와 7번 고정 보상도 제외합니다.
+`FirstFloor`에서는 비전투 선택지를 추첨할 때 미지 카드가 나올 수 있습니다. `NormalBattlesOnly`와 `PlannedFloor`에서는 `FloorMapDefinition.unknown.nodeNumbers`에 1부터 세는 위치를 지정합니다. 미지 결과의 기본 가중치는 일반 전투 40, 이벤트 40, 상점 9, 휴식 9, 매개체 2입니다. 이벤트 유형이 뽑히면 같은 층의 `unknown.events`에서 균등 추첨합니다. 이벤트는 한 층에서 다시 나올 수 있습니다. 매개체가 뽑히면 1층에서는 일반 70%·고급 30%로 등급을 정해 공용 목록의 다음 후보를 제시합니다. 두 등급 모두 제시할 후보가 없으면 매개체 결과를 제외합니다.
 
 `battleLimits`에는 구간의 시작·끝 노드 번호와 전투 상한을 지정합니다. 완료한 일반·엘리트 전투를 세며 미지에서 확정된 일반 전투도 포함합니다. 중간 특수 전투와 보스는 구간의 집계에서 제외합니다. 상한에 도달하면 직접 전투 선택지를 숨기고, 미지의 전투 가중치를 이벤트에 더합니다. 결과 후보가 모두 준비된 경우 40·40·9·9·2가 0·80·9·9·2가 됩니다. 상한에 도달할 수 있는 지점에는 비전투 선택지가 필요하며, 차단된 전투 가중치를 받을 이벤트 풀이 비어 있으면 설정 오류로 처리합니다.
 
-현재 이벤트인 잊힌 주머니와 메마른 우물에서는 골드를 받거나 지나갈 수 있습니다. 1층의 미지 매개체 풀은 확장 탄창 예시 에셋을 사용합니다. [미지 카드](../Assets/Images/UI/NodeIcons/unknown-node.png) · [노드 체크포인트](RunCheckpoints.md#비전투-노드-연결)
+현재 이벤트인 잊힌 주머니와 메마른 우물에서는 골드를 받거나 지나갈 수 있습니다. 미다스의 손을 보유하면 표시 금액과 지급액이 50% 늘어나며 소수점 이하는 버립니다. [미지 카드](../Assets/Images/UI/NodeIcons/unknown-node.png) · [노드 체크포인트](RunCheckpoints.md#비전투-노드-연결)
 
 ## 매개체 노드
 
-1층 7번의 매개체(Conduit) 카드에는 청동 고리를 표시합니다. 입장하면 기존 맵 위에 발견한 매개체 한 개의 그림, 이름, 등급, 효과를 보여 줍니다. 6번에서 일반 전투를 이기면 일반 등급 보급용 확장 탄창을, 엘리트를 이기면 고급 확장 탄창을 제시합니다. 현재 두 탄창 모두 런의 최대 탄약을 1 늘립니다. 4·6·10번 엘리트의 직접 매개체 보상은 전투 보상 처리를 마칠 때 지급합니다. [청동 고리 아트워크](../Assets/Images/UI/NodeIcons/conduit-node.png) · [전투 보상](BattleRewards.md)
+1층 7번의 매개체(Conduit) 카드에는 청동 고리를 표시합니다. 입장하면 기존 맵 위에 발견한 매개체 한 개의 그림, 이름, 등급, 효과를 보여 줍니다. 6번에서 일반 전투를 이기면 일반 등급, 엘리트를 이기면 고급 등급을 7번에 제시합니다. 4·6·10번 엘리트의 직접 매개체 보상은 전투 보상 처리를 마칠 때 지급합니다. [청동 고리 아트워크](../Assets/Images/UI/NodeIcons/conduit-node.png) · [전투 보상](BattleRewards.md)
 
 `매개체 획득`은 보유 목록에 추가하면서 노드를 완료합니다. `지나가기`는 획득 없이 노드를 완료합니다. 이미 보유한 매개체를 다시 발견하면 보유 상태를 안내하고 지나갈 수 있습니다. 진입 시 저장한 매개체는 이어서 하기에서도 동일하게 표시됩니다. 미지에서 나온 매개체도 같은 화면을 사용합니다. [노드 체크포인트](RunCheckpoints.md#비전투-노드-연결)
+
+1층 진입 시 일반·고급 목록을 시드로 각각 한 번 섞습니다. 엘리트 보상과 미지의 매개체 결과는 기본적으로 일반 70%·고급 30%로 정한 등급에서 다음 후보를 가져옵니다. [정예 사냥꾼의 훈장](../Assets/MapData/EliteHunterMedal.asset)을 보유하면 엘리트 보상에 일반 50%·고급 50%를 적용합니다. 추첨한 등급의 후보가 없으면 다른 등급을 사용합니다. 앞서 획득했거나 제시된 매개체는 이후 추첨에서 제외합니다.
+
+7번 보상을 위해 6번 전투 결과가 정해지기 전까지 등급마다 마지막 한 종을 남겨 둡니다. 6번 엘리트를 이기면 직접 보상부터 계산하되, 7번에 줄 고급 한 종을 남깁니다. 7번 보상을 확정한 뒤에는 남은 후보를 다른 보상에 사용할 수 있습니다.
+
+타이틀에서 시작하는 모험에는 군인의 시작 매개체 탄피와 공용 보상 후보 일반 7종·고급 7종이 있습니다. 예시용 확장 탄창과 미사용 적 전리품 에셋은 현재 공용 보상 목록에서 제외합니다.
+
+| 구분 | 매개체 | 효과 |
+|---|---|---|
+| 시작 | [탄피](../Assets/MapData/SoldierStartingCasing.asset) | 전투 시작 시 탄창 한도 내에서 2발 장전 |
+| 일반 | [접이식 엄폐판](../Assets/MapData/FoldingCover.asset) | 첫 플레이어 턴 시작 시 방어도 10 |
+| 일반 | [가시 덤불](../Assets/MapData/ThornThicket.asset) | 전투 시작 시 전투 종료까지 지속되는 가시 3 |
+| 일반 | [악몽의 책갈피](../Assets/MapData/NightmareBookmark.asset) | 악몽 손패 한도 1장 증가 |
+| 일반 | [약점 각인기](../Assets/MapData/WeaknessEngraver.asset) | 카드가 적에게 부여하는 턴제 약점 노출 1턴 연장 |
+| 일반 | [정예 사냥꾼의 훈장](../Assets/MapData/EliteHunterMedal.asset) | 엘리트 매개체 보상 등급 추첨을 일반 50%·고급 50%로 변경 |
+| 일반 | [응급 붕대](../Assets/MapData/EmergencyBandage.asset) | 전투 승리 확정 시 체력 4 회복 |
+| 일반 | [여행자의 물통](../Assets/MapData/TravelersCanteen.asset) | 휴식에서 체력 회복 선택 시 10 추가 회복 |
+| 고급 | [자동 장전기](../Assets/MapData/AutomaticLoader.asset) | 첫 턴을 포함해 매 플레이어 턴 시작 시 탄창 한도 내에서 1발 장전 |
+| 고급 | [방호막 발생기](../Assets/MapData/BarrierGenerator.asset) | 전투 시작 시 방호막 1 |
+| 고급 | [방청유](../Assets/MapData/AntiRustOil.asset) | 보유한 런 동안 녹슬음 면역 |
+| 고급 | [꿈의 책갈피](../Assets/MapData/DreamBookmark.asset) | 꿈 손패 한도 1장 증가 |
+| 고급 | [상인 조합 증표](../Assets/MapData/MerchantGuildToken.asset) | 상점의 카드 구매와 제거 가격 30% 할인 |
+| 고급 | [반달의 잔](../Assets/MapData/HalfMoonChalice.asset) | 전투 시작 시 꿈 게이지를 최대치의 절반까지 채움. 홀수 최대치는 내림 |
+| 고급 | [미다스의 손](../Assets/MapData/MidasHand.asset) | 전투와 이벤트의 골드 획득량 50% 증가 |
 
 `NormalBattlesOnly`에서는 `fixedRelicNodeNumber`와 `guaranteedRelicData`로 임시 배치를 설정합니다. `PlannedFloor`의 중간 특수 전투 다음 매개체도 `guaranteedRelicData`를 사용합니다.
 
 ### 매개체 추가
 
-Unity Project 창에서 **Create → Conduit → Ammo Capacity**를 선택하고 이름·설명·스프라이트·등급과 효과를 설정합니다. `Rarity`는 표시와 엘리트 추첨에 사용하는 등급입니다. [FirstFloor.asset](../Assets/MapData/FirstFloor.asset)의 Inspector에서 7번 보상은 `Guaranteed Relic Data`와 `Midpoint Elite Conduit`, 엘리트 직접 보상 후보는 `Elite Victory Conduits`, 미지 후보는 `Unknown → Relics`에 연결합니다. `ProjectDN → Refresh Run Save Catalog`에서 저장 카탈로그를 수동으로 갱신할 수 있습니다.
+Unity Project 창에서 **Create → Conduit → Ammo Capacity**를 선택하고 이름·설명·스프라이트·등급과 효과를 설정합니다. `Rarity`는 표시와 보상 추첨에 사용하는 등급입니다. [FirstFloor.asset](../Assets/MapData/FirstFloor.asset)은 [일반 매개체 데이터베이스](../Assets/MapData/CommonConduitRewards.asset)와 [고급 매개체 데이터베이스](../Assets/MapData/UncommonConduitRewards.asset)를 참조합니다. 이 두 에셋의 `Conduits`에 등급이 맞는 보상 후보를 등록합니다. `ProjectDN → Refresh Run Save Catalog`에서 저장 카탈로그를 수동으로 갱신할 수 있습니다.
 
-현재 매개체는 최대 탄약 증가, 전투 시작 시 장전, 전투 시작 시 버프 부여를 지원합니다. 군인의 시작 매개체인 [탄피](../Assets/MapData/SoldierStartingCasing.asset)는 전투 시작 시 최대 탄약 한도 안에서 총알 2발을 장전합니다. [가시 덤불](../Assets/MapData/ThornThicket.asset)은 보유 중인 플레이어에게 전투를 시작할 때마다 가시 3을 부여합니다. 전투 시작 버프는 에셋의 `Battle Start Buff`와 `Battle Start Buff Power`에 설정합니다. 선택한 버프의 지속 방식은 `Until Battle End`여야 합니다. 가시 덤불은 전용 아이콘과 함께 저장 카탈로그에 등록되어 있으며, 현재 1층의 고정·미지·엘리트 획득 후보 등록은 남아 있습니다. [가시 덤불 아이콘](../Assets/Images/UI/Conduits/thorn-thicket.png) · [체크포인트 저장 규칙](RunCheckpoints.md#1층-조우와-매개체-복원)
+현재 매개체는 최대 탄약 증가, 전투 시작 시 장전·버프·방어도 부여, 플레이어 턴 시작 시 장전, 꿈·악몽 손패 한도 증가, 녹슬음 면역을 지원합니다. 군인의 시작 매개체인 [탄피](../Assets/MapData/SoldierStartingCasing.asset)는 전투 시작 시 최대 탄약 한도 안에서 총알 2발을 장전합니다. [가시 덤불](../Assets/MapData/ThornThicket.asset)은 보유 중인 플레이어에게 전투를 시작할 때마다 가시 3을 부여합니다. 전투 시작 버프는 에셋의 `Battle Start Buff`와 `Battle Start Buff Power`에 설정합니다. 전투 종료까지 유지되는 버프와 다음 공격을 막으면 소모되는 방호막을 설정할 수 있습니다. 가시 덤불은 전용 아이콘과 함께 일반 공용 보상 후보에 등록되어 있습니다. [가시 덤불 아이콘](../Assets/Images/UI/Conduits/thorn-thicket.png) · [체크포인트 저장 규칙](RunCheckpoints.md#1층-조우와-매개체-복원)
+
+고급 매개체 [자동 장전기](../Assets/MapData/AutomaticLoader.asset)는 1층 공용 보상 후보입니다. 첫 플레이어 턴을 포함해 플레이어 턴이 시작될 때마다 탄창 한도 내에서 총알을 1발 장전합니다. [자동 장전기 아이콘](../Assets/Images/UI/Conduits/automatic-loader.png)
+
+고급 매개체 [방호막 발생기](../Assets/MapData/BarrierGenerator.asset)는 1층 공용 보상 후보입니다. 전투 시작 시 방호막을 1 얻습니다. 방호막은 다음에 받는 공격 피해를 막고 소모됩니다. [방호막 발생기 아이콘](../Assets/Images/UI/Conduits/barrier-generator.png)
+
+일반 매개체 [접이식 엄폐판](../Assets/MapData/FoldingCover.asset)은 1층 공용 보상 후보입니다. 전투마다 첫 플레이어 턴 시작 시 방어도를 10 얻습니다. [접이식 엄폐판 아이콘](../Assets/Images/UI/Conduits/folding-cover.png)
+
+고급 매개체 [방청유](../Assets/MapData/AntiRustOil.asset)는 1층 공용 보상 후보입니다. 획득하면 해당 런의 남은 전투에서 녹슬음에 면역이 됩니다. [방청유 아이콘](../Assets/Images/UI/Conduits/anti-rust-oil.png)
+
+고급 매개체 [꿈의 책갈피](../Assets/MapData/DreamBookmark.asset)는 1층 공용 보상 후보입니다. 꿈 손패의 최대 장수를 1장 늘립니다. 시작 손패와 턴마다 다시 뽑거나 보충할 때 늘어난 한도를 사용합니다. [꿈의 책갈피 아이콘](../Assets/Images/UI/Conduits/dream-bookmark.png)
+
+일반 매개체 [악몽의 책갈피](../Assets/MapData/NightmareBookmark.asset)는 1층 공용 보상 후보입니다. 시작 손패와 이후 드로우에 적용되는 악몽 손패 한도를 1장 늘립니다. [악몽의 책갈피 아이콘](../Assets/Images/UI/Conduits/nightmare-bookmark.png)
+
+고급 매개체 [반달의 잔](../Assets/MapData/HalfMoonChalice.asset)은 전투 시작 시 꿈 게이지를 최대치의 절반까지 채웁니다. 최대치가 홀수이면 소수점 이하는 버립니다. [반달의 잔 아이콘](../Assets/Images/UI/Conduits/half-moon-chalice.png)
+
+고급 매개체 [미다스의 손](../Assets/MapData/MidasHand.asset)은 전투 승리와 이벤트의 골드 획득량을 50% 늘립니다. 골드가 정수이므로 소수점 이하는 버립니다. [미다스의 손 아이콘](../Assets/Images/UI/Conduits/midas-hand.png)
+
+일반 매개체 [응급 붕대](../Assets/MapData/EmergencyBandage.asset)는 전투 승리가 확정될 때 최대 체력 한도 내에서 체력을 4 회복합니다. [응급 붕대 아이콘](../Assets/Images/UI/Conduits/emergency-bandage.png)
 
 ### 매개체 아트워크 제작 기준
 
-신규 매개체 아트워크는 전투 HUD에 표시할 **256×256 투명 PNG**로 제작합니다. 배경과 테두리 없이 매개체만 그립니다. 가로로 길거나 세로로 긴 물건은 원래 비율을 유지하고, 투명 여백을 조정해 다른 아이콘과 비슷한 크기로 보이게 합니다.
+신규 매개체 아트워크는 투명 배경으로 제작합니다. 최근 원본은 `GeneratedArt/Conduits/`에 1254×1254 PNG로 두고, [게임용 이미지](../Assets/Images/UI/Conduits)는 Unity에서 최대 크기 256의 단일 Sprite로 임포트합니다. 물건의 비율을 유지하고 투명 여백으로 다른 아이콘과 표시 크기를 맞춥니다.
 
 `BattleScene`의 `Canvas/ConduitArea`에 매개체를 왼쪽부터 획득 순서대로 표시합니다. 군인의 시작 매개체인 탄피가 먼저 표시되고 새로 획득한 매개체는 오른쪽에 추가됩니다. 획득 순서대로 저장한 보유 목록을 이어서 하기에서 그대로 복원합니다.
 
-획득 패널과 HUD에 같은 투명 스프라이트를 사용하려면 매개체 에셋의 `Artwork`에 연결합니다. 획득 패널에 별도 아트를 사용하는 경우에는 `Hud Artwork`에 투명 아이콘을 연결합니다. 기존 확장 탄창 계열은 [공용 전투 아이콘](../Assets/Images/UI/Conduits/extended-magazine-icon.png)을 사용합니다.
+획득 패널과 HUD에 같은 투명 스프라이트를 사용하려면 매개체 에셋의 `Artwork`에 연결합니다. 획득 패널에 별도 아트를 사용하는 경우에는 `Hud Artwork`에 투명 아이콘을 연결합니다.
 
 | 항목 | 1920×1080 기준 |
 |---|---|
@@ -222,7 +268,7 @@ Unity Project 창에서 **Create → Conduit → Ammo Capacity**를 선택하고
 5. `NormalBattlesOnly`에서 상점·휴식·매개체의 고정 위치는 각각 `fixedShopNodeNumber`, `fixedRestNodeNumber`, `fixedRelicNodeNumber`로 지정합니다. `PlannedFloor` 전환에는 일반·엘리트·보스 전투 풀, 허용 종류, 활성 매개체 처리기가 함께 필요합니다. 상점만 추가해서 기존 계획형 규칙이 곧바로 동작하는 것은 아닙니다.
 6. 새 런에서 확인합니다. 생성 허용 종류는 런 생성 시 확정되므로 진행 중 에셋이나 처리기를 수정해도 기존 노드가 자동 재생성되지는 않습니다. 타이틀에서 런을 시작할 때도 지원 콘텐츠 종류를 전달해야 합니다.
 
-현재 확장 탄창은 같은 에셋을 한 런에서 한 번 획득할 수 있습니다. 효과 유형을 추가할 때 적용할 중복·중첩 규칙은 기획 항목입니다.
+같은 매개체 에셋은 한 런에서 한 번 획득할 수 있습니다. 서로 다른 에셋의 수치 효과와 플래그는 [보유 효과 복원 규칙](RunCheckpoints.md#1층-조우와-매개체-복원)을 따릅니다.
 
 ### 콘텐츠 추가 후 확인할 항목 — 예정
 
@@ -285,7 +331,7 @@ HP와 최대 HP는 다음 전투에 복원합니다. 꿈·악몽의 런 덱과 �
 
 ## 타이틀·종료 시퀀스용 진입점
 
-타이틀에서 새 런을 시작하려면 [캐릭터 선택 창](TitleMenu.md#캐릭터-선택)에서 군인을 선택하고 `모험 시작`을 확정합니다. 현재 `TemporaryRun`으로 맵에 진입하며 시작 골드는 100입니다.
+타이틀에서 새 런을 시작하려면 [캐릭터 선택 창](TitleMenu.md#캐릭터-선택)에서 군인을 선택하고 `모험 시작`을 확정합니다. `FirstFloorRun`의 13노드에 진입하며 시작 골드는 100입니다.
 
 - `RunSession.GetOrCreate().StartNewRun(definition, seed, supportedContent)`: 설정을 검증한 뒤 모든 런 인벤토리와 HP·진행을 새로 시작합니다. 맵 씬에서는 등록된 처리기 종류를 전달합니다. 처리기를 전달하지 않으면 전투만 지원하는 것으로 취급합니다.
 - `RunSession.RunFinished`: `Completed`, `Defeated`, `Cancelled` 중 결과를 런당 한 번 알립니다.
@@ -294,6 +340,24 @@ HP와 최대 HP는 다음 전투에 복원합니다. 꿈·악몽의 런 덱과 �
 `ProjectDN/Setup Map System`은 Unity Editor API로 기본 에셋과 씬을 생성하고 전투 연결을 구성합니다. 이미 존재하는 설정값과 맵 UI는 재생성하지 않습니다. 기존 맵에서 런 설정 참조가 누락됐을 때만 기본 설정을 복구합니다.
 
 ## 검증
+
+### 공용 매개체와 효과 검증
+
+2026-11-18~19 Unity 6000.0.85f2에서 기능별로 실행한 결과입니다. 아래 보고서는 로컬 `.utmp/`에 있습니다. 전체 EditMode 검사와 독립 실행 빌드는 ToDo의 검증 항목으로 관리합니다.
+
+| 검사 범위 | 통과 | 로컬 보고서 |
+|---|---:|---|
+| 공용 보상 풀·구간 상한·미지·7번 노드, 지급과 복원 | 33/33 · 82/82 | `shared-conduits-map.xml`, `shared-conduits-runtime.xml` |
+| 자동 장전기, 방호막 발생기, 접이식 엄폐판의 발동과 복원 | 118/118 · 91/91 · 122/122 | `automatic-loader-green.xml`, `barrier-generator-green.xml`, `folding-cover-green.xml` |
+| 녹슬음 면역과 방청유의 진입·이어하기 | 119/119 · 38/38 | `rust-immunity-regression.xml`, `anti-rust-oil.xml` |
+| 꿈·악몽 책갈피와 꿈 카드 4장 배치 | 53/53 · 56/56 · 4/4 | `dream-bookmark-green.xml`, `nightmare-bookmark-green.xml`, `four-dream-cards-layout.xml` |
+| 약점 노출 추가 턴과 약점 각인기 등록 | 132/132 · 41/41 | `weakness-bonus-regression.xml`, `weakness-engraver-tests.xml` |
+| 상인 조합 증표의 구매·제거 할인과 복원 | 80/80 | `merchant-token-regression.xml` |
+| 정예 사냥꾼의 훈장과 미지·7번 노드의 기존 규칙 | 43/43 | `elite-hunter-medal-regression.xml` |
+| 반달의 잔의 초기 게이지·턴 종료 누적·복원 | 58/58 | `half-moon-chalice-verified.xml` |
+| 미다스의 손의 전투·이벤트 골드 표시와 단일 지급 | 88/88 | `midas-hand-verified.xml` |
+| 응급 붕대의 승리 회복, 저장 재시도와 복원 | 54/54 | `emergency-bandage-verified.xml` |
+| 여행자의 물통의 휴식 표시·회복·저장 재시도와 복원 | 50/50 | `travelers-canteen-verified.xml` |
 
 ### 2026-11-17 가시 덤불과 공용 엘리트 보상
 

@@ -43,6 +43,7 @@ public class BattleRewardSystem : MonoBehaviour
     {
         if (generated || result != BattleResult.Victory) return;
         generated = true;
+        goldReward = RunGoldInventory.GetGoldReward(GoldReward);
         GoldAvailable = GoldReward > 0;
         CardAvailable = true;
         SetState(BattleRewardState.Summary);

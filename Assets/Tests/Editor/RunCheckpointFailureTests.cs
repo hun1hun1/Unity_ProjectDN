@@ -142,7 +142,10 @@ public partial class RunCheckpointRuntimeTests
         Assert.That(granted, Is.Not.Null);
         AmmoCapacityRelic reward = catalog.Resolve<AmmoCapacityRelic>(granted.id);
         Assert.That(reward, Is.Not.Null);
-        Assert.That(state.Definition.floors[0].eliteVictoryConduits, Does.Contain(reward));
+        FloorMapDefinition floor = state.Definition.floors[0];
+        ConduitRewardDatabase database = reward.Rarity == ConduitRarity.Common
+            ? floor.commonConduitRewards : floor.uncommonConduitRewards;
+        Assert.That(database.conduits, Does.Contain(reward));
         Assert.That(RunRelicInventory.Contains(reward), Is.True);
         yield return new ExitPlayMode();
     }

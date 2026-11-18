@@ -46,8 +46,9 @@ public sealed class MapEncounterHandler : MapContentHandler
             description.text = mapEvent.description;
             if (mapEvent.goldReward > 0)
             {
-                acceptText.text = $"골드 {mapEvent.goldReward} 획득";
-                reward = () => RunGoldInventory.Add(mapEvent.goldReward);
+                int gold = RunGoldInventory.GetGoldReward(mapEvent.goldReward);
+                acceptText.text = $"골드 {gold} 획득";
+                reward = () => RunGoldInventory.Add(gold);
             }
         }
         else if (contentType == MapContentType.Relic && choice.ContentData is AmmoCapacityRelic relic)

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc415a7623fe447da5c217ae3a958416, type: 3}
+  m_Name: UncommonConduitRewards
+  m_EditorClassIdentifier:
+  conduits:
+  - {fileID: 11400000, guid: d04c263aa38548ec9dc1ed3dff2ffd73, type: 2}
+  - {fileID: 11400000, guid: dc6fd8e1357940918e432c95551d7f8b, type: 2}
+  - {fileID: 11400000, guid: 0f219dba322e40288df98c2546e4bad9, type: 2}
+  - {fileID: 11400000, guid: 6c0ea5ec34fb4ce0aa30e8fde0f847f5, type: 2}
+  - {fileID: 11400000, guid: 358e7416e1954904bb1ccc6dd9fe9b5e, type: 2}
+  - {fileID: 11400000, guid: c6c409cf6d7a4f75ae4fd015f9346056, type: 2}
+  - {fileID: 11400000, guid: 543f01a6ee194b0c825138eea6880fe3, type: 2}
