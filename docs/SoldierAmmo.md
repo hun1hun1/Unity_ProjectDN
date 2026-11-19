@@ -2,7 +2,7 @@
 
 ## 캐릭터
 
-`Assets/Prefabs/Player/Soldier.prefab`에 Soldier, CostSystem, DeckController, AmmoSystem이 포함되어 있습니다. 총알 UI는 BattleScene의 별도 HUD에 배치합니다. 프리팹의 기본 최대 총알은 10알, 기본 시작값은 0알입니다. AmmoSystem의 Max Ammo와 Starting Ammo를 Inspector에서 변경할 수 있습니다. 총알은 턴 전환 시 유지됩니다. 전투가 시작되면 잔탄을 시작값으로 초기화하고, 보유 매개체의 장전량을 최대 탄약 한도 내에서 더합니다.
+`Assets/Prefabs/Player/Soldier.prefab`에 Soldier, CostSystem, DeckController, AmmoSystem이 포함되어 있습니다. 총알 UI는 BattleScene의 별도 HUD에 배치합니다. 프리팹의 기본 최대 총알은 10알, 기본 시작값은 0알입니다. AmmoSystem의 Max Ammo와 Starting Ammo를 Inspector에서 변경할 수 있습니다. 총알은 턴 전환 시 유지됩니다. 전투가 시작되면 잔탄을 시작값으로 초기화한 뒤, 보유 매개체의 전투 시작 장전과 첫 플레이어 턴 장전을 순서대로 적용합니다.
 
 실행 중 Inspector에서 최대량이나 현재량을 변경하면 다음 프레임에 총알 UI가 갱신됩니다. Starting Ammo를 변경해도 진행 중인 전투의 잔탄을 초기화하지는 않습니다.
 
@@ -12,8 +12,8 @@
 
 Soldier 프리팹의 DeckController는 아래 두 데이터베이스를 참조합니다. 씬에는 별도의 시작 카드 목록이나 데이터베이스 재정의를 저장하지 않습니다.
 
-- 꿈: `Assets/CardDatabase/Soldier/SoldierDreamStartingDeck.asset` (8장)
-- 악몽: `Assets/CardDatabase/Soldier/SoldierNightmareStartingDeck.asset` (6장)
+- [꿈 시작 덱](../Assets/CardDatabase/Soldier/Dream/SoldierDreamStartingDeck.asset) 8장
+- [악몽 시작 덱](../Assets/CardDatabase/Soldier/Nightmare/SoldierNightmareStartingDeck.asset) 6장
 
 새 게임에서 처음 캐릭터가 초기화될 때 데이터베이스 목록을 이번 게임의 덱으로 복사합니다. 중복 카드는 각각 한 장으로 유지하며, 카드 추가·제거가 시작 덱 에셋을 수정하지 않습니다. 같은 데이터베이스 조합을 사용하는 Soldier를 다시 생성하거나 BattleScene을 다시 불러와도 진행 중 덱을 이어받습니다.
 
@@ -23,7 +23,7 @@ Soldier 프리팹의 DeckController는 아래 두 데이터베이스를 참조�
 - `ResetForBattle()`은 시작 데이터베이스 대신 현재 진행 중 덱으로 뽑기 더미를 재구성하고 버림 더미를 비웁니다. BattleManager가 시작 손패를 뽑기 전에 호출합니다.
 - 새 게임을 시작할 때 씬을 불러오기 전에 `RunDeckInventory.ResetForNewGame()`을 호출합니다. 기존 매개체도 초기화하려면 `RunRelicInventory.ResetForNewGame()`을 함께 호출합니다. Play Mode에 새로 진입하면 두 상태가 자동 초기화됩니다.
 
-진행 중 덱은 이번 플레이 실행 동안 유지됩니다. 앱 종료 후 저장·불러오기는 포함하지 않습니다.
+런에서 변경한 보유 덱은 씬이 바뀌어도 유지됩니다. 유효한 체크포인트가 있으면 앱을 다시 실행한 뒤에도 `이어서 하기`로 저장된 덱을 복원합니다. [런 체크포인트](RunCheckpoints.md#저장-기준)
 
 ## 총알 HUD
 
@@ -77,7 +77,7 @@ Create > Card > Effect > Increase Max Ammo에서 `IncreaseMaxAmmoEffect`를 생�
 
 ### 탄약 매개체
 
-**Create → Conduit → Ammo Capacity**에서 `AmmoCapacityRelic`을 생성합니다. Inspector에서 이름·설명·등급·이미지와 Max Ammo Bonus 또는 Battle Start Ammo를 설정합니다. 매개체 획득 처리에서는 아래 둘 중 하나를 호출합니다.
+**Create → Conduit → Ammo Capacity**에서 `AmmoCapacityRelic`을 생성합니다. Inspector에서 이름·설명·등급·이미지를 지정하고, 탄약 효과에 사용할 `Max Ammo Bonus`, `Battle Start Ammo`, `Turn Start Ammo` 값을 설정합니다. 매개체 획득 처리에서는 아래 둘 중 하나를 호출합니다.
 
 ```csharp
 bool acquired = relic.Acquire();
@@ -88,6 +88,6 @@ bool acquired = relic.Acquire();
 
 새 게임을 시작할 때 `RunRelicInventory.ResetForNewGame()`을 호출합니다. 매개체 보유 상태와 보너스를 비우고 현재 Soldier의 전투 보너스와 잔탄도 초기화합니다. 비활성 Soldier도 다시 활성화할 때 새 게임 초기화를 적용합니다. Play Mode에 새로 진입하면 상태가 자동 초기화됩니다.
 
-타이틀에서 새 모험을 시작한 군인은 탄피를 가지고 시작합니다. 탄피는 전투마다 시작 시 2알을 장전합니다. 7번 매개체 노드, 미지 결과, 엘리트 보상에서 확장 탄창 계열을 얻을 수 있습니다. 런 체크포인트는 보유 매개체의 획득 순서와 획득 당시 확정한 최대 탄약 증가량·전투 시작 장전량을 복원합니다. [매개체 노드](MapSystem.md#매개체-노드) · [노드 체크포인트](RunCheckpoints.md#1층-조우와-매개체-복원)
+타이틀에서 새 모험을 시작한 군인은 전투 시작 시 2발을 장전하는 [탄피](../Assets/MapData/SoldierStartingCasing.asset)를 보유합니다. 1층 공용 보상 후보인 [자동 장전기](../Assets/MapData/AutomaticLoader.asset)는 첫 턴을 포함해 플레이어 턴이 시작될 때마다 1발을 장전합니다. 두 매개체를 보유하면 첫 턴에 합계 3발을 장전하며, 실제 장전량은 빈 탄창 공간만큼 제한됩니다. 이어서 하기에서는 획득 당시 확정한 최대 탄약 증가량과 전투·턴 시작 장전량을 복원합니다. [매개체 노드](MapSystem.md#매개체-노드) · [노드 체크포인트](RunCheckpoints.md#1층-조우와-매개체-복원)
 
-`Examples/IncreaseMaxAmmo.asset`은 전투 최대량 +1 카드 예시입니다. `Examples/AmmoCapacityRelic.asset`은 런 최대량 +1 매개체이며, 1층 미지의 매개체 후보에 등록되어 있습니다.
+[IncreaseMaxAmmo](../Assets/CardData/Soldier/Examples/IncreaseMaxAmmo.asset)는 전투 최대량 +1 카드 효과 예시입니다. 런 최대량을 1 늘리는 [확장 탄창 매개체](../Assets/CardData/Soldier/Examples/AmmoCapacityRelic.asset)는 `MapScene`을 단독 실행할 때 사용하는 [5노드 임시 층](../Assets/MapData/TemporaryFloor.asset)의 고정 매개체와 미지 후보에 등록되어 있습니다. 타이틀에서 시작하는 13노드 런의 매개체는 [공용 보상 목록](MapSystem.md#매개체-노드)을 따릅니다.
