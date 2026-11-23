@@ -136,11 +136,11 @@ public partial class RunCheckpointRuntimeTests
         Assert.That(RunSaves.TryLoad(out RunSaveData saved, out _), Is.True);
         Assert.That(saved.inventory.relics.Length, Is.EqualTo(2));
         RunAssetCatalog catalog = RunAssetCatalog.Load();
-        var casing = UnityEditor.AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/SoldierStartingCasing.asset");
+        var casing = UnityEditor.AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/SoldierStartingCasing.asset");
         Assert.That(saved.inventory.relics[0].id, Is.EqualTo(catalog.Key(casing)));
         RunRelicData granted = saved.inventory.relics[1];
         Assert.That(granted, Is.Not.Null);
-        AmmoCapacityRelic reward = catalog.Resolve<AmmoCapacityRelic>(granted.id);
+        ConduitData reward = catalog.Resolve<ConduitData>(granted.id);
         Assert.That(reward, Is.Not.Null);
         FloorMapDefinition floor = state.Definition.floors[0];
         ConduitRewardDatabase database = reward.Rarity == ConduitRarity.Common

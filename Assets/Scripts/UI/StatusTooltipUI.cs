@@ -37,7 +37,7 @@ public class StatusTooltipUI : MonoBehaviour
         return true;
     }
 
-    internal void ShowConduit(ConduitIconHoverUI icon, AmmoCapacityRelic conduit, RectTransform anchor)
+    internal void ShowConduit(ConduitIconHoverUI icon, ConduitData conduit, RectTransform anchor)
     {
         if (conduit == null || !Begin(icon, Vector2.zero, anchor)) return;
         contentText.text = $"{CardStatusDescriptionBuilder.FormatTitle(conduit.RelicName)}\n{conduit.Description}";

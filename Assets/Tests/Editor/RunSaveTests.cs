@@ -39,7 +39,7 @@ public class RunSaveTests
             .First(db=>db.GetAllCards().Any(c=>c!=null&&c.deckType==CardDeckType.TypeDream));
         CardData card=database.GetAllCards().First(c=>c!=null&&c.deckType==CardDeckType.TypeDream);
         var data=new RunInventoryData {gold=234,decks=new[]{new RunDeckData {dreamDatabase=catalog.Key(database),nightmareDatabase="",dream=new[]{catalog.Key(card),catalog.Key(card)},nightmare=Array.Empty<string>()}}};
-        var relic=AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/CardData/Soldier/Examples/AmmoCapacityRelic.asset");
+        var relic=AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/CardData/Soldier/Examples/AmmoCapacityRelic.asset");
         data.relics=new[]{new RunRelicData {id=catalog.Key(relic),bonus=relic.MaxAmmoBonus+3}};
         RunSaveCodec.RestoreInventory(data,catalog);
         RunInventoryData copy=RunSaveCodec.CaptureInventory(catalog);

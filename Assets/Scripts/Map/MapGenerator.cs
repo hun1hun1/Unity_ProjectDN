@@ -101,7 +101,7 @@ public static class MapGenerator
             if (definition.fixedRelicNodeNumber < 0 || definition.fixedRelicNodeNumber > definition.nodeCount)
                 throw new InvalidOperationException("The fixed Conduit choice must be disabled (0) or use an existing node number.");
             if (definition.fixedRelicNodeNumber > 0 && Contains(enabled, MapContentType.Relic) &&
-                (!(definition.guaranteedRelicData is AmmoCapacityRelic relic) || !relic.HasEffect))
+                (!(definition.guaranteedRelicData is ConduitData relic) || !relic.HasEffect))
                 throw new InvalidOperationException("A fixed Conduit choice needs a valid Conduit asset.");
             return;
         }
@@ -147,7 +147,7 @@ public static class MapGenerator
         foreach (MapEventDefinition mapEvent in settings.events ?? Array.Empty<MapEventDefinition>())
             if (mapEvent == null || string.IsNullOrWhiteSpace(mapEvent.title) || mapEvent.goldReward < 0)
                 throw new InvalidOperationException("The floor event pool contains an invalid event.");
-        foreach (AmmoCapacityRelic relic in settings.relics ?? Array.Empty<AmmoCapacityRelic>())
+        foreach (ConduitData relic in settings.relics ?? Array.Empty<ConduitData>())
             if (relic == null || !relic.HasEffect)
                 throw new InvalidOperationException("The unknown relic pool contains an invalid relic.");
         foreach (int node in unknownNodes)
@@ -167,7 +167,7 @@ public static class MapGenerator
     }
 
     internal static MapNode BuildFirstFloorNode(FloorMapDefinition floor, int index, int seed, bool capped = false,
-        AmmoCapacityRelic guaranteedConduit = null)
+        ConduitData guaranteedConduit = null)
     {
         var random = new System.Random(unchecked(seed ^ (index + 1) * 19349663));
         var layout = floor.firstFloorLayout[index];
@@ -270,8 +270,8 @@ public static class MapGenerator
     {
         if (database == null || database.conduits == null || database.conduits.Length == 0)
             throw new InvalidOperationException($"The first floor needs a {rarity} conduit reward database.");
-        var unique = new HashSet<AmmoCapacityRelic>();
-        foreach (AmmoCapacityRelic conduit in database.conduits)
+        var unique = new HashSet<ConduitData>();
+        foreach (ConduitData conduit in database.conduits)
             if (conduit == null || !conduit.HasEffect || conduit.Rarity != rarity || !unique.Add(conduit))
                 throw new InvalidOperationException($"The {rarity} database must contain unique, valid conduits of that rarity.");
     }

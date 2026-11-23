@@ -16,7 +16,7 @@ public sealed class CheckpointShopFixture : MapContentHandler
     public override string CaptureState()=>JsonUtility.ToJson(new State {stock=Stock,offer=Offer});
     public override void RestoreState(string json)
     {if(string.IsNullOrEmpty(json))return;var s=JsonUtility.FromJson<State>(json);Stock=s.stock;Offer=s.offer;}
-    public bool Purchase(DeckController deck,CardData card,AmmoCapacityRelic relic)
+    public bool Purchase(DeckController deck,CardData card,ConduitData relic)
     {
         if(Stock<=0 || RunGoldInventory.Gold<25)return false;
         return CommitAcquisition(visit,()=>

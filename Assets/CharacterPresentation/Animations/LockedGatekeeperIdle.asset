@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ceed63113d6bf4086984f4629237a8, type: 3}
+  m_Name: LockedGatekeeperIdle
+  m_EditorClassIdentifier: 
+  setupVersion: 1
+  frames:
+  - {fileID: 141467329, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -1406087810, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -196032529, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: 772529187, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: 2036475797, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: 702374777, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: 460281923, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -824088182, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -1951392463, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: 769425526, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: 279132864, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -1672892454, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -1723159524, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: 703284067, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -826107208, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: 204692592, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: 1808504142, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -15773259, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -1879735235, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -1600465362, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -403179787, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -251746617, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -106111747, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  - {fileID: -1141642277, guid: e52d22510514a2549978e63b8e8a7930, type: 3}
+  frameDuration: 0.1
+  groundPivot: {x: 0.5, y: 0.0625}
+  contentBounds:
+    serializedVersion: 2
+    x: 0.22395833
+    y: 0.0625
+    width: 0.5520834
+    height: 0.87630206

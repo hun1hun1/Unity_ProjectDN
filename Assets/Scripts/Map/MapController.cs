@@ -183,6 +183,14 @@ public class MapController : MonoBehaviour
             state.Phase == RunPhase.Cancelled ? "전투가 중단되어 런이 종료되었습니다." :
             session.IsTransitioning ? "이동 중입니다." : state.Phase == RunPhase.Content ? "선택한 장소를 이용 중입니다." : "진행할 행동을 선택하세요.";
         var grid = nodeContainer.GetComponent<UnityEngine.UI.GridLayoutGroup>();
+        int columns = Math.Max(1, state.Nodes.Count);
+        if (grid != null)
+        {
+            float availableWidth = ((RectTransform)nodeContainer).rect.width - grid.padding.horizontal;
+            int fittingColumns = Mathf.FloorToInt((availableWidth + grid.spacing.x) / (grid.cellSize.x + grid.spacing.x));
+            columns = Mathf.Clamp(fittingColumns, 1, columns);
+            grid.constraintCount = columns;
+        }
         if (nodeLabels.Count != state.Nodes.Count)
         {
             foreach (TMP_Text label in nodeLabels)
@@ -192,14 +200,12 @@ public class MapController : MonoBehaviour
                 Destroy(label.gameObject);
             }
             nodeLabels.Clear();
-            if (grid != null) grid.constraintCount = Math.Min(10, state.Nodes.Count);
             for (int i = 0; i < state.Nodes.Count; i++)
             {
                 TMP_Text label = Instantiate(nodeTemplate, nodeContainer);
                 label.name = "Node" + (i + 1); label.gameObject.SetActive(true); nodeLabels.Add(label);
             }
         }
-        int columns = grid != null ? Math.Max(1, grid.constraintCount) : Math.Max(1, nodeLabels.Count);
         for (int i = 0; i < nodeLabels.Count; i++)
         {
             bool done = state.Nodes[i].Status == MapNodeStatus.Completed;
@@ -212,6 +218,7 @@ public class MapController : MonoBehaviour
         var progressScroll = nodeContainer.GetComponentInParent<UnityEngine.UI.ScrollRect>();
         if (progressScroll != null && grid != null)
         {
+            progressScroll.vertical = state.Nodes.Count > columns;
             UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)nodeContainer);
             int current = Math.Min(state.NodeIndex, state.Nodes.Count - 1);
             float offset = current / columns * (grid.cellSize.y + grid.spacing.y);

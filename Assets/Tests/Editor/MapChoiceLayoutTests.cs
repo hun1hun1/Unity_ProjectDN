@@ -159,7 +159,7 @@ public class MapChoiceLayoutTests
         }
     }
 
-    [UnityTest] public IEnumerator LongerFloorsKeepProgressInsideItsViewportAndRevealTheCurrentNode()
+    [UnityTest] public IEnumerator ThirteenNodesFitInOneRowAndLongerFloorsRevealTheCurrentNode()
     {
         yield return new EnterPlayMode();
         AsyncOperation load = SceneManager.LoadSceneAsync("MapScene");
@@ -174,20 +174,47 @@ public class MapChoiceLayoutTests
         previewRun = Object.Instantiate(session.Progress.Definition);
         previewCatalog=RunSaveTestCatalog.Register(previewRun);
         previewFloor = Object.Instantiate(previewRun.floors[0]); previewRun.floors = new[] { previewFloor };
-        for (int count = 12; count <= 21; count += 9)
+        foreach (int count in new[] { 13, 21 })
         {
             previewFloor.nodeCount = count; session.StartNewRun(previewRun, 19);
+            yield return null;
             MapController map = Object.FindFirstObjectByType<MapController>();
             var config = new SerializedObject(map);
             Transform nodes = (Transform)config.FindProperty("nodeContainer").objectReferenceValue;
             ScrollRect scroll = nodes.GetComponentInParent<ScrollRect>();
-            Assert.That(scroll, Is.Not.Null, "Long floors need a bounded progress viewport.");
+            Assert.That(scroll, Is.Not.Null);
             Assert.That(scroll.viewport.GetComponent<RectMask2D>(), Is.Not.Null);
             Canvas.ForceUpdateCanvases();
-            Assert.That(scroll.content.rect.height, Is.GreaterThan(scroll.viewport.rect.height));
             var clip = new Vector3[4]; scroll.viewport.GetWorldCorners(clip);
             var status = new Vector3[4]; ((RectTransform)GameObject.Find("Status").transform).GetWorldCorners(status);
             Assert.That(clip[2].y, Is.LessThan(status[0].y));
+            if (count == 13)
+            {
+                var corners = new Vector3[4];
+                float rowBottom = ((RectTransform)ActiveNode(nodes, "Node1")).position.y;
+                float previousRight = float.NegativeInfinity;
+                for (int i = 1; i <= count; i++)
+                {
+                    var node = (RectTransform)ActiveNode(nodes, "Node" + i);
+                    Assert.That(node.position.y, Is.EqualTo(rowBottom).Within(.01f), node.name);
+                    node.GetWorldCorners(corners);
+                    Assert.That(corners[0].x, Is.GreaterThan(previousRight), node.name);
+                    Assert.That(corners[0].x, Is.GreaterThanOrEqualTo(clip[0].x - .01f), node.name);
+                    Assert.That(corners[2].x, Is.LessThanOrEqualTo(clip[2].x + .01f), node.name);
+                    previousRight = corners[2].x;
+                    Assert.That(node.Find("Connector").gameObject.activeSelf, Is.EqualTo(i > 1), node.name);
+                }
+                Assert.That(scroll.vertical, Is.False);
+                Assert.That(scroll.verticalScrollbar.gameObject.activeSelf, Is.False);
+                MapSceneTests.CaptureMap("map-route-row-1280x720.png");
+                MapSceneTests.CaptureMap("map-route-row-1920x1080.png", width: 1920, height: 1080);
+            }
+            else
+            {
+                Assert.That(scroll.vertical, Is.True);
+                Assert.That(scroll.content.rect.height, Is.GreaterThan(scroll.viewport.rect.height));
+            }
+
             RunProgress progress = session.Progress;
             for (int i = 0; i < count - 1; i++)
             {
@@ -201,9 +228,9 @@ public class MapChoiceLayoutTests
             Assert.That(center.y, Is.InRange(clip[0].y, clip[2].y));
             Assert.That(MarkerPath(ActiveNode(nodes, "Node1")), Does.EndWith("/node-completed.png"));
             Assert.That(MarkerPath(current), Does.EndWith("/node-current.png"));
-            Assert.That(ActiveNode(nodes, "Node10").Find("Connector").gameObject.activeSelf, Is.True);
-            Assert.That(ActiveNode(nodes, "Node11").Find("Connector").gameObject.activeSelf, Is.False);
-            MapSceneTests.CaptureMap("map-card-progress-" + count + ".png");
+            Assert.That(ActiveNode(nodes, "Node13").Find("Connector").gameObject.activeSelf, Is.True);
+            if (count > 13)
+                Assert.That(ActiveNode(nodes, "Node14").Find("Connector").gameObject.activeSelf, Is.False);
         }
     }
 }

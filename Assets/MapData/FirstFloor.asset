@@ -18,13 +18,13 @@ MonoBehaviour:
   secondNonBattleChance: 0.3
   nonBattleContents:
   - type: 8
-    weight: 40
+    weight: 30
     contentData: {fileID: 0}
   - type: 3
-    weight: 30
+    weight: 35
     contentData: {fileID: 0}
   - type: 7
-    weight: 30
+    weight: 35
     contentData: {fileID: 0}
   battleLimits:
   - firstNode: 1

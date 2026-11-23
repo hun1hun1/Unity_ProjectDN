@@ -15,4 +15,5 @@ MonoBehaviour:
   actionIcon: {fileID: 0}
   actionName: "\uACF5\uACA9"
   iconSet: {fileID: 11400000, guid: 5fd87de9b8e3fbc48bac86f889a6e7e3, type: 2}
+  presentation: {fileID: 11400000, guid: e31d25317174432986531d6d5c1b3506, type: 2}
   damage: 10

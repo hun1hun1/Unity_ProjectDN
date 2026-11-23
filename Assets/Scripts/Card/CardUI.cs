@@ -39,7 +39,11 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
 
     [Header("Animation")]
     [SerializeField] private RectTransform cardVisual;
-    [SerializeField] private float moveDuration = 0.35f;
+    [SerializeField] private float drawMoveDuration = 0.35f;
+    [SerializeField] private float useMoveDuration = 0.35f;
+    [SerializeField] private float usedCardDiscardMoveDuration = 0.35f;
+    [SerializeField] private float handDiscardMoveDuration = 0.35f;
+    [SerializeField] private float absorbOrExhaustDuration = 0.35f;
     [SerializeField] private float flipDuration = 0.25f;
     [SerializeField] private float discardShrinkDuration = 0.05f;
     [SerializeField] private float returnDuration = 0.2f;
@@ -240,11 +244,11 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
 
         float elapsed = 0f;
 
-        while (elapsed < moveDuration)
+        while (elapsed < drawMoveDuration)
         {
             elapsed += Time.deltaTime;
 
-            float t = Mathf.Clamp01(elapsed / moveDuration);
+            float t = Mathf.Clamp01(elapsed / drawMoveDuration);
             t = Mathf.SmoothStep(0f, 1f, t);
 
             cardVisual.localPosition =
@@ -288,32 +292,10 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
         cardVisual.localScale = finalScale;
     }
 
-    //public IEnumerator DiscardAnimation(RectTransform discardPoint)
-    //{
-    //    SetFaceUp(false);
+    public IEnumerator DiscardAnimation(RectTransform discardPilePoint) =>
+        DiscardAnimation(discardPilePoint, handDiscardMoveDuration);
 
-    //    Vector3 startPosition = cardVisual.position;
-    //    Vector3 endPosition = discardPoint.position;
-
-    //    float elapsed = 0f;
-
-    //    while (elapsed < moveDuration)
-    //    {
-    //        elapsed += Time.deltaTime;
-
-    //        float t = Mathf.Clamp01(elapsed / moveDuration);
-    //        t = Mathf.SmoothStep(0f, 1f, t);
-
-    //        cardVisual.position =
-    //            Vector3.Lerp(startPosition, endPosition, t);
-
-    //        yield return null;
-    //    }
-
-    //    cardVisual.position = endPosition;
-    //}
-
-    public IEnumerator DiscardAnimation(RectTransform discardPilePoint)
+    private IEnumerator DiscardAnimation(RectTransform discardPilePoint, float discardMoveDuration)
     {
         if (cardVisual == null || discardPilePoint == null)
             yield break;
@@ -368,12 +350,12 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
 
         elapsed = 0f;
 
-        while (elapsed < moveDuration)
+        while (elapsed < discardMoveDuration)
         {
             elapsed += Time.deltaTime;
 
             float t = Mathf.Clamp01(
-                elapsed / moveDuration
+                elapsed / discardMoveDuration
             );
 
             t = Mathf.SmoothStep(0f, 1f, t);
@@ -455,11 +437,11 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
 
             float elapsed = 0f;
 
-            while (elapsed < moveDuration)
+            while (elapsed < useMoveDuration)
             {
                 elapsed += Time.deltaTime;
 
-                float t = Mathf.Clamp01(elapsed / moveDuration);
+                float t = Mathf.Clamp01(elapsed / useMoveDuration);
                 t = Mathf.SmoothStep(0f, 1f, t);
 
                 cardVisual.position = Vector3.Lerp(
@@ -497,10 +479,10 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
                 Vector3 fromPosition = cardVisual.position;
                 Vector3 fromScale = cardVisual.localScale;
                 float elapsed = 0f;
-                while (elapsed < moveDuration)
+                while (elapsed < absorbOrExhaustDuration)
                 {
                     elapsed += Time.deltaTime;
-                    float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / moveDuration));
+                    float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / absorbOrExhaustDuration));
                     cardVisual.position = Vector3.Lerp(fromPosition, destination, t);
                     cardVisual.localScale = Vector3.Lerp(fromScale, Vector3.zero, t);
                     yield return null;
@@ -508,7 +490,7 @@ public class CardUI : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
                 cardVisual.localScale = Vector3.zero;
             }
             else
-                yield return DiscardAnimation(discardPilePoint);
+                yield return DiscardAnimation(discardPilePoint, usedCardDiscardMoveDuration);
         }
         finally { presentationBusy = false; }
     }

@@ -37,7 +37,7 @@ public class RunSession : MonoBehaviour
     private static void ResetStatics() => Instance = null;
 
     public void StartNewRun(RunDefinition definition, int seed, IReadOnlyCollection<MapContentType> supportedContent = null,
-        AmmoCapacityRelic startingConduit = null)
+        ConduitData startingConduit = null)
     {
         if (IsTransitioning) throw new InvalidOperationException("Cannot replace a run during a scene transition.");
         // Validate/build first: a broken definition must not erase the previous run or inventory.
@@ -151,7 +151,7 @@ public class RunSession : MonoBehaviour
         RunAssetCatalog catalog = Application.isPlaying ? RunAssetCatalog.Load() : null;
         RunProgressData before = catalog != null ? Progress.Capture(catalog) : null;
         RunSaveData previous = checkpoint;
-        AmmoCapacityRelic conduit = Progress.GetEliteVictoryConduit();
+        ConduitData conduit = Progress.GetEliteVictoryConduit();
         RunRelicData[] relicsBefore = catalog != null && conduit != null ? RunRelicInventory.Capture(catalog) : null;
         Progress.CaptureHealth(currentHP, maxHP);
         if (!Progress.CompleteNode(floor, node, conduit)) return false;

@@ -102,7 +102,7 @@ public class MapSceneTests
             yield return WaitForMap();
 
             Assert.That(progress.CurrentNode.SelectedChoice.Type, Is.EqualTo(MapContentType.Relic));
-            var relic = progress.CurrentNode.SelectedChoice.ContentData as AmmoCapacityRelic;
+            var relic = progress.CurrentNode.SelectedChoice.ContentData as ConduitData;
             Assert.That(relic, Is.Not.Null);
             Assert.That(RunRelicInventory.Contains(relic), Is.False);
             Transform content = GameObject.Find("RelicEncounterPanel/Content").transform;
@@ -163,10 +163,10 @@ public class MapSceneTests
             yield return WaitForScene("TitleScene");
             RunDefinition definition = AssetDatabase.LoadAssetAtPath<RunDefinition>(MapAssetSetup.RunPath);
             int seed = FindSeedForUnknownOutcome(definition, outcomeType);
-            AmmoCapacityRelic midas = null;
+            ConduitData midas = null;
             if (withMidas)
             {
-                midas = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/MidasHand.asset");
+                midas = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/MidasHand.asset");
                 Assert.That(midas, Is.Not.Null);
             }
 
@@ -263,7 +263,7 @@ public class MapSceneTests
             if (outcome is MapEventDefinition)
                 Assert.That(RunGoldInventory.Gold, Is.EqualTo(before + eventGold));
             else
-                Assert.That(RunRelicInventory.Contains((AmmoCapacityRelic)outcome), Is.True);
+                Assert.That(RunRelicInventory.Contains((ConduitData)outcome), Is.True);
         }
         finally { RunSaves.UseStore(null); }
     }
@@ -787,7 +787,7 @@ public class MapSceneTests
         RunSaves.UseStore(new RunSaveStore(savePath));
         try
         {
-            var canteen = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/TravelersCanteen.asset");
+            var canteen = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/TravelersCanteen.asset");
             var floor = AssetDatabase.LoadAssetAtPath<FloorMapDefinition>("Assets/MapData/FirstFloor.asset");
             Assert.That(canteen, Is.Not.Null, "The Traveler's Canteen asset must exist.");
             Assert.That(canteen.Rarity, Is.EqualTo(ConduitRarity.Common));
@@ -1409,7 +1409,7 @@ public class MapSceneTests
         RunSession session = RunSession.Instance;
         RunProgress progress = session.Progress;
         var finished = new FinishCounter(RunPhase.Completed); session.RunFinished += finished.OnFinished;
-        AmmoCapacityRelic relic = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/CardData/Soldier/Examples/AmmoCapacityRelic.asset");
+        ConduitData relic = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/CardData/Soldier/Examples/AmmoCapacityRelic.asset");
         Assert.That(relic.Acquire(), Is.True);
         int initialDeckCount = -1;
         int expectedTotalGold = progress.Definition.startingGold;
@@ -1473,7 +1473,7 @@ public class MapSceneTests
         RunSession session = RunSession.Instance; RunDefinition definition = session.Progress.Definition;
         var finished = new FinishCounter(RunPhase.Defeated); session.RunFinished += finished.OnFinished;
         RunGoldInventory.Add(123);
-        AmmoCapacityRelic relic = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/CardData/Soldier/Examples/AmmoCapacityRelic.asset");
+        ConduitData relic = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/CardData/Soldier/Examples/AmmoCapacityRelic.asset");
         relic.Acquire(); session.SelectOption(0); yield return WaitForScene("BattleScene");
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
         CardData extra = battle.GetDeckController().GetDeck(CardDeckType.TypeDream)[0];
@@ -1784,21 +1784,21 @@ public class MapSceneTests
     private static Canvas FindMapCanvas() =>
         Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None).Single(canvas => canvas.isRootCanvas);
 
-    internal static void CaptureMap(string fileName, Canvas canvas = null)
+    internal static void CaptureMap(string fileName, Canvas canvas = null, int width = 1280, int height = 720)
     {
         if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
         canvas ??= FindMapCanvas();
         var cameraObject = new GameObject("Map capture camera", typeof(Camera));
         Camera camera = cameraObject.GetComponent<Camera>();
         camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = new Color(.055f, .075f, .12f);
-        var target = new RenderTexture(1280, 720, 24); camera.targetTexture = target;
-        var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
+        var target = new RenderTexture(width, height, 24); camera.targetTexture = target;
+        var pixels = new Texture2D(width, height, TextureFormat.RGB24, false);
         RenderTexture previous = RenderTexture.active;
         try
         {
             canvas.renderMode = RenderMode.ScreenSpaceCamera; canvas.worldCamera = camera; canvas.planeDistance = 1;
             Canvas.ForceUpdateCanvases(); camera.Render(); RenderTexture.active = target;
-            pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); pixels.Apply();
+            pixels.ReadPixels(new Rect(0, 0, width, height), 0, 0); pixels.Apply();
             string folder = System.IO.Path.Combine(Application.dataPath, "../.utmp/map-system");
             System.IO.Directory.CreateDirectory(folder); System.IO.File.WriteAllBytes(System.IO.Path.Combine(folder, fileName), pixels.EncodeToPNG());
         }

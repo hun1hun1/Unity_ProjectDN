@@ -12,7 +12,7 @@ internal static class UnknownNodeResolver
         GetOutcomes(settings, canBattle, available, sharedConduitAvailable ?? (AvailableRelics(settings).Count > 0)).Count != 0;
 
     internal static MapChoice Resolve(FloorMapDefinition floor, bool canBattle, Func<MapContentType, bool> available, Random random,
-        AmmoCapacityRelic sharedConduit = null)
+        ConduitData sharedConduit = null)
     {
         UnknownNodeSettings settings = floor.unknown;
         var relics = floor.mode == FloorMapMode.FirstFloor ? null : AvailableRelics(settings);
@@ -66,11 +66,11 @@ internal static class UnknownNodeResolver
         }
     }
 
-    private static List<AmmoCapacityRelic> AvailableRelics(UnknownNodeSettings settings)
+    private static List<ConduitData> AvailableRelics(UnknownNodeSettings settings)
     {
-        var relics = new List<AmmoCapacityRelic>();
+        var relics = new List<ConduitData>();
         if (settings?.relics == null) return relics;
-        foreach (AmmoCapacityRelic relic in settings.relics)
+        foreach (ConduitData relic in settings.relics)
             if (relic != null && relic.HasEffect && !RunRelicInventory.Contains(relic))
                 relics.Add(relic);
         return relics;

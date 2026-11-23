@@ -148,7 +148,7 @@ public partial class TitleMenuTests
         Assert.That(soldier.isOn, Is.True);
         Assert.That(Ref<Button>(selection, "adventureButton").IsInteractable(), Is.True);
         Assert.That(conduitRow.gameObject.activeInHierarchy, Is.True);
-        var conduit = Ref<AmmoCapacityRelic>(menu, "soldierStartingConduit");
+        var conduit = Ref<ConduitData>(menu, "soldierStartingConduit");
         Assert.That(conduitRow.Find("Icon").GetComponent<Image>().sprite, Is.SameAs(conduit.HudArtwork));
         Assert.That(conduitRow.Find("Label").GetComponent<TMP_Text>().text, Is.EqualTo("시작 매개체 · " + conduit.RelicName));
         Assert.That(conduitRow.Find("Effect").GetComponent<TMP_Text>().text, Is.EqualTo(conduit.Description));
@@ -238,7 +238,7 @@ public partial class TitleMenuTests
         Assert.That(RunGoldInventory.Gold, Is.EqualTo(100));
         Assert.That(RunSaves.TryLoad(out RunSaveData initialSave, out _), Is.True);
         Assert.That(initialSave.inventory.gold, Is.EqualTo(100));
-        var casing = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/SoldierStartingCasing.asset");
+        var casing = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/SoldierStartingCasing.asset");
         Assert.That(casing, Is.Not.Null);
         Assert.That(casing.Artwork, Is.Not.Null);
         Assert.That(RunRelicInventory.Contains(casing), Is.True);
@@ -262,8 +262,8 @@ public partial class TitleMenuTests
         Assert.That(ammo.TrySpend(1), Is.True);
         AssertConduitIcons(casing);
 
-        var later = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/MidpointEliteConduit.asset");
-        var last = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/FirstFloorConduit.asset");
+        var later = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/WeaknessEngraver.asset");
+        var last = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/MerchantGuildToken.asset");
         Assert.That(later.Acquire(), Is.True);
         Assert.That(last.Acquire(), Is.True);
         Assert.That(later.Acquire(), Is.False);
@@ -283,7 +283,7 @@ public partial class TitleMenuTests
         Assert.That(RunRelicInventory.Count, Is.EqualTo(3));
     }
 
-    private static void AssertConduitIcons(params AmmoCapacityRelic[] expected)
+    private static void AssertConduitIcons(params ConduitData[] expected)
     {
         var area = GameObject.Find("ConduitArea").GetComponent<RectTransform>();
         var group = area.GetComponent<HorizontalLayoutGroup>();

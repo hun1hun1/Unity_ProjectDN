@@ -37,7 +37,7 @@ public static class RunRelicInventory
             BuffPower = buffPower;
         }
 
-        public RelicEffects(AmmoCapacityRelic relic)
+        public RelicEffects(ConduitData relic)
             : this(relic.MaxAmmoBonus, relic.BattleStartAmmo, relic.TurnStartAmmo,
                 relic.BattleStartBlock, relic.BattleVictoryHeal, relic.RestRecoveryBonus,
                 relic.DreamHandSizeBonus, relic.NightmareHandSizeBonus,
@@ -45,7 +45,7 @@ public static class RunRelicInventory
                 relic.EqualizeEliteConduitOdds, relic.StartWithHalfDreamGauge, relic.RustImmunity,
                 relic.BattleStartBuff, relic.BattleStartBuffPower) { }
 
-        public RunRelicData Capture(AmmoCapacityRelic relic, RunAssetCatalog catalog) => new RunRelicData
+        public RunRelicData Capture(ConduitData relic, RunAssetCatalog catalog) => new RunRelicData
         {
             id = catalog.Key(relic),
             bonus = Capacity,
@@ -67,10 +67,10 @@ public static class RunRelicInventory
         };
     }
 
-    private static readonly Dictionary<AmmoCapacityRelic, RelicEffects> ownedRelics =
-        new Dictionary<AmmoCapacityRelic, RelicEffects>();
-    private static readonly List<AmmoCapacityRelic> acquisitionOrder = new List<AmmoCapacityRelic>();
-    internal static IReadOnlyList<AmmoCapacityRelic> InAcquisitionOrder { get; } = acquisitionOrder.AsReadOnly();
+    private static readonly Dictionary<ConduitData, RelicEffects> ownedRelics =
+        new Dictionary<ConduitData, RelicEffects>();
+    private static readonly List<ConduitData> acquisitionOrder = new List<ConduitData>();
+    internal static IReadOnlyList<ConduitData> InAcquisitionOrder { get; } = acquisitionOrder.AsReadOnly();
     public static int Count => ownedRelics.Count;
     public static int MaxAmmoBonus { get; private set; }
     internal static int BattleStartAmmo { get; private set; }
@@ -89,7 +89,7 @@ public static class RunRelicInventory
     internal static uint GameVersion { get; private set; }
     internal static event Action Changed;
 
-    public static bool Acquire(AmmoCapacityRelic relic)
+    public static bool Acquire(ConduitData relic)
     {
         if (relic == null || !relic.HasEffect || ownedRelics.ContainsKey(relic)) return false;
         // Capture the values on acquisition so editing the asset cannot rewrite run state.
@@ -98,17 +98,17 @@ public static class RunRelicInventory
         return true;
     }
 
-    public static bool Contains(AmmoCapacityRelic relic)
+    public static bool Contains(ConduitData relic)
     {
         return relic != null && ownedRelics.ContainsKey(relic);
     }
 
-    internal static RunRelicData CaptureStartingConduit(AmmoCapacityRelic relic, RunAssetCatalog catalog) =>
+    internal static RunRelicData CaptureStartingConduit(ConduitData relic, RunAssetCatalog catalog) =>
         new RelicEffects(relic).Capture(relic, catalog);
 
     internal static void ApplyBattleStartBuffs(Player player)
     {
-        foreach (AmmoCapacityRelic relic in acquisitionOrder)
+        foreach (ConduitData relic in acquisitionOrder)
         {
             RelicEffects effect = ownedRelics[relic];
             if (effect.StartBuff != null)
@@ -121,7 +121,7 @@ public static class RunRelicInventory
         var result = new RunRelicData[acquisitionOrder.Count];
         for (int i = 0; i < result.Length; i++)
         {
-            AmmoCapacityRelic relic = acquisitionOrder[i];
+            ConduitData relic = acquisitionOrder[i];
             result[i] = ownedRelics[relic].Capture(relic, catalog);
         }
         return result;
@@ -130,7 +130,7 @@ public static class RunRelicInventory
     {
         Clear();
         foreach (RunRelicData entry in data)
-            Add(catalog.Resolve<AmmoCapacityRelic>(entry.id), new RelicEffects(entry.bonus, entry.battleStartAmmo,
+            Add(catalog.Resolve<ConduitData>(entry.id), new RelicEffects(entry.bonus, entry.battleStartAmmo,
                 entry.turnStartAmmo, entry.battleStartBlock, entry.battleVictoryHeal, entry.restRecoveryBonus,
                 entry.dreamHandSizeBonus, entry.nightmareHandSizeBonus,
                 entry.weaknessExposureBonusTurns, entry.shopDiscountPercent, entry.goldGainBonusPercent,
@@ -139,7 +139,7 @@ public static class RunRelicInventory
         unchecked { GameVersion++; }
         Changed?.Invoke();
     }
-    private static void Add(AmmoCapacityRelic relic, RelicEffects effect)
+    private static void Add(ConduitData relic, RelicEffects effect)
     {
         ownedRelics.Add(relic, effect);
         acquisitionOrder.Add(relic);

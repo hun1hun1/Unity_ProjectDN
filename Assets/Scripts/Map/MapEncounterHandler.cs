@@ -51,7 +51,7 @@ public sealed class MapEncounterHandler : MapContentHandler
                 reward = () => RunGoldInventory.Add(gold);
             }
         }
-        else if (contentType == MapContentType.Relic && choice.ContentData is AmmoCapacityRelic relic)
+        else if (contentType == MapContentType.Relic && choice.ContentData is ConduitData relic)
         {
             title.text = "매개체 발견";
             rewardName.text = $"{relic.RelicName} · {RarityLabel(relic.Rarity)}";

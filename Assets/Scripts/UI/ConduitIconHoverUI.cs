@@ -10,7 +10,7 @@ internal sealed class ConduitIconHoverUI : MonoBehaviour, IPointerEnterHandler, 
     private UnityEngine.UI.Image artwork;
     private StatusTooltipUI tooltipPrefab;
     private StatusTooltipUI tooltip;
-    private AmmoCapacityRelic conduit;
+    private ConduitData conduit;
     private bool pointerInside, tooltipShown;
     private float progress, enteredAt;
 
@@ -20,7 +20,7 @@ internal sealed class ConduitIconHoverUI : MonoBehaviour, IPointerEnterHandler, 
         tooltipPrefab = prefab;
     }
 
-    internal void Bind(AmmoCapacityRelic value)
+    internal void Bind(ConduitData value)
     {
         if (value != conduit) ResetHover();
         conduit = value;

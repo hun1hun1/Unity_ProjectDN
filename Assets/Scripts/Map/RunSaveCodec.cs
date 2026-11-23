@@ -51,11 +51,11 @@ public static class RunSaveCodec
                 relic.dreamHandSizeBonus<0 || relic.nightmareHandSizeBonus<0 ||
                 relic.battleStartBuffPower<0 || relic.weaknessExposureBonusTurns<0 ||
                 relic.shopDiscountPercent < 0 || relic.shopDiscountPercent > 100 || relic.goldGainBonusPercent < 0 ||
-                !keys.Add(relic.id) || catalog.Resolve<AmmoCapacityRelic>(relic.id)==null)
+                !keys.Add(relic.id) || catalog.Resolve<ConduitData>(relic.id)==null)
                 throw new InvalidOperationException("Invalid saved relic.");
             bool hasStartBuff = !string.IsNullOrEmpty(relic.battleStartBuff);
             if (hasStartBuff != (relic.battleStartBuffPower > 0) ||
-                (hasStartBuff && !AmmoCapacityRelic.IsValidBattleStartBuff(
+                (hasStartBuff && !ConduitData.IsValidBattleStartBuff(
                     catalog.Resolve<StatusEffectData>(relic.battleStartBuff), relic.battleStartBuffPower)) ||
                 (!hasStartBuff && !relic.rustImmunity && relic.bonus == 0 && relic.battleStartAmmo == 0 &&
                     relic.turnStartAmmo == 0 && relic.battleStartBlock == 0 && relic.battleVictoryHeal == 0 &&

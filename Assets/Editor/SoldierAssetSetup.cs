@@ -361,7 +361,7 @@ public static class SoldierAssetSetup
             card.type = CardType.Skill;
             card.effects = new CardEffect[] { capacity };
         });
-        EnsureAsset<AmmoCapacityRelic>("AmmoCapacityRelic", relic =>
+        EnsureAsset<ConduitData>("AmmoCapacityRelic", relic =>
         {
             SerializedObject state = new SerializedObject(relic);
             state.FindProperty("relicName").stringValue = "확장 탄창 예시";

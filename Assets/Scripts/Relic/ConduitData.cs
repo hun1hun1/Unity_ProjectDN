@@ -2,8 +2,8 @@ using UnityEngine;
 
 public enum ConduitRarity { Common, Uncommon, Rare }
 
-[CreateAssetMenu(fileName = "AmmoCapacityRelic", menuName = "Conduit/Ammo Capacity")]
-public class AmmoCapacityRelic : ScriptableObject
+[CreateAssetMenu(fileName = "ConduitData", menuName = "Conduit/Data")]
+public class ConduitData : ScriptableObject
 {
     [SerializeField] private string relicName;
     [TextArea] [SerializeField] private string description;

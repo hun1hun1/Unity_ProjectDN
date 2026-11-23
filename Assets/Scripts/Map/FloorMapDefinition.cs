@@ -30,7 +30,7 @@ public sealed class UnknownNodeSettings
     [Min(0)] public int restWeight = 9;
     [Min(0)] public int relicWeight = 2;
     public MapEventDefinition[] events = Array.Empty<MapEventDefinition>();
-    public AmmoCapacityRelic[] relics = Array.Empty<AmmoCapacityRelic>();
+    public ConduitData[] relics = Array.Empty<ConduitData>();
 }
 
 [CreateAssetMenu(fileName = "FloorMap", menuName = "Map/Floor Map")]

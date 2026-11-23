@@ -77,7 +77,7 @@ Create > Card > Effect > Increase Max Ammo에서 `IncreaseMaxAmmoEffect`를 생�
 
 ### 탄약 매개체
 
-**Create → Conduit → Ammo Capacity**에서 `AmmoCapacityRelic`을 생성합니다. Inspector에서 이름·설명·등급·이미지를 지정하고, 탄약 효과에 사용할 `Max Ammo Bonus`, `Battle Start Ammo`, `Turn Start Ammo` 값을 설정합니다. 매개체 획득 처리에서는 아래 둘 중 하나를 호출합니다.
+**Create → Conduit → Data**에서 `ConduitData`를 생성합니다. Inspector에서 이름·설명·등급·이미지를 지정하고, 탄약 효과에 사용할 `Max Ammo Bonus`, `Battle Start Ammo`, `Turn Start Ammo` 값을 설정합니다. 매개체 획득 처리에서는 아래 둘 중 하나를 호출합니다.
 
 ```csharp
 bool acquired = relic.Acquire();

@@ -42,7 +42,7 @@ public partial class RunCheckpointRuntimeTests
     {
         Isolate();
         yield return Load("TitleScene");
-        var conduit = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/ThornThicket.asset");
+        var conduit = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/ThornThicket.asset");
         var definition = AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
         Assert.That(conduit, Is.Not.Null);
         Assert.That(conduit.HudArtwork, Is.Not.Null);
@@ -96,7 +96,7 @@ public partial class RunCheckpointRuntimeTests
     {
         Isolate();
         yield return Load("TitleScene");
-        var conduit = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/AutomaticLoader.asset");
+        var conduit = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/AutomaticLoader.asset");
         var definition = AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
         Assert.That(conduit, Is.Not.Null);
         Assert.That(conduit.Rarity, Is.EqualTo(ConduitRarity.Uncommon));
@@ -152,7 +152,7 @@ public partial class RunCheckpointRuntimeTests
     {
         Isolate();
         yield return Load("TitleScene");
-        var conduit = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/BarrierGenerator.asset");
+        var conduit = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/BarrierGenerator.asset");
         var ward = AssetDatabase.LoadAssetAtPath<StatusEffectData>("Assets/StatusData/Ward.asset");
         var definition = AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
         Assert.That(conduit, Is.Not.Null);
@@ -211,7 +211,7 @@ public partial class RunCheckpointRuntimeTests
     {
         Isolate();
         yield return Load("TitleScene");
-        var conduit = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/FoldingCover.asset");
+        var conduit = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/FoldingCover.asset");
         var definition = AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
         Assert.That(conduit, Is.Not.Null);
         Assert.That(conduit.Rarity, Is.EqualTo(ConduitRarity.Common));
@@ -263,7 +263,7 @@ public partial class RunCheckpointRuntimeTests
     {
         Isolate();
         yield return Load("TitleScene");
-        var asset = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/AntiRustOil.asset");
+        var asset = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/AntiRustOil.asset");
         var definition = AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
         Assert.That(asset, Is.Not.Null);
         Assert.That(asset.Rarity, Is.EqualTo(ConduitRarity.Uncommon));
@@ -357,7 +357,7 @@ public partial class RunCheckpointRuntimeTests
     {
         Isolate();
         yield return Load("TitleScene");
-        var chalice = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/HalfMoonChalice.asset");
+        var chalice = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/HalfMoonChalice.asset");
         var definition = AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
         Assert.That(chalice, Is.Not.Null, "The Half-Moon Chalice asset must exist.");
         Assert.That(chalice.Rarity, Is.EqualTo(ConduitRarity.Uncommon));
@@ -432,7 +432,7 @@ public partial class RunCheckpointRuntimeTests
     {
         Isolate();
         yield return Load("TitleScene");
-        var conduit = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>($"Assets/MapData/{assetName}.asset");
+        var conduit = AssetDatabase.LoadAssetAtPath<ConduitData>($"Assets/MapData/{assetName}.asset");
         var definition = AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
         Assert.That(conduit, Is.Not.Null);
         Assert.That(conduit.Rarity, Is.EqualTo(rarity));
@@ -493,7 +493,7 @@ public partial class RunCheckpointRuntimeTests
     {
         Isolate();
         yield return Load("TitleScene");
-        var conduit = ScriptableObject.CreateInstance<AmmoCapacityRelic>();
+        var conduit = ScriptableObject.CreateInstance<ConduitData>();
         var recurringCard = ScriptableObject.CreateInstance<CardData>();
         var enemyAction = Object.Instantiate(AssetDatabase.LoadAssetAtPath<EnemyApplyStatusAction>("Assets/Enemy/Examples/Debuff.asset"));
         RunAssetCatalog catalog = null;
@@ -620,7 +620,7 @@ public partial class RunCheckpointRuntimeTests
     {
         Isolate();
         yield return Load("TitleScene");
-        var bandage = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/EmergencyBandage.asset");
+        var bandage = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/EmergencyBandage.asset");
         var definition = AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
         Assert.That(bandage, Is.Not.Null, "The Emergency Bandage asset must exist.");
         Assert.That(bandage.Rarity, Is.EqualTo(ConduitRarity.Common));
@@ -690,7 +690,7 @@ public partial class RunCheckpointRuntimeTests
     {
         Isolate();
         yield return Load("TitleScene");
-        var midas = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/MidasHand.asset");
+        var midas = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/MidasHand.asset");
         var definition = AssetDatabase.LoadAssetAtPath<RunDefinition>("Assets/MapData/FirstFloorRun.asset");
         Assert.That(midas, Is.Not.Null, "The Midas's Hand asset must exist.");
         Assert.That(midas.Rarity, Is.EqualTo(ConduitRarity.Uncommon));

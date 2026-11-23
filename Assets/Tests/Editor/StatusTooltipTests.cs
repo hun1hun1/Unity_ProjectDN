@@ -105,7 +105,7 @@ public class StatusTooltipTests
 
         var area = GameObject.Find("ConduitArea").transform;
         Assert.That(area.childCount, Is.Zero);
-        var casing = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/SoldierStartingCasing.asset");
+        var casing = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/SoldierStartingCasing.asset");
         Assert.That(casing.Acquire(), Is.True);
         var background = area.Find("ConduitBackground");
         Assert.That(background, Is.Not.Null);
@@ -120,8 +120,8 @@ public class StatusTooltipTests
         Assert.That(frame.raycastTarget, Is.False);
         Assert.That(frame.rectTransform.rect.size, Is.EqualTo(new Vector2(88, 84)));
         Assert.That(frame.rectTransform.anchoredPosition.x, Is.EqualTo(12));
-        var second = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/MidpointEliteConduit.asset");
-        var third = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/MapData/FirstFloorConduit.asset");
+        var second = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/WeaknessEngraver.asset");
+        var third = AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/MapData/MerchantGuildToken.asset");
         Assert.That(second.Acquire(), Is.True);
         Assert.That(third.Acquire(), Is.True);
         Assert.That(frame.rectTransform.rect.size, Is.EqualTo(new Vector2(240, 84)));

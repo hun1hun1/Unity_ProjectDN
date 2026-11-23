@@ -25,7 +25,7 @@ public sealed class ConduitAreaUI : MonoBehaviour
     private void Refresh()
     {
         int visible = 0;
-        foreach (AmmoCapacityRelic conduit in RunRelicInventory.InAcquisitionOrder)
+        foreach (ConduitData conduit in RunRelicInventory.InAcquisitionOrder)
         {
             if (conduit.HudArtwork == null) continue;
 

@@ -341,7 +341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1303d33e876f2294d93d4be20fc68351, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  profile: {fileID: 11400000, guid: a13391df5d8dbc544934bbb6120cc481, type: 2}
+  profile: {fileID: 11400000, guid: bbb4a1c7c28f43a46acc1ab9a696a582, type: 2}
   visual: {fileID: 7163136406211293071}
   spriteAnimator: {fileID: 2367891769189864342}
   idleAnimation: {fileID: 11400000, guid: 3a52c64a749e5714c9aad70b5d38e1de, type: 2}

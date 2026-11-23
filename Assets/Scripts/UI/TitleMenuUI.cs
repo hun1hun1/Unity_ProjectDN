@@ -14,7 +14,7 @@ public class TitleMenuUI : MonoBehaviour
     }
 
     [SerializeField] private RunDefinition runDefinition;
-    [SerializeField] private AmmoCapacityRelic soldierStartingConduit;
+    [SerializeField] private ConduitData soldierStartingConduit;
     [SerializeField] private MapContentType[] supportedContent = Array.Empty<MapContentType>();
     [SerializeField] private CanvasGroup mainMenu;
     [SerializeField] private CharacterSelectionUI characterSelection;

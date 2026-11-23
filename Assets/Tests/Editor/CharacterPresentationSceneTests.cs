@@ -73,6 +73,36 @@ public class CharacterPresentationSceneTests
         }
     }
 
+    [UnityTest] public IEnumerator FirstFloorBossSpawnsWithItsOwnLoopingIdleAndHud()
+    {
+        yield return new EnterPlayMode();
+        yield return SceneManager.LoadSceneAsync("BattleScene");
+        BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
+        var encounter = AssetDatabase.LoadAssetAtPath<BattleEncounterDefinition>("Assets/MapData/FirstFloorBossEncounter.asset");
+        battle.ConfigureEncounter(encounter);
+        yield return null;
+
+        Enemy boss = battle.GetTarget();
+        Assert.That(boss.name, Does.StartWith("LockedGatekeeper"));
+        Assert.That(boss.GetCurrentHP(), Is.EqualTo(encounter.enemyMaxHP));
+        var view = boss.GetComponent<BattleCharacterPresentation>();
+        UISpriteAnimator animator = view.Visual.GetComponent<UISpriteAnimator>();
+        UISpriteAnimation idle = view.IdleAnimation;
+        Assert.That(animator.Animation, Is.SameAs(idle));
+        Assert.That(idle.frames, Has.Length.EqualTo(24));
+        Assert.That(idle.frameDuration, Is.EqualTo(.1f));
+        Assert.That(AssetDatabase.GetAssetPath(idle.frames[0]), Is.EqualTo("Assets/Images/Characters/LockedGatekeeper/Idle.png"));
+        Assert.That(animator.Loop, Is.True);
+        Assert.That(view.InfoUI.gameObject.activeInHierarchy, Is.True);
+        Assert.That(view.ActionUI.gameObject.activeInHierarchy, Is.True);
+        AssertLayout(view);
+
+        Sprite initial = view.Visual.GetComponent<Image>().sprite;
+        yield return WaitForPlayTime(.25f);
+        Assert.That(view.Visual.GetComponent<Image>().sprite, Is.Not.SameAs(initial));
+        Capture(battle, "locked-gatekeeper-1920x1080", 1920, 1080);
+    }
+
     private static IEnumerator WaitForPlayTime(float seconds)
     {
         // The EditMode runner does not wait on WaitForSeconds after EnterPlayMode.

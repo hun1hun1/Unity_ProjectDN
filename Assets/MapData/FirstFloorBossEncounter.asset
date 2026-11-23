@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec1dfd9560543dd4ab48922fcfc38429, type: 3}
   m_Name: FirstFloorBossEncounter
   m_EditorClassIdentifier:
-  displayName: "1층 보스 허수아비"
+  displayName: "1\uCE35 \uBCF4\uC2A4 \uC7A0\uAE34 \uBB38\uC9C0\uAE30"
   behavior: {fileID: 11400000, guid: 446a5b677568aeb49860f965302336e4, type: 2}
-  enemyPrefab: {fileID: 5288080495007236270, guid: a7e765ef1cb46a9419aaec19794001e8, type: 3}
+  enemyPrefab: {fileID: 5236752362110254156, guid: c0464a22b0a0c02469017646be240996, type: 3}
   enemyMaxHP: 50
   goldReward: 20
+  victoryConduit: {fileID: 0}

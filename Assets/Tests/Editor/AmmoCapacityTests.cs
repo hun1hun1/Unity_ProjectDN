@@ -67,7 +67,7 @@ public class AmmoCapacityTests
     public void RelicCapacitySurvivesBattleResetAndPlayerReplacement()
     {
         AmmoSystem ammo = CreateAmmo();
-        AmmoCapacityRelic relic = CreateRelic(4);
+        ConduitData relic = CreateRelic(4);
         Assert.That(relic.Acquire(), Is.True);
         ammo.IncreaseMaxForBattle(3);
         Assert.That(ammo.MaxAmmo, Is.EqualTo(17));
@@ -86,8 +86,8 @@ public class AmmoCapacityTests
     public void DifferentRelicsStackButTheSameRelicIsAcquiredOnlyOnce()
     {
         AmmoSystem ammo = CreateAmmo();
-        AmmoCapacityRelic first = CreateRelic(2);
-        AmmoCapacityRelic second = CreateRelic(3);
+        ConduitData first = CreateRelic(2);
+        ConduitData second = CreateRelic(3);
         Assert.That(RunRelicInventory.Acquire(first), Is.True);
         Assert.That(first.Acquire(), Is.False);
         Assert.That(second.Acquire(), Is.True);
@@ -102,7 +102,7 @@ public class AmmoCapacityTests
     [TestCase(-3)]
     public void InvalidRelicBonusesCannotEnterTheInventory(int amount)
     {
-        AmmoCapacityRelic relic = CreateRelic(amount);
+        ConduitData relic = CreateRelic(amount);
         Assert.That(relic.Acquire(), Is.False);
         Assert.That(RunRelicInventory.Acquire(null), Is.False);
         Assert.That(RunRelicInventory.Count, Is.Zero);
@@ -113,7 +113,7 @@ public class AmmoCapacityTests
     public void NewGameClearsBothBonusesAndRestoresStartingAmmo()
     {
         AmmoSystem ammo = CreateAmmo(2);
-        AmmoCapacityRelic relic = CreateRelic(4);
+        ConduitData relic = CreateRelic(4);
         relic.Acquire();
         ammo.IncreaseMaxForBattle(3);
         ammo.Load(99);
@@ -169,7 +169,7 @@ public class AmmoCapacityTests
     [Test]
     public void RelicBonusIsCapturedAtAcquisitionWithoutMutatingItsAsset()
     {
-        AmmoCapacityRelic relic = CreateRelic(4);
+        ConduitData relic = CreateRelic(4);
         relic.Acquire();
         JsonUtility.FromJsonOverwrite("{\"maxAmmoBonus\":8}", relic);
         AmmoSystem ammo = CreateAmmo();
@@ -224,7 +224,7 @@ public class AmmoCapacityTests
     {
         const string folder = "Assets/CardData/Soldier/Examples/";
         CardData card = AssetDatabase.LoadAssetAtPath<CardData>(folder + "IncreaseMaxAmmo.asset");
-        AmmoCapacityRelic relic = AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>(folder + "AmmoCapacityRelic.asset");
+        ConduitData relic = AssetDatabase.LoadAssetAtPath<ConduitData>(folder + "AmmoCapacityRelic.asset");
         Assert.That(card, Is.Not.Null);
         Assert.That(card.effects, Has.Length.EqualTo(1));
         Assert.That(card.effects[0], Is.InstanceOf<IncreaseMaxAmmoEffect>());
@@ -261,7 +261,7 @@ public class AmmoCapacityTests
         Assert.That(ammo.CurrentAmmo, Is.EqualTo(13));
         Assert.That(label.text, Is.EqualTo("총알 13 / 13"));
         Assert.That(soldier.GetCostSystem().GetDreamCost(), Is.EqualTo(2));
-        AmmoCapacityRelic relic = CreateRelic(2);
+        ConduitData relic = CreateRelic(2);
         relic.Acquire();
         Assert.That(label.text, Is.EqualTo("총알 13 / 15"));
 
@@ -358,9 +358,9 @@ public class AmmoCapacityTests
         return ammo;
     }
 
-    private AmmoCapacityRelic CreateRelic(int bonus)
+    private ConduitData CreateRelic(int bonus)
     {
-        AmmoCapacityRelic relic = CreateAsset<AmmoCapacityRelic>();
+        ConduitData relic = CreateAsset<ConduitData>();
         JsonUtility.FromJsonOverwrite($"{{\"maxAmmoBonus\":{bonus}}}", relic);
         return relic;
     }

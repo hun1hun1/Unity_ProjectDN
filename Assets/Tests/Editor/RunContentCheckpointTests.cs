@@ -35,7 +35,7 @@ public partial class RunCheckpointRuntimeTests
         var root=new GameObject("Fixture deck");root.SetActive(false);var deck=root.AddComponent<DeckController>();
         state=new SerializedObject(deck);state.FindProperty("dreamStartingDeckDatabase").objectReferenceValue=db;state.ApplyModifiedPropertiesWithoutUndo();
         CardData card=deck.GetDeck(CardDeckType.TypeDream)[0];int count=deck.GetDeck(CardDeckType.TypeDream).Count;
-        var relic=AssetDatabase.LoadAssetAtPath<AmmoCapacityRelic>("Assets/CardData/Soldier/Examples/AmmoCapacityRelic.asset");
+        var relic=AssetDatabase.LoadAssetAtPath<ConduitData>("Assets/CardData/Soldier/Examples/AmmoCapacityRelic.asset");
         Assert.That(session.SaveCheckpoint(contentState:shop.CaptureState()),Is.True);
         if(checkStale)
         {

@@ -24,6 +24,33 @@ public class CardUsePresentationFlowTests
         if (Application.isPlaying) yield return new ExitPlayMode();
     }
 
+    [TestCase(0f, 10f)]
+    [TestCase(10f, 0f)]
+    public void UsedCardAndHandDiscardsUseIndependentMoveDurations(float usedDuration, float handDuration)
+    {
+        GameObject prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Card.prefab");
+        CardUI card = Track(Object.Instantiate(prefab)).GetComponent<CardUI>();
+        var discardPoint = (RectTransform)Track(new GameObject("Discard point", typeof(RectTransform))).transform;
+        var settings = new UnityEditor.SerializedObject(card);
+        var usedMove = settings.FindProperty("usedCardDiscardMoveDuration");
+        var handMove = settings.FindProperty("handDiscardMoveDuration");
+        Assert.That(usedMove, Is.Not.Null, "A used card needs its own discard move duration.");
+        Assert.That(handMove, Is.Not.Null, "A card discarded directly from the hand needs its own move duration.");
+        usedMove.floatValue = usedDuration;
+        handMove.floatValue = handDuration;
+        settings.FindProperty("discardShrinkDuration").floatValue = 0f;
+        settings.ApplyModifiedPropertiesWithoutUndo();
+
+        IEnumerator afterUse = card.CompleteUsedCardAnimation(discardPoint);
+        Assert.That(afterUse.MoveNext(), Is.True, "Used cards should start the discard animation.");
+        var usedDiscard = (IEnumerator)afterUse.Current;
+        Assert.That(usedDiscard.MoveNext(), Is.EqualTo(usedDuration > 0f));
+        (afterUse as System.IDisposable)?.Dispose();
+
+        IEnumerator fromHand = card.DiscardAnimation(discardPoint);
+        Assert.That(fromHand.MoveNext(), Is.EqualTo(handDuration > 0f));
+    }
+
     [UnityTest]
     public IEnumerator CardArrivesBeforeFireAndStaysThroughRecoveryBeforeDiscard()
     {

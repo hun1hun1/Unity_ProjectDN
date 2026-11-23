@@ -40,7 +40,7 @@ public class CharacterSelectionUI : MonoBehaviour
         }
     }
 
-    public void Open(AmmoCapacityRelic startingConduit = null)
+    public void Open(ConduitData startingConduit = null)
     {
         panelGroup ??= GetComponent<CanvasGroup>();
         openingElapsed = 0f;
@@ -61,7 +61,7 @@ public class CharacterSelectionUI : MonoBehaviour
         nightmareCards.text = "악몽 · " + FormatDeck(nightmare);
     }
 
-    private void BindStartingConduit(AmmoCapacityRelic conduit)
+    private void BindStartingConduit(ConduitData conduit)
     {
         if (startingConduitRow == null) return;
         startingConduitRow.SetActive(conduit != null);

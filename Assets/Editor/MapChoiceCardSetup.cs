@@ -117,17 +117,28 @@ public static class MapChoiceCardSetup
     private static void ConfigureProgress(Transform parent, Transform nodes)
     {
         Transform root = Child(parent, "ProgressScrollView");
-        Place(root, new Vector2(1200, 86), new Vector2(0, -344));
+        Place(root, new Vector2(0, 86), new Vector2(0, -344));
+        var scrollArea = (RectTransform)root;
+        scrollArea.anchorMin = new Vector2(0, .5f);
+        scrollArea.anchorMax = new Vector2(1, .5f);
         Transform viewport = Child(root, "Viewport"); Stretch(viewport, 0);
         Ensure<UnityEngine.UI.RectMask2D>(viewport);
         var background = Ensure<UnityEngine.UI.Image>(viewport); background.color = Color.clear; background.raycastTarget = true;
         nodes.SetParent(viewport, false);
         var content = (RectTransform)nodes;
-        content.anchorMin = content.anchorMax = content.pivot = new Vector2(.5f, 1);
-        content.sizeDelta = new Vector2(1200, 86); content.anchoredPosition = Vector2.zero;
+        content.anchorMin = new Vector2(0, 1);
+        content.anchorMax = Vector2.one;
+        content.pivot = new Vector2(.5f, 1);
+        content.sizeDelta = new Vector2(0, 86); content.anchoredPosition = Vector2.zero;
         Remove<UnityEngine.UI.LayoutElement>(nodes);
         var grid = nodes.GetComponent<UnityEngine.UI.GridLayoutGroup>();
         grid.cellSize = new Vector2(100, 86); grid.childAlignment = TextAnchor.UpperCenter;
+        grid.spacing = new Vector2(8, grid.spacing.y);
+        if (nodes.Find("NodeTemplate/Connector") is RectTransform connector)
+        {
+            connector.anchoredPosition = new Vector2(-54, connector.anchoredPosition.y);
+            connector.sizeDelta = new Vector2(72, connector.sizeDelta.y);
+        }
         var fit = Ensure<UnityEngine.UI.ContentSizeFitter>(nodes);
         fit.horizontalFit = UnityEngine.UI.ContentSizeFitter.FitMode.Unconstrained;
         fit.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
