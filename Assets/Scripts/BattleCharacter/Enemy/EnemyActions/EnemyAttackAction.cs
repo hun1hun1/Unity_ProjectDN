@@ -22,8 +22,12 @@ public class EnemyAttackAction : EnemyAction
     public override string GetActionDescription(BattleManager battleManager) =>
         Preview(new EnemyActionPreviewContext(battleManager));
 
-    internal override string Preview(EnemyActionPreviewContext context) =>
-        $"공격 {context.Attack(damage)}";
+    internal override string Preview(EnemyActionPreviewContext context)
+    {
+        int amount = context.Attack(damage);
+        context.AddIntent($"플레이어에게 {amount}의 피해를 줍니다", amount);
+        return $"공격 {amount}";
+    }
 
     public override void Execute(BattleManager battleManager)
     {

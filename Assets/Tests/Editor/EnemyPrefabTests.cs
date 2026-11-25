@@ -142,7 +142,8 @@ public class EnemyPrefabTests
         CharacterInfoUI hud = battle.GetTarget().GetComponentInChildren<CharacterInfoUI>();
         Assert.That(((TMP_Text)Get(hud, "hpText")).text, Is.EqualTo("67 / 67"));
         EnemyActionUI actionUI = Object.FindFirstObjectByType<EnemyActionUI>();
-        Assert.That(((TMP_Text)Get(actionUI, "actionText")).text, Is.EqualTo(battle.GetTarget().NextAction.GetActionDescription(battle)));
+        Assert.That(((TMP_Text)Get(actionUI, "actionText")).text, Is.EqualTo("2"));
+        Assert.That(Get(actionUI, "tooltipText"), Is.EqualTo("이번 턴에 적이 플레이어에게 2의 피해를 줍니다."));
         yield return new WaitForSeconds(.8f);
         CaptureBattle(battle);
         battle.GetTarget().TakeDamage(100000);

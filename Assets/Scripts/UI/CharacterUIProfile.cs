@@ -14,7 +14,7 @@ public class CharacterUIProfile : ScriptableObject
     public Vector2 infoOffset = new Vector2(0, -8);
     [Header("Enemy intent above visible artwork")]
     public EnemyActionUI actionPrefab;
-    public Vector2 actionSize = new Vector2(240, 112);
+    public Vector2 actionSize = new Vector2(240, EnemyActionUI.CompactHeight);
     [Min(0)] public float actionGap = 12;
 
     public void Validate()

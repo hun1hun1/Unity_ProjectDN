@@ -402,11 +402,11 @@ public class StatusEffectTests
         SetField(enemy, "currentActionIndex", 0);
         enemy.BindBattle(manager);
         TMP_Text intent = (TMP_Text)GetField(Object.FindFirstObjectByType<EnemyActionUI>(), "actionText");
-        Assert.That(intent.text, Is.EqualTo("공격 10"));
+        Assert.That(intent.text, Is.EqualTo("10"));
         CardHandController hand = (CardHandController)GetField(manager, "dreamCardHand");
         UseCard(manager, hand, AssetDatabase.LoadAssetAtPath<CardData>($"{StatusAssetSetup.ExampleFolder}/WeaknessExposure_Player.asset"));
         yield return WaitForCards(manager);
-        Assert.That(intent.text, Is.EqualTo("공격 15"));
+        Assert.That(intent.text, Is.EqualTo("15"));
         AssertIcon(player, StatusEffectType.WeaknessExposure, 2);
         CardData rust = CreateAsset<CardData>();
         rust.deckType = CardDeckType.TypeDream;
@@ -414,12 +414,12 @@ public class StatusEffectTests
         rust.effects = new CardEffect[] { CreateEffect(CreateStatus(StatusEffectType.Rust), CardTarget.Enemy, 1) };
         UseCard(manager, hand, rust);
         yield return WaitForCards(manager);
-        Assert.That(intent.text, Is.EqualTo("공격 11"));
+        Assert.That(intent.text, Is.EqualTo("11"));
         AssertIcon(enemy, StatusEffectType.Rust, 1);
         UseCard(manager, hand, AssetDatabase.LoadAssetAtPath<CardData>($"{StatusAssetSetup.ExampleFolder}/WeaknessExposure_Enemy.asset"));
         yield return WaitForCards(manager);
         Assert.That(enemy.GetComponentInChildren<StatusEffectsUI>().GetComponentsInChildren<StatusIconUI>(), Has.Length.EqualTo(2));
-        Assert.That(intent.text, Is.EqualTo("공격 11"));
+        Assert.That(intent.text, Is.EqualTo("11"));
         int hp = player.GetCurrentHP();
         manager.EndPlayerTurn();
         Assert.That((BattleState)GetField(manager, "currentState"), Is.EqualTo(BattleState.PlayerTurnEnd));
@@ -429,12 +429,12 @@ public class StatusEffectTests
         AssertIcon(enemy, StatusEffectType.WeaknessExposure, 1);
         Assert.That(enemy.StatusEffects.GetRemainingTurns(StatusEffectType.Rust), Is.Zero);
         Assert.That(enemy.GetComponentInChildren<StatusEffectsUI>().GetComponentsInChildren<StatusIconUI>(), Has.Length.EqualTo(1));
-        Assert.That(intent.text, Is.EqualTo("공격 15"));
+        Assert.That(intent.text, Is.EqualTo("15"));
         manager.EndPlayerTurn();
         Assert.That((BattleState)GetField(manager, "currentState"), Is.EqualTo(BattleState.PlayerTurnEnd));
         yield return WaitForPlayerTurn(manager);
         Assert.That(player.GetCurrentHP(), Is.EqualTo(hp - 26), "Player exposure remains active through the second enemy attack and expires at the next player turn start.");
-        Assert.That(intent.text, Is.EqualTo("공격 10"));
+        Assert.That(intent.text, Is.EqualTo("10"));
         Assert.That(player.GetComponentInChildren<StatusIconUI>(), Is.Null);
         Assert.That(enemy.GetComponentInChildren<StatusIconUI>(), Is.Null);
         Assert.That(attack.GetDamage(), Is.EqualTo(10));
@@ -477,7 +477,7 @@ public class StatusEffectTests
         Assert.That(player.GetComponentInChildren<StatusIconUI>(), Is.Null);
         Assert.That(enemy.GetComponentInChildren<StatusIconUI>(), Is.Null);
         TMP_Text intent = (TMP_Text)GetField(Object.FindFirstObjectByType<EnemyActionUI>(), "actionText");
-        Assert.That(intent.text, Is.EqualTo("공격 10"));
+        Assert.That(intent.text, Is.EqualTo("10"));
         Assert.That(((List<CardUI>)GetField(hand, "cards")).Count, Is.GreaterThan(0));
         yield return new ExitPlayMode();
     }

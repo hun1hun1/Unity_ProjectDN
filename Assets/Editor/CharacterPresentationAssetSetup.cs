@@ -140,7 +140,7 @@ public static class CharacterPresentationAssetSetup
             profile.visualSize = Vector2.one * visualSize;
             profile.infoSize = new Vector2(hudWidth, 84);
             profile.infoOffset = new Vector2(0, -8);
-            profile.actionSize = new Vector2(240, 112); profile.actionGap = 12;
+            profile.actionSize = new Vector2(240, EnemyActionUI.CompactHeight); profile.actionGap = 12;
             profile.setupVersion = 1;
         }
         if (profile.infoPrefab == null) profile.infoPrefab = hud;

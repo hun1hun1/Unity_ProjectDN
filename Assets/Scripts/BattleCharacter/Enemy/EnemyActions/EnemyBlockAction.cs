@@ -22,8 +22,12 @@ public class EnemyBlockAction : EnemyAction
     public override string GetActionDescription(BattleManager battleManager) =>
         Preview(new EnemyActionPreviewContext(battleManager));
 
-    internal override string Preview(EnemyActionPreviewContext context) =>
-        $"방어 {context.Block(block)}";
+    internal override string Preview(EnemyActionPreviewContext context)
+    {
+        int amount = context.Block(block);
+        context.AddIntent($"방어도를 {amount} 얻습니다");
+        return $"방어 {amount}";
+    }
 
     public override void Execute(BattleManager battleManager)
     {

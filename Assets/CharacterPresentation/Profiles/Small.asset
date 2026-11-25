@@ -19,5 +19,5 @@ MonoBehaviour:
   infoSize: {x: 288, y: 84}
   infoOffset: {x: 0, y: -8}
   actionPrefab: {fileID: 3288526273348707074, guid: 4398f4c83aaffed4798d7a4151ac6377, type: 3}
-  actionSize: {x: 240, y: 112}
+  actionSize: {x: 240, y: 56}
   actionGap: 12

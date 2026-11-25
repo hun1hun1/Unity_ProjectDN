@@ -12,7 +12,7 @@ Unity 6000.0.85f2의 2D URP 덱빌딩 전투 프로토타입입니다. 타이틀
 
 **카드 아트워크**는 군인의 꿈 시작 카드 4종과 꿈 보상 카드 18종의 원본·강화 카드에 적용했습니다. [Unity 적용 위치](ToDo_List.md#군인-보상-카드-아트워크)
 
-**방어도 획득 연출**은 플레이어와 적이 방어도를 얻을 때 방패와 실제 획득량을 표시합니다. [캐릭터 HUD](docs/CharacterPresentation.md#방어도-획득-연출)
+**방어도 획득 연출**은 플레이어와 적이 방어도를 얻을 때 방패와 실제 획득량을 표시합니다. **적 행동 예고**는 테두리 없는 아이콘 하나를 사용하며, 공격이 포함되면 우하단에 총 예고 피해가 표시됩니다. 마우스를 올리면 실행 순서를 확인할 수 있습니다. [캐릭터 HUD](docs/CharacterPresentation.md#방어도-획득-연출) · [적 행동 예고](docs/EnemyActions.md#조합별-아이콘)
 
 **1층 조우**에는 전반부 일반 적 4종, 후반부 일반 적 5종, 엘리트 전용 적 3종을 배치했습니다. 접힌 종이병정·재봉거미·뒤집힌 모래시계를 비롯한 신규 9종의 스프라이트와 대기 애니메이션을 연결했으며, 현재 전투는 공용 테스트 행동을 사용합니다. [조우 목록](docs/MapSystem.md#조우-순서) · [적 아트와 미리보기](docs/CharacterPresentation.md#신규-적-스프라이트와-대기-애니메이션)
 
@@ -30,6 +30,7 @@ Unity 6000.0.85f2의 2D URP 덱빌딩 전투 프로토타입입니다. 타이틀
 - [군인과 탄약](docs/SoldierAmmo.md) · [상태이상·버프·디버프](docs/StatusEffects.md)
 - [적 상태 부여와 복합 행동](docs/EnemyActions.md) · [옵션과 오디오 연결](docs/SettingsWindow.md)
 
+- [캐릭터 연출과 체력 변화 숫자 계획](docs/CharacterPresentation.md#체력-변화-숫자-연출-계획)
 - [적 프리팹과 전투 화면](docs/EnemyPrefabs.md): 적별 이미지·스프라이트 애니메이션과 전투 데이터 연결
 - [맵 노드와 런 진행](docs/MapSystem.md) · [전투 보상과 공용 카드 풀](docs/BattleRewards.md)
 - [카드 강화 구현 설계](docs/CardUpgrades.md): 강화 카드 에셋 구성, 선택한 한 장 교체, UI·런 덱 연결과 검증 기준

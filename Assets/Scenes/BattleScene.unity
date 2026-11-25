@@ -4148,6 +4148,8 @@ MonoBehaviour:
   actionIcon: {fileID: 1638933166}
   actionText: {fileID: 2071708371}
   background: {fileID: 802334444111200004}
+  fallbackIcons: {fileID: 11400000, guid: 5fd87de9b8e3fbc48bac86f889a6e7e3, type: 2}
+  tooltipPrefab: {fileID: 4969807975334942594, guid: dd93858de4e24f1fa41360533edc34ae, type: 3}
 --- !u!224 &493691834
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16109,7 +16111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.94}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

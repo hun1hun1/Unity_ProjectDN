@@ -189,12 +189,12 @@ public class EnemyBehaviorTests
             EnemyAction advertised = Next(enemy);
             enemy.StatusEffects.Apply(rust, 1);
             Assert.That(Next(enemy), Is.SameAs(advertised));
-            Assert.That(text.text, Is.EqualTo(advertised.GetActionDescription(battle)));
+            Assert.That(text.text, Is.EqualTo(DamageCalculator.Calculate(((EnemyAttackAction)advertised).GetDamage(), enemy, battle.GetPlayer()).ToString()));
             int hp = battle.GetPlayer().GetCurrentHP();
             int damage = DamageCalculator.Calculate(((EnemyAttackAction)advertised).GetDamage(), enemy, battle.GetPlayer());
             enemy.EnemyTurn(battle);
             Assert.That(battle.GetPlayer().GetCurrentHP(), Is.EqualTo(hp - damage));
-            Assert.That(text.text, Is.EqualTo(Next(enemy).GetActionDescription(battle)));
+            Assert.That(text.text, Is.EqualTo(DamageCalculator.Calculate(((EnemyAttackAction)Next(enemy)).GetDamage(), enemy, battle.GetPlayer()).ToString()));
         }
         enemy.enabled = false;
         EnemyAction cached = Next(enemy);

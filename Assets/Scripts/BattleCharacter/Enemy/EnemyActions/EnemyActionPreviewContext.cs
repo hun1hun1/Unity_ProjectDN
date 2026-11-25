@@ -1,11 +1,24 @@
 using System;
 using System.Collections.Generic;
 
+internal readonly struct EnemyIntentEntry
+{
+    public readonly string Description;
+    public readonly int? Damage;
+
+    public EnemyIntentEntry(string description, int? damage)
+    {
+        Description = description;
+        Damage = damage;
+    }
+}
+
 // One snapshot is shared by all children of a composite. Never execute real actions to render intent.
 public sealed class EnemyActionPreviewContext
 {
     public BattleManager Battle { get; }
     internal bool SummarizeStatuses { get; }
+    private readonly List<EnemyIntentEntry> intentEntries;
     private readonly HashSet<StatusEffectType> playerStatuses;
     private readonly HashSet<StatusEffectType> enemyStatuses;
     private readonly bool hasPlayer;
@@ -32,6 +45,16 @@ public sealed class EnemyActionPreviewContext
         playerBlock = hasPlayer ? player.GetBlock() : 0;
         playerThorns = hasPlayer ? player.StatusEffects.GetBuffPower(StatusEffectType.Thorns) : 0;
         playerStatuses = Copy(player); enemyStatuses = Copy(enemy);
+    }
+
+    internal EnemyActionPreviewContext(BattleManager battle, List<EnemyIntentEntry> entries) : this(battle)
+    {
+        intentEntries = entries;
+    }
+
+    internal void AddIntent(string description, int? damage = null)
+    {
+        intentEntries?.Add(new EnemyIntentEntry(description, damage));
     }
 
     private static HashSet<StatusEffectType> Copy(BattleCharacter character)

@@ -1,6 +1,6 @@
 # 적 프리팹과 전투 화면
 
-2026-11-17 기준입니다.
+구성 확인일 2026-11-25
 
 맵에서 선택한 전투 데이터의 적 프리팹을 BattleScene에 생성한다. 이미지·애니메이션·캐릭터 HP와 상태창은 프리팹에 포함하고, 전투 화면 공통 행동 예고는 생성한 적에 다시 연결한다.
 
@@ -12,9 +12,9 @@
 - 생성과 전투 대상 연결: `BattleManager.ConfigureEncounter()`
 - 맵에서 선택한 전투 적용: `RunBattleBridge`
 
-슬라임·허수아비·도마뱀과 신규 적 9종의 프리팹에 `BattleCharacterPresentation`과 `UISpriteAnimator`를 연결했다. 신규 적은 Normal 크기 프로필과 공용 전투 HUD를 사용한다. 전투 패턴이 정해질 때까지 프리팹에는 기존 테스트 행동을 사용한다. [신규 적 스프라이트와 대기 애니메이션](CharacterPresentation.md#신규-적-스프라이트와-대기-애니메이션)
+슬라임·허수아비·도마뱀과 신규 적 9종의 프리팹에 `BattleCharacterPresentation`과 `UISpriteAnimator`를 연결했다. 적은 실루엣에 따라 Small·Normal·Large 프로필을 선택하고 공용 전투 HUD를 사용한다. 깨진 종은 Small, 접힌 종이병정은 Normal, 양철 나무꾼은 Large를 사용한다. 전투 패턴이 정해질 때까지 프리팹에는 기존 테스트 행동을 사용한다. [신규 적 스프라이트와 대기 애니메이션](CharacterPresentation.md#신규-적-스프라이트와-대기-애니메이션)
 
-1층에는 전반부 일반 4종, 후반부 일반 5종, 엘리트 전용 3종의 프리팹을 각 조우 풀에 연결했다. 13번 보스 조우에는 허수아비를 사용한다. [1층 조우 목록](MapSystem.md#조우-순서)
+1층에는 전반부 일반 4종, 후반부 일반 5종, 엘리트 전용 3종의 프리팹을 각 조우 풀에 연결했다. 허수아비는 후반부 일반 조우에 등장한다. 13번 보스 조우는 `LockedGatekeeper.prefab`을 사용한다. 잠긴 문지기에는 왼쪽을 향한 대기 애니메이션과 Large 크기 프로필을 연결했다. [1층 조우 목록](MapSystem.md#조우-순서) · [보스 조우 에셋](../Assets/MapData/FirstFloorBossEncounter.asset)
 
 ## 다른 적 추가
 

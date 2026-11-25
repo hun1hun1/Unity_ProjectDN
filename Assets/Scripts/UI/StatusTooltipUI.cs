@@ -10,6 +10,7 @@ public class StatusTooltipUI : MonoBehaviour
     private Behaviour owner;
     private Canvas canvas;
     private Vector2 screenPosition;
+    private float requestedWidth;
     private RectTransform anchor;
 
     internal static StatusTooltipUI GetOrCreate(Canvas parent, StatusTooltipUI prefab)
@@ -31,10 +32,25 @@ public class StatusTooltipUI : MonoBehaviour
         if (canvas == null) return false;
         owner = source;
         screenPosition = position;
+        requestedWidth = preferredWidth;
         this.anchor = anchor;
         gameObject.SetActive(true);
         transform.SetAsLastSibling();
         return true;
+    }
+
+    internal void ShowText(Behaviour source, string text, RectTransform anchor, float width)
+    {
+        if (string.IsNullOrEmpty(text) || !Begin(source, Vector2.zero, anchor)) return;
+        requestedWidth = width;
+        RefreshText(source, text);
+    }
+
+    internal void RefreshText(Behaviour source, string text)
+    {
+        if (owner != source) return;
+        contentText.text = text;
+        UpdatePosition();
     }
 
     internal void ShowConduit(ConduitIconHoverUI icon, ConduitData conduit, RectTransform anchor)
@@ -137,7 +153,7 @@ public class StatusTooltipUI : MonoBehaviour
         RectTransform canvasRect = (RectTransform)canvas.transform;
         RectTransform panel = (RectTransform)transform;
         Rect bounds = canvasRect.rect;
-        float width = Mathf.Min(preferredWidth, bounds.width);
+        float width = Mathf.Min(requestedWidth, bounds.width);
         float textWidth = Mathf.Max(1f, width - padding * 2f);
         float height = Mathf.Min(contentText.GetPreferredValues(contentText.text, textWidth, Mathf.Infinity).y + padding * 2f, bounds.height);
         panel.sizeDelta = new Vector2(width, height);

@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 // Authors reusable action assets without replacing the encounter's existing behavior or balance.
 public static class EnemyActionAssetSetup
@@ -45,11 +43,11 @@ public static class EnemyActionAssetSetup
         if (newBehavior) BindActions(behavior, new EnemyAction[] { debuff, debuffAttack, blockAttack });
         behavior.Validate();
         AssetDatabase.SaveAssets();
-        ConfigureIntentLayout();
+        ConfigureIntentBindings(icons);
         Debug.Log("Enemy actions, example behavior and seven combination icons are ready. Existing encounter patterns are unchanged.");
     }
 
-    private static void ConfigureIntentLayout()
+    private static void ConfigureIntentBindings(EnemyActionIconSet icons)
     {
         const string path = "Assets/Scenes/BattleScene.unity";
         Scene scene = SceneManager.GetSceneByPath(path);
@@ -57,25 +55,14 @@ public static class EnemyActionAssetSetup
         if (opened) scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
         try
         {
+            var tooltip = AssetDatabase.LoadAssetAtPath<StatusTooltipUI>("Assets/Prefabs/UI/StatusTooltip.prefab");
             foreach (GameObject root in scene.GetRootGameObjects())
                 foreach (EnemyActionUI ui in root.GetComponentsInChildren<EnemyActionUI>(true))
                 {
                     var binding = new SerializedObject(ui);
-                    Image image = (Image)binding.FindProperty("actionIcon").objectReferenceValue;
-                    TMP_Text text = (TMP_Text)binding.FindProperty("actionText").objectReferenceValue;
-                    image.preserveAspect = true;
-                    image.raycastTarget = false;
-                    RectTransform iconRect = image.rectTransform;
-                    iconRect.anchorMin = new Vector2(.2f, .54f); iconRect.anchorMax = new Vector2(.8f, .98f);
-                    iconRect.offsetMin = iconRect.offsetMax = Vector2.zero;
-                    RectTransform textRect = text.rectTransform;
-                    textRect.anchorMin = new Vector2(.04f, .02f); textRect.anchorMax = new Vector2(.96f, .52f);
-                    textRect.offsetMin = textRect.offsetMax = Vector2.zero;
-                    text.enableAutoSizing = true; text.fontSizeMin = 14; text.fontSizeMax = 36;
-                    text.alignment = TextAlignmentOptions.Top;
-                    text.raycastTarget = false;
-                    EditorUtility.SetDirty(image); EditorUtility.SetDirty(iconRect);
-                    EditorUtility.SetDirty(text); EditorUtility.SetDirty(textRect);
+                    binding.FindProperty("fallbackIcons").objectReferenceValue = icons;
+                    binding.FindProperty("tooltipPrefab").objectReferenceValue = tooltip;
+                    binding.ApplyModifiedPropertiesWithoutUndo();
                 }
             EditorSceneManager.MarkSceneDirty(scene);
             if (!EditorSceneManager.SaveScene(scene)) throw new InvalidOperationException("Could not save enemy intent layout.");

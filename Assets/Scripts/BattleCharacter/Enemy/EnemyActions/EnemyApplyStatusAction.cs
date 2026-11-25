@@ -33,8 +33,20 @@ public class EnemyApplyStatusAction : EnemyAction
     internal override string Preview(EnemyActionPreviewContext context)
     {
         string text = GetActionDescription();
-        if (context.IsImmune(target, status.Type)) return $"{status.DisplayName} · 면역";
+        string recipient = target == EnemyTargetType.Player ? "플레이어" : "자신";
+        if (context.IsImmune(target, status.Type))
+        {
+            context.AddIntent($"{recipient}에게 {status.DisplayName} 효과를 부여하려 하지만 면역으로 적용되지 않습니다");
+            return $"{status.DisplayName} · 면역";
+        }
+
         context.Apply(status, target, turns, buffPower);
+        string detail = status.Type == StatusEffectType.Burn
+            ? $"{recipient}에게 {status.DisplayName} {turns}중첩을 부여합니다"
+            : $"{recipient}에게 {status.DisplayName} 효과를 {turns}턴 동안 부여합니다";
+        if (status.Category == StatusEffectCategory.Buff)
+            detail = $"{recipient}에게 {status.DisplayName} {status.FormatApplication(turns, buffPower)} 효과를 부여합니다";
+        context.AddIntent(detail);
         if (!context.SummarizeStatuses) return text;
         return status.Category == StatusEffectCategory.Buff ? $"{status.DisplayName} {buffPower} 부여" : "디버프";
     }

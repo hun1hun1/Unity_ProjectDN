@@ -7,6 +7,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -67,7 +68,7 @@ public class EnemyActionExpansionTests
         Assert.That(battle.GetPlayer().GetCurrentHP(), Is.EqualTo(65));
     }
 
-    [Test] public void IntentPanelSummarizesDebuffsAndKeepsCompositeDamagePrediction()
+    [Test] public void IntentShowsOnlyAttackDamageAndKeepsDetailedCompositeTooltip()
     {
         BattleManager battle = Battle();
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/CharacterSizes/EnemyIntentUI.prefab");
@@ -77,17 +78,26 @@ public class EnemyActionExpansionTests
         EnemyAction debuff = Debuff(StatusEffectType.WeaknessExposure);
 
         ui.SetAction(debuff, battle);
-        Assert.That(text.text, Is.EqualTo("디버프"));
-        Assert.That(text.font.HasCharacter('디', tryAddCharacter: true), Is.True);
-        Assert.That(text.font.HasCharacter('프', tryAddCharacter: true), Is.True);
+        Assert.That(text.text, Is.Empty);
+        Assert.That(text.enabled, Is.False);
+        Assert.That(Get(ui, "tooltipText"), Is.EqualTo("이번 턴에 적이 플레이어에게 약점 노출 효과를 2턴 동안 부여합니다."));
+
+        ui.SetAction(Composite(Block(8), debuff), battle);
+        Assert.That(text.enabled, Is.False);
+        Assert.That(Get(ui, "tooltipText"), Does.Contain("방어도를 8 얻습니다."));
 
         EnemyAction composite = Composite(Block(8), Composite(debuff, Attack(10)));
         ui.SetAction(composite, battle);
-        Assert.That(text.text, Is.EqualTo("방어 8\n디버프\n공격 15"));
-        Assert.That(composite.GetActionDescription(battle), Does.Contain("약점 노출 2턴"));
+        Assert.That(text.text, Is.EqualTo("15"));
+        Assert.That(Get(ui, "tooltipText"), Is.EqualTo("이번 턴에 적이 방어도를 8 얻습니다.\n이어서 플레이어에게 약점 노출 효과를 2턴 동안 부여합니다.\n이어서 플레이어에게 15의 피해를 줍니다."));
+
+        ui.SetAction(Composite(Attack(6), Attack(6)), battle);
+        Assert.That(text.text, Is.EqualTo("12"));
+        Assert.That(Get(ui, "tooltipText"), Is.EqualTo("이번 턴에 적이 플레이어에게 6의 피해를 줍니다.\n이어서 플레이어에게 6의 피해를 줍니다."));
 
         ui.SetAction(Composite(Attack(100), debuff), battle);
-        Assert.That(text.text, Is.EqualTo("공격 100"));
+        Assert.That(text.text, Is.EqualTo("100"));
+        Assert.That(Get(ui, "tooltipText"), Is.EqualTo("이번 턴에 적이 플레이어에게 100의 피해를 줍니다."));
         Assert.That(battle.GetPlayer().StatusEffects.ActiveEffects, Is.Empty);
     }
 
@@ -242,17 +252,17 @@ public class EnemyActionExpansionTests
         battle.GetTarget().ConfigureEncounter(encounter);
         EnemyActionUI ui = Object.FindFirstObjectByType<EnemyActionUI>();
         TMP_Text text = (TMP_Text)Get(ui, "actionText");
-        Image image = (Image)Get(ui, "actionIcon");
-        Assert.That(text.text, Is.EqualTo("디버프\n공격 15"));
-        Assert.That(image.sprite, Is.SameAs(action.GetActionIcon()));
+        Image icon = (Image)Get(ui, "actionIcon");
+        Assert.That(text.text, Is.EqualTo("15"));
+        Assert.That(icon.sprite, Is.SameAs(action.GetActionIcon()));
         EnemyAction next = battle.GetTarget().NextAction;
         battle.GetTarget().StatusEffects.Apply(Status(StatusEffectType.Rust), 2);
         Assert.That(battle.GetTarget().NextAction, Is.SameAs(next));
-        Assert.That(text.text, Is.EqualTo("디버프\n공격 11"));
-        // The example applies Weakness Exposure before attacking, so calculate using a snapshot result: 10*.75*1.5 = 11.
-        Assert.That(text.text, Does.Contain("공격 11"));
+        // The pending debuff and the current Rust status both affect this hit.
+        Assert.That(text.text, Is.EqualTo("11"));
+        Assert.That(Get(ui, "tooltipText"), Does.Contain("11의 피해"));
         int hp = battle.GetPlayer().GetCurrentHP();
-        battle.GetTarget().EnemyTurn(battle);
+        yield return battle.GetTarget().EnemyTurnRoutine(battle);
         Assert.That(battle.GetPlayer().GetCurrentHP(), Is.EqualTo(hp - 11));
         Assert.That((int)Get(battle.GetTarget(), "consecutiveCount"), Is.EqualTo(1));
     }
@@ -272,24 +282,25 @@ public class EnemyActionExpansionTests
         Enemy enemy = battle.GetTarget(); enemy.ConfigureEncounter(encounter);
         EnemyActionUI ui = Object.FindFirstObjectByType<EnemyActionUI>();
         TMP_Text text = (TMP_Text)Get(ui, "actionText");
-        Assert.That(text.text, Is.EqualTo("공격 10"));
+        Assert.That(text.text, Is.EqualTo("10"));
+        Assert.That(Get(ui, "tooltipText"), Does.Not.Contain("방어도"));
         EnemyAction cached = enemy.NextAction;
         var random = UnityEngine.Random.state;
         player.AddBlock(5);
-        Assert.That(text.text, Does.Contain("방어 8"), "Gaining block can make the advertised attack nonlethal.");
+        Assert.That(Get(ui, "tooltipText"), Does.Contain("방어도를 8"), "Gaining block can make the advertised attack nonlethal.");
         player.ResetBlock();
-        Assert.That(text.text, Is.EqualTo("공격 10"));
+        Assert.That(Get(ui, "tooltipText"), Does.Not.Contain("방어도"));
         player.Heal(5);
-        Assert.That(text.text, Does.Contain("방어 8"));
+        Assert.That(Get(ui, "tooltipText"), Does.Contain("방어도를 8"));
         player.TakeDamage(6);
-        Assert.That(text.text, Is.EqualTo("공격 10"));
+        Assert.That(Get(ui, "tooltipText"), Does.Not.Contain("방어도"));
         player.RestoreHealth(20, 80);
-        Assert.That(text.text, Does.Contain("방어 8"));
+        Assert.That(Get(ui, "tooltipText"), Does.Contain("방어도를 8"));
         Assert.That(enemy.NextAction, Is.SameAs(cached));
         Assert.That(UnityEngine.Random.state, Is.EqualTo(random));
     }
 
-    [UnityTest] public IEnumerator ExpandedIntentFitsItsTextAreaInTheRealBattleScene()
+    [UnityTest] public IEnumerator CompactIntentIsReadableWithoutAFrameAndStillShowsTheTooltip()
     {
         yield return new EnterPlayMode();
         AsyncOperation loading = SceneManager.LoadSceneAsync("BattleScene");
@@ -299,45 +310,76 @@ public class EnemyActionExpansionTests
         var presentation = battle.GetTarget().GetComponent<BattleCharacterPresentation>();
         EnemyActionUI ui = presentation.ActionUI;
         Assert.That(ui, Is.Not.Null);
-        TMP_Text text = (TMP_Text)Get(ui, "actionText");
+        RectTransform root = (RectTransform)ui.transform;
+        Assert.That(root.rect.height, Is.EqualTo(56f).Within(.01f));
+        Image background = (Image)Get(ui, "background");
+        Assert.That(background, Is.Not.Null);
+        Assert.That(background.color.a, Is.Zero);
         foreach (string name in new[] { "Debuff", "DebuffAttack", "BlockAttack", "AllActions" })
         {
             EnemyAction action = AssetDatabase.LoadAssetAtPath<EnemyAction>("Assets/Enemy/Examples/" + name + ".asset");
             ui.SetAction(action, battle);
-            Canvas.ForceUpdateCanvases(); text.ForceMeshUpdate();
+            Canvas.ForceUpdateCanvases();
             Capture(battle, name);
-            Assert.That(text.isTextOverflowing, Is.False, name + " intent must fit without clipping or overlapping other HUD elements.");
-            Assert.That(text.textInfo.lineCount, Is.EqualTo(name == "Debuff" ? 1 : name == "AllActions" ? 3 : 2), name);
-            Image background = (Image)Get(ui, "background");
-            Assert.That(background, Is.Not.Null);
-            Assert.That(background.enabled, Is.True);
-            Assert.That(background.raycastTarget, Is.False);
-            Assert.That(background.type, Is.EqualTo(Image.Type.Sliced));
-            Assert.That(background.pixelsPerUnitMultiplier, Is.EqualTo(2f));
-            Assert.That(background.rectTransform.rect.width, Is.EqualTo(240f).Within(.01f));
-            float height = background.rectTransform.rect.height;
-            Assert.That(height, Is.GreaterThanOrEqualTo(Mathf.Max(88f, text.preferredHeight + 24f) - .01f), name);
-            if (name == "Debuff") Assert.That(height, Is.EqualTo(88f).Within(.01f));
-            if (name == "AllActions") Assert.That(height, Is.GreaterThan(88f));
-            RectTransform root = (RectTransform)ui.transform;
-            RectTransform iconRect = ((Image)Get(ui, "actionIcon")).rectTransform;
-            Bounds backgroundBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(root, background.rectTransform);
-            Bounds iconBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(root, iconRect);
-            Bounds textBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(root, text.rectTransform);
-            Assert.That(iconBounds.min.x, Is.GreaterThanOrEqualTo(backgroundBounds.min.x + 15));
-            Assert.That(iconBounds.max.x, Is.LessThanOrEqualTo(textBounds.min.x));
-            Assert.That(textBounds.max.x, Is.LessThanOrEqualTo(backgroundBounds.max.x - 15));
-            float visibleTextWidth = Mathf.Min(text.preferredWidth, textBounds.size.x);
-            float contentCenter = (iconBounds.min.x + textBounds.min.x + visibleTextWidth) / 2;
-            Assert.That(contentCenter, Is.EqualTo(backgroundBounds.center.x).Within(1f), name);
-            Assert.That(iconBounds.center.x, Is.LessThan(backgroundBounds.center.x), name);
-            Assert.That(textBounds.center.x, Is.GreaterThan(backgroundBounds.center.x), name);
+            Assert.That(background.enabled && background.raycastTarget, Is.True, name);
+            Assert.That(background.rectTransform.rect.height, Is.EqualTo(56f).Within(.01f), name);
+            Assert.That(background.rectTransform.rect.width, Is.GreaterThanOrEqualTo(80f), name);
+            Assert.That(background.rectTransform.rect.width, Is.LessThanOrEqualTo(root.rect.width + .01f), name);
+            var icon = (Image)Get(ui, "actionIcon");
+            Assert.That(icon.enabled, Is.True, name);
+            Assert.That(icon.sprite, Is.SameAs(action.GetActionIcon()), name);
+            Assert.That(icon.rectTransform.rect.size, Is.EqualTo(new Vector2(48f, 48f)), name);
+            Assert.That(icon.GetComponent<Outline>(), Is.Not.Null, name);
+            var text = (TMP_Text)Get(ui, "actionText");
+            Assert.That(text.enabled, Is.EqualTo(name != "Debuff"), name);
+            if (text.enabled)
+            {
+                text.ForceMeshUpdate();
+                Assert.That(text.fontSize, Is.EqualTo(24f), name);
+                Assert.That(text.outlineWidth, Is.GreaterThan(0f), name);
+                Assert.That(text.isTextOverflowing, Is.False, name);
+                Assert.That(text.rectTransform.anchoredPosition.x, Is.GreaterThan(icon.rectTransform.anchoredPosition.x), name);
+                Assert.That(text.rectTransform.anchoredPosition.y, Is.LessThan(icon.rectTransform.anchoredPosition.y), name);
+            }
         }
+
+        Assert.That(EventSystem.current, Is.Not.Null);
+        Canvas canvas = ui.GetComponentInParent<Canvas>().rootCanvas;
+        Camera eventCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+        var pointer = new PointerEventData(EventSystem.current)
+        {
+            position = RectTransformUtility.WorldToScreenPoint(eventCamera, background.rectTransform.position)
+        };
+        var hits = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, hits);
+        RaycastResult target = default;
+        foreach (RaycastResult hit in hits)
+        {
+            if (hit.gameObject != background.gameObject) continue;
+            target = hit;
+            break;
+        }
+        Assert.That(target.isValid, Is.True, "The transparent area must still receive pointer events.");
+        ExecuteEvents.ExecuteHierarchy(target.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
+        var tooltip = (StatusTooltipUI)Get(ui, "tooltip");
+        Assert.That(tooltip, Is.Not.Null);
+        Assert.That(tooltip.gameObject.activeSelf, Is.True);
+        TMP_Text tooltipLabel = (TMP_Text)Get(tooltip, "contentText");
+        Assert.That(tooltipLabel.text, Does.StartWith("이번 턴에 적이 ").And.Contain("약점 노출"));
+        Capture(battle, "IntentTooltip", background.gameObject);
+
+        ui.SetAction(Attack(7), battle);
+        Assert.That(tooltipLabel.text, Is.EqualTo("이번 턴에 적이 플레이어에게 7의 피해를 줍니다."));
+        ExecuteEvents.ExecuteHierarchy(background.gameObject, pointer, ExecuteEvents.pointerExitHandler);
+        Assert.That(tooltip.gameObject.activeSelf, Is.False);
+        ExecuteEvents.ExecuteHierarchy(background.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
+        Assert.That(tooltip.gameObject.activeSelf, Is.True);
         ui.ClearAction();
-        Assert.That(((Image)Get(ui, "background")).enabled, Is.False);
+        Assert.That(background.enabled, Is.False);
+        Assert.That(tooltip.gameObject.activeSelf, Is.False);
     }
 
-    private static void Capture(BattleManager battle, string name)
+    private static void Capture(BattleManager battle, string name, GameObject hoverTarget = null)
     {
         if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
         Canvas canvas = battle.GetTarget().GetComponentInParent<Canvas>().rootCanvas;
@@ -353,7 +395,10 @@ public class EnemyActionExpansionTests
         {
             camera.targetTexture = target;
             canvas.renderMode = RenderMode.ScreenSpaceCamera; canvas.worldCamera = camera; canvas.planeDistance = 1;
-            Canvas.ForceUpdateCanvases(); camera.Render(); RenderTexture.active = target;
+            Canvas.ForceUpdateCanvases();
+            if (hoverTarget != null)
+                ExecuteEvents.ExecuteHierarchy(hoverTarget, new PointerEventData(EventSystem.current), ExecuteEvents.pointerEnterHandler);
+            camera.Render(); RenderTexture.active = target;
             pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); pixels.Apply();
             System.IO.Directory.CreateDirectory(".utmp/enemy-actions");
             System.IO.File.WriteAllBytes(".utmp/enemy-actions/" + name + ".png", pixels.EncodeToPNG());

@@ -21,7 +21,12 @@ public abstract class EnemyAction : ScriptableObject
     protected Sprite GetKindIcon(EnemyActionKinds kinds) => iconSet != null ? iconSet.GetIcon(kinds) : null;
     public void Validate() => Validate(new HashSet<EnemyAction>());
     internal virtual void Validate(HashSet<EnemyAction> visiting) { presentation?.Validate(); }
-    internal virtual string Preview(EnemyActionPreviewContext context) => GetActionDescription(context.Battle);
+    internal virtual string Preview(EnemyActionPreviewContext context)
+    {
+        string description = GetActionDescription(context.Battle);
+        context.AddIntent($"{description} 행동을 합니다");
+        return description;
+    }
 
     public virtual Sprite GetActionIcon()
     {
