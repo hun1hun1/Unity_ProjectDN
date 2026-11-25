@@ -25,6 +25,7 @@ public abstract class BattleCharacter : MonoBehaviour
 
     public event System.Action<BattleCharacter> Died;
     public event System.Action VitalsChanged;
+    public event System.Action<int> HealthChanged;
     public void BindDelayedEffects(DelayedEffectSystem delayed)
     {
         boundDelayedEffects = delayed;
@@ -87,7 +88,7 @@ public abstract class BattleCharacter : MonoBehaviour
 
     private void ApplyDamageToHealth(int damage, int remainingDamage)
     {
-        bool wasAlive = currentHP > 0;
+        int previousHP = currentHP;
         currentHP -= remainingDamage;
 
         if (currentHP < 0)
@@ -95,9 +96,9 @@ public abstract class BattleCharacter : MonoBehaviour
 
         Debug.Log($"{gameObject.name} 피해 {damage} / HP {currentHP} / Block {block}");
 
-        UpdateUI();
+        UpdateHealthUI(previousHP);
 
-        if (wasAlive && currentHP <= 0)
+        if (previousHP > 0 && currentHP <= 0)
         {
             Died?.Invoke(this);
             Die();
@@ -127,12 +128,20 @@ public abstract class BattleCharacter : MonoBehaviour
 
     public virtual void Heal(int amount)
     {
+        int previousHP = currentHP;
         currentHP += amount;
         if (currentHP > maxHP) currentHP = maxHP;
 
         Debug.Log($"{gameObject.name} 회복 +{amount} / 현재 HP {currentHP}");
 
+        UpdateHealthUI(previousHP);
+    }
+
+    private void UpdateHealthUI(int previousHP)
+    {
+        int delta = currentHP - previousHP;
         UpdateUI();
+        if (delta != 0) HealthChanged?.Invoke(delta);
     }
 
     protected void UpdateUI()

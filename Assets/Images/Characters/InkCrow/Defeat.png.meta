@@ -1,0 +1,720 @@
+fileFormatVersion: 2
+guid: b4da6f491a84fb445b2c09d6274b0f97
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8048513154784661654
+    second: Defeat_0
+  - first:
+      213: -434105833088228817
+    second: Defeat_1
+  - first:
+      213: 7531379164506215089
+    second: Defeat_2
+  - first:
+      213: -495329715361624112
+    second: Defeat_3
+  - first:
+      213: 7527811798342787309
+    second: Defeat_4
+  - first:
+      213: -3571299776718016134
+    second: Defeat_5
+  - first:
+      213: -6274961472473957567
+    second: Defeat_6
+  - first:
+      213: 4290541644536804020
+    second: Defeat_7
+  - first:
+      213: 5164791614689288802
+    second: Defeat_8
+  - first:
+      213: 8654236993618977689
+    second: Defeat_9
+  - first:
+      213: -6603575981223082793
+    second: Defeat_10
+  - first:
+      213: 76342457916564687
+    second: Defeat_11
+  - first:
+      213: -2223942345914407330
+    second: Defeat_12
+  - first:
+      213: -1624617644227270898
+    second: Defeat_13
+  - first:
+      213: 3230418862101474862
+    second: Defeat_14
+  - first:
+      213: -5734962185533944417
+    second: Defeat_15
+  - first:
+      213: 1421146859954207061
+    second: Defeat_16
+  - first:
+      213: -8673990338337008557
+    second: Defeat_17
+  - first:
+      213: 6115255300187820707
+    second: Defeat_18
+  - first:
+      213: 7073136601542861144
+    second: Defeat_19
+  - first:
+      213: 4906069583502856843
+    second: Defeat_20
+  - first:
+      213: 8688404786382431030
+    second: Defeat_21
+  - first:
+      213: -7911903255833596369
+    second: Defeat_22
+  - first:
+      213: 1442792026274189982
+    second: Defeat_23
+  - first:
+      213: -5969891553849559652
+    second: Defeat_24
+  - first:
+      213: -5419364768288057291
+    second: Defeat_25
+  - first:
+      213: 8066067668612376459
+    second: Defeat_26
+  - first:
+      213: -5142101125187835353
+    second: Defeat_27
+  - first:
+      213: -2068019008390091712
+    second: Defeat_28
+  - first:
+      213: 8479604880076341789
+    second: Defeat_29
+  - first:
+      213: 4908316295562479481
+    second: Defeat_30
+  - first:
+      213: 2765656070693401001
+    second: Defeat_31
+  - first:
+      213: -3649885035107141946
+    second: Defeat_32
+  - first:
+      213: 4412357912933346509
+    second: Defeat_33
+  - first:
+      213: 1904003393939973559
+    second: Defeat_34
+  - first:
+      213: -4503147579500005266
+    second: Defeat_35
+  - first:
+      213: 349162104373698505
+    second: Defeat_36
+  - first:
+      213: 1447328605220709450
+    second: Defeat_37
+  - first:
+      213: -8356439993079074122
+    second: Defeat_38
+  - first:
+      213: -7643783412209824509
+    second: Defeat_39
+  - first:
+      213: -4087690828223422969
+    second: Defeat_40
+  - first:
+      213: 7081564274188433715
+    second: Defeat_41
+  - first:
+      213: -178102688702392067
+    second: Defeat_42
+  - first:
+      213: 7572236579953876008
+    second: Defeat_43
+  - first:
+      213: -3266633189250767731
+    second: Defeat_44
+  - first:
+      213: 283555216847752391
+    second: Defeat_45
+  - first:
+      213: 2389401725220388980
+    second: Defeat_46
+  - first:
+      213: -5449467508330876967
+    second: Defeat_47
+  - first:
+      213: 1145304504783938736
+    second: Defeat_48
+  - first:
+      213: -4295779796198762706
+    second: Defeat_49
+  - first:
+      213: -1922802024028941002
+    second: Defeat_50
+  - first:
+      213: -1746489952910033950
+    second: Defeat_51
+  - first:
+      213: -5348064599551716272
+    second: Defeat_52
+  - first:
+      213: -3554764232820135181
+    second: Defeat_53
+  - first:
+      213: 2075479401331562364
+    second: Defeat_54
+  - first:
+      213: 3743176506280816919
+    second: Defeat_55
+  - first:
+      213: -5317663062964843751
+    second: Defeat_56
+  - first:
+      213: 4562240364047203186
+    second: Defeat_57
+  - first:
+      213: -5680559525733593506
+    second: Defeat_58
+  - first:
+      213: -1117749327413511949
+    second: Defeat_59
+  - first:
+      213: 7699025483005850301
+    second: Defeat_60
+  - first:
+      213: -7224206042836735921
+    second: Defeat_61
+  - first:
+      213: -4215921346755477551
+    second: Defeat_62
+  - first:
+      213: -7893406068857419802
+    second: Defeat_63
+  - first:
+      213: 5808750970536161018
+    second: Defeat_64
+  - first:
+      213: -4714726415791289742
+    second: Defeat_65
+  - first:
+      213: 7351945359655628476
+    second: Defeat_66
+  - first:
+      213: 1450194311220481162
+    second: Defeat_67
+  - first:
+      213: -5567165395382767869
+    second: Defeat_68
+  - first:
+      213: -4752971257788338005
+    second: Defeat_69
+  - first:
+      213: -1209360043765029775
+    second: Defeat_70
+  - first:
+      213: -2040951981015290321
+    second: Defeat_71
+  - first:
+      213: -8145368713515519102
+    second: Defeat_72
+  - first:
+      213: 2304271427971207208
+    second: Defeat_73
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 50
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: InkCrow_Defeat_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3db2e7a2f4afeac41b684de77a9585fd
+      internalID: 393072562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33df6c710c81a61478260aa0d206bbae
+      internalID: -197025583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a528fa113c5492944ab5742d0543e24d
+      internalID: -1877896651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 172d5aefdcbc29749930a6894d650c0a
+      internalID: -1728190015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_04
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 846ac3ddccdc47a4788ddcf5a7430b9f
+      internalID: 467488397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_05
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1dd347c877c2c442859b2e57eef7516
+      internalID: -1122208220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_06
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 01edef84ffc684240bcd50f7e8014797
+      internalID: 1903699513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_07
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7868f5a860593514396ccf274f7ab1cf
+      internalID: 1011772502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_08
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e9cf3ce7a19ab4e47a4478ec098daffd
+      internalID: 2062376287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_09
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 512
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 605d124bf0350924cb43dc5b68163d36
+      internalID: -1785800261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_10
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 512
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4af499742a6021845a2e30af946157c6
+      internalID: 2101040086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_11
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 512
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a7af94bb7afb8d4ba2e2e07645d624b
+      internalID: 1876198115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e466081489bada4cb6d04972f624b10
+      internalID: -780749318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_13
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3471f32fe65f0344a96e967dce152da3
+      internalID: -806644145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_14
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b67c02dd19b5e444ab48479a2ec5f4d
+      internalID: 1503768679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InkCrow_Defeat_15
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
+      alignment: 9
+      pivot: {x: 0.46875, y: 0.1875}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2477f448b87d1144db69806ee2f0651f
+      internalID: -1794424050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 267d93bff2acc0442b87d53bdd7e89da
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      InkCrow_Defeat_00: 393072562
+      InkCrow_Defeat_01: -197025583
+      InkCrow_Defeat_02: -1877896651
+      InkCrow_Defeat_03: -1728190015
+      InkCrow_Defeat_04: 467488397
+      InkCrow_Defeat_05: -1122208220
+      InkCrow_Defeat_06: 1903699513
+      InkCrow_Defeat_07: 1011772502
+      InkCrow_Defeat_08: 2062376287
+      InkCrow_Defeat_09: -1785800261
+      InkCrow_Defeat_10: 2101040086
+      InkCrow_Defeat_11: 1876198115
+      InkCrow_Defeat_12: -780749318
+      InkCrow_Defeat_13: -806644145
+      InkCrow_Defeat_14: 1503768679
+      InkCrow_Defeat_15: -1794424050
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

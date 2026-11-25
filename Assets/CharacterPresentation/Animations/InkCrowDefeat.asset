@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ceed63113d6bf4086984f4629237a8, type: 3}
+  m_Name: InkCrowDefeat
+  m_EditorClassIdentifier: 
+  setupVersion: 1
+  frames:
+  - {fileID: 393072562, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: -197025583, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: -1877896651, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: -1728190015, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: 467488397, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: -1122208220, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: 1903699513, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: 1011772502, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: 2062376287, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: -1785800261, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: 2101040086, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: 1876198115, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: -780749318, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: -806644145, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: 1503768679, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  - {fileID: -1794424050, guid: b4da6f491a84fb445b2c09d6274b0f97, type: 3}
+  frameDuration: 0.05625
+  groundPivot: {x: 0.46875, y: 0.1875}
+  contentBounds:
+    serializedVersion: 2
+    x: 0.16601562
+    y: 0.13867188
+    width: 0.6328125
+    height: 0.47070312

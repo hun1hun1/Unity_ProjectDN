@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ceed63113d6bf4086984f4629237a8, type: 3}
+  m_Name: BrokenBellDefeat
+  m_EditorClassIdentifier: 
+  setupVersion: 1
+  frames:
+  - {fileID: -2048754146, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: 168142715, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: -177497556, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: 1315361372, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: 2136174879, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: 1259773301, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: 7712293, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: 181086364, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: -133652962, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: 1377525675, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: -1000691394, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: -165011805, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: -1692881546, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: 515346822, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: -1804235836, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  - {fileID: -1197277447, guid: f0550a76310025c419e10d327a4be4a8, type: 3}
+  frameDuration: 0.06125
+  groundPivot: {x: 0.46875, y: 0.1875}
+  contentBounds:
+    serializedVersion: 2
+    x: 0.0625
+    y: 0.13671875
+    width: 0.7519531
+    height: 0.74609375

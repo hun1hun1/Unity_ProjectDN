@@ -8,6 +8,7 @@ public class BattleCharacterPresentation : MonoBehaviour
     [SerializeField] private RectTransform visual;
     [SerializeField] private UISpriteAnimator spriteAnimator;
     [SerializeField] private UISpriteAnimation idleAnimation;
+    [SerializeField] private UISpriteAnimation defeatAnimation;
     [SerializeField] private CharacterInfoUI infoUI;
     [SerializeField] private EnemyActionUI actionUI;
     [SerializeField, HideInInspector] private CharacterInfoUI appliedInfoPrefab;
@@ -20,6 +21,11 @@ public class BattleCharacterPresentation : MonoBehaviour
     private Vector2 presentationOffset;
     private float presentationRotation;
     private BlockGainFeedback blockGainFeedback;
+    private BattleCharacter character;
+    private HealthChangeFeedback healthChangeFeedback;
+    private Vector2 healthNumberOrigin;
+    private bool defeatStarted;
+    private bool playingDefeat;
     public Vector2 PresentationOffset => presentationOffset;
     public float PresentationRotation => presentationRotation;
 
@@ -39,8 +45,33 @@ public class BattleCharacterPresentation : MonoBehaviour
     public CharacterInfoUI InfoUI => infoUI;
     public EnemyActionUI ActionUI { get { EnsureInitialized(); return actionUI; } }
     public RectTransform Visual => visual;
+    internal bool HasDefeatMotion => defeatAnimation != null && spriteAnimator != null &&
+        idleAnimation != null && profile != null;
+    internal bool IsPlayingDefeat => isActiveAndEnabled && playingDefeat;
 
-    private void Awake() { EnsureInitialized(); }
+    internal void PlayDefeat()
+    {
+        if (!isActiveAndEnabled || !HasDefeatMotion || defeatStarted || visual == null ||
+            !spriteAnimator.isActiveAndEnabled) return;
+
+        spriteAnimator.Play(defeatAnimation, false, useUnscaledTime: true);
+        defeatStarted = true;
+        playingDefeat = true;
+        if (actionUI != null) actionUI.ClearAction();
+        ApplyLayout();
+    }
+
+    private void Awake()
+    {
+        character = GetComponent<BattleCharacter>();
+        EnsureInitialized();
+    }
+
+    private void OnEnable()
+    {
+        if (character != null) character.HealthChanged += OnHealthChanged;
+    }
+
     private void LateUpdate()
     {
         if (profile != null && visual != null)
@@ -48,7 +79,15 @@ public class BattleCharacterPresentation : MonoBehaviour
             if (!initialized || appliedProfile != profile || lastLayoutHash != profile.LayoutHash()) ApplyProfile(profile);
             else if (lastRootSize != ((RectTransform)transform).rect.size) ApplyLayout();
         }
+        if (playingDefeat && (spriteAnimator == null || !spriteAnimator.isActiveAndEnabled ||
+            spriteAnimator.Animation != defeatAnimation || spriteAnimator.IsComplete))
+        {
+            playingDefeat = false;
+            if (visual != null && visual.TryGetComponent(out UnityEngine.UI.Image image)) image.enabled = false;
+            if (infoUI != null) infoUI.gameObject.SetActive(false);
+        }
         blockGainFeedback?.Update();
+        healthChangeFeedback?.Update(healthNumberOrigin);
     }
 
     internal void PlayBlockGain(int amount)
@@ -68,7 +107,19 @@ public class BattleCharacterPresentation : MonoBehaviour
         blockGainFeedback.Play(amount, bounds);
     }
 
-    private void OnDisable() => blockGainFeedback?.Hide();
+    private void OnHealthChanged(int delta)
+    {
+        if (!Application.isPlaying || !initialized) return;
+        healthChangeFeedback ??= new HealthChangeFeedback((RectTransform)transform);
+        healthChangeFeedback.Play(delta, healthNumberOrigin);
+    }
+
+    private void OnDisable()
+    {
+        if (character != null) character.HealthChanged -= OnHealthChanged;
+        blockGainFeedback?.Hide();
+        healthChangeFeedback?.Hide();
+    }
 
     public void Configure(RectTransform artwork, UISpriteAnimator animator, UISpriteAnimation idle, CharacterUIProfile selectedProfile)
     {
@@ -83,7 +134,7 @@ public class BattleCharacterPresentation : MonoBehaviour
 
     public void EnsureInitialized()
     {
-        if (initialized || profile == null || visual == null) return;
+        if (initialized || profile == null || visual == null || !gameObject.scene.IsValid()) return;
         if (idleAnimation != null && spriteAnimator != null && spriteAnimator.Animation != idleAnimation)
             spriteAnimator.SetAnimation(idleAnimation);
         ApplyProfile(profile);
@@ -97,6 +148,7 @@ public class BattleCharacterPresentation : MonoBehaviour
         if (visual == null) throw new InvalidOperationException("A presentation requires its own Visual child.");
         BattleCharacter owner = GetComponent<BattleCharacter>();
         if (owner == null) throw new InvalidOperationException("A presentation must belong to a battle character.");
+        character = owner;
         if (selectedProfile.infoPrefab != null && NeedsReplacement(infoUI, appliedInfoPrefab, selectedProfile.infoPrefab))
         {
             CharacterInfoUI old = infoUI;
@@ -104,7 +156,7 @@ public class BattleCharacterPresentation : MonoBehaviour
             infoUI.name = "CharacterInfoUI";
             appliedInfoPrefab = selectedProfile.infoPrefab;
             owner.BindCharacterInfoUI(infoUI);
-            infoUI.gameObject.SetActive(true);
+            infoUI.gameObject.SetActive(!defeatStarted || playingDefeat);
             Remove(old);
         }
         else if (infoUI != null) owner.BindCharacterInfoUI(infoUI);
@@ -150,8 +202,18 @@ public class BattleCharacterPresentation : MonoBehaviour
             size *= reduction;
             visibleHeight *= reduction;
         }
+        if (defeatStarted)
+        {
+            Sprite idleFrame = idleAnimation.frames[0];
+            Sprite defeatFrame = defeatAnimation.frames[0];
+            Vector2 framedSize = defeatFrame.rect.size * (idleFrame.pixelsPerUnit / defeatFrame.pixelsPerUnit);
+            size = Vector2.Scale(size, new Vector2(framedSize.x / cell.x, framedSize.y / cell.y));
+            pivot = defeatAnimation.groundPivot;
+        }
         SetRect(visual, pivot, size, profile.visualOffset);
         visualBasePosition = profile.visualOffset;
+        float towardCenter = character is Enemy ? -1f : 1f;
+        healthNumberOrigin = visualBasePosition + new Vector2(towardCenter * 78f, visibleHeight * .78f);
         ApplyVisualMotion();
         if (infoUI != null) SetRect((RectTransform)infoUI.transform, new Vector2(0.5f, 1), profile.infoSize, profile.infoOffset);
         if (actionUI != null)

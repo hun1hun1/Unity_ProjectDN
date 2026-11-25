@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using TMPro;
 using UnityEditor;
@@ -188,6 +190,98 @@ public class SharedHudArtworkTests
         Assert.That(player.GetBlock(), Is.Positive);
         AssertGain(playerView, $"+{player.GetBlock()}");
         Assert.That(Shield(playerView), Is.SameAs(original));
+    }
+
+    [Test]
+    public void HealthChangeReportsAppliedAmountsAndNotifiesBeforeDeath()
+    {
+        var root = new GameObject("Health change test");
+        try
+        {
+            var player = root.AddComponent<Player>();
+            var changes = new List<string>();
+            player.HealthChanged += delta => changes.Add($"{delta}:{player.GetCurrentHP()}");
+            player.Died += _ => changes.Add("died");
+
+            player.RestoreHealth(10, 10);
+            player.AddBlock(5);
+            player.TakeDamage(3);
+            player.Heal(1);
+            player.TakeDamage(9);
+            player.Heal(5);
+            player.Heal(5);
+            player.TakeDamage(100);
+
+            Assert.That(changes, Is.EqualTo(new[] { "-7:3", "5:8", "2:10", "-10:0", "died" }));
+        }
+        finally { Object.DestroyImmediate(root); }
+    }
+
+    [UnityTest]
+    public IEnumerator HealthChangeNumbersGroupByFrameAndSignForBothSides()
+    {
+        yield return new EnterPlayMode();
+        yield return SceneManager.LoadSceneAsync("BattleScene");
+        var battle = Object.FindFirstObjectByType<BattleManager>();
+        var encounter = AssetDatabase.LoadAssetAtPath<BattleEncounterDefinition>("Assets/MapData/NormalEncounter.asset");
+        battle.ConfigureEncounter(encounter);
+        Player player = battle.GetPlayer();
+        Enemy enemy = battle.GetTarget();
+        TextMeshProUGUI[] Numbers(BattleCharacter actor) => actor.GetComponentsInChildren<TextMeshProUGUI>()
+            .Where(label => label.gameObject.name == "HealthChangeNumber").ToArray();
+
+        player.RestoreHealth(30, 80);
+        enemy.RestoreHealth(30, 80);
+        player.AddBlock(5);
+        player.TakeDamage(5, enemy);
+        var ward = AssetDatabase.LoadAssetAtPath<StatusEffectData>("Assets/StatusData/Ward.asset");
+        Assert.That(player.StatusEffects.Apply(ward, 1), Is.True);
+        player.TakeDamage(12, enemy);
+        Assert.That(Numbers(player), Is.Empty);
+        Assert.That(Numbers(enemy), Is.Empty);
+
+        var thorns = AssetDatabase.LoadAssetAtPath<StatusEffectData>("Assets/StatusData/Thorns.asset");
+        Assert.That(player.StatusEffects.Apply(thorns, 1, 3), Is.True);
+        player.AddBlock(5);
+        player.TakeDamage(12, enemy);
+        player.TakeDamage(3);
+        player.Heal(2);
+        enemy.TakeDamage(4, player);
+        TextMeshProUGUI[] first = Numbers(player);
+        Assert.That(first.Select(label => label.text), Is.EquivalentTo(new[] { "−10", "+2" }));
+        TextMeshProUGUI enemyNumber = Numbers(enemy).Single();
+        Assert.That(enemyNumber.text, Is.EqualTo("−7"));
+        Assert.That(first.All(label => !label.raycastTarget), Is.True);
+        Assert.That(first[0].rectTransform.anchoredPosition.x, Is.Not.EqualTo(first[1].rectTransform.anchoredPosition.x));
+        var playerView = player.GetComponent<BattleCharacterPresentation>();
+        var enemyView = enemy.GetComponent<BattleCharacterPresentation>();
+        var damageNumber = first.Single(label => label.text == "−10");
+        damageNumber.ForceMeshUpdate();
+        Assert.That(damageNumber.textInfo.characterInfo[0].character, Is.EqualTo('−'));
+        Assert.That(damageNumber.rectTransform.anchoredPosition.x, Is.GreaterThan(playerView.Visual.anchoredPosition.x));
+        Assert.That(enemyNumber.rectTransform.anchoredPosition.x, Is.LessThan(enemyView.Visual.anchoredPosition.x));
+        Assert.That(playerView.InfoUI.transform.Find("HPBar/HPText").GetComponent<TMP_Text>().text, Is.EqualTo("22 / 80"));
+
+        yield return null;
+        player.TakeDamage(11);
+        Assert.That(Numbers(player).Select(label => label.text), Is.EquivalentTo(new[] { "−10", "+2", "−11" }));
+        bool render = SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null;
+        if (render) Capture(battle, "health-change-1280x720", 1280, 720);
+
+        enemy.TakeDamage(100, player);
+        Assert.That(Numbers(enemy).Select(label => label.text), Is.EquivalentTo(new[] { "−7", "−23" }));
+        Assert.That(battle.Result, Is.EqualTo(BattleResult.Victory));
+        var rewardCanvas = Object.FindFirstObjectByType<CardRewardUI>().GetComponentInParent<Canvas>();
+        Assert.That(enemyNumber.canvas.overrideSorting, Is.True);
+        Assert.That(enemyNumber.canvas.sortingOrder, Is.GreaterThan(rewardCanvas.sortingOrder));
+        Assert.That(enemyNumber.canvas.GetComponent<GraphicRaycaster>(), Is.Null);
+
+        if (render) Capture(battle, "health-change-victory-1280x720", 1280, 720);
+
+        float deadline = Time.realtimeSinceStartup + 2f;
+        while (Numbers(player).Length > 0 && Time.realtimeSinceStartup < deadline) yield return null;
+        Assert.That(Numbers(player), Is.Empty);
+        Assert.That(Numbers(enemy), Is.Empty);
     }
 
     private static void CheckLiveHud(BattleCharacter actor, float amount)

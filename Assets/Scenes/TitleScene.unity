@@ -774,6 +774,7 @@ GameObject:
   - component: {fileID: 348503841}
   - component: {fileID: 348503844}
   - component: {fileID: 348503845}
+  - component: {fileID: 348503846}
   m_Layer: 5
   m_Name: ContinueButton
   m_TagString: Untagged
@@ -930,6 +931,20 @@ MonoBehaviour:
   m_FlexibleWidth: 0
   m_FlexibleHeight: 0
   m_LayoutPriority: 1
+--- !u!114 &348503846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348503839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a900079ac1b08142b680e2b8ce9d9f4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  hoverClip: {fileID: 8300000, guid: 25d6ca04e70aa524f9ec0737a9362a70, type: 3}
+  clickClip: {fileID: 8300000, guid: ddd33f7c46a9c9a45baa825bc59c5a95, type: 3}
 --- !u!114 &384089069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1823,6 +1838,7 @@ GameObject:
   - component: {fileID: 549081275}
   - component: {fileID: 549081278}
   - component: {fileID: 549081279}
+  - component: {fileID: 549081280}
   m_Layer: 5
   m_Name: QuitButton
   m_TagString: Untagged
@@ -1979,6 +1995,20 @@ MonoBehaviour:
   m_FlexibleWidth: 0
   m_FlexibleHeight: 0
   m_LayoutPriority: 1
+--- !u!114 &549081280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 549081273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a900079ac1b08142b680e2b8ce9d9f4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  hoverClip: {fileID: 8300000, guid: 25d6ca04e70aa524f9ec0737a9362a70, type: 3}
+  clickClip: {fileID: 8300000, guid: ddd33f7c46a9c9a45baa825bc59c5a95, type: 3}
 --- !u!1 &554571709
 GameObject:
   m_ObjectHideFlags: 0
@@ -2130,6 +2160,7 @@ GameObject:
   - component: {fileID: 603395520}
   - component: {fileID: 603395523}
   - component: {fileID: 603395524}
+  - component: {fileID: 603395525}
   m_Layer: 5
   m_Name: StartButton
   m_TagString: Untagged
@@ -2286,6 +2317,20 @@ MonoBehaviour:
   m_FlexibleWidth: 0
   m_FlexibleHeight: 0
   m_LayoutPriority: 1
+--- !u!114 &603395525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603395518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a900079ac1b08142b680e2b8ce9d9f4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  hoverClip: {fileID: 8300000, guid: 25d6ca04e70aa524f9ec0737a9362a70, type: 3}
+  clickClip: {fileID: 8300000, guid: ddd33f7c46a9c9a45baa825bc59c5a95, type: 3}
 --- !u!1 &663851189
 GameObject:
   m_ObjectHideFlags: 0
@@ -3743,6 +3788,7 @@ GameObject:
   - component: {fileID: 1016447272}
   - component: {fileID: 1016447270}
   - component: {fileID: 1016447275}
+  - component: {fileID: 1016447276}
   m_Layer: 5
   m_Name: CancelButton
   m_TagString: Untagged
@@ -3892,6 +3938,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thicknessPixels: 2
+--- !u!114 &1016447276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1016447269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a900079ac1b08142b680e2b8ce9d9f4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  hoverClip: {fileID: 8300000, guid: 25d6ca04e70aa524f9ec0737a9362a70, type: 3}
+  clickClip: {fileID: 8300000, guid: ddd33f7c46a9c9a45baa825bc59c5a95, type: 3}
 --- !u!114 &1030552307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5387,6 +5447,7 @@ GameObject:
   - component: {fileID: 1518133408}
   - component: {fileID: 1518133411}
   - component: {fileID: 1518133412}
+  - component: {fileID: 1518133413}
   m_Layer: 5
   m_Name: OptionsButton
   m_TagString: Untagged
@@ -5543,6 +5604,20 @@ MonoBehaviour:
   m_FlexibleWidth: 0
   m_FlexibleHeight: 0
   m_LayoutPriority: 1
+--- !u!114 &1518133413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1518133406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a900079ac1b08142b680e2b8ce9d9f4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  hoverClip: {fileID: 8300000, guid: 25d6ca04e70aa524f9ec0737a9362a70, type: 3}
+  clickClip: {fileID: 8300000, guid: ddd33f7c46a9c9a45baa825bc59c5a95, type: 3}
 --- !u!114 &1734060241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5647,6 +5722,7 @@ GameObject:
   - component: {fileID: 1869562194}
   - component: {fileID: 1869562193}
   - component: {fileID: 1869562197}
+  - component: {fileID: 1869562198}
   m_Layer: 5
   m_Name: ConfirmButton
   m_TagString: Untagged
@@ -5796,6 +5872,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thicknessPixels: 2
+--- !u!114 &1869562198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869562191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a900079ac1b08142b680e2b8ce9d9f4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  hoverClip: {fileID: 8300000, guid: 25d6ca04e70aa524f9ec0737a9362a70, type: 3}
+  clickClip: {fileID: 8300000, guid: ddd33f7c46a9c9a45baa825bc59c5a95, type: 3}
 --- !u!1 &1893988168
 GameObject:
   m_ObjectHideFlags: 0
@@ -6247,6 +6337,7 @@ GameObject:
   - component: {fileID: 2069575071}
   - component: {fileID: 2069575074}
   - component: {fileID: 2069575075}
+  - component: {fileID: 2069575076}
   m_Layer: 5
   m_Name: TutorialButton
   m_TagString: Untagged
@@ -6403,6 +6494,20 @@ MonoBehaviour:
   m_FlexibleWidth: 0
   m_FlexibleHeight: 0
   m_LayoutPriority: 1
+--- !u!114 &2069575076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2069575069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a900079ac1b08142b680e2b8ce9d9f4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  hoverClip: {fileID: 8300000, guid: 25d6ca04e70aa524f9ec0737a9362a70, type: 3}
+  clickClip: {fileID: 8300000, guid: ddd33f7c46a9c9a45baa825bc59c5a95, type: 3}
 --- !u!1 &2119449779
 GameObject:
   m_ObjectHideFlags: 0

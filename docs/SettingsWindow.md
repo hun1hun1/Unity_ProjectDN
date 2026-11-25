@@ -43,7 +43,11 @@
 
 카드와 적 행동의 `PlaySoundPresentationStep`이 생성하는 AudioSource는 Effects를 사용합니다. 예를 들어 전체 80%, 효과음 50%라면 원래 음량에 40%를 적용합니다. 효과음 0%에서는 Effects 소리가 음소거되며, Music 소리는 전체·배경음 설정을 따릅니다. [카드·적 행동 연출](CardPresentations.md)
 
-현재 타이틀과 전투 씬에 AudioListener가 있습니다. 맵의 AudioListener, 씬 공용 효과음 재생기와 UI·전투 효과음 배치는 [효과음 작업 목록](../ToDo_List.md#게임-효과음)에 있습니다.
+타이틀·맵·전투 씬에는 각각 활성 `AudioListener`가 하나 있습니다. 세 씬의 `SettingsPanel.prefab` 내부 버튼은 공용 호버음과 클릭음을 사용합니다. `UIButtonSound`는 활성 버튼에 포인터가 들어올 때 호버음을, 버튼 동작이 확정될 때 클릭음을 냅니다. 하나의 2D `AudioSource`에서 재생하며 `SettingsAudioSource`의 Effects 채널을 따릅니다. 클릭으로 옵션창이 닫혀도 소리는 이어집니다. [공용 옵션창](../Assets/Prefabs/UI/SettingsPanel.prefab) · [공용 호버음](../Assets/Audio/UI/button-hover.wav) · [공용 클릭음](../Assets/Audio/UI/button-click.wav)
+
+### 버튼 효과음 검증
+
+2026-11-25 Unity 6000.0.85f2의 관련 UI 검사 51/51이 통과했습니다. 이후 최종 버튼 효과음 검사 4/4에서 세 씬의 클립 참조와 적용 범위, 활성 리스너 수, 비활성 버튼의 무음, 옵션창을 닫은 뒤의 클릭음 재생, 효과음 0% 음소거를 확인했습니다. 결과는 로컬 `.utmp/button-sfx/verified.xml`과 `.utmp/button-sfx/final.xml`에 있습니다. [버튼 효과음 테스트](../Assets/Tests/Editor/UIButtonSoundTests.cs)
 
 ## 저장과 검증
 

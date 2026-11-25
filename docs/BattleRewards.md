@@ -22,6 +22,8 @@
 
 보상 요약(`SummaryPanel`), 덱 선택(`DeckSelectPanel`), 카드 선택(`CardRewardPanel`)은 `Assets/Images/UI/Rewards/battle-reward-panel.png`를 9슬라이스로 공유합니다. 보상 화면 뒤의 전투 영역은 어둡게 처리합니다.
 
+새로 전투에서 승리하면 적의 사망 모션이 끝난 뒤 배경과 보상 요약이 0.22초 동안 나타납니다. 배경은 어두워지고 요약 패널은 아래에서 12 Canvas 단위 올라옵니다. 사망 모션 대기와 등장 연출이 끝날 때까지 보상 버튼과 뒤쪽 전투 UI의 포인터 입력을 막습니다. 사망 모션이 연결되지 않은 조우에서는 패널 등장부터 시작합니다. 카드 선택에서 보상 요약으로 돌아오거나 저장된 보상 단계에서 이어서 하면 해당 화면이 바로 표시됩니다. [적 사망 모션](CharacterPresentation.md#적-사망-모션)
+
 덱 선택의 꿈·악몽·카드 보상 건너뛰기 버튼은 같은 폴더의 `reward-deck-*.png`를 사용합니다. 꿈·악몽은 같은 비율을 유지하고 문구를 문양 오른쪽에 표시합니다. 건너뛰기는 하단 중앙에 배치합니다. 버튼 상태 전환과 클릭 연결은 씬의 `Button`에서 관리합니다.
 
 보상 카드에 마우스를 올리면 본문이 화면 환산 크기 16에 도달하도록 필요한 호버 배율을 계산합니다. 확인 버튼 위쪽을 표시 영역으로 사용하고, 이 영역에 들어오는 크기로 제한해 버튼을 가리지 않도록 합니다. 일반 카드 설명의 수치는 기존 보상 표시 규칙을 따릅니다. 공통 확대 방식은 [손패와 목록의 호버](CardHandLayout.md)에 있습니다.
@@ -48,12 +50,14 @@
 
 - `BattleManager.Result`와 `BattleEnded`가 승리/패배/중단을 구분합니다.
 - `BattleRewardSystem`이 수령 여부와 Summary → DeckChoice → CardChoice 흐름을 관리합니다.
-- `CardRewardUI`가 상태에 맞는 화면과 버튼을 표시합니다. 보상 카드 설명은 원본 수치로 표시합니다.
+- `CardRewardUI`는 새 승리의 `VictoryRewardsPrepared` 이벤트로 사망 모션 대기와 보상 요약 등장 연출을 시작합니다. `Changed`로 보상 화면과 버튼을 갱신하고, 보상 카드 설명에는 원본 수치를 표시합니다.
 - `RunGoldInventory.Gold`는 씬 전환과 체크포인트 복원 시 유지됩니다. 새 런은 기존 골드를 초기화하고 `RunDefinition.startingGold`를 지급합니다. 현재 `FirstFloorRun`의 시작 골드는 100입니다.
-- 런의 보상 완료는 `RunBattleBridge`를 거쳐 현재 노드를 완료하고 MapScene으로 돌아갑니다. 보상 수령이나 완료를 저장하지 못하면 마지막 체크포인트 상태로 되돌아가 다시 시도할 수 있습니다. [노드 체크포인트와 이어서 하기](RunCheckpoints.md) 참고.
+- `RunBattleBridge`는 승리 결과와 보상 체크포인트를 화면 연출과 별개로 처리합니다. 이어서 하기에서는 `RestoreCheckpoint`로 보상 단계와 수령 상태를 복원합니다. 보상을 마치면 현재 노드를 완료하고 MapScene으로 돌아갑니다. 보상 수령이나 완료를 저장하지 못하면 마지막 체크포인트 상태로 되돌아가 다시 시도할 수 있습니다. [노드 체크포인트와 이어서 하기](RunCheckpoints.md)
 - `BattleRewardAssetSetup.CreateAssets()`는 현재 BattleScene에 보상 UI와 14개 DB 참조를 구성한 에디터 도구입니다. 메뉴: ProjectDN → Setup Battle Rewards. 재실행 시 보상 UI와 기본 골드 값을 다시 구성하고, 공유 풀 설정은 유지합니다.
 
 ## 검증
+
+2026-11-25 Unity 6000.0.85f2에서 보상창 등장 연출을 연결한 단계의 관련 검사 44/44가 통과했습니다. 입력 잠금, 카드 선택에서 돌아올 때의 패널 위치와 이어서 하기의 즉시 표시를 포함합니다. 적 13종의 사망 모션까지 적용한 뒤에는 관련 검사 29/29가 통과했습니다. 실제 전투 씬의 사망 모션과 보상 표시 순서, 이어서 하기, 카드 선택·확정과 호버를 포함합니다. 결과는 로컬 `.utmp/reward-entrance/verified.xml`과 `.utmp/boss-elite-defeat/verified.xml`에 있습니다. 전체 EditMode와 독립 실행 빌드 검증은 남아 있습니다. [전투 보상 씬 테스트](../Assets/Tests/Editor/BattleRewardSceneTests.cs)
 
 2026-11-18~19의 공용 보상 순서·지급과 복원, 정예 사냥꾼의 훈장, 미다스의 손, 응급 붕대 관련 실행 결과는 [공용 매개체와 효과 검증](MapSystem.md#공용-매개체와-효과-검증)에 정리했습니다.
 

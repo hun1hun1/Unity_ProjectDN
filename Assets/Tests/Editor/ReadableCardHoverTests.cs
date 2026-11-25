@@ -68,7 +68,8 @@ public class ReadableCardHoverTests
         Assert.That(rewards, Is.Not.Null);
         Assert.That(flow, Is.Not.Null);
         Object.FindFirstObjectByType<BattleManager>().GetTarget().TakeDamage(100000);
-        yield return WaitFor(() => flow != null && flow.State == BattleRewardState.Summary);
+        CanvasGroup visibility = rewards.GetComponent<CanvasGroup>();
+        yield return WaitFor(() => flow.State == BattleRewardState.Summary && visibility.interactable);
         rewards.ShowReward();
         rewards.SelectDream();
         yield return WaitFor(() => rewards.GetComponentsInChildren<DeckCardUI>().Any(candidate =>

@@ -56,13 +56,27 @@ public class BattleRewardSceneTests
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();
         BattleRewardSystem flow = Object.FindFirstObjectByType<BattleRewardSystem>();
         CardRewardUI ui = Object.FindFirstObjectByType<CardRewardUI>();
-        Assert.That(ui.GetComponent<CanvasGroup>().blocksRaycasts, Is.False);
+        var visibility = ui.GetComponent<CanvasGroup>();
+        var summary = (RectTransform)ui.transform.Find("SummaryPanel");
+        Vector2 restingPosition = summary.anchoredPosition;
+        Assert.That(visibility.blocksRaycasts, Is.False);
         battle.GetTarget().TakeDamage(100000);
-        yield return null; yield return null;
         Assert.That(battle.Result, Is.EqualTo(BattleResult.Victory));
         Assert.That(flow.State, Is.EqualTo(BattleRewardState.Summary));
-        Assert.That(ui.GetComponent<CanvasGroup>().blocksRaycasts, Is.True);
-        Assert.That(ui.transform.Find("SummaryPanel").gameObject.activeInHierarchy, Is.True);
+        Assert.That(summary.gameObject.activeInHierarchy, Is.True);
+        Assert.That(visibility.alpha, Is.Zero);
+        Assert.That(visibility.interactable, Is.False);
+        Assert.That(visibility.blocksRaycasts, Is.True);
+        Assert.That(summary.anchoredPosition, Is.EqualTo(restingPosition),
+            "Slime's defeat should finish before the reward entrance begins.");
+        Click(summary.Find("GoldButton"));
+        Click(summary.Find("CardButton"));
+        Assert.That(flow.GoldAvailable, Is.True);
+        Assert.That(flow.State, Is.EqualTo(BattleRewardState.Summary));
+        yield return WaitForRewardInput(ui);
+        Assert.That(visibility.alpha, Is.EqualTo(1f));
+        Assert.That(summary.anchoredPosition, Is.EqualTo(restingPosition));
+        Capture(ui, "victory-summary.png");
         Assert.That(ui.transform.Find("SummaryPanel").GetComponent<VerticalLayoutGroup>(), Is.Not.Null);
         Click(ui.transform.Find("SummaryPanel/GoldButton"));
         Assert.That(RunGoldInventory.Gold, Is.EqualTo(20));
@@ -96,6 +110,9 @@ public class BattleRewardSceneTests
         Capture(ui, "dream-selected.png");
         Click(confirm);
         Assert.That(flow.State, Is.EqualTo(BattleRewardState.Summary));
+        Assert.That(visibility.alpha, Is.EqualTo(1f));
+        Assert.That(visibility.interactable, Is.True);
+        Assert.That(summary.anchoredPosition, Is.EqualTo(restingPosition));
         Assert.That(battle.GetDeckController().GetDeck(CardDeckType.TypeDream), Does.Contain(chosen));
         Click(confirm);
         Assert.That(battle.GetDeckController().GetDeck(CardDeckType.TypeDream).Count, Is.EqualTo(before + 1));
@@ -103,6 +120,123 @@ public class BattleRewardSceneTests
         Assert.That(flow.State, Is.EqualTo(BattleRewardState.Completed));
         Assert.That(ui.GetComponent<CanvasGroup>().blocksRaycasts, Is.False);
         yield return new ExitPlayMode();
+    }
+
+    [UnityTest] public IEnumerator RestoredRewardSummaryOpensWithoutAnEntrance()
+    {
+        yield return new EnterPlayMode();
+        yield return SceneManager.LoadSceneAsync("BattleScene");
+        var battle = Object.FindFirstObjectByType<BattleManager>();
+        var flow = Object.FindFirstObjectByType<BattleRewardSystem>();
+        var ui = Object.FindFirstObjectByType<CardRewardUI>();
+        var group = ui.GetComponent<CanvasGroup>();
+        var summary = (RectTransform)ui.transform.Find("SummaryPanel");
+        Vector2 restingPosition = summary.anchoredPosition;
+
+        flow.RestoreCheckpoint(new RunRewardData
+        {
+            state = BattleRewardState.Summary,
+            gold = 20,
+            goldAvailable = true,
+            cardAvailable = true,
+            offers = System.Array.Empty<string>()
+        }, RunAssetCatalog.Load());
+        battle.FinishBattle(BattleResult.Victory);
+
+        Assert.That(summary.gameObject.activeInHierarchy, Is.True);
+        Assert.That(group.alpha, Is.EqualTo(1f));
+        Assert.That(group.interactable, Is.True);
+        Assert.That(summary.anchoredPosition, Is.EqualTo(restingPosition));
+        yield return new ExitPlayMode();
+    }
+
+    [UnityTest] public IEnumerator EarlyEnemiesFinishTheirDefeatBeforeRewardsBecomeVisible()
+    {
+        yield return new EnterPlayMode();
+        var floor = AssetDatabase.LoadAssetAtPath<FloorMapDefinition>("Assets/MapData/FirstFloor.asset");
+        Assert.That(floor.normalBattles, Has.Length.EqualTo(4));
+        yield return VerifyDefeatSheets(floor.normalBattles);
+        yield return new ExitPlayMode();
+    }
+
+    [UnityTest] public IEnumerator LateEnemiesFinishTheirDefeatBeforeRewardsBecomeVisible()
+    {
+        yield return new EnterPlayMode();
+        var floor = AssetDatabase.LoadAssetAtPath<FloorMapDefinition>("Assets/MapData/FirstFloor.asset");
+        Assert.That(floor.lateNormalBattles, Has.Length.EqualTo(5));
+        yield return VerifyDefeatSheets(floor.lateNormalBattles);
+        yield return new ExitPlayMode();
+    }
+
+    [UnityTest] public IEnumerator ElitesAndBossFinishTheirDefeatBeforeRewardsBecomeVisible()
+    {
+        yield return new EnterPlayMode();
+        var floor = AssetDatabase.LoadAssetAtPath<FloorMapDefinition>("Assets/MapData/FirstFloor.asset");
+        Assert.That(floor.eliteBattles, Has.Length.EqualTo(3));
+        Assert.That(floor.bossBattles, Has.Length.EqualTo(1));
+        yield return VerifyDefeatSheets(floor.eliteBattles);
+        yield return VerifyDefeatSheets(floor.bossBattles);
+        yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator VerifyDefeatSheets(BattleEncounterDefinition[] encounters)
+    {
+        foreach (BattleEncounterDefinition encounter in encounters)
+        {
+            AsyncOperation loading = SceneManager.LoadSceneAsync("BattleScene");
+            while (!loading.isDone) yield return null;
+            var battle = Object.FindFirstObjectByType<BattleManager>();
+            var rewards = Object.FindFirstObjectByType<BattleRewardSystem>();
+            var ui = Object.FindFirstObjectByType<CardRewardUI>();
+            Assert.That(battle, Is.Not.Null);
+            Assert.That(rewards, Is.Not.Null);
+            Assert.That(ui, Is.Not.Null);
+            battle.ConfigureEncounter(encounter);
+            var enemy = battle.GetTarget();
+            var presentation = enemy.GetComponent<BattleCharacterPresentation>();
+            RectTransform artwork = presentation.Visual;
+            Image sprite = artwork.GetComponent<Image>();
+            var animator = artwork.GetComponent<UISpriteAnimator>();
+            var group = ui.GetComponent<CanvasGroup>();
+            string enemyName = encounter.enemyPrefab.name;
+            var defeat = AssetDatabase.LoadAssetAtPath<UISpriteAnimation>(
+                $"Assets/CharacterPresentation/Animations/{enemyName}Defeat.asset");
+            Assert.That(defeat, Is.Not.Null, encounter.displayName);
+            Assert.That(defeat.frames, Has.Length.EqualTo(16), encounter.displayName);
+            foreach (Sprite frame in defeat.frames)
+                Assert.That(AssetDatabase.GetAssetPath(frame),
+                    Is.EqualTo($"Assets/Images/Characters/{enemyName}/Defeat.png"), encounter.displayName);
+            float idleScale = artwork.rect.width / animator.Animation.frames[0].bounds.size.x;
+            Vector2 idleGroundPosition = artwork.anchoredPosition;
+
+            enemy.TakeDamage(100000);
+            Assert.That(battle.Result, Is.EqualTo(BattleResult.Victory), encounter.displayName);
+            Assert.That(rewards.State, Is.EqualTo(BattleRewardState.Summary), encounter.displayName);
+            Assert.That(group.alpha, Is.Zero, encounter.displayName);
+            Assert.That(group.interactable, Is.False, encounter.displayName);
+
+            float deadline = Time.realtimeSinceStartup + 3f;
+            bool capturedPose = false;
+            while ((animator.Animation != defeat || !animator.IsComplete) && Time.realtimeSinceStartup < deadline)
+            {
+                Assert.That(group.alpha, Is.Zero, encounter.displayName);
+                if (!capturedPose && animator.Animation == defeat && animator.CurrentFrame >= 8)
+                {
+                    Capture(ui, $"defeat-{enemyName}.png");
+                    capturedPose = true;
+                }
+                yield return null;
+            }
+            Assert.That(animator.Animation, Is.SameAs(defeat), encounter.displayName);
+            Assert.That(animator.IsComplete, Is.True, encounter.displayName);
+            Assert.That(animator.Loop, Is.False, encounter.displayName);
+            Assert.That(sprite.sprite, Is.SameAs(defeat.frames[defeat.frames.Length - 1]), encounter.displayName);
+            Assert.That(artwork.anchoredPosition, Is.EqualTo(idleGroundPosition), encounter.displayName);
+            Assert.That(artwork.rect.width / defeat.frames[0].bounds.size.x,
+                Is.EqualTo(idleScale).Within(.01f), encounter.displayName);
+            Assert.That(presentation.InfoUI.isActiveAndEnabled, Is.False, encounter.displayName);
+            yield return WaitForRewardInput(ui);
+        }
     }
     [UnityTest] public IEnumerator PlayerDeathDoesNotOpenRewards()
     {
@@ -144,7 +278,11 @@ public class BattleRewardSceneTests
             var samplerFields = new SerializedObject(Object.FindFirstObjectByType<CardRewardSystem>());
             samplerFields.FindProperty("poolCatalog").objectReferenceValue = catalog;
             samplerFields.ApplyModifiedPropertiesWithoutUndo();
-            battle.GetTarget().TakeDamage(100000); yield return null; yield return null;
+            battle.FinishBattle(BattleResult.Victory);
+            var visibility = ui.GetComponent<CanvasGroup>();
+            Assert.That(visibility.alpha, Is.Zero);
+            Assert.That(((RectTransform)ui.transform.Find("SummaryPanel")).anchoredPosition.y, Is.LessThan(0f));
+            yield return WaitForRewardInput(ui);
             Click(ui.transform.Find("SummaryPanel/CardButton"));
             Click(ui.transform.Find("DeckSelectPanel/NightmareButton"));
             Assert.That(flow.Offers.Count, Is.EqualTo(2));
@@ -180,6 +318,14 @@ public class BattleRewardSceneTests
         }
         finally { Object.Destroy(first); Object.Destroy(second); Object.Destroy(database); Object.Destroy(catalog); }
         yield return new ExitPlayMode();
+    }
+
+    private static IEnumerator WaitForRewardInput(CardRewardUI ui)
+    {
+        var group = ui.GetComponent<CanvasGroup>();
+        float deadline = Time.realtimeSinceStartup + 2f;
+        while (!group.interactable && Time.realtimeSinceStartup < deadline) yield return null;
+        Assert.That(group.interactable, Is.True);
     }
 
     private static void Capture(CardRewardUI ui, string name)

@@ -1,9 +1,13 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CardRewardUI : MonoBehaviour
 {
+    private const float EntranceDuration = .22f;
+    private const float EntranceDistance = 12f;
+
     [SerializeField] private BattleRewardSystem rewards;
     [SerializeField] private CanvasGroup visibility;
     [SerializeField] private GameObject summaryPanel;
@@ -20,18 +24,122 @@ public class CardRewardUI : MonoBehaviour
     [SerializeField] private Button confirmButton;
     [SerializeField] private GameObject[] selectionBorders;
     private int selectedCardIndex = -1;
+    private Coroutine defeatWait;
+    private RectTransform enteringSummary;
+    private Vector2 summaryRestPosition;
+    private float entranceStartedAt;
     internal RectTransform HoverLowerBoundary => confirmButton != null ? (RectTransform)confirmButton.transform : null;
 
-    private void OnEnable() { if (rewards != null) rewards.Changed += Refresh; Refresh(); }
-    private void OnDisable() { if (rewards != null) rewards.Changed -= Refresh; selectedCardIndex = -1; RefreshSelection(); }
+    private void OnEnable()
+    {
+        if (rewards != null)
+        {
+            rewards.VictoryRewardsPrepared += ShowVictory;
+            rewards.Changed += Refresh;
+        }
+        Refresh();
+    }
+
+    private void OnDisable()
+    {
+        if (rewards != null)
+        {
+            rewards.VictoryRewardsPrepared -= ShowVictory;
+            rewards.Changed -= Refresh;
+        }
+        bool presentationInProgress = defeatWait != null || enteringSummary != null;
+        StopWaitingForDefeat();
+        if (enteringSummary != null) ResetEntrancePosition();
+        if (presentationInProgress) SetVisibility(false);
+        selectedCardIndex = -1;
+        RefreshSelection();
+    }
+
+    private void ShowVictory(Enemy defeatedEnemy)
+    {
+        var presentation = defeatedEnemy != null ? defeatedEnemy.GetComponent<BattleCharacterPresentation>() : null;
+        if (!Application.isPlaying || visibility == null || presentation == null || !presentation.HasDefeatMotion)
+        {
+            BeginEntrance();
+            return;
+        }
+
+        SetVisibility(false);
+        visibility.blocksRaycasts = true;
+        defeatWait = StartCoroutine(ShowAfterDefeat(presentation));
+    }
+
+    private IEnumerator ShowAfterDefeat(BattleCharacterPresentation presentation)
+    {
+        // Allow the lethal action to release its sprite and motion overrides.
+        yield return null;
+        if (presentation != null)
+        {
+            presentation.PlayDefeat();
+            while (presentation != null && presentation.IsPlayingDefeat) yield return null;
+        }
+        defeatWait = null;
+        BeginEntrance();
+    }
+
+    private void StopWaitingForDefeat()
+    {
+        if (defeatWait == null) return;
+        StopCoroutine(defeatWait);
+        defeatWait = null;
+    }
+
+    private void BeginEntrance()
+    {
+        if (!Application.isPlaying || visibility == null || summaryPanel == null ||
+            !(summaryPanel.transform is RectTransform panel)) return;
+
+        enteringSummary = panel;
+        summaryRestPosition = panel.anchoredPosition;
+        entranceStartedAt = Time.unscaledTime;
+        panel.anchoredPosition = summaryRestPosition + Vector2.down * EntranceDistance;
+        visibility.alpha = 0f;
+        visibility.interactable = false;
+        visibility.blocksRaycasts = true;
+    }
+
+    private void Update()
+    {
+        if (enteringSummary == null) return;
+        float progress = Mathf.Clamp01((Time.unscaledTime - entranceStartedAt) / EntranceDuration);
+        visibility.alpha = progress;
+        float remainingDistance = Mathf.SmoothStep(EntranceDistance, 0f, progress);
+        enteringSummary.anchoredPosition = summaryRestPosition + Vector2.down * remainingDistance;
+        if (progress < 1f) return;
+
+        ResetEntrancePosition();
+        SetVisibility(true);
+    }
+
+    private void ResetEntrancePosition()
+    {
+        enteringSummary.anchoredPosition = summaryRestPosition;
+        enteringSummary = null;
+    }
+
+    private void SetVisibility(bool visible)
+    {
+        visibility.alpha = visible ? 1f : 0f;
+        visibility.interactable = visibility.blocksRaycasts = visible;
+    }
+
     private void Refresh()
     {
         if (rewards == null || visibility == null) return;
         selectedCardIndex = -1;
         BattleRewardState state = rewards.State;
         bool visible = state != BattleRewardState.Closed && state != BattleRewardState.Completed;
-        visibility.alpha = visible ? 1 : 0;
-        visibility.interactable = visibility.blocksRaycasts = visible;
+        if (state != BattleRewardState.Summary)
+        {
+            StopWaitingForDefeat();
+            if (enteringSummary != null) ResetEntrancePosition();
+        }
+        if (defeatWait == null && enteringSummary == null) SetVisibility(visible);
         summaryPanel.SetActive(state == BattleRewardState.Summary);
         deckSelectPanel.SetActive(state == BattleRewardState.DeckChoice);
         cardRewardPanel.SetActive(state == BattleRewardState.CardChoice);
@@ -61,22 +169,25 @@ public class CardRewardUI : MonoBehaviour
         if (confirmButton != null)
             confirmButton.interactable = choosing && selectedCardIndex >= 0 && selectedCardIndex < rewards.Offers.Count;
     }
-    public void ClaimGold() { if (!CardInspectionUI.BlocksGameplayInput) rewards.ClaimGold(); }
-    public void ShowReward() { if (!CardInspectionUI.BlocksGameplayInput) rewards.OpenCardReward(); }
-    public void SelectDream() { if (!CardInspectionUI.BlocksGameplayInput) rewards.SelectDeck(CardDeckType.TypeDream); }
-    public void SelectNightmare() { if (!CardInspectionUI.BlocksGameplayInput) rewards.SelectDeck(CardDeckType.TypeNightmare); }
-    public void SkipCard() { if (!CardInspectionUI.BlocksGameplayInput) rewards.SkipCard(); }
-    public void SkipRemaining() { if (!CardInspectionUI.BlocksGameplayInput) rewards.SkipRemaining(); }
+    private bool CanUseControls => isActiveAndEnabled && rewards != null && visibility != null &&
+        visibility.interactable && !CardInspectionUI.BlocksGameplayInput;
+
+    public void ClaimGold() { if (CanUseControls) rewards.ClaimGold(); }
+    public void ShowReward() { if (CanUseControls) rewards.OpenCardReward(); }
+    public void SelectDream() { if (CanUseControls) rewards.SelectDeck(CardDeckType.TypeDream); }
+    public void SelectNightmare() { if (CanUseControls) rewards.SelectDeck(CardDeckType.TypeNightmare); }
+    public void SkipCard() { if (CanUseControls) rewards.SkipCard(); }
+    public void SkipRemaining() { if (CanUseControls) rewards.SkipRemaining(); }
     public void SelectCard(int index)
     {
-        if (CardInspectionUI.BlocksGameplayInput || rewards == null || rewards.State != BattleRewardState.CardChoice ||
+        if (!CanUseControls || rewards.State != BattleRewardState.CardChoice ||
             index < 0 || index >= rewards.Offers.Count || index >= rewardCardSlots.Length || rewards.Offers[index] == null) return;
         selectedCardIndex = index;
         RefreshSelection();
     }
     public void ConfirmCard()
     {
-        if (CardInspectionUI.BlocksGameplayInput || rewards == null || rewards.State != BattleRewardState.CardChoice || selectedCardIndex < 0) return;
+        if (!CanUseControls || rewards.State != BattleRewardState.CardChoice || selectedCardIndex < 0) return;
         rewards.ChooseCard(selectedCardIndex);
     }
 }

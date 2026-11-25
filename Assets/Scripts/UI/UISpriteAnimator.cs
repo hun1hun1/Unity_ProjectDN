@@ -7,6 +7,7 @@ public class UISpriteAnimator : MonoBehaviour
     [SerializeField] private UISpriteAnimation clip;
     private UnityEngine.UI.Image targetImage;
     private double elapsed;
+    private bool useUnscaledTime;
     public int CurrentFrame { get; private set; }
     public UISpriteAnimation Animation => clip;
     public bool Loop { get; private set; } = true;
@@ -16,24 +17,32 @@ public class UISpriteAnimator : MonoBehaviour
         internal UISpriteAnimation Clip;
         internal double Elapsed;
         internal bool Loop;
+        internal bool UseUnscaledTime;
         internal Sprite Sprite;
     }
     private void OnEnable() { ResetPlayback(); }
-    private void Update() { Advance(Time.deltaTime); }
+    private void Update() { Advance(useUnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime); }
     public void SetAnimation(UISpriteAnimation animation) => Play(animation, true);
-    public void Play(UISpriteAnimation animation, bool loop)
+    public void Play(UISpriteAnimation animation, bool loop) => Play(animation, loop, useUnscaledTime: false);
+
+    internal void Play(UISpriteAnimation animation, bool loop, bool useUnscaledTime)
     {
         if (animation != null) animation.Validate();
+        this.useUnscaledTime = useUnscaledTime;
         clip = animation; Loop = loop; ResetPlayback();
     }
     public PlaybackState CaptureState()
     {
         if (targetImage == null) targetImage = GetComponent<UnityEngine.UI.Image>();
-        return new PlaybackState { Clip = clip, Elapsed = elapsed, Loop = Loop, Sprite = targetImage.sprite };
+        return new PlaybackState
+        {
+            Clip = clip, Elapsed = elapsed, Loop = Loop, UseUnscaledTime = useUnscaledTime, Sprite = targetImage.sprite
+        };
     }
     public void RestoreState(PlaybackState state)
     {
         clip = state.Clip; elapsed = state.Elapsed; Loop = state.Loop;
+        useUnscaledTime = state.UseUnscaledTime;
         CurrentFrame = clip == null || clip.frames.Length == 0 ? 0 :
             Math.Min(clip.frames.Length - 1, (int)Math.Floor(elapsed / clip.frameDuration + .000001));
         if (targetImage == null) targetImage = GetComponent<UnityEngine.UI.Image>();

@@ -16,10 +16,14 @@
 
 1층에는 전반부 일반 4종, 후반부 일반 5종, 엘리트 전용 3종의 프리팹을 각 조우 풀에 연결했다. 허수아비는 후반부 일반 조우에 등장한다. 13번 보스 조우는 `LockedGatekeeper.prefab`을 사용한다. 잠긴 문지기에는 왼쪽을 향한 대기 애니메이션과 Large 크기 프로필을 연결했다. [1층 조우 목록](MapSystem.md#조우-순서) · [보스 조우 에셋](../Assets/MapData/FirstFloorBossEncounter.asset)
 
+## 사망 모션 연결
+
+현재 1층 적 프리팹 13종의 `BattleCharacterPresentation`에 각 사망 애니메이션을 지정했다. `Assets/CharacterPresentation/Animations/<적 이름>Defeat.asset`은 해당 적의 `Defeat.png`에서 분할한 스프라이트 16개를 참조한다. 전투에서 적이 죽으면 이 순서대로 한 번 재생한 뒤 보상창이 나타난다. [적별 동작과 재생 시간](CharacterPresentation.md#적-사망-모션) · [보스 사망 애니메이션 에셋 예시](../Assets/CharacterPresentation/Animations/LockedGatekeeperDefeat.asset)
+
 ## 다른 적 추가
 
 1. `Slime.prefab`을 복제하거나 Prefab Variant를 만든다.
-2. 프리팹의 `Visual`에 적 이미지를 지정한다. 대기 스프라이트 시트를 Unity에서 분할하여 `UISpriteAnimation`을 만들고 `BattleCharacterPresentation`의 대기 애니메이션으로 연결한다. [캐릭터 아트 연결](CharacterPresentation.md#inspector에서-크기와-ui-교체)
+2. 프리팹의 `Visual`에 적 이미지를 지정한다. 대기 스프라이트 시트를 Unity에서 분할하여 `UISpriteAnimation`을 만들고 `BattleCharacterPresentation`의 대기 애니메이션으로 연결한다. 사망 모션이 있으면 사망용 `UISpriteAnimation`을 별도로 만들고 같은 컴포넌트의 `Defeat Animation`에 지정한다. [캐릭터 아트 연결](CharacterPresentation.md#inspector에서-크기와-ui-교체)
 3. 프리팹 루트에는 `RectTransform`과 `Enemy`가 있어야 한다. 현재 화면은 Canvas 기반이므로 외형에는 uGUI Image를 사용한다. 기본 프리팹은 생성 영역을 채우는 루트와 비율 유지 이미지로 구성되어 있다.
 4. HP·방어도·상태 UI는 프리팹 내부 참조로 유지한다. 프리팹의 `Action UI`에는 씬 오브젝트를 연결하지 않는다. 전투 화면의 공통 행동 예고는 생성 시 연결된다.
 5. `Create → Map → Battle Encounter`로 전투 데이터를 만들고 `Enemy Prefab`, `Behavior`, `Enemy Max HP`, `Gold Reward`를 지정한다.
@@ -44,6 +48,8 @@
 행동 선택 방식은 [적 행동 패턴](EnemyBehaviors.md), 맵과 전투 데이터 연결은 [맵 시스템](MapSystem.md)을 참고한다.
 
 ## 검증 범위
+
+2026-11-25 Unity 6000.0.85f2에서 조우별 프리팹과 사망 시트 연결, 실제 전투 씬의 재생과 승리 보상 순서를 검사했다. [적 사망 모션 검증](CharacterPresentation.md#적-사망-모션-검증)
 
 2026-11-17 Unity 6000.0.85f2에서 접힌 종이병정·재봉거미·뒤집힌 모래시계의 실제 전투 생성과 대기 애니메이션, 캐릭터 표시 관련 검사가 11/11 통과하였다. 결과는 로컬 `.utmp/generated-enemy-prefab-test.xml`에 있다. 1층 조우 풀 배치와 복원은 [맵 시스템의 검증 기록](MapSystem.md#2026-11-17-1층-적-배치)을 참고한다.
 

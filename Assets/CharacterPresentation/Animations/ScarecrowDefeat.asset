@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ceed63113d6bf4086984f4629237a8, type: 3}
+  m_Name: ScarecrowDefeat
+  m_EditorClassIdentifier: 
+  setupVersion: 1
+  frames:
+  - {fileID: -878816283, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: 1838668936, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: -1524295543, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: -1941943988, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: 524026343, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: -55253596, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: -447442281, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: -761163219, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: -1719116905, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: -1045191601, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: -398848447, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: -940257499, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: -1586683224, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: 2050766943, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: -181815655, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  - {fileID: 1974683676, guid: f60f5311b727c164ca0b0b0d2c294c8c, type: 3}
+  frameDuration: 0.055
+  groundPivot: {x: 0.46875, y: 0.1875}
+  contentBounds:
+    serializedVersion: 2
+    x: 0.16992188
+    y: 0.10546875
+    width: 0.6484375
+    height: 0.72265625

@@ -23,11 +23,19 @@ Project 창의 Create > Card > Presentation 메뉴에서 정의와 단계 에셋
 
 예제는 `ProjectDN/Setup Card Presentation Examples`로 생성합니다. 기존 `GeneratedArt/Soldier/Fire-v2`의 시트를 Sprite로 가져와 사격 연출을 만듭니다. 군인 시작 덱의 꿈 기본 공격 카드에 연출이 비어 있을 때만 사격 예제를 연결합니다. 이미 지정한 연출이나 예제 설정은 덮어쓰지 않으며, 씬·프리팹을 교체하지 않습니다.
 
+### 군인 사격음
+
+현재 사격음은 Unity 적용 전 WAV입니다. 실제 단발 총성 녹음을 편집한 모노 PCM 48 kHz·16-bit 파일로, 길이는 0.65초이며 피크는 −8.5 dBFS입니다. [사격음 WAV](../GeneratedAudio/Battle/soldier-fire-realistic.wav) · [원본 녹음 및 라이선스 · Joseph Sardin, CC0](https://bigsoundbank.com/shot-of-winchester-magnum-xtr-s0397.html)
+
+적용 시 `SoldierFire`의 `Before Impact` 배열에 `FireSprite` → `FireImpact`(0.1초 대기) → 사격음 순서로 둡니다. 사격음은 총구 섬광이 시작하는 시점에 재생하고, `Wait For Completion`을 끄면 피해와 뒤 연출이 이어집니다. `SoldierFire`를 공유하는 공격·저격·재충전과 각 강화 카드에 공통 적용됩니다. [사격 연출 에셋](../Assets/CardPresentations/SoldierFire.asset) · [총구 섬광 프레임](../GeneratedArt/Soldier/Fire-v2/animation.json)
+
+현재의 `PlaySoundPresentationStep`은 카드 연출이 끝날 때 임시 AudioSource를 정리하므로 마지막 일격에서는 잔향이 끊길 수 있습니다. 잔향을 살리는 연결안은 사격음을 전투 씬의 별도 2D AudioSource에서 `PlayOneShot`으로 재생하고 Effects 음량 설정을 따르도록 하는 방식입니다. [현재 재생과 정리](../Assets/Scripts/Card/Presentation/CardPresentationContext.cs#L73)
+
 ## 실행과 정리
 
 기존 `BattleManager`의 카드 효과 코루틴이 실제 효과를 담당합니다. 연출 단계는 효과를 직접 호출하지 않습니다. 연출이 끝나거나 중단되면 위치/회전과 스프라이트 재생 상태를 복원하고 임시 효과/소리를 정리합니다. 캐릭터 레이아웃 변경에는 기준 위치와 일시적인 연출 오프셋을 합성합니다. 체력 UI와 상태 UI는 이동하지 않습니다.
 
-계획 중인 체력 변화 숫자는 앞 연출 뒤 실제 효과가 HP를 변경할 때 시작합니다. 지속·지연 효과로 HP가 바뀌는 경우에도 같은 표시를 사용하며, 뒤 연출과 후속 효과는 숫자가 떠오르는 동안 이어집니다. [체력 변화 숫자 연출 계획](CharacterPresentation.md#체력-변화-숫자-연출-계획)
+체력 변화 숫자는 앞 연출 뒤 실제 효과가 HP를 변경할 때 표시합니다. 지속·지연 효과로 HP가 바뀌는 경우에도 같은 표시를 사용하며, 뒤 연출과 후속 효과는 숫자가 떠오르는 동안 이어집니다. [체력 변화 숫자 연출](CharacterPresentation.md#체력-변화-숫자-연출)
 
 기존 `UISpriteAnimator.SetAnimation`은 반복 재생을 유지합니다. `Play(animation, false)`는 한 번 재생 후 마지막 프레임에서 정지합니다.
 

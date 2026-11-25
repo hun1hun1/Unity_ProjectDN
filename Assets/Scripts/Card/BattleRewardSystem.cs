@@ -16,6 +16,7 @@ public class BattleRewardSystem : MonoBehaviour
     public bool GoldAvailable { get; private set; }
     public bool CardAvailable { get; private set; }
     public IReadOnlyList<CardData> Offers => offers.AsReadOnly();
+    internal event Action<Enemy> VictoryRewardsPrepared;
     public event Action Changed;
     public event Action Completed;
     private List<CardData> offers = new List<CardData>();
@@ -46,9 +47,18 @@ public class BattleRewardSystem : MonoBehaviour
         goldReward = RunGoldInventory.GetGoldReward(GoldReward);
         GoldAvailable = GoldReward > 0;
         CardAvailable = true;
-        SetState(BattleRewardState.Summary);
+        SetState(BattleRewardState.Summary, newVictory: true);
     }
-    private void SetState(BattleRewardState state) { State = state; Changed?.Invoke(); }
+    private void SetState(BattleRewardState state, bool newVictory = false)
+    {
+        State = state;
+        if (newVictory)
+        {
+            Enemy target = battle != null && battle.Result == BattleResult.Victory ? battle.GetTarget() : null;
+            VictoryRewardsPrepared?.Invoke(target != null && target.GetCurrentHP() == 0 ? target : null);
+        }
+        Changed?.Invoke();
+    }
     public RunRewardData CaptureCheckpoint(RunAssetCatalog catalog)
     {
         return new RunRewardData { state=State, gold=GoldReward, goldAvailable=GoldAvailable, cardAvailable=CardAvailable,

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ceed63113d6bf4086984f4629237a8, type: 3}
+  m_Name: LockedGatekeeperDefeat
+  m_EditorClassIdentifier: 
+  setupVersion: 1
+  frames:
+  - {fileID: -686140650, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: -1060935784, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: 1249533466, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: 417984409, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: -632236927, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: -1305053038, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: 1780350684, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: 252394405, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: 1623195158, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: 52368925, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: 234743096, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: 692890501, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: 2059073068, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: -1028895642, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: 506039542, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  - {fileID: -1445463752, guid: 933f8a0c790b3cc43aaecff46910bef4, type: 3}
+  frameDuration: 0.085
+  groundPivot: {x: 0.46875, y: 0.1875}
+  contentBounds:
+    serializedVersion: 2
+    x: 0.22070312
+    y: 0.16992188
+    width: 0.55078125
+    height: 0.6660156

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ceed63113d6bf4086984f4629237a8, type: 3}
+  m_Name: HauntedBroomDefeat
+  m_EditorClassIdentifier: 
+  setupVersion: 1
+  frames:
+  - {fileID: -1540501012, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: 643911635, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: -2054892633, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: -1975557966, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: 188038506, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: 366566101, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: -1814627319, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: 1589327447, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: -94743188, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: -1054215619, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: 336498727, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: -2057443565, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: 719477310, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: -341532358, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: 327088928, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  - {fileID: -733132604, guid: ed4f3a5aaa9cf8044b75a0fe7fd3c68b, type: 3}
+  frameDuration: 0.0525
+  groundPivot: {x: 0.46875, y: 0.1875}
+  contentBounds:
+    serializedVersion: 2
+    x: 0.103515625
+    y: 0.078125
+    width: 0.8359375
+    height: 0.8730469

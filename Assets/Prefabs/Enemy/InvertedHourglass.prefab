@@ -646,6 +646,7 @@ MonoBehaviour:
   visual: {fileID: 5736098807139364507}
   spriteAnimator: {fileID: 792311270546260445}
   idleAnimation: {fileID: 11400000, guid: 855466c888ee0984fa2918e4f76ca676, type: 2}
+  defeatAnimation: {fileID: 11400000, guid: 5b170d5355cf2c740ba0bc52e1d2414d, type: 2}
   infoUI: {fileID: 5469660849017024828}
   actionUI: {fileID: 1250425844724380394}
   appliedInfoPrefab: {fileID: 3099431339603462237, guid: 60fe69bafc05fb14e9d1fd346b9618d9, type: 3}

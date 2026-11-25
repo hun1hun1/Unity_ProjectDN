@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ceed63113d6bf4086984f4629237a8, type: 3}
+  m_Name: LanternMothDefeat
+  m_EditorClassIdentifier: 
+  setupVersion: 1
+  frames:
+  - {fileID: 2008200372, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: -1526720581, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: 1583579395, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: 1697336844, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: -635138396, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: 1180286260, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: 1182351867, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: -2061901499, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: -1268034883, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: -400456079, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: 2066134090, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: 990763106, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: -226730418, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: 968903144, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: -260617118, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  - {fileID: -416191244, guid: 73b48dcd0e1f1f54ca2a879f16226a81, type: 3}
+  frameDuration: 0.0575
+  groundPivot: {x: 0.46875, y: 0.1875}
+  contentBounds:
+    serializedVersion: 2
+    x: 0.009765625
+    y: 0.095703125
+    width: 0.9355469
+    height: 0.75390625
