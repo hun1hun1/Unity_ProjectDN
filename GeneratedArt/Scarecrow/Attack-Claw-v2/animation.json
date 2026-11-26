@@ -1,0 +1,35 @@
+{
+  "name": "scarecrow-double-claw-v2",
+  "frameWidth": 768,
+  "frameHeight": 768,
+  "columns": 4,
+  "rows": 4,
+  "frameCount": 16,
+  "frameDurationMs": 50,
+  "frameRate": 20,
+  "durationMs": 800,
+  "loop": false,
+  "frameOrder": "left-to-right, top-to-bottom",
+  "impactFrameIndices": [
+    3,
+    8
+  ],
+  "impactTimeMs": [
+    150,
+    400
+  ],
+  "impactMotion": [
+    "far hand, high sweep toward screen left",
+    "near hand, low diagonal sweep toward screen left"
+  ],
+  "groundYFromTop": 720,
+  "pivotNormalized": [
+    0.5,
+    0.0625
+  ],
+  "sourceArt": "../Idle-v1/frames/scarecrow-idle-00.png",
+  "sourceArtSha256": "144c64f6733d6b4e776ea146a95166a91d453cecbff28ace15ec853c74a97d3b",
+  "generator": "Built-in ImageGen",
+  "method": "Six ImageGen color-corrected key poses, with a display-luma curve calibrated against the original idle sprite. Foot registration and the 16-frame timing match v1.",
+  "generationPrompt": "Use case: precise-object-edit and identity-preserve. Image 1 is the editing target, a 1536×1024 transparent sprite sheet, exactly 3 columns by 2 rows of 512×512 cells. Image 2 is the exact in-game color reference and needs no changes. Create a COLOR-CORRECTED version of image 1 which looks like the same original game sprite at every pose. The six separate silhouettes, exact three-column two-row layout and their order, all contours, positions, grounded feet, stance, proportions, outfit shapes, hat shape, recognizable seams and patch placements, hand gestures and reach, shadows located on the cloth, and facing direction of image 1 must be carried forward unchanged. Each of the six cells has precisely the same subject arrangement as the corresponding cell in image 1. Only change the tones and colors to match image 2. The current target is paler, yellow-beige, and somewhat washed out. Darken the volumes, with substantially deeper charcoal-brown cavity and under-hat shadows. Use desaturated dark olive-green khaki on the tunic and pants, subdued medium golden-ochre straw with narrow gold glints, the dark raw umber wooden claws and legs, soft tan burlap with dark contour and a warm cream catch-light on raised areas. Keep the existing tiny warm orange eye pop and reddish-brown elbow/shoulder patches. Keep some fair highlights but match Image 2's exact contrast, neutral brown highlights, worn rough fabric and edge detail. Match Image 2's muted brown and green palette faithfully, without adding flat yellow color or black clipping. The strongest glints should be narrow light straw and small eye highlights. Do not shift the feet, pose silhouettes, frame layout, size, broad proportions, or camera. Do not change the action, add effects, add extra limbs, add text, number or outline, or add any external object. Output on true clean transparent RGBA alpha, including the gaps between the limbs, between the fingers, and between every character. No colored, tinted, painted, black, checkered, or gradient backdrop."
+}

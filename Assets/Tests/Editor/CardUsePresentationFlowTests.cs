@@ -75,6 +75,40 @@ public class CardUsePresentationFlowTests
         yield return VerifyBattleCancellation();
     }
 
+    [UnityTest]
+    public IEnumerator KillingShotFinishesPlayingAfterCardPresentationEnds()
+    {
+        yield return new EnterPlayMode();
+        yield return SceneManager.LoadSceneAsync("BattleScene");
+        yield return null;
+        yield return null;
+
+        var battle = Object.FindFirstObjectByType<BattleManager>();
+        Assert.That(battle, Is.Not.Null);
+        var card = UnityEditor.AssetDatabase.LoadAssetAtPath<CardData>(
+            "Assets/CardData/Soldier/Basic/Starting/Dream/Attack/01.Card_Attack/Attack.asset");
+        Assert.That(card, Is.Not.Null);
+        var enemy = battle.GetTarget();
+        Assert.That(enemy, Is.Not.Null);
+        enemy.RestoreHealth(1, enemy.GetMaxHP());
+        battle.StartCoroutine(battle.ExecutePresentedCardRoutine(card, battle.ExecuteCardEffectsRoutine(card, 1)));
+        float deadline = Time.realtimeSinceStartup + 15f;
+        while (battle.Result == BattleResult.None && Time.realtimeSinceStartup < deadline)
+            yield return null;
+        Assert.That(battle.Result, Is.EqualTo(BattleResult.Victory));
+        yield return null;
+
+        var routing = battle.GetComponentInChildren<SettingsAudioSource>();
+        Assert.That(routing, Is.Not.Null, "The killing shot should play through the battle's audio source.");
+        var source = routing.GetComponent<AudioSource>();
+        Assert.That(source.isPlaying, Is.True, "The shot should outlast the ending card presentation.");
+
+        var settings = new GameSettingsService(new FakeGameSettingsPlatform());
+        routing.BindSettings(settings);
+        settings.SetVolumes(1f, 1f, 0f);
+        Assert.That(source.volume, Is.Zero, "Shooting must respect the effects volume.");
+    }
+
     private static IEnumerator VerifyBattleCancellation()
     {
         BattleManager battle = Object.FindFirstObjectByType<BattleManager>();

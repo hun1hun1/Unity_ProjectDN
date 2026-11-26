@@ -46,6 +46,10 @@ Inspector에서 지정한 프로필은 전투 실행 시 적용됩니다. 편집
 
 각 시트는 4608×3072, 6열×4행이며 프레임은 768×768입니다. 모든 프레임을 같은 셀 크기로 분할하고 Pivot `(0.5, 0.0625)`을 사용합니다. PNG 원본은 `GeneratedArt`에 유지하고 사용 시트만 `Assets/Images/Characters`로 복사합니다. 전체 애니메이션의 알파 영역을 측정해 행동 UI의 배치 기준을 저장합니다.
 
+### 허수아비 2연타 모션
+
+제자리에서 양손으로 번갈아 할퀸 뒤 대기 자세로 돌아오는 모션입니다. v2는 기존 대기 스프라이트의 색감과 발 위치에 맞췄습니다. 768×768 프레임 16개를 4열×4행으로 배치했으며, 프레임당 0.05초로 한 번 재생하면 총 0.80초입니다. 타격 기준은 0.15초와 0.40초입니다. Unity 임포트와 허수아비 공격 행동 연결은 작업 목록에 있습니다. [스프라이트 시트](../GeneratedArt/Scarecrow/Attack-Claw-v2/scarecrow-double-claw-spritesheet.png) · [GIF 미리보기](../GeneratedArt/Scarecrow/Attack-Claw-v2/scarecrow-double-claw-preview.gif) · [프레임 정보](../GeneratedArt/Scarecrow/Attack-Claw-v2/animation.json)
+
 ## 군인 패배 연출
 
 플레이어 HP가 0이 되면 전투를 패배로 마치고, 마지막 행동의 연출이 정리된 뒤 [SoldierDefeat](../Assets/CharacterPresentation/Animations/SoldierDefeat.asset)를 한 번 재생합니다. 마지막 프레임에 도달하면 `GameOverUI`가 패배 패널을 페이드 인합니다. 런에서는 군인 이름과 도달 층·노드, 마지막 조우를 표시합니다. `타이틀로 돌아가기`를 누르면 종료된 런의 체크포인트 정리를 확인하고 타이틀을 엽니다. 실패하면 패널에서 안내하고 다시 시도할 수 있습니다. [체크포인트 정리](RunCheckpoints.md#저장-기준)
@@ -135,6 +139,20 @@ Inspector에서 지정한 프로필은 전투 실행 시 적용됩니다. 편집
 간격이 있는 연타는 타격별로 표시하고, 앞 숫자가 남아 있으면 다음 숫자의 위치를 옆으로 조금 옮깁니다. 같은 프레임에 같은 대상에게 들어온 같은 종류의 변화는 합산합니다. [구현과 확인 목록](../ToDo_List.md#전투-체력-변화-숫자-연출)
 
 2026-11-25 Unity 6000.0.85f2의 체력 숫자 대상 재검사 2/2가 통과했습니다. 실제 피해·회복량과 HP 복원 시 표시 생략, 사망 이벤트 순서, 양쪽 캐릭터의 숫자 배치와 같은 프레임 합산·다음 프레임 분리를 확인했습니다. 결과는 로컬 `.utmp/health-change/health-final.xml`에 있습니다. [체력 숫자 검사](../Assets/Tests/Editor/SharedHudArtworkTests.cs#L196)
+
+## 턴 전환 배너
+
+`BattleScene`의 전투 화면 중앙에 배너를 표시합니다. 남청색 배경에는 `내 차례 · N턴`을, 적갈색 배경에는 `적 차례`를 표시합니다. 두 바탕은 1152×184 투명 PNG이고, 문구는 Hahmlet SemiBold SDF를 사용하는 TextMeshPro로 한 줄 중앙 정렬합니다. 기본 재생 시간은 0.50초로, 0.08초 동안 나타나고 0.30초 동안 유지된 뒤 0.12초 동안 사라집니다. [배너 UI](../Assets/Scripts/UI/TurnBannerUI.cs) · [플레이어 배경](../Assets/Images/UI/TurnBanners/your-turn-banner.png) · [적 배경](../Assets/Images/UI/TurnBanners/opponent-turn-banner.png)
+
+| 전투 상황 | 표시와 행동 순서 |
+|---|---|
+| 전투 진입 | 씬 로딩과 안개 전환 종료 → 내 차례 · 1턴 → 카드 사용과 턴 종료 입력 허용 |
+| 적 차례 | 플레이어 손패 정리와 턴 종료 효과 처리 → 적 차례 → 적 턴 시작과 행동 실행 |
+| 다음 플레이어 차례 | 턴 시작 효과 처리와 양쪽 손패 뽑기 → 내 차례 · N턴 → 카드 사용과 턴 종료 입력 허용 |
+
+입력 잠금은 `BattleManager`에서 관리합니다. 첫 플레이어 차례는 전환을 기다리는 동안부터 배너가 사라질 때까지 잠급니다. 다음 플레이어 차례에는 턴 시작 처리부터 배너가 사라질 때까지 잠급니다. 전투가 끝나면 배너를 즉시 숨깁니다. 전투 입장 체크포인트를 복원하면 다시 1턴부터 시작하며, 보상 체크포인트를 복원하면 저장한 보상 화면을 표시합니다. [턴 시작 처리](../Assets/Scripts/Manager/BattleManager.cs#L259) · [이어하기 기준](RunCheckpoints.md)
+
+2026-11-26 Unity 6000.0.85f2에서 관련 검사 20/20이 통과했습니다. 실제 맵에서 전투 씬으로 진입할 때 안개 전환이 끝난 뒤에 첫 배너가 나타나는지, 1턴에서 적 차례와 2턴으로 이어지는지, 양쪽의 행동이 배너가 사라진 뒤에 시작되는지, 전투 종료 시 배너가 즉시 숨겨지는지 확인했습니다. 결과는 로컬 `.utmp/turn-announcement/loading-and-turns.xml`에 있습니다. [턴 배너 테스트](../Assets/Tests/Editor/TurnBannerSceneTests.cs)
 
 ## 기존 UI와 호환
 

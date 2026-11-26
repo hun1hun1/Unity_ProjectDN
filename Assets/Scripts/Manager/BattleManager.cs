@@ -19,6 +19,7 @@ public class BattleManager : MonoBehaviour
 
     [Header("Card Using Area")]
     [SerializeField] private RectTransform cardUsingPoint;
+    [SerializeField] private TurnBannerUI turnBanner;
 
     public BattleResult Result { get; private set; }
     public event System.Action<BattleResult> BattleEnded;
@@ -26,6 +27,7 @@ public class BattleManager : MonoBehaviour
     private bool isResolvingEffects;
     private int activeCardUses;
     private int cardsPlayedThisTurn;
+    private int playerTurnNumber;
     public CardUseContext CurrentCardUse { get; private set; }
     public int CurrentSpentAmmo { get; private set; }
     public bool OpeningAvailable => currentState == BattleState.PlayerTurn && CanContinueEffects && cardsPlayedThisTurn == 0;
@@ -39,11 +41,12 @@ public class BattleManager : MonoBehaviour
     private CardUI resolvingCard;
     private Player boundPlayer;
     private Enemy boundEnemy;
+    private AudioSource presentationAudio;
     private readonly MulliganSystem mulligans = new MulliganSystem();
     public MulliganSystem Mulligans => mulligans;
     public DelayedEffectSystem DelayedEffects { get; } = new DelayedEffectSystem();
     public CardData CurrentEffectCard { get; private set; }
-    public bool BlocksCardInteraction => isResolvingEffects;
+    public bool BlocksCardInteraction => isResolvingEffects || (turnBanner != null && turnBanner.IsShowing);
     public bool CanContinueEffects => isActiveAndEnabled && currentState != BattleState.BattleEnd;
     public bool HasOtherCardUses => activeCardUses > (resolvingCard != null ? 1 : 0);
     public bool HandsAreMoving => HandIsMoving(dreamCardHand) || HandIsMoving(nightmareCardHand);
@@ -120,6 +123,21 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    internal void PlayPresentationOneShot(AudioClip clip, float volume)
+    {
+        if (presentationAudio == null)
+        {
+            var audioObject = new GameObject("Battle Presentation Audio");
+            audioObject.transform.SetParent(transform, false);
+            presentationAudio = audioObject.AddComponent<AudioSource>();
+            presentationAudio.playOnAwake = false;
+            presentationAudio.spatialBlend = 0f;
+            audioObject.AddComponent<SettingsAudioSource>();
+        }
+
+        presentationAudio.PlayOneShot(clip, volume);
+    }
+
     public void RunEffectRoutine(IEnumerator sequence) => EffectSequence.Start(this, LockedEffects(sequence));
 
     private IEnumerator LockedEffects(IEnumerator sequence)
@@ -164,6 +182,7 @@ public class BattleManager : MonoBehaviour
         CurrentSpentAmmo = 0;
         Result = result;
         ChangeState(BattleState.BattleEnd);
+        if (turnBanner != null) turnBanner.Hide();
         DelayedEffects.Clear();
         mulligans.Cancel();
         if (player != null) player.ContinuousCards.ResetForBattle();
@@ -179,6 +198,7 @@ public class BattleManager : MonoBehaviour
     {
         StopAllCoroutines();
         EffectSequence.Stop(this);
+        if (turnBanner != null) turnBanner.Hide();
         mulligans.Cancel();
         DelayedEffects.Clear();
         if (player != null) player.ContinuousCards.ResetForBattle();
@@ -231,6 +251,19 @@ public class BattleManager : MonoBehaviour
         dreamCardHand?.SetRunHandSizeBonus(RunRelicInventory.DreamHandSizeBonus);
         nightmareCardHand?.SetRunHandSizeBonus(RunRelicInventory.NightmareHandSizeBonus);
         DrawStartingHands();
+        playerTurnNumber = 1;
+        if (turnBanner != null)
+            RunEffectRoutine(ShowOpeningTurn());
+    }
+
+    private IEnumerator ShowOpeningTurn()
+    {
+        // Let the newly loaded battle canvas settle before announcing the first turn.
+        yield return null;
+        while (CanContinueEffects && RunSession.Instance != null && RunSession.Instance.IsTransitioning)
+            yield return null;
+        if (CanContinueEffects && turnBanner != null)
+            yield return turnBanner.ShowPlayerTurn(playerTurnNumber);
     }
 
     private void DrawStartingHands()
@@ -366,12 +399,12 @@ public class BattleManager : MonoBehaviour
         else DestroyImmediate(enemy.gameObject);
     }
 
-    public bool CanInspectCards => currentState == BattleState.PlayerTurn && !isResolvingEffects &&
+    public bool CanInspectCards => currentState == BattleState.PlayerTurn && !BlocksCardInteraction &&
         activeCardUses == 0 && !CardUI.HasBusyCards(this);
 
     public bool CanUseCard(CardData cardData)
     {
-        if (CardInspectionUI.BlocksGameplayInput || DeckOverviewUI.BlocksBattleInput || SettingsUI.BlocksBattleInput || currentState != BattleState.PlayerTurn || isResolvingEffects ||
+        if (CardInspectionUI.BlocksGameplayInput || DeckOverviewUI.BlocksBattleInput || SettingsUI.BlocksBattleInput || currentState != BattleState.PlayerTurn || BlocksCardInteraction ||
             cardData == null || cardData.requiredAmmo < 0 || player == null)
             return false;
 
@@ -608,7 +641,7 @@ public class BattleManager : MonoBehaviour
 
     public void EndPlayerTurn()
     {
-        if (CardInspectionUI.BlocksGameplayInput || DeckOverviewUI.BlocksBattleInput || SettingsUI.BlocksBattleInput || isResolvingEffects) return;
+        if (CardInspectionUI.BlocksGameplayInput || DeckOverviewUI.BlocksBattleInput || SettingsUI.BlocksBattleInput || BlocksCardInteraction) return;
         EffectSequence.Start(this, EndPlayerTurnRoutine());
     }
 
@@ -677,6 +710,7 @@ public class BattleManager : MonoBehaviour
             ResetOpeningForTurn();
             DelayedEffects.AdvanceTurn();
             ProcessTurnStartStatusEffects();
+            if (!CanContinueEffects) yield break;
 
             ChangeState(BattleState.PlayerTurn);
 
@@ -705,6 +739,8 @@ public class BattleManager : MonoBehaviour
             if (!CanContinueEffects) yield break;
             DrawCards(CardDeckType.TypeDream, dreamCardHand);
             DrawCards(CardDeckType.TypeNightmare, nightmareCardHand);
+            playerTurnNumber++;
+            if (turnBanner != null) yield return turnBanner.ShowPlayerTurn(playerTurnNumber);
         }
         finally
         {
@@ -723,16 +759,17 @@ public class BattleManager : MonoBehaviour
     private IEnumerator StartEnemyTurn()
     {
         if (!CanContinueEffects || currentState == BattleState.EnemyTurn) yield break;
-        ChangeState(BattleState.EnemyTurn);
-
         Debug.Log("적 턴 시작");
-
-        target.ResetBlock();
 
         bool previousResolving = isResolvingEffects;
         isResolvingEffects = true;
         try
         {
+            if (turnBanner != null) yield return turnBanner.ShowEnemyTurn();
+            if (!CanContinueEffects) yield break;
+
+            ChangeState(BattleState.EnemyTurn);
+            target.ResetBlock();
             yield return target.EnemyTurnRoutine(this);
             if (CanContinueEffects) EndEnemyTurn();
         }

@@ -206,6 +206,8 @@ public class BattleRewardSceneTests
             foreach (Sprite frame in defeat.frames)
                 Assert.That(AssetDatabase.GetAssetPath(frame),
                     Is.EqualTo($"Assets/Images/Characters/{enemyName}/Defeat.png"), encounter.displayName);
+            Canvas.ForceUpdateCanvases();
+            yield return null; // Allow the spawned enemy's LateUpdate to fit the canvas.
             float idleScale = artwork.rect.width / animator.Animation.frames[0].bounds.size.x;
             Vector2 idleGroundPosition = artwork.anchoredPosition;
 
@@ -216,8 +218,19 @@ public class BattleRewardSceneTests
             Assert.That(group.interactable, Is.False, encounter.displayName);
 
             float deadline = Time.realtimeSinceStartup + 3f;
+            while (animator.Animation != defeat && Time.realtimeSinceStartup < deadline)
+            {
+                Assert.That(group.alpha, Is.Zero, encounter.displayName);
+                yield return null;
+            }
+            Assert.That(animator.Animation, Is.SameAs(defeat), encounter.displayName);
+
+            // Capture temporarily changes the canvas dimensions, so check the scale first.
+            Assert.That(artwork.rect.width / defeat.frames[0].bounds.size.x,
+                Is.EqualTo(idleScale).Within(.01f), encounter.displayName);
+
             bool capturedPose = false;
-            while ((animator.Animation != defeat || !animator.IsComplete) && Time.realtimeSinceStartup < deadline)
+            while (!animator.IsComplete && Time.realtimeSinceStartup < deadline)
             {
                 Assert.That(group.alpha, Is.Zero, encounter.displayName);
                 if (!capturedPose && animator.Animation == defeat && animator.CurrentFrame >= 8)
@@ -232,8 +245,6 @@ public class BattleRewardSceneTests
             Assert.That(animator.Loop, Is.False, encounter.displayName);
             Assert.That(sprite.sprite, Is.SameAs(defeat.frames[defeat.frames.Length - 1]), encounter.displayName);
             Assert.That(artwork.anchoredPosition, Is.EqualTo(idleGroundPosition), encounter.displayName);
-            Assert.That(artwork.rect.width / defeat.frames[0].bounds.size.x,
-                Is.EqualTo(idleScale).Within(.01f), encounter.displayName);
             Assert.That(presentation.InfoUI.isActiveAndEnabled, Is.False, encounter.displayName);
             yield return WaitForRewardInput(ui);
         }

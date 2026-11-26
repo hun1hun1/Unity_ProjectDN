@@ -15,7 +15,7 @@
 - `PlaySpritePresentationStep`: `UISpriteAnimation`을 한 번 재생하며 완료를 기다릴 수 있습니다. 연출 종료 시 이전 재생 상태를 복원합니다.
 - `SpawnVfxPresentationStep`: 선택한 Visual 아래에 효과 프리팹을 생성합니다. 장식용 효과이며 피해 판정은 포함하지 않습니다.
 - `ProjectilePresentationStep`: 플레이어/적의 Visual 사이를 이동하는 효과입니다. 도착 후 원래 카드 효과가 실행되도록 앞 연출에 배치할 수 있습니다.
-- `PlaySoundPresentationStep`: 공간감 없는 효과음을 재생합니다. 완료를 기다리지 않으면 나머지 연출과 겹쳐 재생되고, 연출 정리 시 종료합니다.
+- `PlaySoundPresentationStep`은 2D 효과음을 재생합니다. `Wait For Completion`을 끄면 나머지 연출과 겹쳐 재생합니다. 기본 재생은 연출 정리 시 종료하며, `Finish Playing After Presentation`을 켜면 전투 씬에 머무는 동안 클립 끝까지 재생합니다.
 
 ## 에셋 설정
 
@@ -25,15 +25,17 @@ Project 창의 Create > Card > Presentation 메뉴에서 정의와 단계 에셋
 
 ### 군인 사격음
 
-현재 사격음은 Unity 적용 전 WAV입니다. 실제 단발 총성 녹음을 편집한 모노 PCM 48 kHz·16-bit 파일로, 길이는 0.65초이며 피크는 −8.5 dBFS입니다. [사격음 WAV](../GeneratedAudio/Battle/soldier-fire-realistic.wav) · [원본 녹음 및 라이선스 · Joseph Sardin, CC0](https://bigsoundbank.com/shot-of-winchester-magnum-xtr-s0397.html)
+군인 사격음은 모노 PCM 48 kHz·16-bit WAV를 사용합니다. 길이는 0.65초이며 원본 피크는 −8.50 dBFS, RMS는 −26.17 dBFS입니다. [Unity 적용 WAV](../Assets/Audio/Battle/soldier-fire-realistic.wav) · [원본 녹음 및 라이선스 · Joseph Sardin, CC0](https://bigsoundbank.com/shot-of-winchester-magnum-xtr-s0397.html)
 
-적용 시 `SoldierFire`의 `Before Impact` 배열에 `FireSprite` → `FireImpact`(0.1초 대기) → 사격음 순서로 둡니다. 사격음은 총구 섬광이 시작하는 시점에 재생하고, `Wait For Completion`을 끄면 피해와 뒤 연출이 이어집니다. `SoldierFire`를 공유하는 공격·저격·재충전과 각 강화 카드에 공통 적용됩니다. [사격 연출 에셋](../Assets/CardPresentations/SoldierFire.asset) · [총구 섬광 프레임](../GeneratedArt/Soldier/Fire-v2/animation.json)
+`SoldierFire`의 `Before Impact` 배열은 `FireSprite` → `FireImpact`(0.1초 대기) → `FireSound` 순서입니다. 총구 섬광이 시작할 때 재생하며, `Wait For Completion`을 꺼서 피해와 뒤 연출이 이어집니다. `SoldierFire`를 공유하는 공격·저격·재충전과 각 강화 카드에 공통 적용됩니다. [사격 연출 에셋](../Assets/CardPresentations/SoldierFire.asset) · [총구 섬광 프레임](../GeneratedArt/Soldier/Fire-v2/animation.json)
 
-현재의 `PlaySoundPresentationStep`은 카드 연출이 끝날 때 임시 AudioSource를 정리하므로 마지막 일격에서는 잔향이 끊길 수 있습니다. 잔향을 살리는 연결안은 사격음을 전투 씬의 별도 2D AudioSource에서 `PlayOneShot`으로 재생하고 Effects 음량 설정을 따르도록 하는 방식입니다. [현재 재생과 정리](../Assets/Scripts/Card/Presentation/CardPresentationContext.cs#L73)
+`FireSound`는 `Finish Playing After Presentation`을 사용합니다. 전투의 2D `AudioSource`에서 `PlayOneShot`으로 재생하며, 처치 후에도 잔향이 이어지고 Effects 음량 설정을 따릅니다. [사격음 단계](../Assets/CardPresentations/Steps/FireSound.asset)
+
+2026-11-26 Unity 6000.0.85f2에서 처치 직후 사격음이 재생 중이며 효과음 0% 설정이 재생기에 적용되는 것을 확인했습니다. [사격음 재생 테스트](../Assets/Tests/Editor/CardUsePresentationFlowTests.cs#L79)
 
 ## 실행과 정리
 
-기존 `BattleManager`의 카드 효과 코루틴이 실제 효과를 담당합니다. 연출 단계는 효과를 직접 호출하지 않습니다. 연출이 끝나거나 중단되면 위치/회전과 스프라이트 재생 상태를 복원하고 임시 효과/소리를 정리합니다. 캐릭터 레이아웃 변경에는 기준 위치와 일시적인 연출 오프셋을 합성합니다. 체력 UI와 상태 UI는 이동하지 않습니다.
+기존 `BattleManager`의 카드 효과 코루틴이 실제 효과를 담당합니다. 연출 단계는 효과를 직접 호출하지 않습니다. 연출이 끝나거나 중단되면 위치/회전과 스프라이트 재생 상태를 복원하고 카드에 묶인 임시 효과와 소리를 정리합니다. 캐릭터 레이아웃 변경에는 기준 위치와 일시적인 연출 오프셋을 합성합니다. 체력 UI와 상태 UI는 이동하지 않습니다.
 
 체력 변화 숫자는 앞 연출 뒤 실제 효과가 HP를 변경할 때 표시합니다. 지속·지연 효과로 HP가 바뀌는 경우에도 같은 표시를 사용하며, 뒤 연출과 후속 효과는 숫자가 떠오르는 동안 이어집니다. [체력 변화 숫자 연출](CharacterPresentation.md#체력-변화-숫자-연출)
 
@@ -41,7 +43,7 @@ Project 창의 Create > Card > Presentation 메뉴에서 정의와 단계 에셋
 
 ## 적 행동 연출
 
-`EnemyAction`의 `Presentation`에도 같은 연출 에셋을 지정할 수 있습니다. 실제 적 턴은 앞 연출 → 행동 효과 → 뒤 연출을 기다린 뒤 다음 행동 예고와 플레이어 턴으로 진행합니다. 복합 행동은 하위 행동에 지정한 연출도 순서대로 기다립니다. 연출이 비어 있으면 기존 행동 효과를 즉시 실행합니다. 직접 호출하는 `EnemyAction.Execute`는 연출 없는 게임 규칙 처리용이며, 연출을 포함하려면 `ExecuteRoutine` 또는 적의 턴 실행 경로를 사용합니다.
+`EnemyAction`의 `Presentation`에도 같은 연출 에셋을 지정할 수 있습니다. 적 차례 배너가 사라지면 앞 연출 → 행동 효과 → 뒤 연출 순서로 실행합니다. 이후 다음 행동 예고를 갱신하고 플레이어 턴으로 진행합니다. 복합 행동은 하위 행동에 지정한 연출도 순서대로 기다립니다. 연출이 비어 있으면 기존 행동 효과를 즉시 실행합니다. 직접 호출하는 `EnemyAction.Execute`는 연출 없는 게임 규칙 처리용이며, 연출을 포함하려면 `ExecuteRoutine` 또는 적의 턴 실행 경로를 사용합니다. [턴 전환 배너](CharacterPresentation.md#턴-전환-배너)
 
 적 전용 근접 돌진 프리셋은 `Assets/CardPresentations/EnemyMelee.asset`입니다. 적용할 적 행동 에셋을 선택하고 `Presentation`에 연결합니다. 오른쪽의 적이 왼쪽을 바라보는 배치를 기준으로, 살짝 뒤로 준비 → 왼쪽으로 돌진 → 공격 효과 적용 → 잠깐 유지 → 원위치 복귀 순서입니다. 각 이동 단계의 대상은 `Enemy`이며 플레이어용 근접 단계와 별도 에셋으로 구성되어 있습니다.
 

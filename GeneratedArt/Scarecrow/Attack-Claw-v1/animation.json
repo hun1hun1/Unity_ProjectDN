@@ -1,0 +1,35 @@
+{
+  "name": "scarecrow-double-claw-v1",
+  "frameWidth": 768,
+  "frameHeight": 768,
+  "columns": 4,
+  "rows": 4,
+  "frameCount": 16,
+  "frameDurationMs": 50,
+  "frameRate": 20,
+  "durationMs": 800,
+  "loop": false,
+  "frameOrder": "left-to-right, top-to-bottom",
+  "impactFrameIndices": [
+    3,
+    8
+  ],
+  "impactTimeMs": [
+    150,
+    400
+  ],
+  "impactMotion": [
+    "far hand, high sweep toward screen left",
+    "near hand, low diagonal sweep toward screen left"
+  ],
+  "groundYFromTop": 720,
+  "pivotNormalized": [
+    0.5,
+    0.0625
+  ],
+  "sourceArt": "../Idle-v1/frames/scarecrow-idle-00.png",
+  "sourceArtSha256": "144c64f6733d6b4e776ea146a95166a91d453cecbff28ace15ec853c74a97d3b",
+  "generator": "Built-in ImageGen",
+  "method": "Six generated key poses with two-foot registration, small upper-body offsets, and the original idle sprite at both endpoints.",
+  "generationPrompt": "Use case: identity-preserve. Asset type: six key poses for a 2D Unity enemy's double claw attack, based on the supplied existing transparent sprite. The reference is the exact character and proportion guide. Create one 3-column by 2-row sprite sheet of six square cells on real transparent alpha, arranged left to right top row then left to right bottom row. Three columns and two rows are absolute even tiling, individual illustrations must fit their own cells. No separators, border, paper, numbers, captions, watermark, environment, particles, attack trails, or extra objects. The same full-body scarecrow in each cell faces LEFT in a three-quarter view, unchanged warm high-detail painterly game art, patched olive cloth, old crooked straw hat, glowing orange eyes in a stitched burlap mask, frayed golden straw, thin wooden legs and long dark hook-shaped wooden fingers. It has exactly two arms and two legs. Keep BOTH feet planted in exactly the same place in every cell, with identical feet, knees, leg anatomy, stance, camera, overall scale and ground line. Preserve the character identity and outfit precisely. Slight waist and shoulder rotation are allowed for the attacks. Keep the complete hat, both claw hands and both feet in each cell with generous transparent margin, especially at the left, where the player stands. No translational advance or jump, no horizontal flip. Animate one two-hit combination with opposite hands. Top left is the fire-ready opening wind-up for the first hit: the far arm (the arm on screen-left in the reference) coils up and back, claw above forehead height, near arm remains low. Top middle is the first hit: that far arm whips visibly toward screen LEFT with its claws fully extended at upper chest height, torso twists slightly left and the near hand stays back. Top right is the first follow-through: the same far hand sweeps lower left and withdraws, near shoulder loads backward. Bottom left is the rapid second wind-up: the near arm (the arm on screen-right in the base sprite) draws back and up high, elbow bent and claw cocked, far arm lowered on the left. Bottom middle is the second hit: the same near arm crosses powerfully over the front of the chest and reaches LEFT in a low diagonal rake, far hand visibly retracts so hands never merge. Bottom right is the second follow-through: the near claw has traveled below waist level toward left, torso settles and the far hand begins to return to the original ready shape. Make the two impact poses and different attacking arms clearly readable in the same silhouette style. Frame all legs the same in every cell, knee positions and feet are locked, and retain fine original rendering detail."
+}

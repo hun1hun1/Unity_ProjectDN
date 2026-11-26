@@ -80,6 +80,11 @@ public sealed class CardPresentationContext : IDisposable
         source.Play();
         return source;
     }
+    internal void PlaySoundToEnd(AudioClip clip, float volume)
+    {
+        if (battle != null) battle.PlayPresentationOneShot(clip, volume);
+    }
+
     public void Release(GameObject item)
     {
         if (item == null) return;

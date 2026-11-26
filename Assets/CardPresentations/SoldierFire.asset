@@ -15,5 +15,6 @@ MonoBehaviour:
   beforeImpact:
   - {fileID: 11400000, guid: 9708c3774a6af334ba70cc30276db71e, type: 2}
   - {fileID: 11400000, guid: 46b4e6685336c5741ad4a770493b38cb, type: 2}
+  - {fileID: 11400000, guid: e4c7fb7f182743c0a85bb086bec565aa, type: 2}
   afterImpact:
   - {fileID: 11400000, guid: 303e3a5da8e5cb44d94d626bfa5d3331, type: 2}
